@@ -9,14 +9,12 @@
 import Foundation
 
 class YamlLocalhostSplitsParser: LocalhostSplitsParser {
-
     private let splitHelper = SplitHelper()
     private let kTreatmentField = "treatment"
     private let kConfigField = "config"
     private let kKeysField = "keys"
 
     func parseContent(_ content: String) -> LocalhostSplits? {
-
         var errorOccurred = false
         var loadedSplits = LocalhostSplits()
 
@@ -33,14 +31,14 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
 
             if let document = document,
                let values = document.array,
-               values.count > 0,
+               !values.isEmpty,
                let split = parseSplit(row: values[0], splits: loadedSplits),
                let splitName = split.name {
                 loadedSplits[splitName] = split
             }
         }
 
-        if loadedSplits.count == 0, errorOccurred {
+        if loadedSplits.isEmpty, errorOccurred {
             return nil
         }
 
@@ -66,13 +64,15 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
                     if let keys = splitMap[Yaml.string(kKeysField)] {
                         if let keys = keys.array {
                             split.conditions?.insert(
-                                splitHelper.createWhitelistCondition(keys: keys.compactMap { $0.string },
-                                                                     treatment: treatment), at: 0)
+                                splitHelper.createWhitelistCondition(
+                                    keys: keys.compactMap { $0.string },
+                                    treatment: treatment), at: 0)
 
                         } else if let key = keys.string {
                             split.conditions?.insert(
-                                splitHelper.createWhitelistCondition(keys: [key],
-                                                                     treatment: treatment), at: 0)
+                                splitHelper.createWhitelistCondition(
+                                    keys: [key],
+                                    treatment: treatment), at: 0)
                         }
                     } else {
                         split.conditions?.append(splitHelper.createRolloutCondition(treatment: treatment))
@@ -110,7 +110,7 @@ class YamlLocalhostSplitsParser: LocalhostSplitsParser {
                     }
                     currentSplit = String(line)
                 } else {
-                    currentSplit+=line
+                    currentSplit += line
                 }
                 currentSplit.append(newLineChar)
             }

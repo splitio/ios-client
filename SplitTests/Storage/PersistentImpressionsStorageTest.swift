@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class PersistentImpressionsStorageTests: XCTestCase {
-
     var impressionsStorage: PersistentImpressionsStorage!
     var impressionDao: ImpressionDaoStub!
 
@@ -19,8 +18,9 @@ class PersistentImpressionsStorageTests: XCTestCase {
         impressionDao = ImpressionDaoStub()
         var daoProvider = CoreDataDaoProviderMock()
         daoProvider.impressionDao = impressionDao
-        impressionsStorage = DefaultImpressionsStorage(database: SplitDatabaseStub(daoProvider: daoProvider),
-                                                       expirationPeriod: 100)
+        impressionsStorage = DefaultImpressionsStorage(
+            database: SplitDatabaseStub(daoProvider: daoProvider),
+            expirationPeriod: 100)
     }
 
     func testPush() {
@@ -59,10 +59,11 @@ class PersistentImpressionsStorageTests: XCTestCase {
 
         impressionsStorage.setActive(impressions)
 
-        XCTAssertEqual(impressions.count, impressionDao.updatedImpressions.values.filter { $0 ==  StorageRecordStatus.active }.count)
-        XCTAssertEqual(0, impressionDao.updatedImpressions.values.filter { $0 ==  StorageRecordStatus.deleted }.count )
+        XCTAssertEqual(
+            impressions.count,
+            impressionDao.updatedImpressions.values.filter { $0 == StorageRecordStatus.active }.count)
+        XCTAssertEqual(0, impressionDao.updatedImpressions.values.filter { $0 == StorageRecordStatus.deleted }.count)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }

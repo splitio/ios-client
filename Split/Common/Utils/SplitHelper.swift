@@ -9,9 +9,7 @@
 import Foundation
 // swiftlint:disable inclusive_language
 class SplitHelper {
-
     func createDefaultSplit(named splitName: String) -> Split {
-
         let split = Split(name: splitName, trafficType: "custom", status: .active, sets: nil, json: "")
 
         split.defaultTreatment = SplitConstants.control
@@ -26,7 +24,6 @@ class SplitHelper {
     }
 
     func createWhitelistCondition(keys: [String], treatment: String) -> Condition {
-
         let condition = Condition()
         let matcherGroup = MatcherGroup()
         let matcher = Matcher()

@@ -17,7 +17,6 @@ protocol ByKeyMySegmentsStorage {
 }
 
 class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
-
     private let mySegmentsStorage: MySegmentsStorage
     private let userKey: String
 
@@ -25,8 +24,9 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
         return mySegmentsStorage.changeNumber(forKey: userKey) ?? -1
     }
 
-    init(mySegmentsStorage: MySegmentsStorage,
-         userKey: String) {
+    init(
+        mySegmentsStorage: MySegmentsStorage,
+        userKey: String) {
         self.mySegmentsStorage = mySegmentsStorage
         self.userKey = userKey
     }

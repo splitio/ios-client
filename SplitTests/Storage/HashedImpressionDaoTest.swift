@@ -8,17 +8,17 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class HashedImpressionDaoTest: XCTestCase {
-
     var dao: HashedImpressionDao!
 
     override func setUp() {
         let queue = DispatchQueue(label: "hashed impression dao test")
-        dao = CoreDataHashedImpressionDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue))
+        dao = CoreDataHashedImpressionDao(coreDataHelper: IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: queue))
     }
 
     func testUpdate() {
@@ -44,7 +44,7 @@ class HashedImpressionDaoTest: XCTestCase {
 
     func testGetAll() {
         dao.update(SplitTestHelper.createHashedImpressions(start: 1, count: 10))
-        
+
         let all1 = dao.getAll()
 
         dao.update(SplitTestHelper.createHashedImpressions(start: 11, count: 20))
@@ -74,13 +74,13 @@ class HashedImpressionDaoTest: XCTestCase {
 
         XCTAssertEqual(countBef, count)
         XCTAssertEqual(countAfter, 5)
-        XCTAssertEqual(0, allAfter.filter { $0.impressionHash == 1} .count)
-        XCTAssertEqual(1, allAfter.filter { $0.impressionHash == 6} .count)
+        XCTAssertEqual(0, allAfter.filter { $0.impressionHash == 1 }.count)
+        XCTAssertEqual(1, allAfter.filter { $0.impressionHash == 6 }.count)
     }
 
     private func getImp(_ items: [HashedImpression], hash: UInt32) -> HashedImpression? {
-        let res = items.filter { $0.impressionHash == hash}
-        if res.count > 0 {
+        let res = items.filter { $0.impressionHash == hash }
+        if !res.isEmpty {
             return res[0]
         }
         return nil

@@ -11,13 +11,12 @@ import Foundation
 
 class HttpRequestMock: HttpRequest {
     var pinnedCredentialFail: Bool = false
-    
-    func notifyPinnedCredentialFail() {
-    }
+
+    func notifyPinnedCredentialFail() {}
 
     var identifier: Int
 
-    var url: URL = URL(string: "http://split.com")!
+    var url: URL = .init(string: "http://split.com")!
 
     var method: HttpMethod = .get
 
@@ -33,15 +32,11 @@ class HttpRequestMock: HttpRequest {
         self.identifier = identifier
     }
 
-    func send() {
-    }
+    func send() {}
 
-    func setResponse(code: Int) {
-    }
+    func setResponse(code: Int) {}
 
-    func notifyIncomingData(_ data: Data) {
-    }
+    func notifyIncomingData(_ data: Data) {}
 
-    func complete(error: HttpError?) {
-    }
+    func complete(error: HttpError?) {}
 }

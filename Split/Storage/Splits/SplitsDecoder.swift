@@ -21,17 +21,18 @@ struct SplitsParallelDecoder: SplitsDecoder {
     }
 
     func decode(_ list: [String]) -> [Split] {
-
-        if list.count == 0 {
+        if list.isEmpty {
             return []
         }
 
         Logger.v("Using parallel decoding for \(list.count) splits")
         let start = Date.nowMillis()
         var splits = [Split]()
-        let dataQueue = DispatchQueue(label: "split-parallel-parsing-data",
-                                      target: DispatchQueue(label: "split-parallel-parsing-data-conc",
-                                                            attributes: .concurrent))
+        let dataQueue = DispatchQueue(
+            label: "split-parallel-parsing-data",
+            target: DispatchQueue(
+                label: "split-parallel-parsing-data-conc",
+                attributes: .concurrent))
 
         let taskCount = ThreadUtils.processCount(totalTaskCount: list.count, minTaskPerThread: minTaskPerThread)
         let chunkSize = Int(list.count / taskCount)
@@ -66,7 +67,7 @@ struct SplitsSerialDecoder: SplitsDecoder {
     }
 
     func decode(_ list: [String]) -> [Split] {
-        if list.count == 0 {
+        if list.isEmpty {
             return []
         }
         // decoding one by one to avoid losing all
@@ -84,8 +85,7 @@ struct SplitsSerialDecoder: SplitsDecoder {
     }
 
     func getSplit(_ json: String) throws -> Split {
-
-        guard let data  = json.data(using: .utf8) else {
+        guard let data = json.data(using: .utf8) else {
             throw GenericError.unknown(message: "parsing error")
         }
 
@@ -100,8 +100,13 @@ struct SplitsSerialDecoder: SplitsDecoder {
         if let name = name, let trafficType = trafficType, let status = status,
            let statusValue = Status.enumFromString(string: status),
            let killed = killed {
-            return Split(name: name, trafficType: trafficType, status: statusValue,
-                         sets: sets, json: json, killed: killed)
+            return Split(
+                name: name,
+                trafficType: trafficType,
+                status: statusValue,
+                sets: sets,
+                json: json,
+                killed: killed)
         }
 
         Logger.e("Error decoding split")

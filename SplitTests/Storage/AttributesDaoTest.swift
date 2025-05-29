@@ -8,27 +8,31 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class AttributesDaoTest: XCTestCase {
-    
     var attributesDao: AttributesDao!
     var attributesDaoAes128Cbc: AttributesDao!
 
-    let attributes: [String: Any] = ["att1": "se1",
-                                     "att2": true,
-                                     "att3": 1]
-    
+    let attributes: [String: Any] = [
+        "att1": "se1",
+        "att2": true,
+        "att3": 1,
+    ]
+
     override func setUp() {
         let queue = DispatchQueue(label: "my attributes dao test")
-        attributesDao = CoreDataAttributesDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue))
-        attributesDaoAes128Cbc = CoreDataAttributesDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue),
-                                                       cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
+        attributesDao = CoreDataAttributesDao(coreDataHelper: IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: queue))
+        attributesDaoAes128Cbc = CoreDataAttributesDao(
+            coreDataHelper: IntegrationCoreDataHelper.get(
+                databaseName: "test",
+                dispatchQueue: queue),
+            cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
     }
-    
+
     func testUpdateGetPlainText() {
         updateGet(dao: attributesDao)
     }
@@ -38,12 +42,11 @@ class AttributesDaoTest: XCTestCase {
     }
 
     func updateGet(dao: AttributesDao) {
-
         let userKey = "ukey"
         dao.update(userKey: userKey, attributes: self.attributes)
-        
+
         let attributes = dao.getBy(userKey: userKey)!
-        
+
         XCTAssertEqual(3, attributes.count)
         XCTAssertEqual("se1", attributes["att1"] as! String)
         XCTAssertEqual(true, attributes["att2"] as! Bool)
@@ -57,12 +60,12 @@ class AttributesDaoTest: XCTestCase {
     func testGetInvalidKeyAes128Cbc() {
         getInvalidKey(dao: attributesDaoAes128Cbc)
     }
-    
+
     func getInvalidKey(dao: AttributesDao) {
         let userKey = "ukey"
-        
+
         let attributes = dao.getBy(userKey: userKey)
-        
+
         XCTAssertNil(attributes)
     }
 
@@ -75,7 +78,6 @@ class AttributesDaoTest: XCTestCase {
     }
 
     func removeAll(dao: AttributesDao) {
-
         let userKey = "ukey"
         dao.update(userKey: userKey, attributes: self.attributes)
 
@@ -94,11 +96,13 @@ class AttributesDaoTest: XCTestCase {
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
-        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
-                                                   dispatchQueue: DispatchQueue(label: "attributes dao test"))
+        let helper = IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: DispatchQueue(label: "attributes dao test"))
         attributesDao = CoreDataAttributesDao(coreDataHelper: helper)
-        attributesDaoAes128Cbc = CoreDataAttributesDao(coreDataHelper: helper,
-                                                       cipher: cipher)
+        attributesDaoAes128Cbc = CoreDataAttributesDao(
+            coreDataHelper: helper,
+            cipher: cipher)
 
         // Insert encrypted attributess
         attributesDaoAes128Cbc.update(userKey: IntegrationHelper.dummyUserKey, attributes: attributes)
@@ -117,10 +121,11 @@ class AttributesDaoTest: XCTestCase {
         var loadedKey: String?
         var loadedAttributes: String?
         coreDataHelper.performAndWait {
-            let entities = coreDataHelper.fetch(entity: .attribute,
-                                                where: nil,
-                                                rowLimit: 1).compactMap { return $0 as? AttributeEntity }
-            if entities.count > 0 {
+            let entities = coreDataHelper.fetch(
+                entity: .attribute,
+                where: nil,
+                rowLimit: 1).compactMap { $0 as? AttributeEntity }
+            if !entities.isEmpty {
                 loadedKey = entities[0].userKey
                 loadedAttributes = entities[0].attributes
             }
@@ -128,4 +133,3 @@ class AttributesDaoTest: XCTestCase {
         return (userKey: loadedKey, attributes: loadedAttributes)
     }
 }
-

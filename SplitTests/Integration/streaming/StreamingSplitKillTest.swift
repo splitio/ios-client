@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class StreamingSplitKillTest: XCTestCase {
     var httpClient: HttpClient!
@@ -31,22 +31,23 @@ class StreamingSplitKillTest: XCTestCase {
     override func setUp() {
         expIndex = 1
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         loadChanges()
     }
 
     func testSplitKill() {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        //splitConfig.isDebugModeEnabled = true
+        // splitConfig.isDebugModeEnabled = true
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -55,7 +56,7 @@ class StreamingSplitKillTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let expTimeout:  TimeInterval = 5
+        let expTimeout: TimeInterval = 5
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         exp1 = XCTestExpectation(description: "Exp1")
@@ -80,28 +81,36 @@ class StreamingSplitKillTest: XCTestCase {
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
-                                                         timestamp: numbers[splitsChangesHits],
-                                                         changeNumber: numbers[splitsChangesHits]))
+        streamingBinding?.push(
+            message:
+            StreamingIntegrationHelper.splitKillMessagge(
+                splitName: splitName,
+                defaultTreatment: "conta",
+                timestamp: numbers[splitsChangesHits],
+                changeNumber: numbers[splitsChangesHits]))
 
         wait(for: [exp2], timeout: expTimeout)
         waitForUpdate(secs: 1)
-        
+
         let treatmentKill = client.getTreatment(splitName)
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
-                                                          changeNumber: numbers[splitsChangesHits]))
+        streamingBinding?.push(
+            message:
+            StreamingIntegrationHelper.splitUpdateMessage(
+                timestamp: numbers[splitsChangesHits],
+                changeNumber: numbers[splitsChangesHits]))
 
         wait(for: [exp3], timeout: expTimeout)
         waitForUpdate(secs: 1)
         let treatmentNoKill = client.getTreatment(splitName)
-        
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
-                                                         timestamp: numbers[0],
-                                                         changeNumber: numbers[0]))
+
+        streamingBinding?.push(
+            message:
+            StreamingIntegrationHelper.splitKillMessagge(
+                splitName: splitName,
+                defaultTreatment: "conta",
+                timestamp: numbers[0],
+                changeNumber: numbers[0]))
 
         ThreadUtils.delay(seconds: 2.0) // The server should not be hit here
         let treatmentOldKill = client.getTreatment(splitName)
@@ -117,10 +126,10 @@ class StreamingSplitKillTest: XCTestCase {
         })
         semaphore.wait()
     }
-    
+
     private func getChanges(for hitNumber: Int) -> Data {
         if hitNumber < 4 {
-            return Data(self.changes[hitNumber].utf8)
+            return Data(changes[hitNumber].utf8)
         }
         return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
     }
@@ -151,12 +160,12 @@ class StreamingSplitKillTest: XCTestCase {
             return TestDispatcherResponse(code: 500)
         }
     }
-    
+
     private func getAndUpdateHit() -> Int {
         var hitNumber = 0
         DispatchQueue.test.sync {
             hitNumber = self.splitsChangesHits
-            self.splitsChangesHits+=1
+            self.splitsChangesHits += 1
         }
         return hitNumber
     }
@@ -164,9 +173,9 @@ class StreamingSplitKillTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            //DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                self.sseConnExp.fulfill()
-            //}
+            // DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            self.sseConnExp.fulfill()
+            // }
             return self.streamingBinding!
         }
     }
@@ -181,23 +190,23 @@ class StreamingSplitKillTest: XCTestCase {
             split?.killed = true
             split?.defaultTreatment = "conta"
         }
-        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        let targetingRulesChange = TargetingRulesChange(
+            featureFlags: change!,
+            ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
         return (try? Json.encodeToJson(targetingRulesChange)) ?? ""
     }
 
     private func loadChanges() {
-        for i in 0..<4 {
-            let change = getChanges(killed: (i == 2),
-                                    since: self.numbers[i],
-                                    till: self.numbers[i])
+        for i in 0 ..< 4 {
+            let change = getChanges(
+                killed: i == 2,
+                since: numbers[i],
+                till: numbers[i])
             changes.insert(change, at: i)
         }
     }
-    
+
     private func waitForUpdate(secs: UInt32 = 2) {
         sleep(secs)
     }
 }
-
-
-

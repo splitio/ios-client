@@ -8,31 +8,29 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class LRUCacheTest: XCTestCase {
-
-    var cache: LRUCache<Int,Int>!
+    var cache: LRUCache<Int, Int>!
 
     override func setUp() {
         cache = LRUCache(capacity: 10)
     }
 
     func testAddGet() {
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             cache.set(i, for: i)
         }
 
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             XCTAssertNotNil(cache.element(for: i))
         }
         XCTAssertNil(cache.element(for: 20))
-
     }
 
     func testEviction() {
-        for i in 0..<10 {
+        for i in 0 ..< 10 {
             cache.set(i, for: i)
         }
 
@@ -65,22 +63,22 @@ class LRUCacheTest: XCTestCase {
     }
 
     func testInsertPerformance() {
-        let cache = LRUCache<Int,Int>(capacity: 500)
-        self.measure() {
-            for i in 0..<1000 {
+        let cache = LRUCache<Int, Int>(capacity: 500)
+        measure {
+            for i in 0 ..< 1000 {
                 cache.set(i, for: i)
             }
         }
     }
 
     func testGetAllPerformance() {
-        let cache = LRUCache<Int,Int>(capacity: 500)
-        for i in 0..<500 {
+        let cache = LRUCache<Int, Int>(capacity: 500)
+        for i in 0 ..< 500 {
             cache.set(i, for: i)
         }
 
-        self.measure() {
-            for i in 0..<500 {
+        measure {
+            for i in 0 ..< 500 {
                 let _ = cache.element(for: i)
             }
         }
@@ -88,7 +86,5 @@ class LRUCacheTest: XCTestCase {
         cache.clear()
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

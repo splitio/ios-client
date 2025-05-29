@@ -27,24 +27,22 @@ class FilterBuilder {
     }
 
     func build() throws -> String {
-
-        if filters.count == 0 {
+        if filters.isEmpty {
             return ""
         }
 
         var groupedFilters = [SplitFilter]()
         var filterCounts: [SplitFilter.FilterType: Int] = [:]
-        let types = Dictionary(grouping: filters, by: {$0.type}).keys
+        let types = Dictionary(grouping: filters, by: { $0.type }).keys
         types.forEach { filterType in
-            let values = filters.filter({ $0.type == filterType }).flatMap({$0.values})
+            let values = filters.filter { $0.type == filterType }.flatMap { $0.values }
             filterCounts[filterType] = values.count
             groupedFilters.append(
-                SplitFilter(type: filterType, values: values)
-            )
+                SplitFilter(type: filterType, values: values))
         }
 
         if (filterCounts[.bySet] ?? 0) > 0,
-            (filterCounts[.byName] ?? 0) > 0 || (filterCounts[.byPrefix] ?? 0) > 0 {
+           (filterCounts[.byName] ?? 0) > 0 || (filterCounts[.byPrefix] ?? 0) > 0 {
             let message = "SDK Config: names or prefix and sets filter cannot be used at the same time."
             Logger.e(message)
         }
@@ -55,11 +53,11 @@ class FilterBuilder {
             return "&\(filter.type.queryStringField)=\(values.sorted().joined(separator: ","))"
         }
 
-        groupedFilters.sort(by: { $0.type.rawValue < $1.type.rawValue})
+        groupedFilters.sort(by: { $0.type.rawValue < $1.type.rawValue })
         var queryString = ""
         for filter in groupedFilters {
             let deduptedValues = removeDuplicates(values: filter.values)
-            if deduptedValues.count == 0 {
+            if deduptedValues.isEmpty {
                 continue
             }
             if deduptedValues.count > filter.type.maxValuesCount {

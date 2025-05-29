@@ -6,21 +6,21 @@
 //  Copyright © 2024 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class LocalhostSplitStorageTests: XCTestCase {
-
     var splitStorage: SplitsStorage!
 
     override func setUp() {
         let splits = SplitTestHelper.createSplits(namePrefix: "test_split", count: 10)
         // Initialize splitStorage with a mock or actual implementation of SplitsStorage.
         splitStorage = LocalhostSplitsStorage()
-        _ = splitStorage.update(splitChange: ProcessedSplitChange(activeSplits: splits,
-                                                                  archivedSplits: [],
-                                                                  changeNumber: 1,
-                                                                  updateTimestamp: 1))
+        _ = splitStorage.update(splitChange: ProcessedSplitChange(
+            activeSplits: splits,
+            archivedSplits: [],
+            changeNumber: 1,
+            updateTimestamp: 1))
     }
 
     override func tearDown() {
@@ -53,15 +53,15 @@ class LocalhostSplitStorageTests: XCTestCase {
 
     func testUpdateSplitChange() {
         let splits = SplitTestHelper.createSplits(namePrefix: "new_split", count: 5)
-        let splitChange = ProcessedSplitChange(activeSplits: splits,
-                                               archivedSplits: [],
-                                               changeNumber: 1,
-                                               updateTimestamp: 1) // Provide necessary data
+        let splitChange = ProcessedSplitChange(
+            activeSplits: splits,
+            archivedSplits: [],
+            changeNumber: 1,
+            updateTimestamp: 1) // Provide necessary data
         let result = splitStorage.update(splitChange: splitChange)
 
         let loaded = splitStorage.getMany(splits: ["new_split1", "new_split2", "test_split1"])
         let loadedAll = splitStorage.getAll()
-
 
         XCTAssertTrue(result, "Update with splitChange should succeed.")
         XCTAssertEqual(2, loaded.count)

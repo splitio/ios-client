@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class SyncEventBroadcasterStub: SyncEventBroadcaster {
     var registeredHandler: IncomingMessageHandler?
@@ -19,14 +19,13 @@ class SyncEventBroadcasterStub: SyncEventBroadcaster {
     var pushedEvents = [SyncStatusEvent]()
 
     func push(event: SyncStatusEvent) {
-
         lastPushedEvent = event
         pushedEvents.append(event)
-        pushExpectationCallCount+=1
+        pushExpectationCallCount += 1
         if let handler = registeredHandler {
             handler(event)
         }
-        if self.pushExpectationCallCount == pushExpectationTriggerCallCount,
+        if pushExpectationCallCount == pushExpectationTriggerCallCount,
            let exp = pushExpectation {
             exp.fulfill()
         }
@@ -36,6 +35,5 @@ class SyncEventBroadcasterStub: SyncEventBroadcaster {
         registeredHandler = handler
     }
 
-    func destroy() {
-    }
+    func destroy() {}
 }

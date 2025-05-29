@@ -5,23 +5,23 @@
 //  Copyright © 2025 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 final class SplitsSyncHelperTest: XCTestCase {
-
     private var syncHelper: SplitsSyncHelper!
     private var splitFetcher: HttpSplitFetcherStub!
 
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
-        syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
-                                      splitsStorage: SplitsStorageStub(),
-                                      ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
-                                      splitChangeProcessor: SplitChangeProcessorStub(),
-                                      ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessorStub(),
-                                      generalInfoStorage: GeneralInfoStorageMock(),
-                                      splitConfig: SplitClientConfig())
+        syncHelper = SplitsSyncHelper(
+            splitFetcher: splitFetcher,
+            splitsStorage: SplitsStorageStub(),
+            ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
+            splitChangeProcessor: SplitChangeProcessorStub(),
+            ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessorStub(),
+            generalInfoStorage: GeneralInfoStorageMock(),
+            splitConfig: SplitClientConfig())
     }
 
     func testRbSinceParamIsSentToFetcher() {

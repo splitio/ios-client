@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class PushManagerEventBroadcasterTest: XCTestCase {
-
     var channel: SyncEventBroadcaster!
     override func setUp() {
         channel = DefaultSyncEventBroadcaster()
@@ -51,7 +50,6 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         XCTAssertEqual(.pushSubsystemDown, e1)
         XCTAssertEqual(.pushSubsystemDown, e2)
         XCTAssertEqual(.pushSubsystemDown, e3)
-
     }
 
     func testStop() {
@@ -62,7 +60,7 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         var count = 0
 
         channel.register(handler: { event in
-            count+=1
+            count += 1
         })
 
         DispatchQueue.test.asyncAfter(deadline: DispatchTime.now() + 0.2) {
@@ -81,10 +79,7 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         wait(for: [exp1], timeout: 5.0)
 
         XCTAssertEqual(1, count)
-
     }
 
-    override func tearDown() {
-
-    }
+    override func tearDown() {}
 }

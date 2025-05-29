@@ -9,7 +9,6 @@
 import Foundation
 
 public enum SplitLogLevel: String {
-
     case verbose = "VERBOSE"
     case debug = "DEBUG"
     case info = "INFO"

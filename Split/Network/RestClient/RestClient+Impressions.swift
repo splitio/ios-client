@@ -15,10 +15,10 @@ protocol RestClientImpressions: RestClient {
 extension DefaultRestClient: RestClientImpressions {
     func sendImpressions(impressions: [ImpressionsTest], completion: @escaping (DataResult<EmptyValue>) -> Void) {
         do {
-            self.execute(
-                    endpoint: endpointFactory.impressionsEndpoint,
-                    body: try Json.encodeToJsonData(impressions),
-                    completion: completion)
+            execute(
+                endpoint: endpointFactory.impressionsEndpoint,
+                body: try Json.encodeToJsonData(impressions),
+                completion: completion)
         } catch {
             Logger.e("Could not send impressions. Error: " + error.localizedDescription)
         }

@@ -6,11 +6,10 @@
 //  Copyright © 2021 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SplitSdkUpdatePollingTest: XCTestCase {
-    
     let kNeverRefreshRate = 9999999
     var streamingBinding: TestStreamResponseBinding?
     var httpClient: HttpClient!
@@ -25,27 +24,28 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         XCTestExpectation(description: "upd 0"),
         XCTestExpectation(description: "upd 1"),
         XCTestExpectation(description: "upd 2"),
-        XCTestExpectation(description: "upd 3")
+        XCTestExpectation(description: "upd 3"),
     ]
 
     let impExp = XCTestExpectation(description: "impressions")
 
     var impHit: [ImpressionsTest]?
-    
+
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
-    
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
-
         let respData = responseSplitChanges()
         var responses = [TestDispatcherResponse]()
         for data in respData {
-            let rData = TargetingRulesChange(featureFlags: data, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+            let rData = TargetingRulesChange(
+                featureFlags: data,
+                ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
             responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(rData).utf8)))
         }
 
@@ -60,16 +60,18 @@ class SplitSdkUpdatePollingTest: XCTestCase {
                 } else if index == self.spExp.count {
                     self.spExp[index - 1].fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999999, till: 99999999).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 99999999, till: 99999999).utf8))
             }
 
             if request.isMySegmentsEndpoint() {
-                self.mySegmentsHits+=1
+                self.mySegmentsHits += 1
                 let hit = self.mySegmentsHits
                 var json = IntegrationHelper.emptyMySegments
                 if hit > 2 {
                     var mySegments = [String]()
-                    for i in 1...hit {
+                    for i in 1 ... hit {
                         mySegments.append("segment\(i)")
                     }
 
@@ -105,13 +107,14 @@ class SplitSdkUpdatePollingTest: XCTestCase {
     }
 
     // MARK: Test
+
     func testSdkReadyOnly() throws {
         let apiKey = IntegrationHelper.dummyApiKey
         let trafficType = "client"
 
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
-        
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+
+        let splitConfig = SplitClientConfig()
         splitConfig.segmentsRefreshRate = 99999
         splitConfig.featuresRefreshRate = 99999
         splitConfig.impressionRefreshRate = 99999
@@ -119,19 +122,19 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.streamingEnabled = false
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
-        
-        let key: Key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
+            .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+
+        let key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesTest"))
         _ = builder.setHttpClient(httpClient)
         factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
-        
+
         let client = factory!.client
 
         var sdkReadyFired = false
         var sdkUpdatedFired = false
-        
+
         client.on(event: SplitEvent.sdkReady) {
             sdkReadyFired = true
             sdkReady.fulfill()
@@ -140,7 +143,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         client.on(event: SplitEvent.sdkUpdated) {
             sdkUpdatedFired = true
         }
-        
+
         wait(for: [sdkReady], timeout: 30)
 
         // wait for sdk update
@@ -148,7 +151,6 @@ class SplitSdkUpdatePollingTest: XCTestCase {
 
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(sdkUpdatedFired)
-
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -164,7 +166,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
         let sdkUpdate = XCTestExpectation(description: "SDK Update Expectation")
 
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.segmentsRefreshRate = 99999
         splitConfig.featuresRefreshRate = 2
         splitConfig.impressionRefreshRate = 99999
@@ -172,9 +174,9 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.streamingEnabled = false
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+            .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
 
-        let key: Key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
+        let key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesTest"))
         _ = builder.setHttpClient(httpClient)
@@ -200,7 +202,6 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         XCTAssertTrue(sdkReadyFired)
         XCTAssertTrue(sdkUpdatedFired)
 
-
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
             _ = semaphore.signal()
@@ -215,7 +216,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
         let sdkUpdate = XCTestExpectation(description: "SDK Update Expectation")
 
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.segmentsRefreshRate = 2
         splitConfig.featuresRefreshRate = 999999
         splitConfig.impressionRefreshRate = 999999
@@ -224,9 +225,9 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         splitConfig.streamingEnabled = false
         splitConfig.logLevel = .verbose
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+            .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
 
-        let key: Key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
+        let key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesTest"))
         _ = builder.setHttpClient(httpClient)
@@ -255,7 +256,6 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         XCTAssertTrue(sdkReadyFired)
         XCTAssertTrue(sdkUpdatedFired)
 
-
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
             _ = semaphore.signal()
@@ -263,15 +263,15 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         semaphore.wait()
     }
 
-    private func  responseSplitChanges() -> [SplitChange] {
+    private func responseSplitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
 
         var prevChangeNumber: Int64 = 0
-        for i in 0..<4 {
+        for i in 0 ..< 4 {
             let c = loadSplitsChangeFile()!
             c.since = c.till
             if prevChangeNumber != 0 {
-                c.till = prevChangeNumber  + kChangeNbInterval
+                c.till = prevChangeNumber + kChangeNbInterval
                 c.since = c.till
             }
             prevChangeNumber = c.till
@@ -292,12 +292,11 @@ class SplitSdkUpdatePollingTest: XCTestCase {
     }
 
     private func getAndIncrement() -> Int {
-        var i = 0;
+        var i = 0
         DispatchQueue.test.sync {
             i = self.reqChangesIndex
-            self.reqChangesIndex+=1
+            self.reqChangesIndex += 1
         }
         return i
     }
 }
-

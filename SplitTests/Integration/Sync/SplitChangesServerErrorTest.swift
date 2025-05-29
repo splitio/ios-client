@@ -6,11 +6,10 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SplitChangesServerErrorTest: XCTestCase {
-    
     let kNeverRefreshRate = 9999999
     let kChangeNbInterval: Int64 = 86400
     var reqChangesIndex = 0
@@ -20,7 +19,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         XCTestExpectation(description: "upd 0"),
         XCTestExpectation(description: "error 1"),
         XCTestExpectation(description: "upd 2"),
-        XCTestExpectation(description: "upd 3")
+        XCTestExpectation(description: "upd 3"),
     ]
 
     var serverUrl = "localhost"
@@ -28,28 +27,31 @@ class SplitChangesServerErrorTest: XCTestCase {
     let impExp = XCTestExpectation(description: "impressions")
 
     var impHit: [ImpressionsTest]?
-    
+
     var httpClient: HttpClient!
     var streamingBinding: TestStreamResponseBinding?
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
-
         let respData = responseSplitChanges()
         var responses = [TestDispatcherResponse]()
         responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(
-            TargetingRulesChange(featureFlags: respData[0], ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))).utf8)))
+            TargetingRulesChange(
+                featureFlags: respData[0],
+                ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))).utf8)))
         responses.append(TestDispatcherResponse(code: 500))
         responses.append(TestDispatcherResponse(code: 500))
         responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(
-            TargetingRulesChange(featureFlags: respData[1], ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))).utf8)))
-
+            TargetingRulesChange(
+                featureFlags: respData[1],
+                ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))).utf8)))
 
         return { request in
             if request.isSplitEndpoint() {
@@ -64,7 +66,9 @@ class SplitChangesServerErrorTest: XCTestCase {
                     self.spExp[index - 1].fulfill()
                 }
                 let since = Int(self.lastChangeNumber)
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
             }
 
             if request.isMySegmentsEndpoint() {
@@ -94,6 +98,7 @@ class SplitChangesServerErrorTest: XCTestCase {
     }
 
     // MARK: Test
+
     /// Getting changes from server and test treatments and change number
     func testChangesError() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_f"
@@ -102,8 +107,8 @@ class SplitChangesServerErrorTest: XCTestCase {
         var treatments = [String]()
 
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
-        
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+
+        let splitConfig = SplitClientConfig()
         splitConfig.streamingEnabled = false
         splitConfig.featuresRefreshRate = 3
         splitConfig.impressionRefreshRate = kNeverRefreshRate
@@ -111,26 +116,26 @@ class SplitChangesServerErrorTest: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.streamingEnabled = false
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
-        
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+            .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesServerErrorTest"))
         _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
-        
+
         let client = factory!.client
 
         var sdkReadyFired = false
-        
+
         client.on(event: SplitEvent.sdkReady) {
             sdkReadyFired = true
             sdkReady.fulfill()
         }
-        
+
         wait(for: [sdkReady], timeout: 10)
 
-        for i in 0..<4 {
+        for i in 0 ..< 4 {
             wait(for: [spExp[i]], timeout: 40)
             treatments.append(client.getTreatment("test_feature"))
         }
@@ -150,15 +155,15 @@ class SplitChangesServerErrorTest: XCTestCase {
         factory = nil
     }
 
-    private func  responseSplitChanges() -> [SplitChange] {
+    private func responseSplitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
 
-        for i in 0..<2 {
+        for i in 0 ..< 2 {
             let c = loadSplitsChangeFile()!
             var prevChangeNumber = c.since
             c.since = prevChangeNumber + kChangeNbInterval
             c.till = c.since
-            
+
             prevChangeNumber = c.till
             lastChangeNumber = prevChangeNumber
             let split = c.splits[0]
@@ -181,4 +186,3 @@ class SplitChangesServerErrorTest: XCTestCase {
         return try Json.decodeFrom(json: content, to: [ImpressionsTest].self)
     }
 }
-

@@ -6,8 +6,8 @@
 //  Copyright © 2024 Split. All rights reserved.
 //
 
-import Foundation
 import CommonCrypto
+import Foundation
 
 enum PinType {
     case key
@@ -63,15 +63,15 @@ enum KeyHashAlgo: String, Codable {
     case sha1
 }
 
-struct CertKeyTypeHelper {
+enum CertKeyTypeHelper {
     private static let keyMapping: [String: CertKeyType] = [
         "\(kSecAttrKeyTypeRSA)_2048": .rsa2048,
         "\(kSecAttrKeyTypeRSA)_3072": .rsa3072,
         "\(kSecAttrKeyTypeRSA)_4096": .rsa4096,
         "\(kSecAttrKeyTypeEC)_256": .secp256r1,
         "\(kSecAttrKeyTypeEC)_384": .secp384r1,
-        "\(kSecAttrKeyTypeEC)_521": .secp521r1
-        ]
+        "\(kSecAttrKeyTypeEC)_521": .secp521r1,
+    ]
 
     static func map(type: String, size: Int) -> CertKeyType {
         if let type = keyMapping["\(type)_\(size)"] {
@@ -112,6 +112,7 @@ struct CertSpki {
     var data: Data {
         return rawData
     }
+
     private var rawData: Data
 
     init(type: CertKeyType, data: Data) {
@@ -133,7 +134,6 @@ protocol TlsPinChecker {
 }
 
 struct DefaultTlsPinChecker: TlsPinChecker {
-
     private let pins: [CredentialPin]
 
     init(pins: [CredentialPin]) {
@@ -143,7 +143,6 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     // Using a generic parameter to aisolate Apple's framework and
     // also to make the component easily mockable
     func check(credential: AnyObject) -> CredentialValidationResult {
-
         guard let challenge = credential as? URLAuthenticationChallenge else {
             Logger.e("The credential received is not a URLAuthenticationChallenge")
             return .invalidParameter
@@ -153,32 +152,35 @@ struct DefaultTlsPinChecker: TlsPinChecker {
         // and that the host is pinned to validation
         let protectionSpace = challenge.protectionSpace
         if protectionSpace.authenticationMethod != NSURLAuthenticationMethodServerTrust {
-            logValidationAvoidance(host: protectionSpace.host,
-                                   method: protectionSpace.authenticationMethod,
-                                   message: "No server trust")
+            logValidationAvoidance(
+                host: protectionSpace.host,
+                method: protectionSpace.authenticationMethod,
+                message: "No server trust")
             return .noServerTrustMethod
         }
 
         guard let serverTrust = protectionSpace.serverTrust else {
-            logValidationAvoidance(host: protectionSpace.host,
-                                   method: protectionSpace.authenticationMethod,
-                                   message: "No server trust info")
+            logValidationAvoidance(
+                host: protectionSpace.host,
+                method: protectionSpace.authenticationMethod,
+                message: "No server trust info")
             return .unavailableServerTrust
         }
 
         let result = checkValidity(of: serverTrust, protectionSpace: protectionSpace)
-        Logger.d("Credential validation result for host \(protectionSpace.host) " +
-                     "and method \(protectionSpace.authenticationMethod): \(result.description)")
+        Logger.d(
+            "Credential validation result for host \(protectionSpace.host) " +
+                "and method \(protectionSpace.authenticationMethod): \(result.description)")
         return result
     }
 
-    private func checkValidity(of secTrust: SecTrust,
-                               protectionSpace: URLProtectionSpace) -> CredentialValidationResult {
-
+    private func checkValidity(
+        of secTrust: SecTrust,
+        protectionSpace: URLProtectionSpace) -> CredentialValidationResult {
         // Check if we have pins for the domain
         let host = protectionSpace.host
         let domainPins = pinsFor(domain: host, pins: pins)
-        if domainPins.count == 0 {
+        if domainPins.isEmpty {
             return .noPinsForDomain
         }
 
@@ -190,7 +192,7 @@ struct DefaultTlsPinChecker: TlsPinChecker {
         // Chain is valid, continue to
         let certficateCount = chainLength(secTrust)
 
-        for index in 0..<certficateCount {
+        for index in 0 ..< certficateCount {
             guard let certificate = certificate(at: index, from: secTrust) else {
                 // This should not happen. Only if something went really wrong
                 Logger.e("Something went wrong when validating certificate chain")
@@ -234,7 +236,6 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     }
 
     private func isValidSecurityChain(_ secTrust: SecTrust, host: String) -> Bool {
-
         if #available(macOSApplicationExtension 10.14, macOS 10.14, *) {
             var evalError: CFError?
 
@@ -285,7 +286,7 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     }
 }
 
-struct AlgoHelper {
+enum AlgoHelper {
     static func computeHash(_ data: Data, algo: KeyHashAlgo) -> Data {
         switch algo {
         case .sha1:
@@ -303,7 +304,7 @@ struct AlgoHelper {
         return Data(sha256)
     }
 
-    private static  func hashSha1(_ data: Data) -> Data {
+    private static func hashSha1(_ data: Data) -> Data {
         var sha1 = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
         data.withUnsafeBytes {
             _ = CC_SHA1($0.baseAddress, CC_LONG(data.count), &sha1)
@@ -313,7 +314,7 @@ struct AlgoHelper {
 }
 
 // TODO: improve this parser to encapsulate Apple's framework
-struct TlsCertificateParser {
+enum TlsCertificateParser {
     private static let certificateExtension = "der"
     static func spki(from certificateName: String, bundle: Bundle) -> CertSpki? {
         guard let certificate = loadCertificate(name: certificateName, bundle: bundle) else {
@@ -324,7 +325,6 @@ struct TlsCertificateParser {
     }
 
     private static func loadCertificate(name: String, bundle: Bundle) -> SecCertificate? {
-
         let loadedData = FileUtil.loadFileData(name: name, type: certificateExtension, bundle: bundle)
         guard let cerData = loadedData as? NSData else {
             Logger.e("Could not load certificate \(name) for name")
@@ -371,7 +371,6 @@ struct TlsCertificateParser {
     }
 
     static private func typeOf(key: SecKey) -> CertKeyType {
-
         let keyInfo = SecKeyCopyAttributes(key) as? [String: AnyObject]
         if let keyInfo = keyInfo,
            let type = keyInfo[kSecAttrKeyType as String] as? String,

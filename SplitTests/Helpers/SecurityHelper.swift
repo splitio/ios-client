@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SecurityHelper  {
+class SecurityHelper {
     private let limit: UInt8 = 10 // "\n"
     func loadPemData(name: String, type: String = "pem") -> Data? {
         guard let pem = FileHelper.loadFileData(sourceClass: self, name: name, type: type) else {
@@ -20,17 +20,17 @@ class SecurityHelper  {
         let pemBase64 = pem
             .split(separator: limit)
 
-        let final = Array(pemBase64
-            .dropFirst()
-            .dropLast()
-            .joined())
+        let final = Array(
+            pemBase64
+                .dropFirst()
+                .dropLast()
+                .joined())
 
         print("PEM DEC")
         print(Base64Utils.decodeBase64(Data(final).stringRepresentation)?.hexadecimalRepresentation)
         print("PEM DEC FIN")
 
-        return  Data(final)
-
+        return Data(final)
     }
 
     func inspect(certificate: SecCertificate) {
@@ -47,7 +47,6 @@ class SecurityHelper  {
     }
 
     func createServerTrust(certName: String) -> SecTrust? {
-
         guard let certificate = certificateFromFile(name: certName) else {
             return nil
         }
@@ -58,8 +57,7 @@ class SecurityHelper  {
     }
 
     func certificateFromFile(name: String) -> SecCertificate? {
-
-        let loadedData = FileHelper.loadFileData(sourceClass:self, name: name, type: "der")!
+        let loadedData = FileHelper.loadFileData(sourceClass: self, name: name, type: "der")!
         guard let cerData = loadedData as? NSData else {
             print("Could not load certificate \(name) for name")
             return nil
@@ -69,7 +67,6 @@ class SecurityHelper  {
     }
 
     func createAuthChallenge(host: String, certName: String) -> URLAuthenticationChallenge? {
-
         guard let protectionSpace = createProtectionSpace(host: host, certName: certName) else {
             Logger.d("Could not create protection space mock")
             return nil
@@ -82,8 +79,7 @@ class SecurityHelper  {
             previousFailureCount: 0,
             failureResponse: nil,
             error: nil,
-            sender: ChallengeSenderMock()
-        )
+            sender: ChallengeSenderMock())
     }
 
     func createInvalidChallenge(authMethod: String) -> URLAuthenticationChallenge {
@@ -93,8 +89,7 @@ class SecurityHelper  {
             previousFailureCount: 0,
             failureResponse: nil,
             error: nil,
-            sender: ChallengeSenderMock()
-        )
+            sender: ChallengeSenderMock())
     }
 
     func createInvalidChallengeWithoutSecTrust() -> URLAuthenticationChallenge {
@@ -104,12 +99,11 @@ class SecurityHelper  {
             previousFailureCount: 0,
             failureResponse: nil,
             error: nil,
-            sender: ChallengeSenderMock()
-        )
+            sender: ChallengeSenderMock())
     }
 
     func hashedKey(keyName: String, algo: KeyHashAlgo) -> Data {
-        guard let keyData = FileHelper.loadFileData(sourceClass:self, name: keyName, type: "der") else {
+        guard let keyData = FileHelper.loadFileData(sourceClass: self, name: keyName, type: "der") else {
             Logger.d("Could not create key for certificate pinning test key \(keyName)")
             return Data()
         }
@@ -117,7 +111,6 @@ class SecurityHelper  {
         let expectedHash = AlgoHelper.computeHash(keyData, algo: algo)
         return expectedHash
     }
-
 }
 
 class ChallengeSenderMock: NSObject, URLAuthenticationChallengeSender {
@@ -127,32 +120,33 @@ class ChallengeSenderMock: NSObject, URLAuthenticationChallengeSender {
 }
 
 class ProtectionSpaceMock: URLProtectionSpace {
-
     var serverTrustMock: SecTrust?
     init(host: String, secTrust: SecTrust) {
         self.serverTrustMock = secTrust
-        super.init(host: host, port: 443,
-                   protocol: NSURLProtectionSpaceHTTPS,
-                   realm: nil,
-                   authenticationMethod: NSURLAuthenticationMethodServerTrust)
-
+        super.init(
+            host: host,
+            port: 443,
+            protocol: NSURLProtectionSpaceHTTPS,
+            realm: nil,
+            authenticationMethod: NSURLAuthenticationMethodServerTrust)
     }
 
-    init(host: String = "www.testhost.com",
-         authProtocol: String = NSURLProtectionSpaceHTTPS,
-         authMethod: String = NSURLAuthenticationMethodServerTrust) {
-
-        super.init(host: host, port: 443,
-                   protocol: authProtocol,
-                   realm: nil,
-                   authenticationMethod: authMethod)
-
+    init(
+        host: String = "www.testhost.com",
+        authProtocol: String = NSURLProtectionSpaceHTTPS,
+        authMethod: String = NSURLAuthenticationMethodServerTrust) {
+        super.init(
+            host: host,
+            port: 443,
+            protocol: authProtocol,
+            realm: nil,
+            authenticationMethod: authMethod)
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override var serverTrust: SecTrust? {
         return serverTrustMock
     }

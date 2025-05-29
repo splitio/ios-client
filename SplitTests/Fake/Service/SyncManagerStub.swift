@@ -11,7 +11,6 @@ import Foundation
 import XCTest
 
 class SyncManagerStub: SyncManager {
-
     var setupUserConsentExp: XCTestExpectation?
 
     var startCalled = false
@@ -48,5 +47,4 @@ class SyncManagerStub: SyncManager {
             exp.fulfill()
         }
     }
-
 }

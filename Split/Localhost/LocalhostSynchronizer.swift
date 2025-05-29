@@ -9,49 +9,42 @@
 import Foundation
 
 class LocalhostSynchronizer: FeatureFlagsSynchronizer {
-
     private let featureFlagsStorage: SplitsStorage
     private let featureFlagsDataSource: LocalhostDataSource
     private let eventsManager: SplitEventsManager
     private var isFirstLoad = Atomic<Bool>(true)
 
-    init(featureFlagsStorage: SplitsStorage,
-         featureFlagsDataSource: LocalhostDataSource,
-         eventsManager: SplitEventsManager) {
+    init(
+        featureFlagsStorage: SplitsStorage,
+        featureFlagsDataSource: LocalhostDataSource,
+        eventsManager: SplitEventsManager) {
         self.featureFlagsStorage = featureFlagsStorage
         self.featureFlagsDataSource = featureFlagsDataSource
         self.eventsManager = eventsManager
         setup()
     }
 
-    func load() {
-    }
+    func load() {}
 
     func synchronize() {
         featureFlagsDataSource.start()
     }
 
-    func synchronize(changeNumber: Int64?, rbsChangeNumber: Int64?) {
-    }
+    func synchronize(changeNumber: Int64?, rbsChangeNumber: Int64?) {}
 
     func startPeriodicSync() {
         featureFlagsDataSource.start()
     }
 
-    func stopPeriodicSync() {
-    }
+    func stopPeriodicSync() {}
 
-    func notifyKilled() {
-    }
+    func notifyKilled() {}
 
-    func notifyUpdated() {
-    }
+    func notifyUpdated() {}
 
-    func pause() {
-    }
+    func pause() {}
 
-    func resume() {
-    }
+    func resume() {}
 
     func destroy() {
         featureFlagsDataSource.stop()
@@ -67,9 +60,11 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
             }
 
             let values = featureFlags.values.map { $0 as Split }
-            let change = ProcessedSplitChange(activeSplits: values,
-                                              archivedSplits: [],
-                                              changeNumber: -1, updateTimestamp: -1)
+            let change = ProcessedSplitChange(
+                activeSplits: values,
+                archivedSplits: [],
+                changeNumber: -1,
+                updateTimestamp: -1)
 
             // Update will remove all records before insert new ones
             _ = self.featureFlagsStorage.update(splitChange: change)

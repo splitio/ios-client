@@ -19,17 +19,16 @@ protocol EventsSynchronizer {
 }
 
 class DefaultEventsSynchronizer: EventsSynchronizer {
-
     private let syncWorkerFactory: SyncWorkerFactory
     private let eventsSyncHelper: EventsRecorderSyncHelper
     private let periodicEventsRecorderWorker: PeriodicRecorderWorker
     private let flusherEventsRecorderWorker: RecorderWorker
     private let telemetryProducer: TelemetryRuntimeProducer?
 
-    init(syncWorkerFactory: SyncWorkerFactory,
-         eventsSyncHelper: EventsRecorderSyncHelper,
-         telemetryProducer: TelemetryRuntimeProducer?) {
-
+    init(
+        syncWorkerFactory: SyncWorkerFactory,
+        eventsSyncHelper: EventsRecorderSyncHelper,
+        telemetryProducer: TelemetryRuntimeProducer?) {
         self.syncWorkerFactory = syncWorkerFactory
         self.flusherEventsRecorderWorker = syncWorkerFactory.createEventsRecorderWorker(syncHelper: eventsSyncHelper)
         self.periodicEventsRecorderWorker =
@@ -59,11 +58,11 @@ class DefaultEventsSynchronizer: EventsSynchronizer {
     }
 
     func push(_ event: EventDTO) {
-        if self.eventsSyncHelper.pushAndCheckFlush(event) {
-            self.flusherEventsRecorderWorker.flush()
-            self.eventsSyncHelper.resetAccumulator()
+        if eventsSyncHelper.pushAndCheckFlush(event) {
+            flusherEventsRecorderWorker.flush()
+            eventsSyncHelper.resetAccumulator()
         }
-        self.telemetryProducer?.recordEventStats(type: .queued, count: 1)
+        telemetryProducer?.recordEventStats(type: .queued, count: 1)
     }
 
     func destroy() {

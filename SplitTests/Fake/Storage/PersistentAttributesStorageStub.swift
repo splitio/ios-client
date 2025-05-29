@@ -11,11 +11,11 @@ import Foundation
 
 class PersistentAttributesStorageStub: PersistentAttributesStorage {
     var attributes = [String: [String: Any]]()
-    func set(_ attributes: [String : Any], forKey key: String) {
+    func set(_ attributes: [String: Any], forKey key: String) {
         self.attributes[key] = attributes
     }
 
-    func getAll(forKey key: String) -> [String : Any]? {
+    func getAll(forKey key: String) -> [String: Any]? {
         return attributes[key]
     }
 

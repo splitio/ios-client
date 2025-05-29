@@ -6,11 +6,10 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class FlushTests: XCTestCase {
-    
     let kNeverRefreshRate = 9999999
     var httpClient: HttpClient!
     var splitChange: TargetingRulesChange?
@@ -22,7 +21,7 @@ class FlushTests: XCTestCase {
 
     var impExp: XCTestExpectation?
     var trackExp: XCTestExpectation?
-    
+
     override func setUp() {
         if splitChange == nil {
             splitChange = loadSplitsChangeFile()
@@ -30,17 +29,18 @@ class FlushTests: XCTestCase {
         trackRequestData = [String]()
         impressionsRequestData = [String]()
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
-    
+
     func test() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_g"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "account"
-        
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 999999
         splitConfig.segmentsRefreshRate = 999999
         splitConfig.impressionRefreshRate = 999999
@@ -49,42 +49,42 @@ class FlushTests: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.eventsPerPush = 10
         splitConfig.eventsQueueSize = 1000
-        
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
         let factory = builder.setApiKey(apiKey).setKey(key)
             .setConfig(splitConfig).build()
-        
+
         let client = factory?.client
-        
+
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
         var timeOutFired = false
         var sdkReadyFired = false
-        
+
         client?.on(event: SplitEvent.sdkReady) {
             sdkReadyFired = true
             sdkReadyExpectation.fulfill()
         }
-        
+
         client?.on(event: SplitEvent.sdkReadyTimedOut) {
             timeOutFired = true
             sdkReadyExpectation.fulfill()
         }
-        
+
         wait(for: [sdkReadyExpectation], timeout: 40)
 
-        for i in 0..<10 {
+        for i in 0 ..< 10 {
             sleep(1)
             _ = client?.getTreatment("FACUNDO_TEST")
             _ = client?.getTreatment("Test_Save_1")
             _ = client?.getTreatment("NO_EXISTING_FEATURE_\(i)")
         }
 
-        for i in 0..<100 {
+        for i in 0 ..< 100 {
             _ = client?.track(eventType: "account", value: Double(i))
         }
 
@@ -92,7 +92,6 @@ class FlushTests: XCTestCase {
         trackExp = XCTestExpectation()
         client?.flush()
         wait(for: [impExp!, trackExp!], timeout: 5)
-
 
         let event99 = getTrackEventBy(value: 99.0)
         let event100 = getTrackEventBy(value: 100.0)
@@ -115,6 +114,7 @@ class FlushTests: XCTestCase {
     }
 
     // MARK: Tracks Hits
+
     private func buildEventsFromJson(content: String) throws -> [EventDTO] {
         return try Json.dynamicDecodeFrom(json: content, to: [EventDTO].self)
     }
@@ -129,7 +129,7 @@ class FlushTests: XCTestCase {
                 print("error: \(error)")
             }
             let events = lastEventHitEvents.filter { $0.value == value }
-            if events.count > 0 {
+            if !events.isEmpty {
                 return events[0]
             }
         }
@@ -137,6 +137,7 @@ class FlushTests: XCTestCase {
     }
 
     // MARK: Impressions Hits
+
     private func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
         return try Json.decodeFrom(json: content, to: [ImpressionsTest].self)
     }
@@ -146,12 +147,12 @@ class FlushTests: XCTestCase {
         for data in hits {
             var lastImpressionsHitTest: [ImpressionsTest] = []
             do {
-                lastImpressionsHitTest = try buildImpressionsFromJson(content:data)
+                lastImpressionsHitTest = try buildImpressionsFromJson(content: data)
             } catch {
                 print("error: \(error)")
             }
             let impressions = lastImpressionsHitTest.filter { $0.testName == testName }
-            if impressions.count > 0 {
+            if !impressions.isEmpty {
                 return impressions[0]
             }
         }
@@ -167,7 +168,9 @@ class FlushTests: XCTestCase {
            let targetingRulesChange = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
             let flagsChange = targetingRulesChange.featureFlags
             flagsChange.till = Int64(Int(flagsChange.since))
-            return TargetingRulesChange(featureFlags: flagsChange, ruleBasedSegments: targetingRulesChange.ruleBasedSegments)
+            return TargetingRulesChange(
+                featureFlags: flagsChange,
+                ruleBasedSegments: targetingRulesChange.ruleBasedSegments)
         }
         return nil
     }
@@ -210,13 +213,13 @@ class FlushTests: XCTestCase {
 
     var trackHitCount = 0
     func nextTrackHit() -> Int {
-        trackHitCount+=1
+        trackHitCount += 1
         return trackHitCount
     }
 
     var impressionHitCount = 0
     func nextImpressionHit() -> Int {
-        impressionHitCount+=1
+        impressionHitCount += 1
         return impressionHitCount
     }
 }

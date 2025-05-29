@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class PushNotificationManagerTest: XCTestCase {
-
     var pnManager: PushNotificationManager!
     var sseAuthenticator: SseAuthenticatorStub!
     var timersManager: TimersManagerMock!
@@ -31,20 +30,26 @@ class PushNotificationManagerTest: XCTestCase {
         broadcasterChannel = SyncEventBroadcasterStub()
         telemetryProducer = TelemetryStorageStub()
         byKeyFacade = ByKeyFacadeMock()
-        let byKeyGroup = ByKeyComponentGroup(splitClient: SplitClientStub(),
-                                             eventsManager: SplitEventsManagerStub(),
-                                             mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
-                                             attributesStorage: ByKeyAttributesStorageStub(userKey: userKey,
-                                                                                           attributesStorage: AttributesStorageStub()))
+        let byKeyGroup = ByKeyComponentGroup(
+            splitClient: SplitClientStub(),
+            eventsManager: SplitEventsManagerStub(),
+            mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
+            attributesStorage: ByKeyAttributesStorageStub(
+                userKey: userKey,
+                attributesStorage: AttributesStorageStub()))
         byKeyFacade.append(byKeyGroup, forKey: key)
-
 
         sseClientFactory = SseClientFactoryStub()
 
         let sseConnectionHandler = SseConnectionHandler(sseClientFactory: sseClientFactory)
-        
-        pnManager = DefaultPushNotificationManager(userKeyRegistry: byKeyFacade, sseAuthenticator: sseAuthenticator,
-                                                   broadcasterChannel: broadcasterChannel, timersManager: timersManager, telemetryProducer: telemetryProducer, sseConnectionHandler: sseConnectionHandler)
+
+        pnManager = DefaultPushNotificationManager(
+            userKeyRegistry: byKeyFacade,
+            sseAuthenticator: sseAuthenticator,
+            broadcasterChannel: broadcasterChannel,
+            timersManager: timersManager,
+            telemetryProducer: telemetryProducer,
+            sseConnectionHandler: sseConnectionHandler)
     }
 
     func testStartFullConnectionOk() {
@@ -73,7 +78,7 @@ class PushNotificationManagerTest: XCTestCase {
         XCTAssertEqual(userKey, sseAuthenticator.userKeys[0])
         XCTAssertEqual(rawToken, sseClientFactory.clients[0].token)
         XCTAssertEqual(2, sseClientFactory.clients[0].channels?.count)
-        XCTAssertNotNil(broadcasterChannel.pushedEvents.filter {$0 == .pushDelayReceived(delaySeconds: 0)}.count)
+        XCTAssertNotNil(broadcasterChannel.pushedEvents.filter { $0 == .pushDelayReceived(delaySeconds: 0) }.count)
         XCTAssertEqual(SyncStatusEvent.pushSubsystemUp, broadcasterChannel.lastPushedEvent)
         XCTAssertTrue(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
@@ -137,7 +142,7 @@ class PushNotificationManagerTest: XCTestCase {
         XCTAssertFalse(timersManager.timerIsAdded(timer: .refreshAuthToken))
         XCTAssertFalse(timersManager.timerIsAdded(timer: .appHostBgDisconnect))
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.count)
-        XCTAssertNotNil(broadcasterChannel.pushedEvents.filter {$0 == .pushDelayReceived(delaySeconds: 0)}.count)
+        XCTAssertNotNil(broadcasterChannel.pushedEvents.filter { $0 == .pushDelayReceived(delaySeconds: 0) }.count)
     }
 
     func testStreamingDisabled() {
@@ -189,13 +194,12 @@ class PushNotificationManagerTest: XCTestCase {
         pnManager.stop()
 
         wait(for: [closeExp], timeout: 5)
-        
+
         XCTAssertTrue(sseClientFactory.clients[0].disconnectCalled)
         XCTAssertTrue(timersManager.timerIsCancelled(timer: .refreshAuthToken))
     }
 
     func testResetConnectionOk() {
-
         pnManager.jwtParser = JwtParserStub(token: dummyToken())
 
         var exp = XCTestExpectation(description: "start")
@@ -236,22 +240,34 @@ class PushNotificationManagerTest: XCTestCase {
     }
 
     private func successAuthResult(pushEnabled: Bool = true) -> SseAuthenticationResult {
-        return SseAuthenticationResult(success: true, errorIsRecoverable: false,
-                                       pushEnabled: pushEnabled, rawToken: rawToken, sseConnectionDelay: 0)
+        return SseAuthenticationResult(
+            success: true,
+            errorIsRecoverable: false,
+            pushEnabled: pushEnabled,
+            rawToken: rawToken,
+            sseConnectionDelay: 0)
     }
 
     private func recoverableAuthResult() -> SseAuthenticationResult {
-        return SseAuthenticationResult(success: false, errorIsRecoverable: true,
-                                       pushEnabled: true, rawToken: nil, sseConnectionDelay: 0)
+        return SseAuthenticationResult(
+            success: false,
+            errorIsRecoverable: true,
+            pushEnabled: true,
+            rawToken: nil,
+            sseConnectionDelay: 0)
     }
 
     private func noRecoverableAuthResult() -> SseAuthenticationResult {
-        return SseAuthenticationResult(success: false, errorIsRecoverable: false,
-                                       pushEnabled: true, rawToken: nil, sseConnectionDelay: 0)
+        return SseAuthenticationResult(
+            success: false,
+            errorIsRecoverable: false,
+            pushEnabled: true,
+            rawToken: nil,
+            sseConnectionDelay: 0)
     }
 
     private func dummyToken() -> JwtToken {
-        return JwtToken(issuedAt: 1000, expirationTime: 10000, channels: ["ch1", "ch2"], rawToken:rawToken)
+        return JwtToken(issuedAt: 1000, expirationTime: 10000, channels: ["ch1", "ch2"], rawToken: rawToken)
     }
 
     private func addSseClient(connected: Bool, results: [Bool], closeExp: XCTestExpectation? = nil) {
@@ -260,5 +276,4 @@ class PushNotificationManagerTest: XCTestCase {
         sseClient.closeExp = closeExp
         sseClientFactory.clients.append(sseClient)
     }
-
 }

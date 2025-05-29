@@ -6,8 +6,8 @@
 // Copyright (c) 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class StreamingInitTest: XCTestCase {
     var httpClient: HttpClient!
@@ -21,8 +21,9 @@ class StreamingInitTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         authRequestUrl = ""
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
@@ -39,8 +40,7 @@ class StreamingInitTest: XCTestCase {
     }
 
     private func performTest(expectedAuthUrl: String) {
-
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
         splitConfig.segmentsRefreshRate = 30
         splitConfig.impressionRefreshRate = 30
@@ -49,7 +49,7 @@ class StreamingInitTest: XCTestCase {
         splitConfig.eventsQueueSize = 100
         splitConfig.eventsPushRate = 5
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -86,13 +86,14 @@ class StreamingInitTest: XCTestCase {
             _ = semaphore.signal()
         })
         semaphore.wait()
-
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
@@ -115,5 +116,4 @@ class StreamingInitTest: XCTestCase {
             return self.streamingBinding!
         }
     }
-
 }

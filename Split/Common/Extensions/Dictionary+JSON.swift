@@ -9,7 +9,6 @@
 import Foundation
 
 extension Dictionary {
-
     func toJSONString() -> String? {
         let jsonData = try? JSONSerialization.data(withJSONObject: self, options: .init(rawValue: 0))
         if jsonData != nil {

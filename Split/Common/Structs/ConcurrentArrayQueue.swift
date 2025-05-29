@@ -8,13 +8,14 @@
 import Foundation
 
 class ConcurrentArrayQueue<T> {
-    private let queue = DispatchQueue(label: "split-concurrent-array-queue",
-                                      attributes: .concurrent)
+    private let queue = DispatchQueue(
+        label: "split-concurrent-array-queue",
+        attributes: .concurrent)
     private var array = [T]()
     private var firstAppend = true
 
     // Adds a new element at the end of the array.
-    func append( _ element: T) {
+    func append(_ element: T) {
         queue.async(flags: .barrier) { [weak self] in
             if let self = self {
                 self.array.append(element)

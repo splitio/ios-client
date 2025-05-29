@@ -9,7 +9,6 @@
 import Foundation
 
 struct TelemetryHttpLatencies: Codable {
-
     var splits: [Int]?
     var mySegments: [Int]?
     var impressions: [Int]?
@@ -40,7 +39,7 @@ enum TelemetryStreamingEventType: Int {
     case syncModeUpdate = 70
 }
 
-struct TelemetryStreamingEventValue {
+enum TelemetryStreamingEventValue {
     static let empty: Int64 = 0
 
     // Streaming event
@@ -70,7 +69,6 @@ struct TelemetryStreamingEvent: Codable {
 }
 
 struct TelemetryHttpErrors: Codable {
-
     var splits: [Int: Int]?
     var mySegments: [Int: Int]?
     var myLargeSegments: [Int: Int]?
@@ -117,7 +115,6 @@ struct TelemetryMethodExceptions: Codable {
 }
 
 struct TelemetryLastSync: Codable {
-
     var splits: Int64?
     var impressions: Int64?
     var impressionsCount: Int64?
@@ -138,7 +135,6 @@ struct TelemetryLastSync: Codable {
 }
 
 struct TelemetryMethodLatencies: Codable {
-
     var treatment: [Int]?
     var treatments: [Int]?
     var treatmentWithConfig: [Int]?
@@ -185,7 +181,6 @@ enum TelemetryUpdatesFromSseType {
 
 // Codable to allow testing
 struct TelemetryStats: Codable {
-
     var lastSynchronization: TelemetryLastSync?
     var methodLatencies: TelemetryMethodLatencies?
     var methodExceptions: TelemetryMethodExceptions?

@@ -18,18 +18,16 @@ protocol PersistentEventsStorage {
 }
 
 class DefaultEventsStorage: PersistentEventsStorage {
-
     private let eventDao: EventDao
     private let expirationPeriod: Int64
 
     init(database: SplitDatabase, expirationPeriod: Int64) {
-
         self.eventDao = database.eventDao
         self.expirationPeriod = expirationPeriod
     }
 
     func pop(count: Int) -> [EventDTO] {
-        let createdAt = Date().unixTimestamp() - self.expirationPeriod
+        let createdAt = Date().unixTimestamp() - expirationPeriod
         let events = eventDao.getBy(createdAt: createdAt, status: StorageRecordStatus.active, maxRows: count)
         eventDao.update(ids: events.compactMap { $0.storageId }, newStatus: StorageRecordStatus.deleted)
         return events
@@ -52,7 +50,7 @@ class DefaultEventsStorage: PersistentEventsStorage {
         if events.count < 1 {
             return
         }
-        eventDao.update(ids: events.compactMap { return $0.storageId }, newStatus: StorageRecordStatus.active)
+        eventDao.update(ids: events.compactMap { $0.storageId }, newStatus: StorageRecordStatus.active)
     }
 
     func delete(_ events: [EventDTO]) {

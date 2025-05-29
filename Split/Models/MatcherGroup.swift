@@ -23,8 +23,8 @@ class MatcherGroup: NSObject, Codable {
 
     required init(from decoder: Decoder) throws {
         if let values = try? decoder.container(keyedBy: CodingKeys.self) {
-            matcherCombiner = try? values.decode(MatcherCombiner.self, forKey: .matcherCombiner)
-            matchers = try? values.decode([Matcher].self, forKey: .matchers)
+            self.matcherCombiner = try? values.decode(MatcherCombiner.self, forKey: .matcherCombiner)
+            self.matchers = try? values.decode([Matcher].self, forKey: .matchers)
         }
     }
 }

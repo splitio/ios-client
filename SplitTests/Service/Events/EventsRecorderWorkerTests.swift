@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class EventsRecorderWorkerTests: XCTestCase {
-
     var worker: EventsRecorderWorker!
     var eventStorage: PersistentEventsStorageStub!
     var eventsRecorder: HttpEventsRecorderStub!
@@ -20,9 +19,10 @@ class EventsRecorderWorkerTests: XCTestCase {
     override func setUp() {
         eventStorage = PersistentEventsStorageStub()
         eventsRecorder = HttpEventsRecorderStub()
-        worker = EventsRecorderWorker(persistentEventsStorage: eventStorage,
-                                      eventsRecorder: eventsRecorder,
-                                      eventsPerPush: 2)
+        worker = EventsRecorderWorker(
+            persistentEventsStorage: eventStorage,
+            eventsRecorder: eventsRecorder,
+            eventsPerPush: 2)
     }
 
     func testSendSuccess() {
@@ -34,7 +34,7 @@ class EventsRecorderWorkerTests: XCTestCase {
 
         XCTAssertEqual(6, eventsRecorder.executeCallCount)
         XCTAssertEqual(11, eventsRecorder.eventsSent.count)
-        XCTAssertEqual(0, eventStorage.storedEvents.count)        
+        XCTAssertEqual(0, eventStorage.storedEvents.count)
     }
 
     func testFailToSendSome() {
@@ -61,7 +61,6 @@ class EventsRecorderWorkerTests: XCTestCase {
         XCTAssertEqual(1, eventsRecorder.eventsSent.count)
     }
 
-
     func testSendNoEvents() {
         // When no events available recorder should not be called
         worker.flush()
@@ -71,7 +70,5 @@ class EventsRecorderWorkerTests: XCTestCase {
         XCTAssertEqual(0, eventsRecorder.eventsSent.count)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

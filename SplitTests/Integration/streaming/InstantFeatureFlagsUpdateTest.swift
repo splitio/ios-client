@@ -6,8 +6,8 @@
 //  Copyright © 2023 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class InstantFeatureFlagsUpdateTest: XCTestCase {
     var httpClient: HttpClient!
@@ -32,15 +32,14 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
     override func setUp() {
         changesLoaded = false
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         streamingHelper = StreamingTestingHelper()
     }
 
     func testInstantUpdateGzip() throws {
-
-
         factory = buildFactory()
         let client = factory.client
 
@@ -87,7 +86,6 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
     }
 
     func testInstantUpdateZlib() throws {
-
         factory = buildFactory()
         let client = factory.client
 
@@ -177,7 +175,6 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         semaphore.wait()
     }
 
-
     var mySegmentsHitCount = 0
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
@@ -187,7 +184,9 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
                     self.changesLoaded = false
                     return TestDispatcherResponse(code: 200, data: Data(self.changes.utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 self.mySegExp?.fulfill()
@@ -204,7 +203,6 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         return TestDispatcherResponse(code: 200, data: Data(json.utf8))
     }
 
-
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingHelper.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
@@ -214,13 +212,13 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
     }
 
     private func wait() {
-        ThreadUtils.delay(seconds: Double(self.kRefreshRate) * 2.0)
+        ThreadUtils.delay(seconds: Double(kRefreshRate) * 2.0)
     }
 
     private func buildFactory(changeNumber: Int64 = 0) -> SplitFactory {
         let db = TestingHelper.createTestDatabase(name: "test")
         db.generalInfoDao.update(info: .splitsChangeNumber, longValue: changeNumber)
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
         splitConfig.impressionRefreshRate = 999999
@@ -242,7 +240,9 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         change?.since = 500
         change?.till = 500
         changes = (try? Json.encodeToJson(
-            TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
-        )) ?? IntegrationHelper.emptySplitChanges
+            TargetingRulesChange(
+                featureFlags: change!,
+                ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)))) ?? IntegrationHelper
+            .emptySplitChanges
     }
 }

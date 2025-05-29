@@ -10,13 +10,12 @@ import Foundation
 @testable import Split
 
 class HttpEventsRecorderStub: HttpEventsRecorder {
-
     var eventsSent = [EventDTO]()
     var errorOccurredCallCount = -1
     var executeCallCount = 0
 
     func execute(_ items: [EventDTO]) throws {
-        executeCallCount+=1
+        executeCallCount += 1
         if errorOccurredCallCount == executeCallCount {
             throw HttpError.unknown(code: -1, message: "something happend")
         }

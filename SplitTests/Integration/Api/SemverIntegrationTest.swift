@@ -5,11 +5,10 @@
 //  Copyright © 2024 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SemverIntegrationTest: XCTestCase {
-
     let apiKey = IntegrationHelper.dummyApiKey
     let matchingKey = IntegrationHelper.dummyUserKey
     let trafficType = "user"
@@ -32,14 +31,15 @@ class SemverIntegrationTest: XCTestCase {
         impressionsOnListener = []
         streamingHelper = StreamingTestingHelper()
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
-    
+
     func testEqualToSemverMatcher() throws {
         let client = try? startTest()
-        
+
         XCTAssertEqual("on", client?.getTreatment("semver_equalto", attributes: ["version": "1.22.9"]))
         XCTAssertEqual("off", client?.getTreatment("semver_equalto", attributes: ["version": "1.22.9+build"]))
         XCTAssertEqual("off", client?.getTreatment("semver_equalto", attributes: ["version": "1.22.9-rc.0"]))
@@ -71,7 +71,11 @@ class SemverIntegrationTest: XCTestCase {
         XCTAssertEqual("off", client?.getTreatment("semver_greater_or_equalto", attributes: ["version": "1.21.9"]))
         XCTAssertEqual("off", client?.getTreatment("semver_greater_or_equalto", attributes: ["version": "invalid"]))
 
-        assertImpressions(labelCount: 3, defaultLabelCount: 3, totalCount: 6, defaultLabel: "greater than or equal to semver")
+        assertImpressions(
+            labelCount: 3,
+            defaultLabelCount: 3,
+            totalCount: 6,
+            defaultLabel: "greater than or equal to semver")
     }
 
     func testLessThanOrEqualToSemverMatcher() throws {
@@ -84,7 +88,11 @@ class SemverIntegrationTest: XCTestCase {
         XCTAssertEqual("on", client?.getTreatment("semver_less_or_equalto", attributes: ["version": "1.21.9"]))
         XCTAssertEqual("off", client?.getTreatment("semver_less_or_equalto", attributes: nil))
 
-        assertImpressions(labelCount: 4, defaultLabelCount: 2, totalCount: 6, defaultLabel: "less than or equal to semver")
+        assertImpressions(
+            labelCount: 4,
+            defaultLabelCount: 2,
+            totalCount: 6,
+            defaultLabel: "less than or equal to semver")
     }
 
     func testBetweenSemverMatcher() throws {
@@ -100,8 +108,8 @@ class SemverIntegrationTest: XCTestCase {
         assertImpressions(labelCount: 3, defaultLabelCount: 3, totalCount: 6, defaultLabel: "between semver")
     }
 
-    private func startTest() throws -> SplitClient?  {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+    private func startTest() throws -> SplitClient? {
+        let splitConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 6000
         splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: false)
@@ -115,7 +123,7 @@ class SemverIntegrationTest: XCTestCase {
         splitConfig.impressionListener = { impression in
             self.impressionsOnListener.append(impression)
         }
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(testDb)
         _ = builder.setHttpClient(httpClient)
@@ -156,11 +164,15 @@ class SemverIntegrationTest: XCTestCase {
         return { request in
             if request.isSplitEndpoint() {
                 if self.splitChangesHit == 0 {
-                    let targetingRulesChange = TargetingRulesChange(featureFlags: self.loadSplitsChangeFile()!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+                    let targetingRulesChange = TargetingRulesChange(
+                        featureFlags: self.loadSplitsChangeFile()!,
+                        ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
                     return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(targetingRulesChange))
                 }
-                self.splitChangesHit+=1
-                let targetingRulesChange = TargetingRulesChange(featureFlags: self.splitChange!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+                self.splitChangesHit += 1
+                let targetingRulesChange = TargetingRulesChange(
+                    featureFlags: self.splitChange!,
+                    ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(targetingRulesChange))
             }
             if request.isMySegmentsEndpoint() {

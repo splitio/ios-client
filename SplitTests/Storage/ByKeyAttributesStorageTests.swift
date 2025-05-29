@@ -8,24 +8,26 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ByKeyAttributesStorageTests: XCTestCase {
-
     let userKey = "dummyKey"
 
     var attributesStorage: AttributesStorageStub!
     var byKeyStorage: ByKeyAttributesStorage!
 
-    let testAttributes: [String: Any] = ["att1": "se1",
-                                         "att2": true,
-                                         "att3": 1]
-    
+    let testAttributes: [String: Any] = [
+        "att1": "se1",
+        "att2": true,
+        "att3": 1,
+    ]
+
     override func setUp() {
         attributesStorage = AttributesStorageStub()
-        byKeyStorage = DefaultByKeyAttributesStorage(attributesStorage: attributesStorage,
-                                                          userKey: userKey)
+        byKeyStorage = DefaultByKeyAttributesStorage(
+            attributesStorage: attributesStorage,
+            userKey: userKey)
     }
 
     func testNoLoaded() {
@@ -143,7 +145,5 @@ class ByKeyAttributesStorageTests: XCTestCase {
         XCTAssertEqual(0, generalAttributes.count)
     }
 
-    override func tearDown() {
-
-    }
+    override func tearDown() {}
 }

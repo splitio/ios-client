@@ -10,13 +10,11 @@ import Foundation
 @testable import Split
 
 class SseClientFactoryStub: SseClientFactory {
-
-
     var clients = [SseClientMock]()
     var clientIndex = 0
     func create() -> SseClient {
         let client = clients[clientIndex]
-        clientIndex+=1
+        clientIndex += 1
         return client
     }
 }

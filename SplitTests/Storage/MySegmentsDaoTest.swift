@@ -8,25 +8,28 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class MySegmentsDaoTest: XCTestCase {
-    
     var mySegmentsDao: MySegmentsDao!
     var mySegmentsDaoAes128Cbc: MySegmentsDao!
-    
+
     override func setUp() {
         let queue = DispatchQueue(label: "my segments dao test")
-        mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue),
-                                              entity: .mySegment)
-        mySegmentsDaoAes128Cbc = CoreDataMySegmentsDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue),
-                                                       entity: .mySegment,
-                                                       cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
+        mySegmentsDao = CoreDataMySegmentsDao(
+            coreDataHelper: IntegrationCoreDataHelper.get(
+                databaseName: "test",
+                dispatchQueue: queue),
+            entity: .mySegment)
+        mySegmentsDaoAes128Cbc = CoreDataMySegmentsDao(
+            coreDataHelper: IntegrationCoreDataHelper.get(
+                databaseName: "test",
+                dispatchQueue: queue),
+            entity: .mySegment,
+            cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
     }
-    
+
     func testUpdateGetPlainText() {
         updateGet(dao: mySegmentsDao)
     }
@@ -41,10 +44,10 @@ class MySegmentsDaoTest: XCTestCase {
         dao.update(userKey: userKey, change: change)
 
         let mySegments = dao.getBy(userKey: userKey)
-        
+
         XCTAssertEqual(2, mySegments?.segments.count)
-        XCTAssertEqual(1, mySegments?.segments.compactMap { $0.name } .filter { $0 == "s1" }.count)
-        XCTAssertEqual(1, mySegments?.segments.compactMap { $0.name } .filter { $0 == "s2" }.count)
+        XCTAssertEqual(1, mySegments?.segments.compactMap { $0.name }.filter { $0 == "s1" }.count)
+        XCTAssertEqual(1, mySegments?.segments.compactMap { $0.name }.filter { $0 == "s2" }.count)
     }
 
     func testGetInvalidKeyPlainText() {
@@ -57,9 +60,9 @@ class MySegmentsDaoTest: XCTestCase {
 
     func getInvalidKey(dao: MySegmentsDao) {
         let userKey = "ukey"
-        
+
         let mySegments = dao.getBy(userKey: userKey)
-        
+
         XCTAssertNil(mySegments?.segments.count)
     }
 
@@ -68,13 +71,16 @@ class MySegmentsDaoTest: XCTestCase {
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
-        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
-                                               dispatchQueue: DispatchQueue(label: "impression dao test"))
-        mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: helper,
-                                              entity: .myLargeSegment)
-        mySegmentsDaoAes128Cbc = CoreDataMySegmentsDao(coreDataHelper: helper,
-                                                       entity: .mySegment,
-                                                       cipher: cipher)
+        let helper = IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: DispatchQueue(label: "impression dao test"))
+        mySegmentsDao = CoreDataMySegmentsDao(
+            coreDataHelper: helper,
+            entity: .myLargeSegment)
+        mySegmentsDaoAes128Cbc = CoreDataMySegmentsDao(
+            coreDataHelper: helper,
+            entity: .mySegment,
+            cipher: cipher)
 
         // create segment and get one encrypted feature name
         let userKey = "ukey"
@@ -92,10 +98,12 @@ class MySegmentsDaoTest: XCTestCase {
     }
 
     func testDeleteAll() {
-        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
-                                               dispatchQueue: DispatchQueue(label: "impression dao test"))
-        mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: helper,
-                                              entity: .mySegment)
+        let helper = IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: DispatchQueue(label: "impression dao test"))
+        mySegmentsDao = CoreDataMySegmentsDao(
+            coreDataHelper: helper,
+            entity: .mySegment)
         let userKey = "ukey"
         let change = SegmentChange(segments: ["s1", "s2"])
         mySegmentsDao.update(userKey: userKey, change: change)
@@ -115,10 +123,11 @@ class MySegmentsDaoTest: XCTestCase {
         var segmentList: String? = nil
         coreDataHelper.performAndWait {
             let predicate = NSPredicate(format: "userKey == %@", userKey)
-            let entities = coreDataHelper.fetch(entity: .mySegment,
-                                                where: predicate,
-                                                rowLimit: 1).compactMap { return $0 as? MySegmentEntity }
-            if entities.count > 0 {
+            let entities = coreDataHelper.fetch(
+                entity: .mySegment,
+                where: predicate,
+                rowLimit: 1).compactMap { $0 as? MySegmentEntity }
+            if !entities.isEmpty {
                 loadedUserKey = entities[0].userKey
                 segmentList = entities[0].segmentList
             }
@@ -126,4 +135,3 @@ class MySegmentsDaoTest: XCTestCase {
         return (userKey: loadedUserKey, segmentList: segmentList)
     }
 }
-

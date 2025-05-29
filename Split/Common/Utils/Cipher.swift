@@ -6,12 +6,13 @@
 //  Copyright © 2023 Split. All rights reserved.
 //
 
-import Foundation
 import CommonCrypto
+import Foundation
 
 protocol KeyGenerator {
     func generateKey(size: Int) -> Data?
 }
+
 struct DefaultKeyGenerator: KeyGenerator {
     func generateKey(size: Int) -> Data? {
         let pointer: UnsafeMutablePointer<Int8> = UnsafeMutablePointer.allocate(capacity: size)
@@ -31,7 +32,6 @@ protocol Cipher {
 }
 
 struct DefaultCipher: Cipher {
-
     private let cipherKey: Data
 
     init(cipherKey: Data) {
@@ -65,9 +65,18 @@ struct DefaultCipher: Cipher {
             var result: Int32 = -1
             data.withUnsafeBytes { (dataBytes: UnsafeRawBufferPointer) in
                 key.withUnsafeBytes { (keyBytes: UnsafeRawBufferPointer) in
-                    result = CCCrypt(CCOperation(kCCEncrypt), CCAlgorithm(kCCAlgorithmAES), options,
-                                     keyBytes.baseAddress, key.count, nil, dataBytes.baseAddress,
-                                     data.count, cryptBytes.baseAddress, cryptLength, &numBytesEncrypted)
+                    result = CCCrypt(
+                        CCOperation(kCCEncrypt),
+                        CCAlgorithm(kCCAlgorithmAES),
+                        options,
+                        keyBytes.baseAddress,
+                        key.count,
+                        nil,
+                        dataBytes.baseAddress,
+                        data.count,
+                        cryptBytes.baseAddress,
+                        cryptLength,
+                        &numBytesEncrypted)
                 }
             }
             return Int(result)
@@ -78,7 +87,7 @@ struct DefaultCipher: Cipher {
             return nil
         }
 
-        cryptData.removeSubrange(numBytesEncrypted..<cryptData.count)
+        cryptData.removeSubrange(numBytesEncrypted ..< cryptData.count)
 
         return cryptData
     }
@@ -94,11 +103,18 @@ struct DefaultCipher: Cipher {
             var result: Int32 = -1
             data.withUnsafeBytes { (dataBytes: UnsafeRawBufferPointer) in
                 key.withUnsafeBytes { (keyBytes: UnsafeRawBufferPointer) in
-                    result = CCCrypt(CCOperation(kCCDecrypt),
-                                     CCAlgorithm(kCCAlgorithmAES),
-                                     options, keyBytes.baseAddress, key.count, nil,
-                                     dataBytes.baseAddress, data.count,
-                                     cryptBytes.baseAddress, cryptLength, &numBytesEncrypted)
+                    result = CCCrypt(
+                        CCOperation(kCCDecrypt),
+                        CCAlgorithm(kCCAlgorithmAES),
+                        options,
+                        keyBytes.baseAddress,
+                        key.count,
+                        nil,
+                        dataBytes.baseAddress,
+                        data.count,
+                        cryptBytes.baseAddress,
+                        cryptLength,
+                        &numBytesEncrypted)
                 }
             }
             return Int(result)
@@ -108,7 +124,7 @@ struct DefaultCipher: Cipher {
             return nil
         }
 
-        cryptData.removeSubrange(numBytesEncrypted..<cryptData.count)
+        cryptData.removeSubrange(numBytesEncrypted ..< cryptData.count)
         return cryptData
     }
 
@@ -124,7 +140,8 @@ struct DefaultCipher: Cipher {
         kCCUnspecifiedError: "kCCUnspecifiedError",
         kCCCallSequenceError: "kCCCallSequenceError",
         kCCKeySizeError: "kCCKeySizeError",
-        kCCInvalidKey: "kCCInvalidKey"]
+        kCCInvalidKey: "kCCInvalidKey",
+    ]
 
     private func logError(_ status: Int, operation: String = "Enc") {
         Logger.v("Error when \(operation): \(errors[status] ?? "Unknown")")

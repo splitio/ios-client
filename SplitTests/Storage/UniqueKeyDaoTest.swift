@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class UniqueKeyDaoTest: XCTestCase {
-
     var uniqueKeyDao: UniqueKeyDao!
     var uniqueKeyDaoAes128Cbc: UniqueKeyDao!
     var helperPlainText: CoreDataHelper!
@@ -20,21 +19,23 @@ class UniqueKeyDaoTest: XCTestCase {
 
     override func setUp() {
         let queue = DispatchQueue(label: "key dao test")
-        helperPlainText = IntegrationCoreDataHelper.get(databaseName: "test",
-                                                 dispatchQueue: queue)
+        helperPlainText = IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: queue)
 
         uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: helperPlainText)
 
-        helperAes128Cbc = IntegrationCoreDataHelper.get(databaseName: "test",
-                                                 dispatchQueue: queue)
-        uniqueKeyDaoAes128Cbc = CoreDataUniqueKeyDao(coreDataHelper: helperAes128Cbc,
-                                                     cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
+        helperAes128Cbc = IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: queue)
+        uniqueKeyDaoAes128Cbc = CoreDataUniqueKeyDao(
+            coreDataHelper: helperAes128Cbc,
+            cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
         let keys = createUniqueKeys()
         for key in keys {
             uniqueKeyDao.insert(key)
             uniqueKeyDaoAes128Cbc.insert(key)
         }
-
     }
 
     func testInsertGetPlainText() {
@@ -46,7 +47,6 @@ class UniqueKeyDaoTest: XCTestCase {
     }
 
     func insertGet(dao: UniqueKeyDao) {
-
         let loadedUniqueKeys = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
 
         XCTAssertEqual(10, loadedUniqueKeys.count)
@@ -61,11 +61,11 @@ class UniqueKeyDaoTest: XCTestCase {
     }
 
     func update(dao: UniqueKeyDao) {
-
         let loadedUniqueKeys = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
-        dao.update(ids: loadedUniqueKeys.prefix(5).compactMap { return $0.storageId },
-                            newStatus: StorageRecordStatus.deleted,
-        incrementSentCount: false)
+        dao.update(
+            ids: loadedUniqueKeys.prefix(5).compactMap { $0.storageId },
+            newStatus: StorageRecordStatus.deleted,
+            incrementSentCount: false)
         let active = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
         let deleted = dao.getBy(createdAt: 200, status: StorageRecordStatus.deleted, maxRows: 20)
 
@@ -82,14 +82,13 @@ class UniqueKeyDaoTest: XCTestCase {
     }
 
     func updateAndIncrementCount(dao: UniqueKeyDao, helper: CoreDataHelper) {
-
         let loadedUniqueKeys = uniqueKeyDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
-        uniqueKeyDao.update(ids: loadedUniqueKeys.prefix(5).compactMap { return $0.storageId },
-                            newStatus: StorageRecordStatus.deleted,
-        incrementSentCount: true)
+        uniqueKeyDao.update(
+            ids: loadedUniqueKeys.prefix(5).compactMap { $0.storageId },
+            newStatus: StorageRecordStatus.deleted,
+            incrementSentCount: true)
         let active = getByCount(status: StorageRecordStatus.active, helper: helper)
         let deleted = getByCount(status: StorageRecordStatus.deleted, helper: helper)
-
 
         for count in active {
             XCTAssertEqual(0, count)
@@ -111,21 +110,23 @@ class UniqueKeyDaoTest: XCTestCase {
     func loadOutdated(dao: UniqueKeyDao) {
         let timestamp = Date().unixTimestamp() + 10000
         let loadedUniqueKeys = uniqueKeyDao.getBy(createdAt: timestamp, status: StorageRecordStatus.active, maxRows: 20)
-        let loadedUniqueKeys1 = uniqueKeyDao.getBy(createdAt: timestamp, status: StorageRecordStatus.deleted, maxRows: 20)
+        let loadedUniqueKeys1 = uniqueKeyDao.getBy(
+            createdAt: timestamp,
+            status: StorageRecordStatus.deleted,
+            maxRows: 20)
 
         XCTAssertEqual(0, loadedUniqueKeys.count)
         XCTAssertEqual(0, loadedUniqueKeys1.count)
     }
 
-
     private func getByCount(status: Int32, helper: CoreDataHelper) -> [Int16] {
         var resp = [Int16]()
         helper.performAndWait {
             let predicate = NSPredicate(format: "status == %d", status)
-            let entities = helper.fetch(entity: .uniqueKey,
-                                        where: predicate,
-                                        rowLimit: 100)
-
+            let entities = helper.fetch(
+                entity: .uniqueKey,
+                where: predicate,
+                rowLimit: 100)
 
             entities.forEach {
                 if let entity = $0 as? UniqueKeyEntity {
@@ -141,11 +142,13 @@ class UniqueKeyDaoTest: XCTestCase {
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
-        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
-                                                   dispatchQueue: DispatchQueue(label: "impression dao test"))
+        let helper = IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: DispatchQueue(label: "impression dao test"))
         uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: helper)
-        uniqueKeyDaoAes128Cbc = CoreDataUniqueKeyDao(coreDataHelper: helper,
-                                                       cipher: cipher)
+        uniqueKeyDaoAes128Cbc = CoreDataUniqueKeyDao(
+            coreDataHelper: helper,
+            cipher: cipher)
 
         // create impressions and get one encrypted feature name
         let counts = createUniqueKeys()
@@ -168,35 +171,37 @@ class UniqueKeyDaoTest: XCTestCase {
     private func getBy(coreDataHelper: CoreDataHelper) -> (String, String)? {
         var body: (String, String)? = nil
         coreDataHelper.performAndWait {
-            let entities = coreDataHelper.fetch(entity: .uniqueKey,
-                                                where: nil,
-                                                rowLimit: 1).compactMap { return $0 as? UniqueKeyEntity }
-            if entities.count > 0 {
+            let entities = coreDataHelper.fetch(
+                entity: .uniqueKey,
+                where: nil,
+                rowLimit: 1).compactMap { $0 as? UniqueKeyEntity }
+            if !entities.isEmpty {
                 body = (entities[0].userKey, entities[0].featureList)
             }
         }
         return body
     }
 
-    /// TODO: Check how to test delete in inMemoryDb
+    // TODO: Check how to test delete in inMemoryDb
     func PausedtestDelete() {
         let toDelete = uniqueKeyDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20).prefix(5)
 
-        uniqueKeyDao.delete(Array(toDelete).map { $0.storageId ?? "nil"})
+        uniqueKeyDao.delete(Array(toDelete).map { $0.storageId ?? "nil" })
         let loadedUniqueKeys = uniqueKeyDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
 
         let notFound = Set(toDelete.map { $0.storageId })
 
         XCTAssertEqual(5, loadedUniqueKeys.count)
-        XCTAssertEqual(0, loadedUniqueKeys.filter { notFound.contains($0.storageId)}.count)
+        XCTAssertEqual(0, loadedUniqueKeys.filter { notFound.contains($0.storageId) }.count)
     }
 
     private func createUniqueKeys() -> [UniqueKey] {
         var keys = [UniqueKey]()
-        for i in 0..<10 {
-            keys.append(UniqueKey(storageId: UUID().uuidString,
-                                  userKey: "key\(i)",
-                                  features: ["name"]))
+        for i in 0 ..< 10 {
+            keys.append(UniqueKey(
+                storageId: UUID().uuidString,
+                userKey: "key\(i)",
+                features: ["name"]))
         }
         return keys
     }

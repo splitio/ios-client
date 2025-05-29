@@ -28,7 +28,7 @@ class HashedImpressionsStorageMock: HashedImpressionsStorage {
             items[hash] = time
         }
     }
-    
+
     func get(for hash: UInt32) -> Int64? {
         var time: Int64?
         queue.sync {
@@ -36,7 +36,7 @@ class HashedImpressionsStorageMock: HashedImpressionsStorage {
         }
         return time
     }
-    
+
     func clear() {
         queue.sync {
             items.removeAll()

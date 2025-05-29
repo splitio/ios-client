@@ -11,7 +11,6 @@ import Foundation
 public typealias SplitImpressionListener = (SplitImpression) -> Void
 
 public class SplitClientConfig: NSObject {
-
     ///
     /// How many milliseconds to wait before triggering a timeout event when the SDK is being initialized.
     /// Default: -1 (means no timeout)
@@ -93,7 +92,6 @@ public class SplitClientConfig: NSObject {
         set {
             SecureDataStore.shared.setToken(token: newValue)
         }
-
     }
 
     @objc public var serviceEndpoints = ServiceEndpoints.builder().build()
@@ -207,8 +205,9 @@ public class SplitClientConfig: NSObject {
     @objc public var pushRetryBackoffBase = 1 {
         didSet {
             if pushRetryBackoffBase < 1 || pushRetryBackoffBase > 1800 {
-                Logger.w("pushRetryBackoffBase must be a value in seconds between 1 and 1800 (30 minutes). " +
-                    "Resetting it to 1 second")
+                Logger.w(
+                    "pushRetryBackoffBase must be a value in seconds between 1 and 1800 (30 minutes). " +
+                        "Resetting it to 1 second")
                 pushRetryBackoffBase = 1
             }
         }
@@ -237,7 +236,7 @@ public class SplitClientConfig: NSObject {
     /// @return: This builder
     /// @default: GRANTED
     ///
-    public var userConsent: UserConsent = UserConsent.granted
+    public var userConsent: UserConsent = .granted
 
     ///
     ///    Allows to perform a custom authentication on HTTPS requests.
@@ -254,12 +253,13 @@ public class SplitClientConfig: NSObject {
     /// The schedule time for telemetry flush after the first one.
     /// Default: 3600 seconds (1 hour)
     ///
-    @objc public var telemetryRefreshRate: Int =  kDefaultTelemetryRefreshRate {
+    @objc public var telemetryRefreshRate: Int = kDefaultTelemetryRefreshRate {
         didSet {
             if telemetryRefreshRate < SplitClientConfig.kMinTelemetryRefreshRate {
-                internalTelemetryRefreshRate =  SplitClientConfig.kMinTelemetryRefreshRate
-                Logger.w("Telemetry refresh rate lower than allowed. " +
-                            "Using minimum allowed value: \(SplitClientConfig.kMinTelemetryRefreshRate) seconds.")
+                internalTelemetryRefreshRate = SplitClientConfig.kMinTelemetryRefreshRate
+                Logger.w(
+                    "Telemetry refresh rate lower than allowed. " +
+                        "Using minimum allowed value: \(SplitClientConfig.kMinTelemetryRefreshRate) seconds.")
             } else {
                 internalTelemetryRefreshRate = telemetryRefreshRate
             }
@@ -357,9 +357,9 @@ public class SplitClientConfig: NSObject {
     /// That's why is only public for when ENABLE_TELEMETRY_ALWAYS flag is present
     /// Do not change this property
     #if ENABLE_TELEMETRY_ALWAYS
-    public var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
+        public var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
     #else
-    var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
+        var telemetryConfigHelper: TelemetryConfigHelper = DefaultTelemetryConfigHelper()
     #endif
 
     // This variable will be handled internaly based on
@@ -375,13 +375,12 @@ public class SplitClientConfig: NSObject {
     var cdnByPassMaxAttempts: Int = 10
     var cdnBackoffTimeBaseInSecs: Int = 10
     var cdnBackoffTimeMaxInSecs: Int = 60
-
 }
 
 extension SplitClientConfig {
     func bySetsFilter() -> SplitFilter? {
         // Group the filters by type
-        let groupedFilters = Dictionary(grouping: self.sync.filters) { $0.type }
+        let groupedFilters = Dictionary(grouping: sync.filters) { $0.type }
 
         // Extract and combine values for 'bySet' type
         guard let sets = groupedFilters[.bySet]?.reduce(into: [String](), { result, filter in
@@ -391,6 +390,5 @@ extension SplitClientConfig {
         }
 
         return SplitFilter(type: .bySet, values: sets)
-
     }
 }

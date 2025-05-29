@@ -13,19 +13,18 @@ protocol HttpUniqueKeysRecorder {
 }
 
 class DefaultHttpUniqueKeysRecorder: HttpUniqueKeysRecorder {
-
     private let restClient: RestClientUniqueKeys
     private let syncHelper: SyncHelper
     private let resource = Resource.uniqueKeys
 
-    init(restClient: RestClientUniqueKeys,
-         syncHelper: SyncHelper) {
+    init(
+        restClient: RestClientUniqueKeys,
+        syncHelper: SyncHelper) {
         self.restClient = restClient
         self.syncHelper = syncHelper
     }
 
     func execute(_ uniqueKeys: UniqueKeys) throws {
-
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)
@@ -41,6 +40,5 @@ class DefaultHttpUniqueKeysRecorder: HttpUniqueKeysRecorder {
         semaphore.wait()
 
         try syncHelper.throwIfError(httpError)
-
     }
 }

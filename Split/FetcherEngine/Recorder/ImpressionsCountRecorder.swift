@@ -13,19 +13,18 @@ protocol HttpImpressionsCountRecorder {
 }
 
 class DefaultHttpImpressionsCountRecorder: HttpImpressionsCountRecorder {
-
     private let restClient: RestClientImpressionsCount
     private let syncHelper: SyncHelper
     private let resource = Resource.impressionsCount
 
-    init(restClient: RestClientImpressionsCount,
-         syncHelper: SyncHelper) {
+    init(
+        restClient: RestClientImpressionsCount,
+        syncHelper: SyncHelper) {
         self.restClient = restClient
         self.syncHelper = syncHelper
     }
 
     func execute(_ counts: ImpressionsCount) throws {
-
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)

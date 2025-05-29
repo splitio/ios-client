@@ -7,12 +7,11 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class SyncConfigTest: XCTestCase {
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testFilterName() {
         // Testing basic by name filter creation
@@ -52,9 +51,9 @@ class SyncConfigTest: XCTestCase {
 
         config.filters.forEach {
             if $0.type == .byName {
-                byNameCount+=1
+                byNameCount += 1
             } else {
-                byPrefixCount+=1
+                byPrefixCount += 1
             }
         }
         XCTAssertEqual(2, byNameCount)
@@ -62,12 +61,12 @@ class SyncConfigTest: XCTestCase {
     }
 
     func testInvalidFilterValuesDiscarded() {
-    //        // Filters that doesn't pass split rules
-    //        // has to be removed from the list
-    //        // This test adds some invalid ones an thes correct deletion
+        //        // Filters that doesn't pass split rules
+        //        // has to be removed from the list
+        //        // This test adds some invalid ones an thes correct deletion
 
-            let byName = SplitFilter.byName(["", "f2"])
-            let byPrefix = SplitFilter.byPrefix(["", "f2"])
+        let byName = SplitFilter.byName(["", "f2"])
+        let byPrefix = SplitFilter.byPrefix(["", "f2"])
 
         let config = SyncConfig.builder().addSplitFilter(byName).addSplitFilter(byPrefix).build()
 
@@ -80,19 +79,17 @@ class SyncConfigTest: XCTestCase {
 
     func testEmptyFilterValuesDiscarded() {
 //     Empty lists should be discarded
-            // Here we create two filters:
-            // By name having no values and by prefix having all invalid values
-            // No tests has to be added to SyncConfig
+        // Here we create two filters:
+        // By name having no values and by prefix having all invalid values
+        // No tests has to be added to SyncConfig
 
-            let byName = SplitFilter.byName([])
-            let byPrefix = SplitFilter.byPrefix([])
+        let byName = SplitFilter.byName([])
+        let byPrefix = SplitFilter.byPrefix([])
 
         let config = SyncConfig.builder().addSplitFilter(byName).addSplitFilter(byPrefix).build()
 
         XCTAssertEqual(0, config.filters.count)
     }
 
-    override func tearDown() {
-
-    }
+    override func tearDown() {}
 }

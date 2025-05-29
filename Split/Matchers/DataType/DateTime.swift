@@ -9,7 +9,6 @@ import Foundation
 
 public class DateTime: NSObject {
     static func zeroOutTime(timestamp: TimeInterval) -> Date {
-
         let date = Date(timeIntervalSince1970: Double(Int64(timestamp)))
         let calendar = Calendar.current
 

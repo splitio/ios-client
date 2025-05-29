@@ -6,8 +6,8 @@
 // Copyright (c) 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class UserKeyEncondingTest: XCTestCase {
     var httpClient: HttpClient!
@@ -23,14 +23,14 @@ class UserKeyEncondingTest: XCTestCase {
     override func setUp() {
         encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? "nokey"
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
     func testKey() {
-
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
         splitConfig.segmentsRefreshRate = 30
         splitConfig.impressionRefreshRate = 30
@@ -39,7 +39,7 @@ class UserKeyEncondingTest: XCTestCase {
         splitConfig.eventsQueueSize = 100
         splitConfig.eventsPushRate = 5
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -68,13 +68,14 @@ class UserKeyEncondingTest: XCTestCase {
             _ = semaphore.signal()
         })
         semaphore.wait()
-
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 let urlString = request.url.absoluteString
@@ -96,5 +97,4 @@ class UserKeyEncondingTest: XCTestCase {
             return self.streamingBinding!
         }
     }
-
 }

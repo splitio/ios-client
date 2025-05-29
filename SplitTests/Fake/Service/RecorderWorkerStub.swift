@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class RecorderWorkerStub: RecorderWorker {
     var flushCalled = false
@@ -16,7 +16,7 @@ class RecorderWorkerStub: RecorderWorker {
     var expectation: XCTestExpectation?
     func flush() {
         flushCalled = true
-        flushCallCount+=1
+        flushCallCount += 1
         if let exp = expectation {
             exp.fulfill()
         }

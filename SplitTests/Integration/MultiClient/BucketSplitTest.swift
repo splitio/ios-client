@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class BucketSplitTest: XCTestCase {
-
     let splitName = "bucket_test"
     var streamingBinding: TestStreamResponseBinding?
     let userKey = "littleSpoon"
@@ -28,7 +27,8 @@ class BucketSplitTest: XCTestCase {
         "7B7AD9AC-21C7-46C0-B49B-A19BBE726409": "V70",
         "9975F10D-044A-48C8-8443-2816B92852DC": "V80",
         "DC8B43D2-5D06-48D3-B1FD-FEDF1A6DC2F1": "V90",
-        "0E7C9914-7268-452A-B855-DF06542C1FE7": "V100"]
+        "0E7C9914-7268-452A-B855-DF06542C1FE7": "V100",
+    ]
 
     let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.test)
 
@@ -42,7 +42,6 @@ class BucketSplitTest: XCTestCase {
     }
 
     func testMultiClientBuckets() {
-
         for (bkey, _) in bucketsKeys {
             let key = Key(matchingKey: userKey, bucketingKey: bkey)
             readyExps[key] = XCTestExpectation(description: "key: \(bkey)")
@@ -70,14 +69,16 @@ class BucketSplitTest: XCTestCase {
 
     private func getChanges() -> Data {
         let changeNumber = 5000
-        var content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: "bucket_split_test", type: "json")!
+        var content = FileHelper.readDataFromFile(
+            sourceClass: IntegrationHelper(),
+            name: "bucket_split_test",
+            type: "json")!
         content = content.replacingOccurrences(of: "<FIELD_SINCE>", with: "\(changeNumber)")
         content = content.replacingOccurrences(of: "<FIELD_TILL>", with: "\(changeNumber)")
         return Data(content.utf8)
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
-
         return { request in
             if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: self.getChanges())
@@ -100,23 +101,23 @@ class BucketSplitTest: XCTestCase {
             action(key, client)
         }
     }
+
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.test.asyncAfter(deadline: .now() + 1) {
-            }
+            DispatchQueue.test.asyncAfter(deadline: .now() + 1) {}
             return self.streamingBinding!
         }
     }
 
     private func basicSplitConfig() -> SplitClientConfig {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 3000
         splitConfig.eventsPushRate = 999999
-        //splitConfig.isDebugModeEnabled = true
+        // splitConfig.isDebugModeEnabled = true
         return splitConfig
     }
 
@@ -125,14 +126,15 @@ class BucketSplitTest: XCTestCase {
         let splitDatabase = database ?? TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
         splitConfig.trafficType = trafficType
         splitConfig.logLevel = TestingHelper.testLogLevel
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -155,7 +157,7 @@ class BucketSplitTest: XCTestCase {
     private func impressions(from data: Data?) -> [KeyImpression]? {
         guard let data = data else { return nil }
         do {
-            let tests =  try Json.decodeFrom(json: data.stringRepresentation, to: [ImpressionsTest].self)
+            let tests = try Json.decodeFrom(json: data.stringRepresentation, to: [ImpressionsTest].self)
             return tests.flatMap { $0.keyImpressions }
         } catch {
             print(error)
@@ -163,5 +165,3 @@ class BucketSplitTest: XCTestCase {
         return nil
     }
 }
-
-

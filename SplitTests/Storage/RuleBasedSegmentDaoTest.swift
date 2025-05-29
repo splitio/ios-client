@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class RuleBasedSegmentDaoTest: XCTestCase {
-
     var ruleBasedSegmentDao: RuleBasedSegmentDao!
     var ruleBasedSegmentDaoAes128Cbc: RuleBasedSegmentDao!
 
@@ -19,13 +18,11 @@ class RuleBasedSegmentDaoTest: XCTestCase {
         let cipherKey = IntegrationHelper.dummyCipherKey
         let queue = DispatchQueue(label: "rule based segment dao test")
         ruleBasedSegmentDao = CoreDataRuleBasedSegmentDao(
-            coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test", dispatchQueue: queue)
-        )
+            coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test", dispatchQueue: queue))
 
         ruleBasedSegmentDaoAes128Cbc = CoreDataRuleBasedSegmentDao(
             coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test", dispatchQueue: queue),
-            cipher: DefaultCipher(cipherKey: cipherKey)
-        )
+            cipher: DefaultCipher(cipherKey: cipherKey))
 
         let segments = createRuleBasedSegments()
         ruleBasedSegmentDao.insertOrUpdate(segments: segments)
@@ -141,11 +138,13 @@ class RuleBasedSegmentDaoTest: XCTestCase {
 
         // Create two daos accessing the same db
         // One with encryption and the other without it
-        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
-                                                  dispatchQueue: DispatchQueue(label: "rule based segment dao test"))
+        let helper = IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: DispatchQueue(label: "rule based segment dao test"))
         ruleBasedSegmentDao = CoreDataRuleBasedSegmentDao(coreDataHelper: helper)
-        ruleBasedSegmentDaoAes128Cbc = CoreDataRuleBasedSegmentDao(coreDataHelper: helper,
-                                                                  cipher: cipher)
+        ruleBasedSegmentDaoAes128Cbc = CoreDataRuleBasedSegmentDao(
+            coreDataHelper: helper,
+            cipher: cipher)
 
         // create segments and get one encrypted segment name
         let segments = createRuleBasedSegments()
@@ -172,10 +171,11 @@ class RuleBasedSegmentDaoTest: XCTestCase {
         var body: String? = nil
         coreDataHelper.performAndWait {
             let predicate = NSPredicate(format: "name == %@", testName)
-            let entities = coreDataHelper.fetch(entity: .ruleBasedSegment,
-                                               where: predicate,
-                                               rowLimit: 1).compactMap { return $0 as? RuleBasedSegmentEntity }
-            if entities.count > 0 {
+            let entities = coreDataHelper.fetch(
+                entity: .ruleBasedSegment,
+                where: predicate,
+                rowLimit: 1).compactMap { $0 as? RuleBasedSegmentEntity }
+            if !entities.isEmpty {
                 name = entities[0].name
                 body = entities[0].body
             }
@@ -185,7 +185,7 @@ class RuleBasedSegmentDaoTest: XCTestCase {
 
     private func createRuleBasedSegments() -> [RuleBasedSegment] {
         var segments = [RuleBasedSegment]()
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             let segment = newRuleBasedSegment(name: "segment_\(i)", trafficType: "tt_\(i)")
             segments.append(segment)
         }
@@ -198,7 +198,7 @@ class RuleBasedSegmentDaoTest: XCTestCase {
         segment.trafficTypeName = trafficType
         segment.status = .active
         segment.changeNumber = Int64(Date.nowMillis())
-        
+
         // Add some conditions for testing
         let condition = Condition()
         condition.matcherGroup = MatcherGroup()
@@ -222,7 +222,8 @@ class RuleBasedSegmentDaoTest: XCTestCase {
         excluded.keys = Set(["key1", "key2"])
         excluded.segments = Set([
             ExcludedSegment(name: "segment1", type: .standard),
-            ExcludedSegment(name: "segment2", type: .standard)])
+            ExcludedSegment(name: "segment2", type: .standard),
+        ])
         segment.excluded = excluded
 
         return segment

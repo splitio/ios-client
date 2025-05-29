@@ -50,15 +50,15 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     private var isTrackingEnabled: Bool = true
     private var isPersistenceEnabled: Bool = true
 
-    init(splitConfig: SplitClientConfig,
-         splitApiFacade: SplitApiFacade,
-         storageContainer: SplitStorageContainer,
-         syncWorkerFactory: SyncWorkerFactory,
-         impressionsSyncHelper: ImpressionsRecorderSyncHelper?,
-         uniqueKeyTracker: UniqueKeyTracker?,
-         notificationHelper: NotificationHelper?,
-         impressionsObserver: ImpressionsObserver) {
-
+    init(
+        splitConfig: SplitClientConfig,
+        splitApiFacade: SplitApiFacade,
+        storageContainer: SplitStorageContainer,
+        syncWorkerFactory: SyncWorkerFactory,
+        impressionsSyncHelper: ImpressionsRecorderSyncHelper?,
+        uniqueKeyTracker: UniqueKeyTracker?,
+        notificationHelper: NotificationHelper?,
+        impressionsObserver: ImpressionsObserver) {
         self.splitConfig = splitConfig
         self.syncWorkerFactory = syncWorkerFactory
         self.storageContainer = storageContainer
@@ -67,15 +67,15 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         self.impressionsSyncHelper = impressionsSyncHelper
         self.impressionsObserver = impressionsObserver
 
-#if os(macOS)
-        notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { [weak self] _ in
-            if let self = self {
-                self.saveUniqueKeys()
-                self.saveImpressionsCount()
-                self.saveHashedImpressions()
+        #if os(macOS)
+            notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { [weak self] _ in
+                if let self = self {
+                    self.saveUniqueKeys()
+                    self.saveImpressionsCount()
+                    self.saveHashedImpressions()
+                }
             }
-        }
-#endif
+        #endif
         setupImpressionsMode()
     }
 
@@ -97,7 +97,6 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     func push(_ decoratedImpression: DecoratedImpression) {
-
         if !isTrackingEnabled {
             Logger.v("Impression not tracked because tracking is disabled")
             return
@@ -137,7 +136,6 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         } else {
             telemetryProducer?.recordImpressionStats(type: .deduped, count: 1)
         }
-
     }
 
     func pause() {
@@ -206,7 +204,6 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     private func setupImpressionsMode() {
-
         createUniqueKeysRecorder()
         createImpressionsCountRecorder()
 
@@ -223,18 +220,18 @@ class DefaultImpressionsTracker: ImpressionsTracker {
     }
 
     private func createImpressionsCountRecorder() {
-        self.periodicImpressionsCountRecorderWoker
-        = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
-        self.flusherImpressionsCountRecorderWorker
-        = syncWorkerFactory.createImpressionsCountRecorderWorker()
+        periodicImpressionsCountRecorderWoker
+            = syncWorkerFactory.createPeriodicImpressionsCountRecorderWorker()
+        flusherImpressionsCountRecorderWorker
+            = syncWorkerFactory.createImpressionsCountRecorderWorker()
         impressionsCounter = ImpressionsCounter()
     }
 
     private func createUniqueKeysRecorder() {
-        self.periodicUniqueKeysRecorderWorker
-        = syncWorkerFactory.createPeriodicUniqueKeyRecorderWorker(flusherChecker: uniqueKeyFlushChecker)
-        self.flusherUniqueKeysRecorderWorker
-        = syncWorkerFactory.createUniqueKeyRecorderWorker(flusherChecker: uniqueKeyFlushChecker)
+        periodicUniqueKeysRecorderWorker
+            = syncWorkerFactory.createPeriodicUniqueKeyRecorderWorker(flusherChecker: uniqueKeyFlushChecker)
+        flusherUniqueKeysRecorderWorker
+            = syncWorkerFactory.createUniqueKeyRecorderWorker(flusherChecker: uniqueKeyFlushChecker)
     }
 
     private func isOptimizedImpressionsMode() -> Bool {

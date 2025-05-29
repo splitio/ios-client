@@ -11,13 +11,14 @@ import Foundation
 protocol HttpDataRequest: HttpRequest, HttpDataReceivingRequest {
     var data: Data? { get }
     func notifyIncomingData(_ data: Data)
-    func getResponse(completionHandler: @escaping RequestCompletionHandler,
-                     errorHandler: @escaping RequestErrorHandler) -> Self
+    func getResponse(
+        completionHandler: @escaping RequestCompletionHandler,
+        errorHandler: @escaping RequestErrorHandler) -> Self
 }
 
 // MARK: HttpDataRequest
-class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
 
+class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
     private(set) var data: Data?
 
     override func notifyIncomingData(_ data: Data) {
@@ -27,8 +28,9 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
         self.data?.append(data)
     }
 
-    func getResponse(completionHandler: @escaping RequestCompletionHandler,
-                     errorHandler: @escaping RequestErrorHandler) -> Self {
+    func getResponse(
+        completionHandler: @escaping RequestCompletionHandler,
+        errorHandler: @escaping RequestErrorHandler) -> Self {
         requestQueue.sync {
             self.completionHandler = completionHandler
             self.errorHandler = errorHandler
@@ -50,10 +52,11 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
                 }
                 errorHandler(error)
             } else if let completionHandler = self.completionHandler {
-                completionHandler(HttpResponse(code: self.responseCode,
-                                               data: self.data,
-                                               internalCode: internalCode)
-                )
+                completionHandler(
+                    HttpResponse(
+                        code: self.responseCode,
+                        data: self.data,
+                        internalCode: internalCode))
             }
         }
     }

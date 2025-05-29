@@ -17,7 +17,7 @@ class FlagSetsValidatorMock: FlagSetsValidator {
 
         return Array(set1.intersection(set2))
     }
-    
+
     var cleanAndValidateValuesResult = [String]()
     func cleanAndValidateValues(_ values: [String], calledFrom method: String) -> [String] {
         let set1 = Set(validateOnEvaluatioResults)

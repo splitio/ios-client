@@ -18,7 +18,7 @@ class Base64Utils {
         // Replace +
         let base64NoPlus = base64.replacingOccurrences(of: "-", with: "+")
         // Replace _
-       let base64NoSlash = base64NoPlus.replacingOccurrences(of: "_", with: "/")
+        let base64NoSlash = base64NoPlus.replacingOccurrences(of: "_", with: "/")
         var finalBase64 = base64NoSlash
         // = complement
         let mod4 = base64NoPlus.count % 4
@@ -26,8 +26,9 @@ class Base64Utils {
             let appStr = String(repeating: "=", count: 4 - mod4)
             finalBase64 = "\(base64NoSlash)\(appStr)"
         }
-        return Data(base64Encoded: finalBase64,
-                    options: Data.Base64DecodingOptions.init(rawValue: 0))?.stringRepresentation
+        return Data(
+            base64Encoded: finalBase64,
+            options: Data.Base64DecodingOptions(rawValue: 0))?.stringRepresentation
     }
 
     class func decodeBase64(_ base64: String?) -> Data? {
@@ -38,7 +39,7 @@ class Base64Utils {
         // Replace +
         let base64NoPlus = base64.replacingOccurrences(of: "-", with: "+")
         // Replace _
-       let base64NoSlash = base64NoPlus.replacingOccurrences(of: "_", with: "/")
+        let base64NoSlash = base64NoPlus.replacingOccurrences(of: "_", with: "/")
         var finalBase64 = base64NoSlash
         // = complement
         let mod4 = base64NoPlus.count % 4
@@ -46,8 +47,9 @@ class Base64Utils {
             let appStr = String(repeating: "=", count: 4 - mod4)
             finalBase64 = "\(base64NoSlash)\(appStr)"
         }
-        return Data(base64Encoded: finalBase64,
-                    options: Data.Base64DecodingOptions.init(rawValue: 0))
+        return Data(
+            base64Encoded: finalBase64,
+            options: Data.Base64DecodingOptions(rawValue: 0))
     }
 
     class func encodeToBase64(_ string: String) -> String {
@@ -58,8 +60,8 @@ class Base64Utils {
         guard let base64 = base64 else {
             return nil
         }
-        return Data(base64Encoded: base64,
-                    options: Data.Base64DecodingOptions.init(rawValue: 0))
-
+        return Data(
+            base64Encoded: base64,
+            options: Data.Base64DecodingOptions(rawValue: 0))
     }
 }

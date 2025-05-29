@@ -19,7 +19,6 @@ protocol JwtTokenParser {
 }
 
 struct DefaultJwtTokenParser: JwtTokenParser {
-
     private static let kPublishersChannelMetadata = "channel-metadata:publishers"
     private static let kPublishersCannelPrefix = "[?occupancy=metrics.publishers]"
 
@@ -48,8 +47,11 @@ struct DefaultJwtTokenParser: JwtTokenParser {
                 }
                 return $0.key
             }
-            return JwtToken(issuedAt: authToken.issuedAt, expirationTime: authToken.expirationTime,
-                            channels: processedChannels, rawToken: raw)
+            return JwtToken(
+                issuedAt: authToken.issuedAt,
+                expirationTime: authToken.expirationTime,
+                channels: processedChannels,
+                rawToken: raw)
         } catch {
             Logger.e("Error parsing SSE authentication JWT json: \(error.localizedDescription)")
             throw JwtTokenError.tokenIsInvalid

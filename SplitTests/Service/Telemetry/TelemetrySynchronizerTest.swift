@@ -8,13 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
-
-
+import XCTest
 
 class TelmetrySynchronizerTest: XCTestCase {
-
     var synchronizer: TelemetrySynchronizer!
     var configRecorderWorker: RecorderWorkerStub!
     var statsRecorderWorker: RecorderWorkerStub!
@@ -24,9 +21,10 @@ class TelmetrySynchronizerTest: XCTestCase {
         configRecorderWorker = RecorderWorkerStub()
         statsRecorderWorker = RecorderWorkerStub()
         periodicStatsRecorderWorker = PeriodicRecorderWorkerStub()
-        synchronizer = DefaultTelemetrySynchronizer(configRecorderWorker: configRecorderWorker,
-                                                    statsRecorderWorker: statsRecorderWorker,
-                                                    periodicStatsRecorderWorker: periodicStatsRecorderWorker)
+        synchronizer = DefaultTelemetrySynchronizer(
+            configRecorderWorker: configRecorderWorker,
+            statsRecorderWorker: statsRecorderWorker,
+            periodicStatsRecorderWorker: periodicStatsRecorderWorker)
     }
 
     func testSyncConfig() {
@@ -40,7 +38,6 @@ class TelmetrySynchronizerTest: XCTestCase {
     }
 
     func testSyncStats() {
-
         statsRecorderWorker.expectation = XCTestExpectation()
 
         synchronizer.synchronizeStats()
@@ -52,20 +49,16 @@ class TelmetrySynchronizerTest: XCTestCase {
     }
 
     func testStart() {
-
         synchronizer.start()
 
         XCTAssertTrue(periodicStatsRecorderWorker.startCalled)
     }
 
     func testStop() {
-
         synchronizer.destroy()
 
         XCTAssertTrue(periodicStatsRecorderWorker.stopCalled)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

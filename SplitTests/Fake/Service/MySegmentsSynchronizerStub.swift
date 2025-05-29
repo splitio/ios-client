@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class MySegmentsSynchronizerStub: MySegmentsSynchronizer {
-
     var loadMySegmentsFromCacheCalled = false
     var synchronizeMySegmentsCalled = false
     var forceMySegmentsSyncCalled = false

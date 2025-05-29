@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class StreamingOccupancyTest: XCTestCase {
     let apiKey = IntegrationHelper.dummyApiKey
@@ -30,13 +30,11 @@ class StreamingOccupancyTest: XCTestCase {
     var testFactory: TestSplitFactory!
 
     override func setUp() {
-
         testFactory = TestSplitFactory(userKey: "user_key")
         testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
     }
 
     func testOccupancy() throws {
-
         try testFactory.buildSdk()
         let syncSpy = testFactory.synchronizerSpy
         let client = testFactory.client
@@ -56,54 +54,57 @@ class StreamingOccupancyTest: XCTestCase {
         wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
         streamingBinding?.push(message: ":keepalive") // to confirm streaming connection ok
 
-
         // Should disable streaming and enable polling
         syncSpy.startPeriodicFetchingExp = XCTestExpectation()
         // Should disable streaming
-        timestamp+=1000
-        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: timestamp,
-                                                                                    publishers: 0,
-                                                                                    channel: kPrimaryChannel))
+        timestamp += 1000
+        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(
+            timestamp: timestamp,
+            publishers: 0,
+            channel: kPrimaryChannel))
 
         wait(for: [syncSpy.startPeriodicFetchingExp!], timeout: 5)
         let streamingDisabledPri = syncSpy.startPeriodicFetchingCalled
 
         // Should enable streaming in secondary channel
         syncSpy.stopPeriodicFetchingExp = XCTestExpectation()
-        timestamp+=1000
-        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: timestamp,
-                                                                                    publishers: 1,
-                                                                                    channel: kSecondaryChannel))
+        timestamp += 1000
+        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(
+            timestamp: timestamp,
+            publishers: 1,
+            channel: kSecondaryChannel))
         wait(for: [syncSpy.stopPeriodicFetchingExp!], timeout: 5)
         let streamingEnabledSec = syncSpy.stopPeriodicFetchingCalled
 
         syncSpy.startPeriodicFetchingCalled = false
         syncSpy.startPeriodicFetchingExp = XCTestExpectation()
         // Should disable streaming in secondary channel and enable polling
-        timestamp+=1000
-        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: timestamp,
-                                                                                    publishers: 0,
-                                                                                    channel: kSecondaryChannel))
+        timestamp += 1000
+        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(
+            timestamp: timestamp,
+            publishers: 0,
+            channel: kSecondaryChannel))
         wait(for: [syncSpy.startPeriodicFetchingExp!], timeout: 5) // expectations for hits when polling enabled
         let streamingDisabledSec = syncSpy.startPeriodicFetchingCalled
 
-
         syncSpy.stopPeriodicFetchingExp = XCTestExpectation()
         // Should disable streaming
-        timestamp+=1000
-        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: timestamp,
-                                                                                    publishers: 1,
-                                                                                    channel: kPrimaryChannel))
+        timestamp += 1000
+        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(
+            timestamp: timestamp,
+            publishers: 1,
+            channel: kPrimaryChannel))
 
         wait(for: [syncSpy.stopPeriodicFetchingExp!], timeout: 5)
         let streamingEnabledPri = syncSpy.stopPeriodicFetchingCalled
 
         syncSpy.stopPeriodicFetchingCalled = false
         // Sending old timestamp notification. Nothing should change
-        timestamp-=2000
-        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: timestamp,
-                                                                                    publishers: 0,
-                                                                                    channel: kPrimaryChannel))
+        timestamp -= 2000
+        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(
+            timestamp: timestamp,
+            publishers: 0,
+            channel: kPrimaryChannel))
 
         wait() // if polling enabled on hit should occur
         let oldTimestampDisabled = syncSpy.stopPeriodicFetchingCalled
@@ -128,7 +129,9 @@ class StreamingOccupancyTest: XCTestCase {
                 if self.checkSplitChangesHit {
                     self.splitsChangesExp.fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 if self.checkMySegmentsHit {
@@ -162,7 +165,6 @@ class StreamingOccupancyTest: XCTestCase {
 
     private func wait() {
         print("WAIT OCCC 2")
-        ThreadUtils.delay(seconds: Double(self.kRefreshRate) * 2.0)
+        ThreadUtils.delay(seconds: Double(kRefreshRate) * 2.0)
     }
 }
-

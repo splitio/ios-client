@@ -9,10 +9,8 @@
 import Foundation
 
 // FileHelper
-struct FileUtil {
-
+enum FileUtil {
     static func copySourceFile(name: String, type: String, fileStorage: FileStorage, bundle: Bundle) -> Bool {
-
         guard let fileContent = loadFile(name: name, type: type, bundle: bundle) else {
             return false
         }
@@ -33,7 +31,6 @@ struct FileUtil {
     }
 
     static func loadFileData(name: String, type fileType: String, bundle: Bundle) -> Data? {
-
         guard let filepath = bundle.path(forResource: name, ofType: fileType) else {
             return nil
         }

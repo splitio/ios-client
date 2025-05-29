@@ -1,8 +1,7 @@
-import XCTest
 @testable import Split
+import XCTest
 
 final class RolloutCacheManagerIntegrationTest: XCTestCase {
-
     private var httpClient: HttpClient!
     private let apiKey = IntegrationHelper.dummyApiKey
     private let userKey = "key"
@@ -15,8 +14,9 @@ final class RolloutCacheManagerIntegrationTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         notificationHelper = NotificationHelperStub()
         testDb = TestingHelper.createTestDatabase(name: "test")
@@ -25,11 +25,15 @@ final class RolloutCacheManagerIntegrationTest: XCTestCase {
     }
 
     func testExpirationPeriodIsUsed() {
-        test(timestampDaysAgo: getTimestampDaysAgo(days: 1), configBuilder: RolloutCacheConfiguration.builder().set(expirationDays: 1))
+        test(
+            timestampDaysAgo: getTimestampDaysAgo(days: 1),
+            configBuilder: RolloutCacheConfiguration.builder().set(expirationDays: 1))
     }
 
     func testClearOnInitClearCacheOnStartup() {
-        test(timestampDaysAgo: getTimestampDaysAgo(days: 0), configBuilder: RolloutCacheConfiguration.builder().set(clearOnInit: true))
+        test(
+            timestampDaysAgo: getTimestampDaysAgo(days: 0),
+            configBuilder: RolloutCacheConfiguration.builder().set(clearOnInit: true))
     }
 
     func testRepeatedInitWithClearOnInitSetToTrueDoesNotClearIfMinDaysHasNotElapsed() {
@@ -127,7 +131,13 @@ final class RolloutCacheManagerIntegrationTest: XCTestCase {
         }
 
         // Track final values
-        verify(factory: factory, readyExp: readyExp, initialFlags: initialFlags, initialSegments: initialSegments, initialLargeSegments: initialLargeSegments, initialChangeNumber: initialChangeNumber)
+        verify(
+            factory: factory,
+            readyExp: readyExp,
+            initialFlags: initialFlags,
+            initialSegments: initialSegments,
+            initialLargeSegments: initialLargeSegments,
+            initialChangeNumber: initialChangeNumber)
     }
 
     private func preloadDB(updateTimestamp: Int64?, lastClearTimestamp: Int64?, changeNumber: Int64?) {
@@ -143,17 +153,26 @@ final class RolloutCacheManagerIntegrationTest: XCTestCase {
             testDb.generalInfoDao.update(info: .splitsChangeNumber, longValue: changeNumber)
         }
         testDb.mySegmentsDao.update(userKey: userKey, change: SegmentChange(segments: ["s1", "s2"], changeNumber: nil))
-        testDb.myLargeSegmentsDao.update(userKey: userKey, change: SegmentChange(segments: ["l1", "l2"], changeNumber: nil))
+        testDb.myLargeSegmentsDao.update(
+            userKey: userKey,
+            change: SegmentChange(segments: ["l1", "l2"], changeNumber: nil))
     }
 
     private func loadSplitsChangeFile() -> String {
-        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json") else {
+        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json")
+        else {
             return IntegrationHelper.emptySplitChanges(since: 99999, till: 99999)
         }
         return splitJson
     }
 
-    private func verify(factory: SplitFactory, readyExp: XCTestExpectation, initialFlags: [Split], initialSegments: SegmentChange?, initialLargeSegments: SegmentChange?, initialChangeNumber: Int64?) {
+    private func verify(
+        factory: SplitFactory,
+        readyExp: XCTestExpectation,
+        initialFlags: [Split],
+        initialSegments: SegmentChange?,
+        initialLargeSegments: SegmentChange?,
+        initialChangeNumber: Int64?) {
         let finalFlags = testDb.splitDao.getAll()
         let finalSegments = testDb.mySegmentsDao.getBy(userKey: userKey)
         let finalLargeSegments = testDb.myLargeSegmentsDao.getBy(userKey: userKey)
@@ -185,12 +204,12 @@ final class RolloutCacheManagerIntegrationTest: XCTestCase {
     }
 
     private func getFactory(rolloutConfig: RolloutCacheConfiguration) -> SplitFactory {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.logLevel = .verbose
         splitConfig.streamingEnabled = false
         splitConfig.featuresRefreshRate = 1
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -215,9 +234,13 @@ final class RolloutCacheManagerIntegrationTest: XCTestCase {
             if request.isSplitEndpoint() {
                 if self.firstSplitHit {
                     self.firstSplitHit = false
-                    return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: -1, till: 99999).utf8))
+                    return TestDispatcherResponse(
+                        code: 200,
+                        data: Data(IntegrationHelper.emptySplitChanges(since: -1, till: 99999).utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
             }
 
             if request.isMySegmentsEndpoint() {

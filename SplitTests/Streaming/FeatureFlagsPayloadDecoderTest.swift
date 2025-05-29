@@ -8,16 +8,16 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class FeatureFlagsPayloadDecoderTest: XCTestCase {
-
-    let decoder: DefaultFeatureFlagsPayloadDecoder = DefaultFeatureFlagsPayloadDecoder(type: Split.self)
-
+    let decoder: DefaultFeatureFlagsPayloadDecoder = .init(type: Split.self)
 
     func testDecodeZlib() throws {
-        let featureFlag = try decoder.decode(payload: TestingData.updateSplitsNotificationZlib().definition!, compressionUtil: Zlib())
+        let featureFlag = try decoder.decode(
+            payload: TestingData.updateSplitsNotificationZlib().definition!,
+            compressionUtil: Zlib())
 
         XCTAssertEqual("mauro_java", featureFlag.name!)
         XCTAssertEqual("off", featureFlag.defaultTreatment)
@@ -25,14 +25,14 @@ class FeatureFlagsPayloadDecoderTest: XCTestCase {
     }
 
     func testDecodeGzip() throws {
-        let featureFlag = try decoder.decode(payload: TestingData.updateSplitsNotificationGzip().definition!, compressionUtil: Gzip())
+        let featureFlag = try decoder.decode(
+            payload: TestingData.updateSplitsNotificationGzip().definition!,
+            compressionUtil: Gzip())
 
         XCTAssertEqual("mauro_java", featureFlag.name!)
         XCTAssertEqual("off", featureFlag.defaultTreatment)
         XCTAssertFalse(featureFlag.killed!)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

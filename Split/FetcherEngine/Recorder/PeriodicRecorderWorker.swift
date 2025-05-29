@@ -15,19 +15,20 @@ protocol PeriodicRecorderWorker {
     func stop()
     func destroy()
 }
+
 //
 class DefaultPeriodicRecorderWorker: PeriodicRecorderWorker {
-
     private let recorderWorker: RecorderWorker
     private var fetchTimer: PeriodicTimer
     private let fetchQueue = DispatchQueue.general
     private var isPaused: Atomic<Bool> = Atomic(false)
 
-    init(timer: PeriodicTimer,
-         recorderWorker: RecorderWorker) {
+    init(
+        timer: PeriodicTimer,
+        recorderWorker: RecorderWorker) {
         self.recorderWorker = recorderWorker
         self.fetchTimer = timer
-        self.fetchTimer.handler { [weak self] in
+        fetchTimer.handler { [weak self] in
             guard let self = self else {
                 return
             }

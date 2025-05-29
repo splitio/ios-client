@@ -8,14 +8,13 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class MySegmentsPayloadDecoderTest: XCTestCase {
     let decoder = DefaultMySegmentsPayloadDecoder()
 
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testUserKeyHash() {
         let expectedResult = "MjAwNjI0Nzg3NQ=="
@@ -23,6 +22,5 @@ class MySegmentsPayloadDecoderTest: XCTestCase {
         XCTAssertEqual(expectedResult, decoder.hash(userKey: "user_key"))
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }

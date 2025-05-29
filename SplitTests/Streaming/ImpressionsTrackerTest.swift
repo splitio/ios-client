@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class ImpressionsTrackerTest: XCTestCase {
     var periodicImpressionsRecorderWorker: PeriodicRecorderWorkerStub!
@@ -34,7 +34,7 @@ class ImpressionsTrackerTest: XCTestCase {
         createImpressionsTracker(impressionsMode: .optimized, realObserver: true)
         let impression = createImpression()
 
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             impressionsTracker.push(decorate(impression, impressionsDisabled: i % 2 != 0))
         }
 
@@ -57,14 +57,14 @@ class ImpressionsTrackerTest: XCTestCase {
         createImpressionsTracker(impressionsMode: .debug)
         var impression = createImpression()
 
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             impression.storageId = UUID().uuidString
             impressionsTracker.push(decorate(impression, impressionsDisabled: i % 2 != 0))
         }
 
         // Before save an clear
         let trackedKeys = uniqueKeyTracker.trackedKeys
-        
+
         // Calling pause to save items on storage
         impressionsTracker.pause()
 
@@ -101,9 +101,9 @@ class ImpressionsTrackerTest: XCTestCase {
         XCTAssertEqual(0, uniqueKeyTracker.trackedKeys.count)
         XCTAssertEqual(0, uniqueKeyTracker.trackedKeys["k1"]?.count ?? 0)
         XCTAssertEqual(0, impressionsStorage.impressions.count)
-        XCTAssertEqual(1, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f1"}[0].count)
-        XCTAssertEqual(2, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f2"}[0].count)
-        XCTAssertEqual(3, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f3"}[0].count)
+        XCTAssertEqual(1, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f1" }[0].count)
+        XCTAssertEqual(2, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f2" }[0].count)
+        XCTAssertEqual(3, impressionsCountStorage.storedImpressions.values.filter { $0.feature == "f3" }[0].count)
     }
 
     func testStartOptimized() {
@@ -162,7 +162,7 @@ class ImpressionsTrackerTest: XCTestCase {
 
         XCTAssertTrue(periodicUniqueKeysRecorderWorker.pauseCalled)
         XCTAssertTrue(uniqueKeyTracker.saveAndClearCalled)
-    
+
         XCTAssertTrue(observer.saveCalled)
     }
 
@@ -285,7 +285,7 @@ class ImpressionsTrackerTest: XCTestCase {
         impressionsTracker.enableTracking(false)
         let impression = createImpression(randomId: true)
 
-        for _ in 0..<5 {
+        for _ in 0 ..< 5 {
             impressionsTracker.push(decorate(impression))
         }
 
@@ -302,19 +302,27 @@ class ImpressionsTrackerTest: XCTestCase {
         XCTAssertEqual(0, impressionsCountStorage.storedImpressions.count)
     }
 
-    private func createImpression(keyName: String = "k1", featureName: String = "feature", randomId: Bool = false) -> KeyImpression {
-        return KeyImpression(featureName: featureName, keyName: keyName,
-                             treatment: "t1", label: "the label", time: Date().unixTimestampInMiliseconds(),
-                             changeNumber: 1, storageId: randomId ? UUID().uuidString : "idFeature")
+    private func createImpression(
+        keyName: String = "k1",
+        featureName: String = "feature",
+        randomId: Bool = false) -> KeyImpression {
+        return KeyImpression(
+            featureName: featureName,
+            keyName: keyName,
+            treatment: "t1",
+            label: "the label",
+            time: Date().unixTimestampInMiliseconds(),
+            changeNumber: 1,
+            storageId: randomId ? UUID().uuidString : "idFeature")
     }
 
     private func decorate(_ impression: KeyImpression, impressionsDisabled: Bool = false) -> DecoratedImpression {
         return DecoratedImpression(impression: impression, impressionsDisabled: impressionsDisabled)
     }
 
-    private func createImpressionsTracker(impressionsMode: ImpressionsMode, 
-                                          realObserver: Bool = false) {
-
+    private func createImpressionsTracker(
+        impressionsMode: ImpressionsMode,
+        realObserver: Bool = false) {
         let config = SplitClientConfig()
         config.impressionsMode = impressionsMode.rawValue
 
@@ -334,7 +342,6 @@ class ImpressionsTrackerTest: XCTestCase {
         syncWorkerFactory.uniqueKeysRecorderWorker = uniqueKeysRecorderWorker
         syncWorkerFactory.periodicUniqueKeysRecorderWorker = periodicUniqueKeysRecorderWorker
 
-
         telemetryProducer = TelemetryStorageStub()
         impressionsStorage = ImpressionsStorageStub()
         persistentImpressionsStorage = PersistentImpressionsStorageStub()
@@ -343,25 +350,26 @@ class ImpressionsTrackerTest: XCTestCase {
         uniqueKeyTracker = UniqueKeyTrackerStub()
         flagSetsCache = FlagSetsCacheMock()
 
-        let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
-                                                     splitsStorage: SplitsStorageStub(),
-                                                     persistentSplitsStorage: PersistentSplitsStorageStub(),
-                                                     impressionsStorage: ImpressionsStorageStub(),
-                                                     persistentImpressionsStorage: persistentImpressionsStorage,
-                                                     impressionsCountStorage: impressionsCountStorage,
-                                                     eventsStorage: EventsStorageStub(),
-                                                     persistentEventsStorage: PersistentEventsStorageStub(),
-                                                     telemetryStorage: telemetryProducer,
-                                                     mySegmentsStorage: MySegmentsStorageStub(),
-                                                     myLargeSegmentsStorage: MySegmentsStorageStub(),
-                                                     attributesStorage: AttributesStorageStub(),
-                                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub(), 
-                                                     flagSetsCache: flagSetsCache,
-                                                     persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
-                                                     hashedImpressionsStorage: HashedImpressionsStorageMock(),
-                                                     generalInfoStorage: GeneralInfoStorageMock(),
-                                                     ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
-                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
+        let storageContainer = SplitStorageContainer(
+            splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
+            splitsStorage: SplitsStorageStub(),
+            persistentSplitsStorage: PersistentSplitsStorageStub(),
+            impressionsStorage: ImpressionsStorageStub(),
+            persistentImpressionsStorage: persistentImpressionsStorage,
+            impressionsCountStorage: impressionsCountStorage,
+            eventsStorage: EventsStorageStub(),
+            persistentEventsStorage: PersistentEventsStorageStub(),
+            telemetryStorage: telemetryProducer,
+            mySegmentsStorage: MySegmentsStorageStub(),
+            myLargeSegmentsStorage: MySegmentsStorageStub(),
+            attributesStorage: AttributesStorageStub(),
+            uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
+            flagSetsCache: flagSetsCache,
+            persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
+            hashedImpressionsStorage: HashedImpressionsStorageMock(),
+            generalInfoStorage: GeneralInfoStorageMock(),
+            ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
+            persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
 
         let apiFacade = try! SplitApiFacade.builder()
             .setUserKey("userKey")
@@ -371,20 +379,26 @@ class ImpressionsTrackerTest: XCTestCase {
             .setStreamingHttpClient(HttpClientMock(session: HttpSessionMock()))
             .build()
 
-        let impressionsRecorderSyncHelper = ImpressionsRecorderSyncHelper(impressionsStorage: impressionsStorage,
-                                                                          accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10))
+        let impressionsRecorderSyncHelper = ImpressionsRecorderSyncHelper(
+            impressionsStorage: impressionsStorage,
+            accumulator: DefaultRecorderFlushChecker(
+                maxQueueSize: 10,
+                maxQueueSizeInBytes: 10))
 
-        self.impressionsObserver = (realObserver ? DefaultImpressionsObserver(storage: storageContainer.hashedImpressionsStorage) : ImpressionsObserverMock())
+        impressionsObserver =
+            (
+                realObserver ? DefaultImpressionsObserver(storage: storageContainer.hashedImpressionsStorage) :
+                    ImpressionsObserverMock())
 
         notificationHelper = NotificationHelperStub()
-        impressionsTracker = DefaultImpressionsTracker(splitConfig: config,
-                                                       splitApiFacade: apiFacade,
-                                                       storageContainer: storageContainer,
-                                                       syncWorkerFactory: syncWorkerFactory,
-                                                       impressionsSyncHelper: impressionsRecorderSyncHelper,
-                                                       uniqueKeyTracker: uniqueKeyTracker,
-                                                       notificationHelper: notificationHelper,
-                                                       impressionsObserver: impressionsObserver)
+        impressionsTracker = DefaultImpressionsTracker(
+            splitConfig: config,
+            splitApiFacade: apiFacade,
+            storageContainer: storageContainer,
+            syncWorkerFactory: syncWorkerFactory,
+            impressionsSyncHelper: impressionsRecorderSyncHelper,
+            uniqueKeyTracker: uniqueKeyTracker,
+            notificationHelper: notificationHelper,
+            impressionsObserver: impressionsObserver)
     }
 }
-

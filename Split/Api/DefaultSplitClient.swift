@@ -12,7 +12,6 @@ import Foundation
 typealias DestroyHandler = () -> Void
 
 public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClient {
-
     private var storageContainer: SplitStorageContainer
     private var key: Key
     private let config: SplitClientConfig
@@ -26,15 +25,15 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 
     var initStopwatch: Stopwatch?
 
-    init(config: SplitClientConfig,
-         key: Key,
-         treatmentManager: TreatmentManager,
-         apiFacade: SplitApiFacade,
-         storageContainer: SplitStorageContainer,
-         eventsManager: SplitEventsManager,
-         eventsTracker: EventsTracker,
-         clientManager: SplitClientManager) {
-
+    init(
+        config: SplitClientConfig,
+        key: Key,
+        treatmentManager: TreatmentManager,
+        apiFacade: SplitApiFacade,
+        storageContainer: SplitStorageContainer,
+        eventsManager: SplitEventsManager,
+        eventsTracker: EventsTracker,
+        clientManager: SplitClientManager) {
         self.config = config
         self.key = key
         self.eventsTracker = eventsTracker
@@ -56,44 +55,51 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
 }
 
 // MARK: Events
-extension DefaultSplitClient {
 
+extension DefaultSplitClient {
     public func on(event: SplitEvent, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: false, queue: nil, execute: action)
     }
 
-    public func on(event: SplitEvent, runInBackground: Bool,
-                   execute action: @escaping SplitAction) {
+    public func on(
+        event: SplitEvent,
+        runInBackground: Bool,
+        execute action: @escaping SplitAction) {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
     }
 
-    public func on(event: SplitEvent,
-                   queue: DispatchQueue, execute action: @escaping SplitAction) {
+    public func on(
+        event: SplitEvent,
+        queue: DispatchQueue,
+        execute action: @escaping SplitAction) {
         on(event: event, runInBackground: true, queue: queue, execute: action)
     }
 
-    private func on(event: SplitEvent,
-                    runInBackground: Bool,
-                    queue: DispatchQueue?,
-                    execute action: @escaping SplitAction) {
-
+    private func on(
+        event: SplitEvent,
+        runInBackground: Bool,
+        queue: DispatchQueue?,
+        execute action: @escaping SplitAction) {
         guard let factory = clientManager?.splitFactory else {
             return
         }
 
-        let task = SplitEventActionTask(action: action, event: event,
-                                        runInBackground: runInBackground,
-                                        factory: factory,
-                                        queue: queue)
+        let task = SplitEventActionTask(
+            action: action,
+            event: event,
+            runInBackground: runInBackground,
+            factory: factory,
+            queue: queue)
         task.event = event
         on(event: event, executeTask: task)
     }
 
     private func on(event: SplitEvent, executeTask task: SplitEventTask) {
-        if  event != .sdkReadyFromCache,
-            eventsManager.eventAlreadyTriggered(event: event) {
-            Logger.w("A handler was added for \(event.toString()) on the SDK, " +
-                     "which has already fired and won’t be emitted again. The callback won’t be executed.")
+        if event != .sdkReadyFromCache,
+           eventsManager.eventAlreadyTriggered(event: event) {
+            Logger.w(
+                "A handler was added for \(event.toString()) on the SDK, " +
+                    "which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }
         eventsManager.register(event: event, task: task)
@@ -101,6 +107,7 @@ extension DefaultSplitClient {
 }
 
 // MARK: Treatment / Evaluation
+
 extension DefaultSplitClient {
     public func getTreatmentWithConfig(_ split: String) -> SplitResult {
         return treatmentManager.getTreatmentWithConfig(split, attributes: nil, evaluationOptions: nil)
@@ -128,45 +135,89 @@ extension DefaultSplitClient {
 }
 
 // MARK: Treatment / Evaluation with Properties
+
 extension DefaultSplitClient {
-    public func getTreatment(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> String {
+    public func getTreatment(
+        _ split: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> String {
         return treatmentManager.getTreatment(split, attributes: attributes, evaluationOptions: evaluationOptions)
     }
 
-    public func getTreatments(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
-        return treatmentManager.getTreatments(splits: splits, attributes: attributes, evaluationOptions: evaluationOptions)
+    public func getTreatments(
+        splits: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return treatmentManager.getTreatments(
+            splits: splits,
+            attributes: attributes,
+            evaluationOptions: evaluationOptions)
     }
 
-    public func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult {
-        return treatmentManager.getTreatmentWithConfig(split, attributes: attributes, evaluationOptions: evaluationOptions)
+    public func getTreatmentWithConfig(
+        _ split: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> SplitResult {
+        return treatmentManager.getTreatmentWithConfig(
+            split,
+            attributes: attributes,
+            evaluationOptions: evaluationOptions)
     }
 
-    public func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfig(splits: splits, attributes: attributes, evaluationOptions: evaluationOptions)
+    public func getTreatmentsWithConfig(
+        splits: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfig(
+            splits: splits,
+            attributes: attributes,
+            evaluationOptions: evaluationOptions)
     }
 
-    public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
-        return treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: evaluationOptions)
+    public func getTreatmentsByFlagSet(
+        _ flagSet: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return treatmentManager.getTreatmentsByFlagSet(
+            flagSet: flagSet,
+            attributes: attributes,
+            evaluationOptions: evaluationOptions)
     }
 
-    public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
-        return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: evaluationOptions)
+    public func getTreatmentsByFlagSets(
+        _ flagSets: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return treatmentManager.getTreatmentsByFlagSets(
+            flagSets: flagSets,
+            attributes: attributes,
+            evaluationOptions: evaluationOptions)
     }
 
-    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String,
-                                                 attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: evaluationOptions)
+    public func getTreatmentsWithConfigByFlagSet(
+        _ flagSet: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfigByFlagSet(
+            flagSet: flagSet,
+            attributes: attributes,
+            evaluationOptions: evaluationOptions)
     }
 
-    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
-                                                  attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: evaluationOptions)
+    public func getTreatmentsWithConfigByFlagSets(
+        _ flagSets: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfigByFlagSets(
+            flagSets: flagSets,
+            attributes: attributes,
+            evaluationOptions: evaluationOptions)
     }
 }
 
 // MARK: Track Events
-extension DefaultSplitClient {
 
+extension DefaultSplitClient {
     public func track(trafficType: String, eventType: String) -> Bool {
         return track(eventType: eventType, trafficType: trafficType, properties: nil)
     }
@@ -199,24 +250,28 @@ extension DefaultSplitClient {
         return track(eventType: eventType, trafficType: nil, value: value, properties: properties)
     }
 
-    func track(eventType: String, trafficType: String? = nil,
-               value: Double? = nil, properties: [String: Any]?) -> Bool {
+    func track(
+        eventType: String,
+        trafficType: String? = nil,
+        value: Double? = nil,
+        properties: [String: Any]?) -> Bool {
         if isClientDestroyed {
             validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: "track")
             return false
         }
-        return eventsTracker.track(eventType: eventType,
-                                   trafficType: trafficType,
-                                   value: value,
-                                   properties: properties,
-                                   matchingKey: key.matchingKey,
-                                   isSdkReady: eventsManager.eventAlreadyTriggered(event: .sdkReady))
+        return eventsTracker.track(
+            eventType: eventType,
+            trafficType: trafficType,
+            value: value,
+            properties: properties,
+            matchingKey: key.matchingKey,
+            isSdkReady: eventsManager.eventAlreadyTriggered(event: .sdkReady))
     }
 }
 
 // MARK: Persistent attributes feature
-extension DefaultSplitClient {
 
+extension DefaultSplitClient {
     public func setAttribute(name: String, value: Any) -> Bool {
         if !isValidAttribute(value) {
             logInvalidAttribute(name: name)
@@ -257,12 +312,13 @@ extension DefaultSplitClient {
 
     private func isValidAttribute(_ value: Any) -> Bool {
         return anyValueValidator.isPrimitiveValue(value: value) ||
-        anyValueValidator.isList(value: value)
+            anyValueValidator.isList(value: value)
     }
 
     private func logInvalidAttribute(name: String) {
-        Logger.i("Invalid attribute value for evaluation: \(name). " +
-                 "Types allowed are String, Number, Boolean and List")
+        Logger.i(
+            "Invalid attribute value for evaluation: \(name). " +
+                "Types allowed are String, Number, Boolean and List")
     }
 
     private func attributesStorage() -> AttributesStorage {
@@ -271,30 +327,43 @@ extension DefaultSplitClient {
 }
 
 // MARK: By Sets evaluation
+
 extension DefaultSplitClient {
     public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: nil)
     }
 
     public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String] {
-        return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: nil)
+        return treatmentManager.getTreatmentsByFlagSets(
+            flagSets: flagSets,
+            attributes: attributes,
+            evaluationOptions: nil)
     }
 
-    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: nil)
+    public func getTreatmentsWithConfigByFlagSet(
+        _ flagSet: String,
+        attributes: [String: Any]?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfigByFlagSet(
+            flagSet: flagSet,
+            attributes: attributes,
+            evaluationOptions: nil)
     }
 
-    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
-                                                  attributes: [String: Any]?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: nil)
+    public func getTreatmentsWithConfigByFlagSets(
+        _ flagSets: [String],
+        attributes: [String: Any]?) -> [String: SplitResult] {
+        return treatmentManager.getTreatmentsWithConfigByFlagSets(
+            flagSets: flagSets,
+            attributes: attributes,
+            evaluationOptions: nil)
     }
 }
 
 // MARK: Flush / Destroy
-extension DefaultSplitClient {
 
+extension DefaultSplitClient {
     private func syncFlush() {
-        if let clientManager = self.clientManager {
+        if let clientManager = clientManager {
             clientManager.flush()
         }
     }

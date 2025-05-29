@@ -7,18 +7,16 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class RuleBasedSegmentStorageTest: XCTestCase {
-
     private var persistentStorageStub: PersistentRuleBasedSegmentsStorageStub!
     private var ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage!
 
     override func setUp() {
         ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(
-            persistentStorage: createPersistentStorageStub()
-        )
+            persistentStorage: createPersistentStorageStub())
         ruleBasedSegmentsStorage.loadLocal()
     }
 
@@ -53,8 +51,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         let customMock = MockPersistentRuleBasedSegmentsStorage()
         let persistentStorageStub = PersistentRuleBasedSegmentsStorageStub(delegate: customMock)
         let storage = DefaultRuleBasedSegmentsStorage(
-            persistentStorage: persistentStorageStub
-        )
+            persistentStorage: persistentStorageStub)
         storage.loadLocal()
 
         // Initial state - verify segment_1 exists
@@ -67,10 +64,9 @@ class RuleBasedSegmentStorageTest: XCTestCase {
             segments: [
                 createSegment(name: "new_segment", trafficType: "new_tt"),
                 createSegment(name: "segment_2", trafficType: "tt_2"),
-                createSegment(name: "segment_1", trafficType: "tt_1", status: .archived)
+                createSegment(name: "segment_1", trafficType: "tt_1", status: .archived),
             ],
-            changeNumber: 456
-        )
+            changeNumber: 456)
 
         storage.loadLocal()
 
@@ -86,15 +82,13 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         customMock.updateSnapshotData(
             segments: [
                 createSegment(name: "active_segment", trafficType: "tt_active"),
-                createSegment(name: "archived_segment", trafficType: "tt_archived", status: .archived)
+                createSegment(name: "archived_segment", trafficType: "tt_archived", status: .archived),
             ],
-            changeNumber: 789
-        )
+            changeNumber: 789)
 
         persistentStorageStub = PersistentRuleBasedSegmentsStorageStub(delegate: customMock)
         let storage = DefaultRuleBasedSegmentsStorage(
-            persistentStorage: persistentStorageStub
-        )
+            persistentStorage: persistentStorageStub)
         storage.loadLocal()
 
         // Verify only active segments are loaded
@@ -102,7 +96,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         XCTAssertNotNil(storage.get(segmentName: "active_segment"))
         XCTAssertNil(storage.get(segmentName: "archived_segment"))
     }
-    
+
     func testGetExistingSegment() {
         let segment = ruleBasedSegmentsStorage.get(segmentName: "segment_1")
 
@@ -141,8 +135,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         _ = ruleBasedSegmentsStorage.update(
             toAdd: Set([unparsedSegment]),
             toRemove: Set(),
-            changeNumber: 456
-        )
+            changeNumber: 456)
 
         let segment = ruleBasedSegmentsStorage.get(segmentName: "unparsed_segment")
 
@@ -152,7 +145,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         XCTAssertEqual(segment?.changeNumber, 456)
         XCTAssertTrue(segment?.isParsed ?? false)
     }
-    
+
     func testContainsExistingSegments() {
         let result = ruleBasedSegmentsStorage.contains(segmentNames: ["segment_1", "segment_2"])
 
@@ -176,7 +169,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
         XCTAssertTrue(result)
     }
-    
+
     func testUpdateAddSegments() {
         let newSegment1 = createSegment(name: "new_segment_1", trafficType: "tt_new_1")
         let newSegment2 = createSegment(name: "new_segment_2", trafficType: "tt_new_2")
@@ -184,8 +177,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         let updated = ruleBasedSegmentsStorage.update(
             toAdd: Set([newSegment1, newSegment2]),
             toRemove: Set(),
-            changeNumber: 456
-        )
+            changeNumber: 456)
 
         XCTAssertTrue(updated)
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, 456)
@@ -206,8 +198,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         let updated = ruleBasedSegmentsStorage.update(
             toAdd: Set(),
             toRemove: Set([createSegment(name: "segment_1"), createSegment(name: "segment_2")]),
-            changeNumber: 456
-        )
+            changeNumber: 456)
 
         XCTAssertTrue(updated)
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, 456)
@@ -230,8 +221,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         let updated = ruleBasedSegmentsStorage.update(
             toAdd: Set([newSegment]),
             toRemove: Set([createSegment(name: "segment_1")]),
-            changeNumber: 456
-        )
+            changeNumber: 456)
 
         XCTAssertTrue(updated)
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, 456)
@@ -253,8 +243,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         let updated = ruleBasedSegmentsStorage.update(
             toAdd: Set(),
             toRemove: Set(),
-            changeNumber: 456
-        )
+            changeNumber: 456)
 
         XCTAssertFalse(updated)
         XCTAssertEqual(ruleBasedSegmentsStorage.changeNumber, 456)
@@ -282,7 +271,10 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         return persistentStorageStub
     }
 
-    private func createSegment(name: String, trafficType: String = "tt_default", status: Status = .active) -> RuleBasedSegment {
+    private func createSegment(
+        name: String,
+        trafficType: String = "tt_default",
+        status: Status = .active) -> RuleBasedSegment {
         let segment = RuleBasedSegment()
         segment.name = name
         segment.trafficTypeName = trafficType
@@ -297,7 +289,7 @@ private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegment
     private var segments = [
         createSegment(name: "segment_1", trafficType: "tt_1"),
         createSegment(name: "segment_2", trafficType: "tt_2"),
-        createSegment(name: "segment_3", trafficType: "tt_3")
+        createSegment(name: "segment_3", trafficType: "tt_3"),
     ]
     private var snapshotChangeNumber: Int64 = 123
 
@@ -319,7 +311,7 @@ private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegment
 
     func updateSnapshotData(segments: [RuleBasedSegment], changeNumber: Int64) {
         self.segments = segments
-        self.snapshotChangeNumber = changeNumber
+        snapshotChangeNumber = changeNumber
     }
 
     private static func createSegment(name: String, trafficType: String) -> RuleBasedSegment {

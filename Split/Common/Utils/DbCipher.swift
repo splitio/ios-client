@@ -6,21 +6,20 @@
 //  Copyright © 2023 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 struct DbCipher {
-
     private let dbHelper: CoreDataHelper
     private var fromCipher: Cipher?
     private var toCipher: Cipher?
     private var mustApply: Bool
 
-    init(cipherKey: Data,
-         from fromLevel: SplitEncryptionLevel,
-         to toLevel: SplitEncryptionLevel,
-         coreDataHelper: CoreDataHelper) throws {
-
+    init(
+        cipherKey: Data,
+        from fromLevel: SplitEncryptionLevel,
+        to toLevel: SplitEncryptionLevel,
+        coreDataHelper: CoreDataHelper) throws {
         self.mustApply = fromLevel != toLevel
         if !mustApply {
             throw GenericError.noCipheringNeeded
@@ -31,7 +30,7 @@ struct DbCipher {
         self.toCipher = createCipher(cipherKey: cipherKey, level: toLevel)
         if fromCipher == nil, toCipher == nil {
             Logger.v("Something happend when encrypting / decrypting cache")
-            mustApply = false
+            self.mustApply = false
             throw GenericError.couldNotCreateCiphers
         }
     }
@@ -55,7 +54,7 @@ struct DbCipher {
     }
 
     private func updateSplits() {
-        let items = dbHelper.fetch(entity: .split).compactMap { return $0 as? SplitEntity }
+        let items = dbHelper.fetch(entity: .split).compactMap { $0 as? SplitEntity }
         for item in items {
             let name = fromCipher?.decrypt(item.name) ?? item.name
             item.name = toCipher?.encrypt(name) ?? name
@@ -66,7 +65,7 @@ struct DbCipher {
     }
 
     private func updateRuleBasedSegments() {
-        let items = dbHelper.fetch(entity: .ruleBasedSegment).compactMap { return $0 as? RuleBasedSegmentEntity }
+        let items = dbHelper.fetch(entity: .ruleBasedSegment).compactMap { $0 as? RuleBasedSegmentEntity }
         for item in items {
             let name = fromCipher?.decrypt(item.name) ?? item.name
             item.name = toCipher?.encrypt(name) ?? name
@@ -77,7 +76,7 @@ struct DbCipher {
     }
 
     private func updateSegments(type entity: CoreDataEntity) {
-        let items = dbHelper.fetch(entity: entity).compactMap { return $0 as? MySegmentEntity }
+        let items = dbHelper.fetch(entity: entity).compactMap { $0 as? MySegmentEntity }
         for item in items {
             let userKey = fromCipher?.decrypt(item.userKey) ?? item.userKey
             item.userKey = toCipher?.encrypt(userKey) ?? userKey
@@ -88,7 +87,7 @@ struct DbCipher {
     }
 
     private func updateImpressions() {
-        let items = dbHelper.fetch(entity: .impression).compactMap { return $0 as? ImpressionEntity }
+        let items = dbHelper.fetch(entity: .impression).compactMap { $0 as? ImpressionEntity }
         for item in items {
             let testName = fromCipher?.decrypt(item.testName) ?? item.testName
             item.testName = toCipher?.encrypt(testName) ?? testName
@@ -99,7 +98,7 @@ struct DbCipher {
     }
 
     private func updateUniqueKeys() {
-        let items = dbHelper.fetch(entity: .uniqueKey).compactMap { return $0 as? UniqueKeyEntity }
+        let items = dbHelper.fetch(entity: .uniqueKey).compactMap { $0 as? UniqueKeyEntity }
         for item in items {
             let userKey = fromCipher?.decrypt(item.userKey) ?? item.userKey
             item.userKey = toCipher?.encrypt(userKey) ?? userKey
@@ -110,7 +109,7 @@ struct DbCipher {
     }
 
     private func updateAttributes() {
-        let items = dbHelper.fetch(entity: .attribute).compactMap { return $0 as? AttributeEntity }
+        let items = dbHelper.fetch(entity: .attribute).compactMap { $0 as? AttributeEntity }
         for item in items {
             let userKey = fromCipher?.decrypt(item.userKey) ?? item.userKey
             item.userKey = toCipher?.encrypt(userKey) ?? userKey
@@ -122,7 +121,7 @@ struct DbCipher {
 
     private func update(entity: CoreDataEntity) {
         let bodyField = "body"
-        let items = dbHelper.fetch(entity: entity).compactMap { return $0 as? NSManagedObject }
+        let items = dbHelper.fetch(entity: entity).compactMap { $0 as? NSManagedObject }
         for item in items {
             guard let body = item.value(forKey: bodyField) as? String else {
                 continue

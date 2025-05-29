@@ -6,8 +6,8 @@
 //  Copyright © 2025 Split. All rights reserved.
 //
 
-@testable import Split
 import Foundation
+@testable import Split
 
 class RuleBasedSegmentDaoStub: RuleBasedSegmentDao {
     var insertedSegments = [RuleBasedSegment]()
@@ -20,7 +20,7 @@ class RuleBasedSegmentDaoStub: RuleBasedSegmentDao {
     }
 
     func syncInsertOrUpdate(segment: RuleBasedSegment) {
-       insertOrUpdate(segment: segment)
+        insertOrUpdate(segment: segment)
     }
 
     func insertOrUpdate(segment: RuleBasedSegment) {

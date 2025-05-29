@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class SecureStorageStub: KeyValueStorage {
-
     var values = [String: String]()
     func set<T: Encodable>(item: T, for key: SecureItem) {
         do {
@@ -24,7 +23,6 @@ class SecureStorageStub: KeyValueStorage {
     func getString(item: SecureItem) -> String? {
         return values[item.toString()]
     }
-
 
     func get<T: Decodable>(item: SecureItem, type: T.Type) -> T? {
         guard let data = getString(item: item) else {

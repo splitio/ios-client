@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class SyncGuardianStub: SyncGuardian {
-
     var maxSyncPeriod: Int64 = 0
     func setMaxSyncPeriod(_ newPeriod: Int64) {
         maxSyncPeriod = newPeriod
@@ -27,5 +26,4 @@ class SyncGuardianStub: SyncGuardian {
         mustSyncCalled = true
         return mustSyncValue
     }
-
 }

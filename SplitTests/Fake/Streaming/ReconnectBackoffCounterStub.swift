@@ -15,7 +15,7 @@ class ReconnectBackoffCounterStub: ReconnectBackoffCounter {
     var nextRetryTime: Double = 1
 
     func getNextRetryTime() -> Double {
-        retryCallCount+=1
+        retryCallCount += 1
         return nextRetryTime
     }
 

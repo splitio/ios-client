@@ -9,7 +9,6 @@
 import Foundation
 
 @objc public class ServiceEndpoints: NSObject {
-
     private static let kSdkEndpoint = "https://sdk.split.io/api"
     static let kEventsEndpoint = "https://events.split.io/api"
     static let kAuthServiceEndpoint = "https://auth.split.io/api/v2"
@@ -57,9 +56,13 @@ import Foundation
         return message == "" ? nil : message
     }
 
-    private init(sdkEndpoint: URL, eventsEndpoint: URL, authServiceEndpoint: URL,
-                 streamingServiceEndpoint: URL, telemetryServiceEndpoint: URL, invalidEndpoints: [String]) {
-
+    private init(
+        sdkEndpoint: URL,
+        eventsEndpoint: URL,
+        authServiceEndpoint: URL,
+        streamingServiceEndpoint: URL,
+        telemetryServiceEndpoint: URL,
+        invalidEndpoints: [String]) {
         self.sdkEndpoint = sdkEndpoint
         self.eventsEndpoint = eventsEndpoint
         self.authServiceEndpoint = authServiceEndpoint
@@ -140,14 +143,13 @@ import Foundation
         }
 
         @objc public func build() -> ServiceEndpoints {
-
-            return ServiceEndpoints(sdkEndpoint: sdkUrl(),
-                                    eventsEndpoint: eventsUrl(),
-                                    authServiceEndpoint: authServiceUrl(),
-                                    streamingServiceEndpoint: streamingServiceUrl(),
-                                    telemetryServiceEndpoint: telemetryServiceUrl(),
-                                    invalidEndpoints: invalidEndpoints
-            )
+            return ServiceEndpoints(
+                sdkEndpoint: sdkUrl(),
+                eventsEndpoint: eventsUrl(),
+                authServiceEndpoint: authServiceUrl(),
+                streamingServiceEndpoint: streamingServiceUrl(),
+                telemetryServiceEndpoint: telemetryServiceUrl(),
+                invalidEndpoints: invalidEndpoints)
         }
 
         // Using dummy approach and validation array to
@@ -194,15 +196,15 @@ import Foundation
         }
 
         private func createUrl(string: String) -> URL? {
-#if swift(>=5.9)
-            if #available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *) {
-                return URL(string: string, encodingInvalidCharacters: false)
-            } else {
+            #if swift(>=5.9)
+                if #available(iOS 17.0, macOS 14.0, watchOS 10.0, tvOS 17.0, *) {
+                    return URL(string: string, encodingInvalidCharacters: false)
+                } else {
+                    return URL(string: string)
+                }
+            #else
                 return URL(string: string)
-            }
-#else
-            return URL(string: string)
-#endif
+            #endif
         }
 
         private func dummyEndpoint() -> URL {

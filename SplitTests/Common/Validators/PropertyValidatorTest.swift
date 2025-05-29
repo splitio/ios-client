@@ -7,27 +7,25 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class PropertyValidatorTest: XCTestCase {
-
     var propertyValidator: DefaultPropertyValidator!
     var anyValueValidator: AnyValueValidatorStub!
     var validationLogger: ValidationMessageLoggerStub!
-    
+
     override func setUp() {
         anyValueValidator = AnyValueValidatorStub()
         validationLogger = ValidationMessageLoggerStub()
         propertyValidator = DefaultPropertyValidator(
             anyValueValidator: anyValueValidator,
-            validationLogger: validationLogger
-        )
+            validationLogger: validationLogger)
     }
 
     func testValidateNilProperties() {
         let result = propertyValidator.validate(properties: nil, initialSizeInBytes: 100, validationTag: "test")
-        
+
         XCTAssertTrue(result.isValid)
         XCTAssertNil(result.validatedProperties)
         XCTAssertEqual(result.sizeInBytes, 100)
@@ -36,7 +34,7 @@ class PropertyValidatorTest: XCTestCase {
 
     func testValidateEmptyProperties() {
         let result = propertyValidator.validate(properties: [:], initialSizeInBytes: 100, validationTag: "test")
-        
+
         XCTAssertTrue(result.isValid)
         XCTAssertNotNil(result.validatedProperties)
         XCTAssertEqual(result.validatedProperties?.count, 0)
@@ -46,7 +44,10 @@ class PropertyValidatorTest: XCTestCase {
 
     func testValidateValidProperties() {
         let testProperties = ["key1": "value1", "key2": 123, "key3": true] as [String: Any]
-        let result = propertyValidator.validate(properties: testProperties, initialSizeInBytes: 100, validationTag: "test")
+        let result = propertyValidator.validate(
+            properties: testProperties,
+            initialSizeInBytes: 100,
+            validationTag: "test")
 
         XCTAssertTrue(result.isValid)
         XCTAssertNotNil(result.validatedProperties)
@@ -57,11 +58,14 @@ class PropertyValidatorTest: XCTestCase {
 
     func testValidateTooManyProperties() {
         var testProperties = [String: Any]()
-        for i in 0...301 {
+        for i in 0 ... 301 {
             testProperties["\(i)"] = "\(i)"
         }
 
-        let result = propertyValidator.validate(properties: testProperties, initialSizeInBytes: 0, validationTag: "test")
+        let result = propertyValidator.validate(
+            properties: testProperties,
+            initialSizeInBytes: 0,
+            validationTag: "test")
 
         // Validation should still pass, but a warning should be logged
         XCTAssertTrue(result.isValid)
@@ -80,7 +84,10 @@ class PropertyValidatorTest: XCTestCase {
         let largeValue = String(repeating: "a", count: propertySize)
         let testProperties = ["largeKey": largeValue]
 
-        let result = propertyValidator.validate(properties: testProperties, initialSizeInBytes: initialSize, validationTag: "test")
+        let result = propertyValidator.validate(
+            properties: testProperties,
+            initialSizeInBytes: initialSize,
+            validationTag: "test")
 
         // Validation should fail due to size limit
         XCTAssertFalse(result.isValid)

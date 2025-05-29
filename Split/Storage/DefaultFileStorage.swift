@@ -8,7 +8,6 @@
 import Foundation
 
 class DefaultFileStorage: FileStorage {
-
     var dataFolderUrl: URL?
     let dataFolderName: String
 
@@ -48,8 +47,7 @@ class DefaultFileStorage: FileStorage {
             do {
                 let fileURL = dataFolderUrl.appendingPathComponent(elementId)
                 try FileManager.default.removeItem(at: fileURL)
-            } catch {
-            }
+            } catch {}
         }
     }
 
@@ -62,17 +60,17 @@ class DefaultFileStorage: FileStorage {
     }
 
     private func getDataFolder() -> URL? {
-
         if dataFolderUrl != nil {
             return dataFolderUrl
         }
 
         let fileManager = FileManager.default
         do {
-            let cachesDirectory = try fileManager.url(for: .cachesDirectory,
-                                                      in: .userDomainMask,
-                                                      appropriateFor: nil,
-                                                      create: false)
+            let cachesDirectory = try fileManager.url(
+                for: .cachesDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: false)
             dataFolderUrl = cachesDirectory.appendingPathComponent(dataFolderName)
             createDataFolderIfNecessary()
         } catch {
@@ -83,7 +81,7 @@ class DefaultFileStorage: FileStorage {
 
     private func createDataFolderIfNecessary() {
         let fileManager = FileManager.default
-        if let dataFolderUrl = self.dataFolderUrl, !fileManager.fileExists(atPath: dataFolderUrl.path) {
+        if let dataFolderUrl = dataFolderUrl, !fileManager.fileExists(atPath: dataFolderUrl.path) {
             do {
                 try fileManager.createDirectory(at: dataFolderUrl, withIntermediateDirectories: true, attributes: nil)
             } catch {

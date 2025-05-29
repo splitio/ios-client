@@ -8,21 +8,21 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class HttpMySegmentsFetcherTest: XCTestCase {
-    
     var restClient: RestClientStub!
     var fetcher: HttpMySegmentsFetcher!
     var telemetryProducer: TelemetryStorageStub!
     override func setUp() {
         restClient = RestClientStub()
         telemetryProducer = TelemetryStorageStub()
-        fetcher = DefaultHttpMySegmentsFetcher(restClient: restClient,
-                                               syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
+        fetcher = DefaultHttpMySegmentsFetcher(
+            restClient: restClient,
+            syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
-    
+
     func testServerNoReachable() {
         restClient.isServerAvailable = false
         var isError = false
@@ -35,13 +35,14 @@ class HttpMySegmentsFetcherTest: XCTestCase {
         XCTAssertEqual(0, telemetryProducer.recordHttpLastSyncCallCount)
         XCTAssertEqual(0, telemetryProducer.recordHttpLatencyCallCount)
     }
-    
+
     func testSuccessFulFetch() throws {
         restClient.isServerAvailable = true
         let change = SegmentChange(segments: ["s1", "s2", "s3"], changeNumber: 100)
         let largeChange = SegmentChange(segments: ["s2", "s4"], changeNumber: 200)
-        let allChange = AllSegmentsChange(mySegmentsChange: change,
-                                          myLargeSegmentsChange: largeChange)
+        let allChange = AllSegmentsChange(
+            mySegmentsChange: change,
+            myLargeSegmentsChange: largeChange)
         restClient.update(segments: [allChange])
 
         let c = try fetcher.execute(userKey: "user", till: nil, headers: nil)
@@ -57,4 +58,3 @@ class HttpMySegmentsFetcherTest: XCTestCase {
         XCTAssertEqual(0, telemetryProducer.recordHttpErrorCallCount)
     }
 }
-

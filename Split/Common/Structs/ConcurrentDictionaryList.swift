@@ -9,9 +9,9 @@
 import Foundation
 
 class ConcurrentDictionaryList<K: Hashable, T> {
-
-    private var queue = DispatchQueue(label: "split-concurrent-dictionary-list",
-                                      attributes: .concurrent)
+    private var queue = DispatchQueue(
+        label: "split-concurrent-dictionary-list",
+        attributes: .concurrent)
     private var items = [K: [T]]()
 
     var all: [K: [T]] {
@@ -23,7 +23,7 @@ class ConcurrentDictionaryList<K: Hashable, T> {
     }
 
     var count: Int {
-        var count: Int = 0
+        var count = 0
         queue.sync {
             for (_, values) in items {
                 count += values.count

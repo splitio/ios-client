@@ -7,8 +7,8 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(ImpressionEntity)
 class ImpressionEntity: NSManagedObject {

@@ -16,7 +16,6 @@ protocol PersistentRuleBasedSegmentsStorage {
 }
 
 class DefaultPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage {
-
     private let ruleBasedSegmentDao: RuleBasedSegmentDao
     private let generalInfoStorage: GeneralInfoStorage
 
@@ -31,7 +30,7 @@ class DefaultPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStor
         }
 
         if !toRemove.isEmpty {
-            let segmentNames = toRemove.compactMap { return $0.name }
+            let segmentNames = toRemove.compactMap { $0.name }
             if !segmentNames.isEmpty {
                 ruleBasedSegmentDao.delete(segmentNames)
             }
@@ -43,8 +42,7 @@ class DefaultPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStor
     func getSnapshot() -> RuleBasedSegmentsSnapshot {
         return RuleBasedSegmentsSnapshot(
             changeNumber: generalInfoStorage.getRuleBasedSegmentsChangeNumber(),
-            segments: ruleBasedSegmentDao.getAll()
-        )
+            segments: ruleBasedSegmentDao.getAll())
     }
 
     func clear() {

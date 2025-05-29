@@ -45,7 +45,6 @@ protocol Synchronizer: ImpressionLogger {
 }
 
 class DefaultSynchronizer: Synchronizer {
-
     private let splitConfig: SplitClientConfig
     private let splitStorageContainer: SplitStorageContainer
 
@@ -70,16 +69,16 @@ class DefaultSynchronizer: Synchronizer {
 
     private var isDestroyed = Atomic(false)
 
-    init(splitConfig: SplitClientConfig,
-         defaultUserKey: String,
-         featureFlagsSynchronizer: FeatureFlagsSynchronizer,
-         telemetrySynchronizer: TelemetrySynchronizer?,
-         byKeyFacade: ByKeyFacade,
-         splitStorageContainer: SplitStorageContainer,
-         impressionsTracker: ImpressionsTracker,
-         eventsSynchronizer: EventsSynchronizer,
-         splitEventsManager: SplitEventsManager) {
-
+    init(
+        splitConfig: SplitClientConfig,
+        defaultUserKey: String,
+        featureFlagsSynchronizer: FeatureFlagsSynchronizer,
+        telemetrySynchronizer: TelemetrySynchronizer?,
+        byKeyFacade: ByKeyFacade,
+        splitStorageContainer: SplitStorageContainer,
+        impressionsTracker: ImpressionsTracker,
+        eventsSynchronizer: EventsSynchronizer,
+        splitEventsManager: SplitEventsManager) {
         self.defaultUserKey = defaultUserKey
         self.splitConfig = splitConfig
         self.splitStorageContainer = splitStorageContainer
@@ -94,7 +93,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func loadSplitsFromCache() {
-        self.featureFlagsSynchronizer.load()
+        featureFlagsSynchronizer.load()
     }
 
     func loadMySegmentsFromCache() {
@@ -135,7 +134,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeMySegments() {
-        self.synchronizeMySegments(forKey: defaultUserKey)
+        synchronizeMySegments(forKey: defaultUserKey)
     }
 
     func synchronizeMySegments(forKey key: String) {
@@ -144,9 +143,10 @@ class DefaultSynchronizer: Synchronizer {
 
     func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64) {
         runIfSyncEnabled {
-            self.byKeySynchronizer.forceMySegmentsSync(forKey: key,
-                                                       changeNumbers: changeNumbers,
-                                                       delay: delay)
+            self.byKeySynchronizer.forceMySegmentsSync(
+                forKey: key,
+                changeNumbers: changeNumbers,
+                delay: delay)
         }
     }
 
@@ -241,7 +241,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func flush() {
-        flushQueue.async {  [weak self] in
+        flushQueue.async { [weak self] in
             guard let self = self else { return }
 
             self.impressionsTracker.flush()
@@ -259,7 +259,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeSplits() {
-        self.featureFlagsSynchronizer.synchronize()
+        featureFlagsSynchronizer.synchronize()
     }
 
     func disableSdk() {
@@ -288,16 +288,18 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     // MARK: Private
+
     private func recordSyncModeEvent(_ mode: Int64) {
         if splitConfig.streamingEnabled && !isDestroyed.value {
-            telemetryProducer?.recordStreamingEvent(type: .syncModeUpdate,
-                                                    data: mode)
+            telemetryProducer?.recordStreamingEvent(
+                type: .syncModeUpdate,
+                data: mode)
         }
     }
 
     @inline(__always)
     private func runIfSyncEnabled(action: () -> Void) {
-        if self.splitConfig.syncEnabled, !self.isSdkDisabled.value {
+        if splitConfig.syncEnabled, !isSdkDisabled.value {
             action()
         }
     }

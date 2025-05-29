@@ -13,19 +13,18 @@ protocol SseNotificationProcessor {
 }
 
 class DefaultSseNotificationProcessor: SseNotificationProcessor {
-
     private let sseNotificationParser: SseNotificationParser
     private let splitsUpdateWorker: SplitsUpdateWorker
     private let mySegmentsUpdateWorker: SegmentsUpdateWorker
     private let myLargeSegmentsUpdateWorker: SegmentsUpdateWorker
     private let splitKillWorker: SplitKillWorker
 
-    init (notificationParser: SseNotificationParser,
-          splitsUpdateWorker: SplitsUpdateWorker,
-          splitKillWorker: SplitKillWorker,
-          mySegmentsUpdateWorker: SegmentsUpdateWorker,
-          myLargeSegmentsUpdateWorker: SegmentsUpdateWorker) {
-
+    init(
+        notificationParser: SseNotificationParser,
+        splitsUpdateWorker: SplitsUpdateWorker,
+        splitKillWorker: SplitKillWorker,
+        mySegmentsUpdateWorker: SegmentsUpdateWorker,
+        myLargeSegmentsUpdateWorker: SegmentsUpdateWorker) {
         self.sseNotificationParser = notificationParser
         self.splitsUpdateWorker = splitsUpdateWorker
         self.mySegmentsUpdateWorker = mySegmentsUpdateWorker
@@ -47,14 +46,15 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
         case .splitKill:
             processSplitKill(notification)
         default:
-            Logger.e("Unknown notification arrived: \(notification.jsonData ?? "null" )")
+            Logger.e("Unknown notification arrived: \(notification.jsonData ?? "null")")
         }
     }
 
     private func processTargetingRuleUpdate(_ notification: IncomingNotification) {
         if let jsonData = notification.jsonData {
             do {
-                try splitsUpdateWorker.process(notification:
+                try splitsUpdateWorker.process(
+                    notification:
                     sseNotificationParser.parseTargetingRuleNotification(jsonString: jsonData, type: notification.type))
             } catch {
                 Logger.e("Error while parsing targeting rule update notification: \(error.localizedDescription)")
@@ -63,16 +63,16 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
     }
 
     private func processSegmentsUpdate(_ notification: IncomingNotification, updateWorker: SegmentsUpdateWorker) {
-
         if let jsonData = notification.jsonData {
             do {
                 try updateWorker.process(
-                    notification: sseNotificationParser.parseMembershipsUpdate(jsonString: jsonData,
-                                                                               type: notification.type)
-                )
+                    notification: sseNotificationParser.parseMembershipsUpdate(
+                        jsonString: jsonData,
+                        type: notification.type))
             } catch {
-                Logger.e("Error while parsing \(notification.type) update notification:" +
-                         " \(error.localizedDescription)")
+                Logger.e(
+                    "Error while parsing \(notification.type) update notification:" +
+                        " \(error.localizedDescription)")
             }
         }
     }
@@ -80,7 +80,8 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
     private func processSplitKill(_ notification: IncomingNotification) {
         if let jsonData = notification.jsonData {
             do {
-                try splitKillWorker.process(notification:
+                try splitKillWorker.process(
+                    notification:
                     sseNotificationParser.parseSplitKill(jsonString: jsonData))
             } catch {
                 Logger.e("Error while parsing split kill notification: \(error.localizedDescription)")

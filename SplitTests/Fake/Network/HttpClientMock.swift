@@ -11,7 +11,6 @@ import Foundation
 import XCTest
 
 class HttpClientMock: HttpClient {
-
     var throwOnSend = false
     var httpDataRequest: HttpDataRequest!
     var httpStreamRequest: HttpStreamRequest!
@@ -35,17 +34,21 @@ class HttpClientMock: HttpClient {
         }
     }
 
-    func sendRequest(endpoint: Endpoint, parameters: HttpParameters?,
-                     headers: [String: String]?, body: Data?) throws -> HttpDataRequest {
-
+    func sendRequest(
+        endpoint: Endpoint,
+        parameters: HttpParameters?,
+        headers: [String: String]?,
+        body: Data?) throws -> HttpDataRequest {
         if throwOnSend {
             throw HttpError.unknown(code: -1, message: "throw on send mock exception")
         }
         return httpDataRequest
     }
 
-    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?,
-                           headers: [String: String]?) throws -> HttpStreamRequest {
+    func sendStreamRequest(
+        endpoint: Endpoint,
+        parameters: HttpParameters?,
+        headers: [String: String]?) throws -> HttpStreamRequest {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             if let exp = self.streamReqExp {
                 exp.fulfill()

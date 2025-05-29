@@ -10,14 +10,13 @@ import Foundation
 @testable import Split
 
 class HttpTelemetryConfigRecorderStub: HttpTelemetryConfigRecorder {
-
     var configSent: TelemetryConfig?
     var errorOccurredCallCount = -1
     var executeCallCount = 0
 
     func execute(_ config: TelemetryConfig) throws {
         configSent = config
-        executeCallCount+=1
+        executeCallCount += 1
         if errorOccurredCallCount >= executeCallCount {
             throw HttpError.unknown(code: -1, message: "something happend")
         }

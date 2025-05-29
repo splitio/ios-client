@@ -26,7 +26,6 @@ struct SplitApiFacade {
 }
 
 class SplitApiFacadeBuilder {
-
     private var userKey: String?
     private var splitConfig: SplitClientConfig?
     private var eventsManager: SplitEventsManager?
@@ -62,12 +61,12 @@ class SplitApiFacadeBuilder {
     }
 
     func setStreamingHttpClient(_ httpClient: HttpClient) -> SplitApiFacadeBuilder {
-        self.streamingHttpClient = httpClient
+        streamingHttpClient = httpClient
         return self
     }
 
     func setSplitsQueryString(_ queryString: String) -> SplitApiFacadeBuilder {
-        self.splitsQueryString = queryString
+        splitsQueryString = queryString
         return self
     }
 
@@ -77,71 +76,81 @@ class SplitApiFacadeBuilder {
     }
 
     func build() throws -> SplitApiFacade {
-
-        guard let restClient = self.restClient else {
+        guard let restClient = restClient else {
             throw GenericError.nullValueInApiFacade
         }
 
         let splitsFetcher
-            = DefaultHttpSplitFetcher(restClient: restClient,
-                                      syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+            = DefaultHttpSplitFetcher(
+                restClient: restClient,
+                syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
         let mySegmentsFetcher: HttpMySegmentsFetcher
-            = DefaultHttpMySegmentsFetcher(restClient: restClient,
-                                           syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+            = DefaultHttpMySegmentsFetcher(
+                restClient: restClient,
+                syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
         let eventsRecorder
-            = DefaultHttpEventsRecorder(restClient: restClient,
-                                        syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+            = DefaultHttpEventsRecorder(
+                restClient: restClient,
+                syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
         let sseAuthenticator
-            = DefaultSseAuthenticator(restClient: restClient,
-                                      syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+            = DefaultSseAuthenticator(
+                restClient: restClient,
+                syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
         var telemetryConfigRecorder: HttpTelemetryConfigRecorder?
         var telemetryStatsRecorder: HttpTelemetryStatsRecorder?
         if splitConfig?.isTelemetryEnabled ?? false {
             telemetryConfigRecorder
-            = DefaultHttpTelemetryConfigRecorder(restClient: restClient,
-                                                 syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+                = DefaultHttpTelemetryConfigRecorder(
+                    restClient: restClient,
+                    syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
 
             telemetryStatsRecorder
-            = DefaultHttpTelemetryStatsRecorder(restClient: restClient,
-                                                syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+                = DefaultHttpTelemetryStatsRecorder(
+                    restClient: restClient,
+                    syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
         }
 
-        return SplitApiFacade(splitsFetcher: splitsFetcher, mySegmentsFetcher: mySegmentsFetcher,
-                              impressionsRecorder: getImpressionsRecorder(restClient: restClient),
-                              impressionsCountRecorder: getImpressionsCountRecorder(restClient: restClient),
-                              eventsRecorder: eventsRecorder, streamingHttpClient: self.streamingHttpClient,
-                              sseAuthenticator: sseAuthenticator,
-                              telemetryConfigRecorder: telemetryConfigRecorder,
-                              telemetryStatsRecorder: telemetryStatsRecorder,
-                              uniqueKeysRecorder: getUniqueKeysRecorder(restClient: restClient))
+        return SplitApiFacade(
+            splitsFetcher: splitsFetcher,
+            mySegmentsFetcher: mySegmentsFetcher,
+            impressionsRecorder: getImpressionsRecorder(restClient: restClient),
+            impressionsCountRecorder: getImpressionsCountRecorder(restClient: restClient),
+            eventsRecorder: eventsRecorder,
+            streamingHttpClient: streamingHttpClient,
+            sseAuthenticator: sseAuthenticator,
+            telemetryConfigRecorder: telemetryConfigRecorder,
+            telemetryStatsRecorder: telemetryStatsRecorder,
+            uniqueKeysRecorder: getUniqueKeysRecorder(restClient: restClient))
     }
 
     private func getImpressionsRecorder(restClient: RestClientImpressions) -> HttpImpressionsRecorder? {
         if impressionsMode() == .optimized ||
             impressionsMode() == .debug {
-            return DefaultHttpImpressionsRecorder(restClient: restClient,
-                                             syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+            return DefaultHttpImpressionsRecorder(
+                restClient: restClient,
+                syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
         }
         return nil
     }
 
     private func getImpressionsCountRecorder(restClient: RestClientImpressionsCount) -> HttpImpressionsCountRecorder {
         let syncHelper = DefaultSyncHelper(telemetryProducer: telemetryStorage)
-        return  DefaultHttpImpressionsCountRecorder(restClient: restClient,
-                                                  syncHelper: syncHelper)
+        return DefaultHttpImpressionsCountRecorder(
+            restClient: restClient,
+            syncHelper: syncHelper)
     }
 
     private func getUniqueKeysRecorder(restClient: RestClientUniqueKeys) -> HttpUniqueKeysRecorder {
-        return DefaultHttpUniqueKeysRecorder(restClient: restClient,
-                                                 syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+        return DefaultHttpUniqueKeysRecorder(
+            restClient: restClient,
+            syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
     }
 
     private func impressionsMode() -> ImpressionsMode {
         return splitConfig?.$impressionsMode ?? .optimized
     }
-
 }

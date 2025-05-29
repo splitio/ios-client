@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class PeriodicRecorderWorkerStub: PeriodicRecorderWorker {
-
     var startCalled = false
     var resumeCalled = false
     var pauseCalled = false
@@ -36,6 +35,4 @@ class PeriodicRecorderWorkerStub: PeriodicRecorderWorker {
     func destroy() {
         destroyCalled = true
     }
-
-
 }

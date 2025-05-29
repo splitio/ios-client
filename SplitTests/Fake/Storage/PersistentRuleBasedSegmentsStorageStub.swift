@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage {
-
     var updateCalled = false
     var clearCalled = false
     var changeNumberCalled = false
@@ -32,8 +31,7 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
     convenience init(database: SplitDatabase, generalInfoStorage: GeneralInfoStorage) {
         self.init(delegate: DefaultPersistentRuleBasedSegmentsStorage(
             database: database,
-            generalInfoStorage: generalInfoStorage
-        ))
+            generalInfoStorage: generalInfoStorage))
     }
 
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) {
@@ -41,7 +39,7 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
         lastAddedSegments = toAdd
         lastRemovedSegments = toRemove
         lastChangeNumber = changeNumber
-        
+
         delegate?.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
     }
 

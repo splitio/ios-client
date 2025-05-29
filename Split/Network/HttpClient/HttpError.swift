@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct InternalHttpErrorCode {
+enum InternalHttpErrorCode {
     static let pinningValidationFail = 1
     static let noCode = -1
 }
@@ -24,14 +24,15 @@ enum HttpError: Error, Equatable {
 }
 
 // MARK: Get message
+
 extension HttpError {
     var code: Int {
         switch self {
-        case .clientRelated(let code, _):
+        case let .clientRelated(code, _):
             return code
-        case .unknown(let code, _):
+        case let .unknown(code, _):
             return code
-        case .outdatedProxyError(let code, _):
+        case let .outdatedProxyError(code, _):
             return code
         default:
             return -1
@@ -42,7 +43,7 @@ extension HttpError {
     /// - Returns: true if this is an outdated proxy error, false otherwise
     func isProxyOutdatedError() -> Bool {
         switch self {
-        case .outdatedProxyError(_, _):
+        case .outdatedProxyError:
             return true
         default:
             return false
@@ -55,22 +56,22 @@ extension HttpError {
             return "Server is unavailable"
         case .clientRelated:
             return "Authentication error"
-        case .couldNotCreateRequest(let message):
+        case let .couldNotCreateRequest(message):
             return message
-        case .unknown( _, let message):
+        case let .unknown(_, message):
             return message
         case .requestTimeOut:
             return "Request Time Out"
         case .uriTooLong:
             return "Uri too long"
-        case .outdatedProxyError(let code, let spec):
+        case let .outdatedProxyError(code, spec):
             return "Outdated proxy error with spec version \(spec) (HTTP \(code))"
         }
     }
 
     var internalCode: Int {
         switch self {
-        case .clientRelated(_, let internalCode):
+        case let .clientRelated(_, internalCode):
             return internalCode
         default:
             return InternalHttpErrorCode.noCode

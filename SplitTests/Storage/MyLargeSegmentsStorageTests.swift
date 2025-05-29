@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class MyLargeSegmentsStorageTests: XCTestCase {
-
     var persistentStorage: PersistentMySegmentsStorageMock!
     var mySegmentsStorage: MySegmentsStorage!
     var userKey = "dummyKey"
@@ -52,7 +51,7 @@ class MyLargeSegmentsStorageTests: XCTestCase {
     }
 
     func testUpdateSegments() {
-        persistentStorage.persistedSegments = [userKey : dummyChange]
+        persistentStorage.persistedSegments = [userKey: dummyChange]
         mySegmentsStorage.loadLocal(forKey: userKey)
         let changeNum = mySegmentsStorage.changeNumber(forKey: userKey)
         let segments = mySegmentsStorage.getAll(forKey: userKey)
@@ -68,8 +67,8 @@ class MyLargeSegmentsStorageTests: XCTestCase {
         XCTAssertTrue(segments.contains("s3"))
 
         XCTAssertEqual(2, persistedSegments?.segments.count)
-        XCTAssertTrue(persistedSegments?.segments.compactMap { $0.name } .contains("n1") ?? false)
-        XCTAssertTrue(persistedSegments?.segments.compactMap { $0.name } .contains("n2") ?? false)
+        XCTAssertTrue(persistedSegments?.segments.compactMap { $0.name }.contains("n1") ?? false)
+        XCTAssertTrue(persistedSegments?.segments.compactMap { $0.name }.contains("n2") ?? false)
 
         XCTAssertEqual(2, newSegments.count)
         XCTAssertTrue(newSegments.contains("n1"))
@@ -79,9 +78,9 @@ class MyLargeSegmentsStorageTests: XCTestCase {
     }
 
     func testUpdateEmptySegments() {
-        persistentStorage.persistedSegments = [userKey : dummyChange]
+        persistentStorage.persistedSegments = [userKey: dummyChange]
         mySegmentsStorage.loadLocal(forKey: userKey)
-        
+
         let changeNum = mySegmentsStorage.changeNumber(forKey: userKey)
         let segments = mySegmentsStorage.getAll(forKey: userKey)
 
@@ -102,8 +101,9 @@ class MyLargeSegmentsStorageTests: XCTestCase {
 
     func testClear() {
         let otherKey = "otherKey"
-        persistentStorage.persistedSegments = [userKey : dummyChange,
-                                               otherKey: SegmentChange(segments: ["s1"], changeNumber: 44)
+        persistentStorage.persistedSegments = [
+            userKey: dummyChange,
+            otherKey: SegmentChange(segments: ["s1"], changeNumber: 44),
         ]
 
         mySegmentsStorage.loadLocal(forKey: userKey)
@@ -114,7 +114,7 @@ class MyLargeSegmentsStorageTests: XCTestCase {
 
         let newChangeNum = mySegmentsStorage.changeNumber(forKey: userKey)
         let newSegments = mySegmentsStorage.getAll(forKey: userKey)
-        
+
         let otherChangeNum = mySegmentsStorage.changeNumber(forKey: otherKey)
         let otherSegments = mySegmentsStorage.getAll(forKey: otherKey)
         let persistedSegments = persistentStorage.getSnapshot(forKey: userKey)
@@ -134,11 +134,11 @@ class MyLargeSegmentsStorageTests: XCTestCase {
         XCTAssertTrue(otherSegments.contains("s1"))
 
         XCTAssertEqual(1, otherPersistedSegments?.segments.count)
-        XCTAssertTrue(otherPersistedSegments?.segments.compactMap { $0.name } .contains("s1") ?? false)
+        XCTAssertTrue(otherPersistedSegments?.segments.compactMap { $0.name }.contains("s1") ?? false)
     }
 
     func testChangeNumber() {
-        persistentStorage.persistedSegments = [userKey : dummyChange]
+        persistentStorage.persistedSegments = [userKey: dummyChange]
         mySegmentsStorage.loadLocal(forKey: userKey)
         let cn1 = mySegmentsStorage.changeNumber(forKey: userKey)
 
@@ -151,8 +151,9 @@ class MyLargeSegmentsStorageTests: XCTestCase {
 
     func testClearAll() {
         let otherKey = "otherKey"
-        persistentStorage.persistedSegments = [userKey : dummyChange,
-                                               otherKey: SegmentChange(segments: ["s1"], changeNumber: 44)
+        persistentStorage.persistedSegments = [
+            userKey: dummyChange,
+            otherKey: SegmentChange(segments: ["s1"], changeNumber: 44),
         ]
         mySegmentsStorage.loadLocal(forKey: userKey)
         mySegmentsStorage.loadLocal(forKey: otherKey)

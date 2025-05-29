@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 struct ForceMySegmentsParams {
     let segmentsCn: SegmentsChangeNumber
@@ -103,15 +103,17 @@ class SynchronizerStub: Synchronizer {
     func synchronizeMySegments(forKey key: String) {
         synchronizeMySegmentsForKeyCalled[key] = true
     }
-    
+
     var forceMySegmentsSyncForKeyCalled = [String: Bool]()
     var forceMySegmentsCalledParams = [String: ForceMySegmentsParams]()
-    func forceMySegmentsSync(forKey key: String,
-                             changeNumbers: SegmentsChangeNumber,
-                             delay: Int64) {
+    func forceMySegmentsSync(
+        forKey key: String,
+        changeNumbers: SegmentsChangeNumber,
+        delay: Int64) {
         forceMySegmentsSyncForKeyCalled[key] = true
-        forceMySegmentsCalledParams[key] = ForceMySegmentsParams(segmentsCn:changeNumbers,
-                                                                 delay: delay)
+        forceMySegmentsCalledParams[key] = ForceMySegmentsParams(
+            segmentsCn: changeNumbers,
+            delay: delay)
 
         if let exp = forceMySegmentsSyncExp[key] {
             exp.fulfill()
@@ -133,7 +135,6 @@ class SynchronizerStub: Synchronizer {
             exp.fulfill()
         }
     }
-
 
     func syncAll() {
         syncAllCalled = true

@@ -18,15 +18,15 @@ protocol TelemetrySynchronizer {
 }
 
 class DefaultTelemetrySynchronizer: TelemetrySynchronizer {
-
     private let configRecorderWorker: RecorderWorker
     private let statsRecorderWorker: RecorderWorker
     private let periodicStatsRecorderWorker: PeriodicRecorderWorker
     private let syncQueue = DispatchQueue.general
 
-    init(configRecorderWorker: RecorderWorker,
-         statsRecorderWorker: RecorderWorker,
-         periodicStatsRecorderWorker: PeriodicRecorderWorker) {
+    init(
+        configRecorderWorker: RecorderWorker,
+        statsRecorderWorker: RecorderWorker,
+        periodicStatsRecorderWorker: PeriodicRecorderWorker) {
         self.configRecorderWorker = configRecorderWorker
         self.statsRecorderWorker = statsRecorderWorker
         self.periodicStatsRecorderWorker = periodicStatsRecorderWorker
@@ -60,5 +60,4 @@ class DefaultTelemetrySynchronizer: TelemetrySynchronizer {
         periodicStatsRecorderWorker.stop()
         periodicStatsRecorderWorker.destroy()
     }
-
 }

@@ -7,18 +7,16 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class EndpointTest: XCTestCase {
-
     static let kTestUrlString = "https://www.dummy-split.com"
     static let kTestPath = "splits"
-    let  kTestUrl = URL(string: kTestUrlString)!
+    let kTestUrl = URL(string: kTestUrlString)!
     let kFullUrl = URL(string: "\(kTestUrlString)/\(kTestPath)")!
 
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testDefaultEndpointBuild() {
         let endpoint = Endpoint.builder(baseUrl: kTestUrl, path: Self.kTestPath).build()
@@ -29,9 +27,9 @@ class EndpointTest: XCTestCase {
     }
 
     func testPostEndpointBuild() {
-    let endpoint = Endpoint.builder(baseUrl: kTestUrl, path: Self.kTestPath)
-        .set(method: .post)
-        .build()
+        let endpoint = Endpoint.builder(baseUrl: kTestUrl, path: Self.kTestPath)
+            .set(method: .post)
+            .build()
 
         XCTAssertEqual(HttpMethod.post, endpoint.method)
         XCTAssertEqual(kFullUrl, endpoint.url)
@@ -40,7 +38,7 @@ class EndpointTest: XCTestCase {
     func testHeadersEndpointBuild() {
         let endpoint = Endpoint.builder(baseUrl: kTestUrl, path: Self.kTestPath)
             .add(headers: ["header1": "value1", "header2": "value2"])
-            .add(header: "header3", withValue:"value3")
+            .add(header: "header3", withValue: "value3")
             .build()
 
         XCTAssertEqual(3, endpoint.headers.count)
@@ -50,6 +48,5 @@ class EndpointTest: XCTestCase {
         XCTAssertEqual(kFullUrl, endpoint.url)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }

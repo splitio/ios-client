@@ -8,19 +8,18 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class MySegmentsV2PayloaDecoderTest: XCTestCase {
-
     let decoder = DefaultSegmentsPayloadDecoder()
     let gzip = Gzip()
     let zlib = Zlib()
 
     func testKeyListGzipPayload() throws {
-
-        let payload = try decoder.decodeAsString(payload: TestingData.encodedKeyListPayloadGzip(),
-                                                 compressionUtil: gzip)
+        let payload = try decoder.decodeAsString(
+            payload: TestingData.encodedKeyListPayloadGzip(),
+            compressionUtil: gzip)
 
         let keyList = try decoder.parseKeyList(jsonString: payload)
 
@@ -33,21 +32,19 @@ class MySegmentsV2PayloaDecoderTest: XCTestCase {
         XCTAssertTrue(added.contains(8482869187405483569))
         XCTAssertTrue(removed.contains(8031872927333060586))
         XCTAssertTrue(removed.contains(6829471020522910836))
-
     }
 
     func testBoundedGzipPayload() throws {
         let payload = try decoder.decodeAsBytes(payload: TestingData.encodedBoundedPayloadGzip(), compressionUtil: gzip)
-        try boundedTest(payload: payload,decompressor: gzip)
+        try boundedTest(payload: payload, decompressor: gzip)
     }
 
     func testBoundedZlibPayload() throws {
         let payload = try decoder.decodeAsBytes(payload: TestingData.encodedBoundedPayloadZlib(), compressionUtil: zlib)
-        try boundedTest(payload: payload,decompressor: zlib)
+        try boundedTest(payload: payload, decompressor: zlib)
     }
 
     func boundedTest(payload: Data, decompressor: CompressionUtil) throws {
-
         var keys = [String]()
         keys.append("603516ce-1243-400b-b919-0dce5d8aecfd")
         keys.append("88f8b33b-f858-4aea-bea2-a5f066bab3ce")
@@ -71,7 +68,5 @@ class MySegmentsV2PayloaDecoderTest: XCTestCase {
         }
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

@@ -11,7 +11,6 @@ import Foundation
 import XCTest
 
 class TelemetryStorageStub: TelemetryStorage {
-
     var nonReadyUsageCallCount = 0
     var popTagsCallCount = 0
     var recordHttpErrorCallCount = 0
@@ -31,11 +30,11 @@ class TelemetryStorageStub: TelemetryStorage {
     var isFactoryDataRecorded = Atomic<Bool>(false)
 
     func recordLastSync(resource: Resource, time: Int64) {
-        recordHttpLastSyncCallCount+=1
+        recordHttpLastSyncCallCount += 1
     }
 
     func recordHttpLatency(resource: Resource, latency: Int64) {
-        recordHttpLatencyCallCount+=1
+        recordHttpLatencyCallCount += 1
     }
 
     func getNonReadyUsages() -> Int {
@@ -54,22 +53,17 @@ class TelemetryStorageStub: TelemetryStorage {
         return []
     }
 
-
     func recordNonReadyUsage() {
-        nonReadyUsageCallCount+=1
+        nonReadyUsageCallCount += 1
     }
-
 
     func recordLatency(method: TelemetryMethod, latency: Int64) {
         methodLatencies[method] = (methodLatencies[method] ?? 0) + 1
     }
 
-    func recordException(method: TelemetryMethod) {
+    func recordException(method: TelemetryMethod) {}
 
-    }
-
-    func addTag(tag: String) {
-    }
+    func addTag(tag: String) {}
 
     func recordImpressionStats(type: TelemetryImpressionsDataType, count: Int) {
         impressions[type] = (impressions[type] ?? 0) + 1
@@ -80,16 +74,12 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func recordHttpError(resource: Resource, status: Int) {
-        recordHttpErrorCallCount+=1
+        recordHttpErrorCallCount += 1
     }
 
-    func recordAuthRejections() {
+    func recordAuthRejections() {}
 
-    }
-
-    func recordTokenRefreshes() {
-
-    }
+    func recordTokenRefreshes() {}
 
     func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64?) {
         streamingEvents[type] = (streamingEvents[type] ?? 0) + 1
@@ -101,19 +91,21 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func popMethodExceptions() -> TelemetryMethodExceptions {
-        return TelemetryMethodExceptions(treatment: 0,
-                                         treatments: 0,
-                                         treatmentWithConfig: 0,
-                                         treatmentsWithConfig: 0,
-                                         track: 0)
+        return TelemetryMethodExceptions(
+            treatment: 0,
+            treatments: 0,
+            treatmentWithConfig: 0,
+            treatmentsWithConfig: 0,
+            track: 0)
     }
 
     func popMethodLatencies() -> TelemetryMethodLatencies {
-        return TelemetryMethodLatencies(treatment: [0],
-                                        treatments: [0],
-                                        treatmentWithConfig: [0],
-                                        treatmentsWithConfig: [0],
-                                        track: [0])
+        return TelemetryMethodLatencies(
+            treatment: [0],
+            treatments: [0],
+            treatmentWithConfig: [0],
+            treatmentsWithConfig: [0],
+            track: [0])
     }
 
     func getImpressionStats(type: TelemetryImpressionsDataType) -> Int {
@@ -125,30 +117,42 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func getLastSync() -> TelemetryLastSync {
-        return TelemetryLastSync(splits: 0, impressions: 0,
-                                            impressionsCount: 0, events: 0, token: 0,
-                                            telemetry: 0, mySegments: 0)
+        return TelemetryLastSync(
+            splits: 0,
+            impressions: 0,
+            impressionsCount: 0,
+            events: 0,
+            token: 0,
+            telemetry: 0,
+            mySegments: 0)
     }
 
     func popHttpErrors() -> TelemetryHttpErrors {
-        let val: [Int: Int] = [0: 0]
-        return TelemetryHttpErrors(splits: val,
-                                   mySegments: val, impressions: val,
-                                   impressionsCount: val,
-                                   events: val,
-                                   token: val,
-                                   telemetry: val)
+        let val = [0: 0]
+        return TelemetryHttpErrors(
+            splits: val,
+            mySegments: val,
+            impressions: val,
+            impressionsCount: val,
+            events: val,
+            token: val,
+            telemetry: val)
     }
 
     func popHttpLatencies() -> TelemetryHttpLatencies {
-        let val: [Int] = [0]
-        return TelemetryHttpLatencies(splits: val, mySegments: val,
-                                      impressions: val, impressionsCount: val,
-                                      events: val, token: val, telemetry: val)
+        let val = [0]
+        return TelemetryHttpLatencies(
+            splits: val,
+            mySegments: val,
+            impressions: val,
+            impressionsCount: val,
+            events: val,
+            token: val,
+            telemetry: val)
     }
 
     func popTags() -> [String] {
-        popTagsCallCount+=1
+        popTagsCallCount += 1
         return []
     }
 
@@ -157,16 +161,16 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func recordFactories(active: Int, redundant: Int) {
-        recordActiveFactoriesCallCount+=1
-        recordRedundantFactoriessCallCount+=1
+        recordActiveFactoriesCallCount += 1
+        recordRedundantFactoriessCallCount += 1
     }
 
     func recordTimeUntilReady(_ time: Int64) {
-        recordTimeUntilReadyCallCount+=1
+        recordTimeUntilReadyCallCount += 1
     }
 
     func recordTimeUntilReadyFromCache(_ time: Int64) {
-        recordTimeUntilReadyFromCacheCallCount+=1
+        recordTimeUntilReadyFromCacheCallCount += 1
     }
 
     func getActiveFactories() -> Int {

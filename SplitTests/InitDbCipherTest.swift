@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class InitDbCipherTest: XCTestCase {
-
     var dbHelper: CoreDataHelper!
     var db: SplitDatabase!
     let apiKey1 = IntegrationHelper.dummyApiKey
@@ -20,10 +19,10 @@ class InitDbCipherTest: XCTestCase {
     override func setUp() {
         GlobalSecureStorage.testStorage = secureStorage
         dbHelper = createDbHelper()
-        db = TestingHelper.createTestDatabase(name: "test",
-                                              queue: DispatchQueue.test,
-                                              helper: dbHelper)
-
+        db = TestingHelper.createTestDatabase(
+            name: "test",
+            queue: DispatchQueue.test,
+            helper: dbHelper)
     }
 
     func testEncryptDb() throws {
@@ -39,7 +38,6 @@ class InitDbCipherTest: XCTestCase {
     }
 
     func testDecryptDb() throws {
-
         secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(apiKey2))
         let factory = initSdk(encryptionEnabled: false, apiKey: apiKey2)
 
@@ -63,17 +61,19 @@ class InitDbCipherTest: XCTestCase {
     }
 
     private func createDbHelper() -> CoreDataHelper {
-        return IntegrationCoreDataHelper.get(databaseName: "test",
-                                             dispatchQueue: DispatchQueue.global())
+        return IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: DispatchQueue.global())
     }
 
-    private func createCipher(fromLevel: SplitEncryptionLevel,
-                              toLevel: SplitEncryptionLevel,
-                              dbHelper: CoreDataHelper) throws -> DbCipher {
-        return try DbCipher(cipherKey: IntegrationHelper.dummyCipherKey,
-                            from: fromLevel,
-                            to: toLevel,
-                            coreDataHelper: dbHelper)
+    private func createCipher(
+        fromLevel: SplitEncryptionLevel,
+        toLevel: SplitEncryptionLevel,
+        dbHelper: CoreDataHelper) throws -> DbCipher {
+        return try DbCipher(
+            cipherKey: IntegrationHelper.dummyCipherKey,
+            from: fromLevel,
+            to: toLevel,
+            coreDataHelper: dbHelper)
     }
 }
-

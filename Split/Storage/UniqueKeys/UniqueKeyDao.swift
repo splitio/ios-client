@@ -6,8 +6,8 @@
 //  Copyright © 2022 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 protocol UniqueKeyDao {
     func insert(_ key: UniqueKey)
@@ -18,7 +18,6 @@ protocol UniqueKeyDao {
 }
 
 class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
-
     private let cipher: Cipher?
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
         self.cipher = cipher
@@ -26,7 +25,6 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
     }
 
     func insert(_ key: UniqueKey) {
-
         executeAsync { [weak self] in
             guard let self = self else {
                 return
@@ -36,7 +34,7 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
     }
 
     func insert(_ keys: [UniqueKey]) {
-        if keys.count == 0 {
+        if keys.isEmpty {
             return
         }
         executeAsync { [weak self] in
@@ -58,9 +56,10 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
             }
 
             let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
-            let entities = self.coreDataHelper.fetch(entity: .uniqueKey,
-                                                     where: predicate,
-                                                     rowLimit: maxRows).compactMap { return $0 as? UniqueKeyEntity }
+            let entities = self.coreDataHelper.fetch(
+                entity: .uniqueKey,
+                where: predicate,
+                rowLimit: maxRows).compactMap { $0 as? UniqueKeyEntity }
 
             entities.forEach { entity in
                 if let model = try? self.mapEntityToModel(entity) {
@@ -72,7 +71,7 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
     }
 
     func update(ids: [String], newStatus: Int32, incrementSentCount: Bool) {
-        if ids.count == 0 {
+        if ids.isEmpty {
             return
         }
 
@@ -83,64 +82,70 @@ class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
                 return
             }
             let entities =
-            self.coreDataHelper.fetch(entity: .uniqueKey,
-                                      where: predicate).compactMap { return $0 as? UniqueKeyEntity }
+                self.coreDataHelper.fetch(
+                    entity: .uniqueKey,
+                    where: predicate).compactMap { $0 as? UniqueKeyEntity }
 
             var toDelete = [String]()
             for entity in entities {
                 entity.status = newStatus
                 if incrementSentCount {
-                    entity.sendAttemptCount+=1
+                    entity.sendAttemptCount += 1
                     if entity.sendAttemptCount > ServiceConstants.retryCount {
                         toDelete.append(entity.storageId)
                     }
                 }
             }
-            self.coreDataHelper.delete(entity: .uniqueKey, by: "storageId",
-                                       values: toDelete)
+            self.coreDataHelper.delete(
+                entity: .uniqueKey,
+                by: "storageId",
+                values: toDelete)
             self.coreDataHelper.save()
         }
     }
 
     func delete(_ ids: [String]) {
-        if ids.count == 0 {
+        if ids.isEmpty {
             return
         }
         executeAsync { [weak self] in
             guard let self = self else {
                 return
             }
-            self.coreDataHelper.delete(entity: .uniqueKey, by: "storageId",
-                                       values: ids)
+            self.coreDataHelper.delete(
+                entity: .uniqueKey,
+                by: "storageId",
+                values: ids)
             self.coreDataHelper.save()
         }
     }
 
     private func mapEntityToModel(_ entity: UniqueKeyEntity) throws -> UniqueKey {
-
         let userKey = cipher?.decrypt(entity.userKey) ?? entity.userKey
         let json = cipher?.decrypt(entity.featureList) ?? entity.featureList
         let featureList = try Json.decodeFrom(json: json, to: [String].self)
-        let model = UniqueKey(storageId: entity.storageId,
-                              userKey: userKey,
-                              features: Set(featureList))
+        let model = UniqueKey(
+            storageId: entity.storageId,
+            userKey: userKey,
+            features: Set(featureList))
         return model
     }
 
     // Call this function within an "execute" or "executeAsync"
     private func insert(key: UniqueKey) {
-        if let obj = self.coreDataHelper.create(entity: .uniqueKey) as? UniqueKeyEntity {
+        if let obj = coreDataHelper.create(entity: .uniqueKey) as? UniqueKeyEntity {
             do {
-                obj.storageId = self.coreDataHelper.generateId()
-                obj.userKey = self.cipher?.encrypt(key.userKey) ?? key.userKey
+                obj.storageId = coreDataHelper.generateId()
+                obj.userKey = cipher?.encrypt(key.userKey) ?? key.userKey
                 let featureList = try Json.encodeToJson(key.features)
-                obj.featureList = self.cipher?.encrypt(featureList) ?? featureList
+                obj.featureList = cipher?.encrypt(featureList) ?? featureList
                 obj.createdAt = Date().unixTimestamp()
                 obj.status = StorageRecordStatus.active
-                self.coreDataHelper.save()
+                coreDataHelper.save()
             } catch {
-                Logger.e("An error occurred while inserting unique keys " +
-                         "in storage: \(error.localizedDescription)")
+                Logger.e(
+                    "An error occurred while inserting unique keys " +
+                        "in storage: \(error.localizedDescription)")
             }
         }
     }

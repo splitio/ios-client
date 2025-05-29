@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class SseHandlerTest: XCTestCase {
-
     var notificationProcessor: SseNotificationProcessorStub!
     var notificationParser: SseNotificationParserStub!
     var notificationManagerKeeper: NotificationManagerKeeperStub!
@@ -27,20 +26,21 @@ class SseHandlerTest: XCTestCase {
         notificationProcessor = SseNotificationProcessorStub()
         notificationManagerKeeper = NotificationManagerKeeperStub()
         broadcasterChannel = SyncEventBroadcasterStub()
-        sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
-                                       notificationParser: notificationParser,
-                                       notificationManagerKeeper: notificationManagerKeeper,
-                                       broadcasterChannel: broadcasterChannel,
-                                       telemetryProducer: telemetryProducer
-        )
+        sseHandler = DefaultSseHandler(
+            notificationProcessor: notificationProcessor,
+            notificationParser: notificationParser,
+            notificationManagerKeeper: notificationManagerKeeper,
+            broadcasterChannel: broadcasterChannel,
+            telemetryProducer: telemetryProducer)
     }
 
     func testIncomingSplitUpdate() {
         notificationParser.incomingNotification = IncomingNotification(type: .splitUpdate, jsonData: "dummy")
-        notificationParser.splitsUpdateNotification = TargetingRuleUpdateNotification(changeNumber: -1 ,
-                                                                               previousChangeNumber: nil,
-                                                                               definition: nil,
-                                                                               compressionType: nil)
+        notificationParser.splitsUpdateNotification = TargetingRuleUpdateNotification(
+            changeNumber: -1,
+            previousChangeNumber: nil,
+            definition: nil,
+            compressionType: nil)
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
@@ -49,7 +49,10 @@ class SseHandlerTest: XCTestCase {
 
     func testIncomingSplitKill() {
         notificationParser.incomingNotification = IncomingNotification(type: .splitKill, jsonData: "dummy")
-        notificationParser.splitKillNotification = SplitKillNotification(changeNumber: -1, splitName: "split1", defaultTreatment: "off")
+        notificationParser.splitKillNotification = SplitKillNotification(
+            changeNumber: -1,
+            splitName: "split1",
+            defaultTreatment: "off")
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertFalse(notificationManagerKeeper.handleIncomingPresenceEventCalled)
@@ -58,14 +61,15 @@ class SseHandlerTest: XCTestCase {
 
     func testIncomingMySegmentsUpdate() {
         notificationParser.incomingNotification = IncomingNotification(type: .mySegmentsUpdate, jsonData: "dummy")
-        notificationParser.membershipsUpdateNotification = MembershipsUpdateNotification(changeNumber: -1,
-                                                                                         compressionType: .gzip,
-                                                                                         updateStrategy: .boundedFetchRequest,
-                                                                                         segments: nil,
-                                                                                         data: nil,
-                                                                                         hash: .none,
-                                                                                         seed: 0,
-                                                                                         timeMillis: 60)
+        notificationParser.membershipsUpdateNotification = MembershipsUpdateNotification(
+            changeNumber: -1,
+            compressionType: .gzip,
+            updateStrategy: .boundedFetchRequest,
+            segments: nil,
+            data: nil,
+            hash: .none,
+            seed: 0,
+            timeMillis: 60)
 
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
@@ -75,14 +79,15 @@ class SseHandlerTest: XCTestCase {
 
     func testNoProcessIncomingWhenStreamingInactive() {
         notificationParser.incomingNotification = IncomingNotification(type: .mySegmentsUpdate, jsonData: "dummy")
-        notificationParser.membershipsUpdateNotification = MembershipsUpdateNotification(changeNumber: -1,
-                                                                                         compressionType: .gzip,
-                                                                                         updateStrategy: .boundedFetchRequest,
-                                                                                         segments: nil,
-                                                                                         data: nil,
-                                                                                         hash: .none,
-                                                                                         seed: 0,
-                                                                                         timeMillis: 60)
+        notificationParser.membershipsUpdateNotification = MembershipsUpdateNotification(
+            changeNumber: -1,
+            compressionType: .gzip,
+            updateStrategy: .boundedFetchRequest,
+            segments: nil,
+            data: nil,
+            hash: .none,
+            seed: 0,
+            timeMillis: 60)
         notificationManagerKeeper.isStreamingActive = false
 
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
@@ -90,19 +95,21 @@ class SseHandlerTest: XCTestCase {
         XCTAssertFalse(notificationProcessor.processCalled)
     }
 
-
     func testIncomingOccupancy() {
         notificationParser.incomingNotification = IncomingNotification(type: .occupancy, jsonData: "dummy")
-        notificationParser.occupancyNotification = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 1))
+        notificationParser
+            .occupancyNotification = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 1))
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 
         XCTAssertTrue(notificationManagerKeeper.handleIncomingPresenceEventCalled)
         XCTAssertFalse(notificationProcessor.processCalled)
-
     }
 
     func testIncomingControlStreaming() {
-        notificationParser.incomingNotification = IncomingNotification(type: .control, jsonData: "dummy", timestamp: 100)
+        notificationParser.incomingNotification = IncomingNotification(
+            type: .control,
+            jsonData: "dummy",
+            timestamp: 100)
         notificationParser.controlNotification = ControlNotification(type: .control, controlType: .streamingResumed)
         sseHandler.handleIncomingMessage(message: ["data": "{pepe}"])
 

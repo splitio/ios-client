@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class EventsSynchronizerStub: EventsSynchronizer {
-
     var startCalled = false
     var pauseCalled = false
     var resumeCalled = false
@@ -46,6 +45,4 @@ class EventsSynchronizerStub: EventsSynchronizer {
     func destroy() {
         destroyCalled = true
     }
-
-
 }

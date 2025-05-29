@@ -31,7 +31,7 @@ class Semver: Equatable, Hashable {
 
         do {
             return try Semver(version: version)
-        } catch SemverParseError.invalidVersionFormat(let message) {
+        } catch let SemverParseError.invalidVersionFormat(message) {
             Logger.e("\(message)")
             return nil
         } catch {
@@ -47,7 +47,7 @@ class Semver: Equatable, Hashable {
 
         // set and remove preRelease if exists
         let (preRelease, isStable, vWithoutPreRelease)
-        = try getAndRemovePreReleaseIfExists(vWithoutMetadata: vWithoutMetadata)
+            = try getAndRemovePreReleaseIfExists(vWithoutMetadata: vWithoutMetadata)
 
         self.preRelease = preRelease
         self.isStable = isStable
@@ -94,7 +94,7 @@ class Semver: Equatable, Hashable {
 
         // Compare pre-release versions lexically
         let minLength = min(preRelease.count, to.preRelease.count)
-        for index in 0..<minLength {
+        for index in 0 ..< minLength {
             if preRelease[index] == to.preRelease[index] {
                 continue
             }
@@ -120,8 +120,9 @@ class Semver: Equatable, Hashable {
         hasher.combine(version)
     }
 
-    private func getAndRemoveMetadataIfExists(version: String) throws -> (metadata: String?,
-                                                                          versionWithoutMetadata: String) {
+    private func getAndRemoveMetadataIfExists(version: String) throws -> (
+        metadata: String?,
+        versionWithoutMetadata: String) {
         var vWithoutMetadata = ""
         var tMetadata = ""
         if let index = version.firstIndex(of: kMetadataDelimiter) {
@@ -153,9 +154,10 @@ class Semver: Equatable, Hashable {
         return metadataString
     }
 
-    private func getAndRemovePreReleaseIfExists(vWithoutMetadata: String) throws -> (preRelease: [String],
-                                                                                     isStable: Bool,
-                                                                                     versionWithoutPreRelease: String) {
+    private func getAndRemovePreReleaseIfExists(vWithoutMetadata: String) throws -> (
+        preRelease: [String],
+        isStable: Bool,
+        versionWithoutPreRelease: String) {
         var vWithoutPreRelease = ""
         var tPreRelease: [String] = []
         var tIsStable = true
@@ -167,7 +169,8 @@ class Semver: Equatable, Hashable {
             }
 
             let preReleaseData = String(vWithoutMetadata[preReleaseDataIndex...])
-            let preReleaseComponents = preReleaseData.split(separator: kValueDelimiter, omittingEmptySubsequences: false).map { String($0) }
+            let preReleaseComponents = preReleaseData
+                .split(separator: kValueDelimiter, omittingEmptySubsequences: false).map { String($0) }
 
             if preReleaseComponents.isEmpty || preReleaseComponents.contains(where: { $0.isEmpty }) {
                 throw SemverParseError.invalidVersionFormat("Unable to convert to Semver, incorrect pre release data")
@@ -185,9 +188,10 @@ class Semver: Equatable, Hashable {
         return (tPreRelease, tIsStable, vWithoutPreRelease)
     }
 
-    private func getMajorMinorAndPatch(vWithoutPreRelease: String) throws -> (major: Int64,
-                                                                              minor: Int64,
-                                                                              patch: Int64) {
+    private func getMajorMinorAndPatch(vWithoutPreRelease: String) throws -> (
+        major: Int64,
+        minor: Int64,
+        patch: Int64) {
         let vParts = vWithoutPreRelease.split(separator: kValueDelimiter, omittingEmptySubsequences: false)
 
         if vParts.count != 3 {

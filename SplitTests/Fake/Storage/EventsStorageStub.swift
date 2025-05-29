@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class EventsStorageStub: EventsStorage {
-
     var enablePersistenceCalled = false
     var enablePersistenceValue: Bool?
 
@@ -29,4 +28,3 @@ class EventsStorageStub: EventsStorage {
         clearInMemoryCalled = true
     }
 }
-

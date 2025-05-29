@@ -7,16 +7,14 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class CountsRecorderCountWorkerTests: XCTestCase {
-
     var worker: ImpressionsCountRecorderWorker!
     var countsStorage: PersistentImpressionsCountStorageStub!
     var countsRecorder: HttpImpressionsCountRecorderStub!
     var dummyCounts: [ImpressionsCountPerFeature]!
-
 
     override func setUp() {
         dummyCounts = TestingHelper.createImpressionsCount(count: 601)
@@ -61,7 +59,6 @@ class CountsRecorderCountWorkerTests: XCTestCase {
         XCTAssertEqual(1, countsRecorder.countsSent.count)
     }
 
-
     func testSendNoImpressions() {
         // When no impressions available recorder should not be called
         worker.flush()
@@ -71,7 +68,5 @@ class CountsRecorderCountWorkerTests: XCTestCase {
         XCTAssertEqual(0, countsRecorder.countsSent.count)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

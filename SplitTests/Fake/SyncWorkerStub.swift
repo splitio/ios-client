@@ -12,7 +12,6 @@ import XCTest
 @testable import Split
 
 class RetryableSyncWorkerStub: RetryableSyncWorker {
-
     var completion: SyncCompletion?
     var errorHandler: ErrorHandler?
 
@@ -34,7 +33,6 @@ class RetryableSyncWorkerStub: RetryableSyncWorker {
 }
 
 class PeriodicSyncWorkerStub: PeriodicSyncWorker {
-
     var startCalled = false
     var stopCalled = false
     var destroyCalled = false
@@ -63,7 +61,6 @@ class PeriodicSyncWorkerStub: PeriodicSyncWorker {
 }
 
 class RetryableMySegmentsSyncWorkerStub: RetryableSyncWorker {
-
     var errorHandler: ErrorHandler?
 
     init(userKey: String? = nil, avoidCache: Bool? = nil) {

@@ -6,15 +6,14 @@
 //  Copyright © 2025 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class RestClientCustomDecoderTest: XCTestCase {
-    
     private var httpSession: HttpSessionMock!
     private var requestManager: HttpRequestManagerMock!
     private var restClient: DefaultRestClient!
-    
+
     override func setUp() {
         super.setUp()
         httpSession = HttpSessionMock()
@@ -22,7 +21,10 @@ class RestClientCustomDecoderTest: XCTestCase {
         let serviceEndpoints = ServiceEndpoints.builder()
             .set(sdkEndpoint: "https://sdk.split-test.io")
             .set(eventsEndpoint: "https://events.split-test.io").build()
-        let endpointFactory = EndpointFactory(serviceEndpoints: serviceEndpoints, apiKey: "dummy-key", splitsQueryString: "")
+        let endpointFactory = EndpointFactory(
+            serviceEndpoints: serviceEndpoints,
+            apiKey: "dummy-key",
+            splitsQueryString: "")
         let httpClient = DefaultHttpClient(session: httpSession, requestManager: requestManager)
         restClient = DefaultRestClient(httpClient: httpClient, endpointFactory: endpointFactory)
     }
@@ -33,7 +35,7 @@ class RestClientCustomDecoderTest: XCTestCase {
         restClient = nil
         super.tearDown()
     }
-    
+
     func testExecuteWithDefaultDecoder() {
         let json = """
         {
@@ -41,7 +43,7 @@ class RestClientCustomDecoderTest: XCTestCase {
             "name": "test"
         }
         """
-        
+
         let dummyData = Data(json.utf8)
         let expectation = XCTestExpectation(description: "API call completes")
         var result: TestModel?
@@ -63,7 +65,7 @@ class RestClientCustomDecoderTest: XCTestCase {
 
         requestManager.append(data: dummyData, to: 1)
         _ = requestManager.set(responseCode: 200, to: 1)
-        
+
         wait(for: [expectation], timeout: 1)
 
         XCTAssertEqual(1, httpSession.dataTaskCallCount)
@@ -73,7 +75,7 @@ class RestClientCustomDecoderTest: XCTestCase {
         XCTAssertEqual(result?.id, 123)
         XCTAssertEqual(result?.name, "test")
     }
-    
+
     func testExecuteWithCustomDecoder() {
         let json = """
         {
@@ -81,7 +83,7 @@ class RestClientCustomDecoderTest: XCTestCase {
             "custom_name": "custom_test"
         }
         """
-        
+
         let dummyData = Data(json.utf8)
         let expectation = XCTestExpectation(description: "API call completes")
         let customDecoderCalled = XCTestExpectation(description: "Custom decoder called")
@@ -90,7 +92,7 @@ class RestClientCustomDecoderTest: XCTestCase {
 
         let customDecoder: (Data) throws -> TestModel = { data in
             customDecoderCalled.fulfill()
-            
+
             let decoder = JSONDecoder()
             let customModel = try decoder.decode(CustomTestModel.self, from: data)
             // Convert from custom model to standard model
@@ -114,7 +116,7 @@ class RestClientCustomDecoderTest: XCTestCase {
 
         requestManager.append(data: dummyData, to: 1)
         _ = requestManager.set(responseCode: 200, to: 1)
-        
+
         wait(for: [expectation, customDecoderCalled], timeout: 1)
 
         XCTAssertEqual(1, httpSession.dataTaskCallCount)

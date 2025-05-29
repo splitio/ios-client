@@ -10,7 +10,6 @@
 import Foundation
 
 class SegmentsPayloadDecoderMock: SegmentsPayloadDecoder {
-
     var hashedKey: UInt64 = 1
     var decodedString: String?
     var parsedKeyList: KeyList?

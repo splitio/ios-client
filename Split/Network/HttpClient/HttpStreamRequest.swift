@@ -14,17 +14,18 @@ protocol HttpStreamRequest: HttpRequest, HttpDataReceivingRequest {
     typealias CloseHandler = () -> Void
     typealias ErrorHandler = (HttpError) -> Void
 
-    func getResponse(responseHandler: @escaping ResponseHandler,
-                     incomingDataHandler: @escaping IncomingDataHandler,
-                     closeHandler: @escaping CloseHandler,
-                     errorHandler: @escaping ErrorHandler) -> Self
+    func getResponse(
+        responseHandler: @escaping ResponseHandler,
+        incomingDataHandler: @escaping IncomingDataHandler,
+        closeHandler: @escaping CloseHandler,
+        errorHandler: @escaping ErrorHandler) -> Self
 
     func close()
 }
 
 // MARK: DefaultHttpStreamRequest
-class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
 
+class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
     var responseHandler: ResponseHandler?
     var incomingDataHandler: IncomingDataHandler?
     var closeHandler: CloseHandler?
@@ -34,7 +35,7 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
     }
 
     override func notifyIncomingData(_ data: Data) {
-        if let incomingDataHandler = self.incomingDataHandler {
+        if let incomingDataHandler = incomingDataHandler {
             incomingDataHandler(data)
         }
     }
@@ -53,9 +54,11 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
         return self
     }
 
-    func getResponse(responseHandler: @escaping ResponseHandler, incomingDataHandler: @escaping IncomingDataHandler,
-                     closeHandler: @escaping CloseHandler, errorHandler: @escaping ErrorHandler) -> Self {
-
+    func getResponse(
+        responseHandler: @escaping ResponseHandler,
+        incomingDataHandler: @escaping IncomingDataHandler,
+        closeHandler: @escaping CloseHandler,
+        errorHandler: @escaping ErrorHandler) -> Self {
         return response(
             queue: DispatchQueue(label: HttpQueue.default),
             responseHandler: responseHandler,
@@ -69,15 +72,15 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
     }
 
     override func setResponse(code: Int) {
-        if let responseHandler  = self.responseHandler {
+        if let responseHandler = responseHandler {
             responseHandler(HttpResponse(code: code))
         }
     }
 
     override func complete(error: HttpError?) {
-        if let error = error, let errorHandler = self.errorHandler {
+        if let error = error, let errorHandler = errorHandler {
             errorHandler(error)
-        } else if let closeHandler = self.closeHandler {
+        } else if let closeHandler = closeHandler {
             closeHandler()
         }
     }

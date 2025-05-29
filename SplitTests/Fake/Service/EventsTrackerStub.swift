@@ -6,20 +6,21 @@
 //  Copyright © 2022 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class EventsTrackerStub: EventsTracker {
     var isTrackingEnabled: Bool = true
 
     var trackCalled = false
     var trackResponse = true
-    func track(eventType: String,
-               trafficType: String?,
-               value: Double?,
-               properties: [String : Any]?,
-               matchingKey: String,
-               isSdkReady: Bool) -> Bool {
+    func track(
+        eventType: String,
+        trafficType: String?,
+        value: Double?,
+        properties: [String: Any]?,
+        matchingKey: String,
+        isSdkReady: Bool) -> Bool {
         return trackResponse
     }
 }

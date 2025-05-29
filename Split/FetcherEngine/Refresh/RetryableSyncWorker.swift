@@ -24,7 +24,6 @@ protocol RetryableSyncWorker {
 /// nettwork connection and http server errors
 ///
 class BaseRetryableSyncWorker: RetryableSyncWorker {
-
     var completion: SyncCompletion?
     var errorHandler: ErrorHandler?
     private var reconnectBackoffCounter: ReconnectBackoffCounter
@@ -32,9 +31,9 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     private var isRunning: Atomic<Bool> = Atomic(false)
     private let syncQueue = DispatchQueue.general
 
-    init(eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter) {
-
+    init(
+        eventsManager: SplitEventsManager,
+        reconnectBackoffCounter: ReconnectBackoffCounter) {
         self.eventsManager = eventsManager
         self.reconnectBackoffCounter = reconnectBackoffCounter
     }
@@ -73,7 +72,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
                 ThreadUtils.delay(seconds: retryTimeInSeconds)
             }
         }
-        self.isRunning.set(false)
+        isRunning.set(false)
         if let handler = completion {
             handler(success)
         }
@@ -101,7 +100,6 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 }
 
 class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
-
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
@@ -109,30 +107,32 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     private let ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor
     private let syncHelper: SplitsSyncHelper
 
-    init(splitFetcher: HttpSplitFetcher,
-         splitsStorage: SplitsStorage,
-         generalInfoStorage: GeneralInfoStorage,
-         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
-         splitChangeProcessor: SplitChangeProcessor,
-         ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
-         eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter,
-         splitConfig: SplitClientConfig) {
-
+    init(
+        splitFetcher: HttpSplitFetcher,
+        splitsStorage: SplitsStorage,
+        generalInfoStorage: GeneralInfoStorage,
+        ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
+        splitChangeProcessor: SplitChangeProcessor,
+        ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
+        eventsManager: SplitEventsManager,
+        reconnectBackoffCounter: ReconnectBackoffCounter,
+        splitConfig: SplitClientConfig) {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.ruleBasedSegmentChangeProcessor = ruleBasedSegmentChangeProcessor
-        self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
-                                           splitsStorage: splitsStorage,
-                                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
-                                           splitChangeProcessor: splitChangeProcessor,
-                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
-                                           generalInfoStorage: generalInfoStorage,
-                                           splitConfig: splitConfig)
-        super.init(eventsManager: eventsManager,
-                   reconnectBackoffCounter: reconnectBackoffCounter)
+        self.syncHelper = SplitsSyncHelper(
+            splitFetcher: splitFetcher,
+            splitsStorage: splitsStorage,
+            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+            splitChangeProcessor: splitChangeProcessor,
+            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
+            generalInfoStorage: generalInfoStorage,
+            splitConfig: splitConfig)
+        super.init(
+            eventsManager: eventsManager,
+            reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() throws -> Bool {
@@ -157,7 +157,6 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
 }
 
 class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
-
     private let splitsFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
@@ -167,17 +166,17 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
     private let syncHelper: SplitsSyncHelper
     var changeChecker: SplitsChangesChecker
 
-    init(splitsFetcher: HttpSplitFetcher,
-         splitsStorage: SplitsStorage,
-         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
-         generalInfoStorage: GeneralInfoStorage,
-         splitChangeProcessor: SplitChangeProcessor,
-         ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
-         changeNumber: SplitsUpdateChangeNumber,
-         eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter,
-         splitConfig: SplitClientConfig) {
-
+    init(
+        splitsFetcher: HttpSplitFetcher,
+        splitsStorage: SplitsStorage,
+        ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
+        generalInfoStorage: GeneralInfoStorage,
+        splitChangeProcessor: SplitChangeProcessor,
+        ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
+        changeNumber: SplitsUpdateChangeNumber,
+        eventsManager: SplitEventsManager,
+        reconnectBackoffCounter: ReconnectBackoffCounter,
+        splitConfig: SplitClientConfig) {
         self.splitsFetcher = splitsFetcher
         self.splitsStorage = splitsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
@@ -186,15 +185,17 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         self.changeNumber = changeNumber
         self.changeChecker = DefaultSplitsChangesChecker()
 
-        self.syncHelper = SplitsSyncHelper(splitFetcher: splitsFetcher,
-                                           splitsStorage: splitsStorage,
-                                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
-                                           splitChangeProcessor: splitChangeProcessor,
-                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
-                                           generalInfoStorage: generalInfoStorage,
-                                           splitConfig: splitConfig)
-        super.init(eventsManager: eventsManager,
-                   reconnectBackoffCounter: reconnectBackoffCounter)
+        self.syncHelper = SplitsSyncHelper(
+            splitFetcher: splitsFetcher,
+            splitsStorage: splitsStorage,
+            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+            splitChangeProcessor: splitChangeProcessor,
+            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
+            generalInfoStorage: generalInfoStorage,
+            splitConfig: splitConfig)
+        super.init(
+            eventsManager: eventsManager,
+            reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() throws -> Bool {
@@ -211,11 +212,12 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         }
 
         do {
-            let result = try syncHelper.sync(since: storedChangeNumber,
-                                             rbSince: storedRbChangeNumber,
-                                             till: flagsChangeNumber ?? rbsChangeNumber,
-                                             clearBeforeUpdate: false,
-                                             headers: ServiceConstants.controlNoCacheHeader)
+            let result = try syncHelper.sync(
+                since: storedChangeNumber,
+                rbSince: storedRbChangeNumber,
+                till: flagsChangeNumber ?? rbsChangeNumber,
+                clearBeforeUpdate: false,
+                headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
                 if result.featureFlagsUpdated {
                     notifyUpdate([.splitsUpdated])

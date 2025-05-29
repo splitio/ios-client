@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ConcurrentSetTests: XCTestCase {
-
     var concurrentSet: ConcurrentSet<String>!
 
     override func setUp() {
@@ -20,7 +19,7 @@ class ConcurrentSetTests: XCTestCase {
     }
 
     func testInsert() {
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             concurrentSet.insert("pepe_\(i)")
         }
 
@@ -30,7 +29,7 @@ class ConcurrentSetTests: XCTestCase {
     }
 
     func testDeleteAll() {
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             concurrentSet.insert("pepe_\(i)")
         }
         concurrentSet.removeAll()
@@ -41,8 +40,7 @@ class ConcurrentSetTests: XCTestCase {
     }
 
     func testTakeAll() {
-
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             concurrentSet.insert("pepe_\(i)")
         }
 
@@ -54,7 +52,7 @@ class ConcurrentSetTests: XCTestCase {
     }
 
     func testSet() {
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             concurrentSet.insert("pepe_\(i)")
         }
 
@@ -65,7 +63,5 @@ class ConcurrentSetTests: XCTestCase {
         XCTAssertEqual(2, s.count)
     }
 
-    override func tearDown() {
-
-    }
+    override func tearDown() {}
 }

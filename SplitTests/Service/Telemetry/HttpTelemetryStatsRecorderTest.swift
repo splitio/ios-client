@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class HttpTelemetryStatsRecorderTest: XCTestCase {
-
     var restClient: RestClientStub!
     var recorder: DefaultHttpTelemetryStatsRecorder!
     let telemetryStats = TestingHelper.createTelemetryStats()
@@ -21,8 +20,9 @@ class HttpTelemetryStatsRecorderTest: XCTestCase {
     override func setUp() {
         restClient = RestClientStub()
         telemetryProducer = TelemetryStorageStub()
-        recorder = DefaultHttpTelemetryStatsRecorder(restClient: restClient,
-                                                     syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
+        recorder = DefaultHttpTelemetryStatsRecorder(
+            restClient: restClient,
+            syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
 
     func testServerNoReachable() {
@@ -38,7 +38,6 @@ class HttpTelemetryStatsRecorderTest: XCTestCase {
     }
 
     func testSuccessSending() throws {
-
         try recorder.execute(telemetryStats)
 
         XCTAssertEqual(1, restClient.sendTelemetryStatsCount)
@@ -47,7 +46,5 @@ class HttpTelemetryStatsRecorderTest: XCTestCase {
         XCTAssertEqual(0, telemetryProducer.recordHttpErrorCallCount)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

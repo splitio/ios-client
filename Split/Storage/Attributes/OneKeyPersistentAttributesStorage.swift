@@ -17,7 +17,6 @@ protocol OneKeyPersistentAttributesStorage {
 
 @available(*, deprecated, message: "Gonna be replaced by PersistentAttributesStorage")
 class DefaultOneKeyPersistentAttributesStorage: OneKeyPersistentAttributesStorage {
-
     private let attributesDao: AttributesDao
     private let userKey: String
 

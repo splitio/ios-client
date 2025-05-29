@@ -8,6 +8,7 @@
 import Foundation
 
 // MARK: HttpResultWrapper
+
 enum HttpResultWrapper {
     case success(Json)
     case failure
@@ -23,7 +24,7 @@ enum HttpResultWrapper {
 
     var value: Json? {
         switch self {
-        case .success(let value):
+        case let .success(value):
             return value
         case .failure:
             return nil
@@ -32,6 +33,7 @@ enum HttpResultWrapper {
 }
 
 // MARK: HttpDataResponse
+
 struct HttpDataResponse<Value> {
     let error: Error? = nil
     let data: Data?
@@ -44,6 +46,7 @@ struct HttpDataResponse<Value> {
 }
 
 // MARK: HttpResult
+
 enum HttpResult<Value> {
     case success(Value)
     case failure(Error)
@@ -63,7 +66,7 @@ enum HttpResult<Value> {
 
     var value: Value? {
         switch self {
-        case .success(let value):
+        case let .success(value):
             return value
         case .failure:
             return nil
@@ -74,7 +77,7 @@ enum HttpResult<Value> {
         switch self {
         case .success:
             return nil
-        case .failure(let error):
+        case let .failure(error):
             return error
         }
     }

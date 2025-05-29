@@ -7,14 +7,13 @@
 import Foundation
 
 class ContainsAllOfSetMatcher: BaseMatcher, MatcherProtocol {
-
     var data: Set<String>?
 
-    init(data: [String]?,
-         negate: Bool? = nil,
-         attribute: String? = nil,
-         type: MatcherType? = nil) {
-
+    init(
+        data: [String]?,
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
 
         if let dataElements = data {
@@ -30,7 +29,6 @@ class ContainsAllOfSetMatcher: BaseMatcher, MatcherProtocol {
             setToCompare = Set(dataElements.map { $0 })
         } else {
             return false
-
         }
 
         guard let matchValueSet = setToCompare, let dataElements = data else {

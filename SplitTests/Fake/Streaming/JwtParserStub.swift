@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 struct JwtParserStub: JwtTokenParser {
-
     var token: JwtToken?
     var error: JwtTokenError?
 

@@ -13,7 +13,8 @@ class ImpressionsCounter {
         let featureName: String
         let timeframe: Int64
     }
-    private let queue: DispatchQueue = DispatchQueue(label: "split-impressions-counter", attributes: .concurrent)
+
+    private let queue: DispatchQueue = .init(label: "split-impressions-counter", attributes: .concurrent)
     private var counts = [Key: Int]()
 
     func inc(featureName: String, timeframe: Int64, amount: Int) {
@@ -28,9 +29,10 @@ class ImpressionsCounter {
     func popAll() -> [ImpressionsCountPerFeature] {
         var poppedCounts = [ImpressionsCountPerFeature]()
         queue.sync(flags: .barrier) {
-            poppedCounts.append(contentsOf: counts.compactMap { ImpressionsCountPerFeature(feature: $0.key.featureName,
-                                                                                           timeframe: $0.key.timeframe,
-                                                                                           count: $0.value)
+            poppedCounts.append(contentsOf: counts.compactMap { ImpressionsCountPerFeature(
+                feature: $0.key.featureName,
+                timeframe: $0.key.timeframe,
+                count: $0.value)
             })
             counts.removeAll()
         }
@@ -39,7 +41,7 @@ class ImpressionsCounter {
 
     func isEmpty() -> Bool {
         queue.sync {
-            return counts.isEmpty
+            counts.isEmpty
         }
     }
 

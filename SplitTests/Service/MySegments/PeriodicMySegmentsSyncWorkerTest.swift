@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
-
     var mySegmentsStorage: MySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
     var backoffCounter: ReconnectBackoffCounterStub!
@@ -41,16 +40,15 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         syncHelper.expSyncLimit = 3
 
         mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(
-                                                            mySegmentsStorage: msStorage,
-                                                            myLargeSegmentsStorage: mlsStorage,
-                                                            telemetryProducer: TelemetryStorageStub(),
-                                                            timer: timer,
-                                                            eventsManager: eventsManager,
-                                                            syncHelper: syncHelper
-        )
+            mySegmentsStorage: msStorage,
+            myLargeSegmentsStorage: mlsStorage,
+            telemetryProducer: TelemetryStorageStub(),
+            timer: timer,
+            eventsManager: eventsManager,
+            syncHelper: syncHelper)
         mySegmentsSyncWorker.start()
 
-        for i in 0..<3 {
+        for i in 0 ..< 3 {
             msStorage.changeNumber = 100 + i.asInt64()
             mlsStorage.changeNumber = 200 + i.asInt64()
             timer.timerHandler?()
@@ -73,12 +71,12 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
         syncHelper.results = [TestingHelper.segmentsSyncResult()]
 
         mySegmentsSyncWorker = PeriodicMySegmentsSyncWorker(
-                                                            mySegmentsStorage: msStorage,
-                                                            myLargeSegmentsStorage: mlsStorage,
-                                                            telemetryProducer: TelemetryStorageStub(),
-                                                            timer: timer,
-                                                            eventsManager: eventsManager,
-                                                            syncHelper: syncHelper)
+            mySegmentsStorage: msStorage,
+            myLargeSegmentsStorage: mlsStorage,
+            telemetryProducer: TelemetryStorageStub(),
+            timer: timer,
+            eventsManager: eventsManager,
+            syncHelper: syncHelper)
 
         mySegmentsSyncWorker.start()
         timer.timerHandler?()

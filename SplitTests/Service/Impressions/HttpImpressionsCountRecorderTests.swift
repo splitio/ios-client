@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class HttpImpressionsCountRecorderTests: XCTestCase {
-
     var restClient: RestClientStub!
     var recorder: DefaultHttpImpressionsCountRecorder!
     let counts = TestingHelper.createImpressionsCount()
@@ -21,8 +20,9 @@ class HttpImpressionsCountRecorderTests: XCTestCase {
     override func setUp() {
         restClient = RestClientStub()
         telemetryProducer = TelemetryStorageStub()
-        recorder = DefaultHttpImpressionsCountRecorder(restClient: restClient,
-                                                       syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
+        recorder = DefaultHttpImpressionsCountRecorder(
+            restClient: restClient,
+            syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
 
     func testServerNoReachable() {
@@ -49,7 +49,5 @@ class HttpImpressionsCountRecorderTests: XCTestCase {
         XCTAssertEqual(0, telemetryProducer.recordHttpErrorCallCount)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

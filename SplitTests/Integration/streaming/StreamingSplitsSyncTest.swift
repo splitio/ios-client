@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class StreamingSplitsSyncTest: XCTestCase {
     var httpClient: HttpClient!
@@ -31,7 +31,7 @@ class StreamingSplitsSyncTest: XCTestCase {
     var changes = [String]()
     var sseExp: XCTestExpectation!
     let kInitialChangeNumber = 1000
-    
+
     var exp1: XCTestExpectation!
     var exp2: XCTestExpectation!
     var exp3: XCTestExpectation!
@@ -40,29 +40,29 @@ class StreamingSplitsSyncTest: XCTestCase {
     override func setUp() {
         splitsChangesHits = 0
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         loadChanges()
     }
 
     func testInit() {
-        
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        //splitConfig.isDebugModeEnabled = true
-        
+        // splitConfig.isDebugModeEnabled = true
+
         sseExp = XCTestExpectation()
-        
+
         exp1 = XCTestExpectation(description: "Exp1")
         exp2 = XCTestExpectation(description: "Exp2")
         exp3 = XCTestExpectation(description: "Exp3")
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -74,7 +74,6 @@ class StreamingSplitsSyncTest: XCTestCase {
         let expTimeout = 5.0
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-        
 
         client.on(event: SplitEvent.sdkReady) {
             sdkReadyExpectation.fulfill()
@@ -86,34 +85,41 @@ class StreamingSplitsSyncTest: XCTestCase {
 
         IntegrationHelper.tlog("step 0")
         wait(for: [sdkReadyExpectation, sseExp], timeout: 100)
-        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
-        
-         // Wait for signal BUT give travis time to fire it
+        streamingBinding?
+            .push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
+
+        // Wait for signal BUT give travis time to fire it
         wait(for: [exp1], timeout: expTimeout)
         waitForUpdate(secs: 1)
 
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
         waitForUpdate(secs: 1)
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[2],
-                                                          changeNumber: numbers[2]))
+        streamingBinding?.push(
+            message:
+            StreamingIntegrationHelper.splitUpdateMessage(
+                timestamp: numbers[2],
+                changeNumber: numbers[2]))
         wait(for: [exp2], timeout: expTimeout)
         waitForUpdate(secs: 1)
 
         let treatmentFirst = client.getTreatment(splitName)
         waitForUpdate(secs: 1)
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[3],
-                                                          changeNumber: numbers[3]))
+        streamingBinding?.push(
+            message:
+            StreamingIntegrationHelper.splitUpdateMessage(
+                timestamp: numbers[3],
+                changeNumber: numbers[3]))
         wait(for: [exp3], timeout: expTimeout)
         waitForUpdate(secs: 1)
         let treatmentSec = client.getTreatment(splitName)
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: 100,
-                                                          changeNumber: 100))
+        streamingBinding?.push(
+            message:
+            StreamingIntegrationHelper.splitUpdateMessage(
+                timestamp: 100,
+                changeNumber: 100))
         waitForUpdate()
         let treatmentOld = client.getTreatment(splitName)
 
@@ -132,11 +138,11 @@ class StreamingSplitsSyncTest: XCTestCase {
     private func getChanges(for hitNumber: Int) -> Data {
         if hitNumber <= expCount {
             IntegrationHelper.tlog("changes \(hitNumber)")
-            return Data(self.changes[hitNumber].utf8)
+            return Data(changes[hitNumber].utf8)
         }
         return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
     }
-    
+
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
@@ -155,7 +161,7 @@ class StreamingSplitsSyncTest: XCTestCase {
                 return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
             }
             if request.isMySegmentsEndpoint() {
-                self.mySegmentsHits+=1
+                self.mySegmentsHits += 1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
             if request.isAuthEndpoint() {
@@ -167,7 +173,7 @@ class StreamingSplitsSyncTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            self.sseConnHits+=1
+            self.sseConnHits += 1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             DispatchQueue.test.asyncAfter(deadline: .now() + 1) {
                 self.sseExp.fulfill()
@@ -189,15 +195,18 @@ class StreamingSplitsSyncTest: XCTestCase {
                 partition.size = 0
             }
         }
-        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        let targetingRulesChange = TargetingRulesChange(
+            featureFlags: change!,
+            ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
         return (try? Json.encodeToJson(targetingRulesChange)) ?? ""
     }
 
     private func loadChanges() {
-        for i in 0..<5 {
-            let change = getChanges(withTreatment: self.treatments[i],
-                                    since: self.numbers[i],
-                                    till: self.numbers[i])
+        for i in 0 ..< 5 {
+            let change = getChanges(
+                withTreatment: treatments[i],
+                since: numbers[i],
+                till: numbers[i])
             changes.insert(change, at: i)
         }
     }
@@ -205,14 +214,13 @@ class StreamingSplitsSyncTest: XCTestCase {
     private func waitForUpdate(secs: UInt32 = 2) {
         sleep(secs)
     }
-    
+
     private func getAndUpdateHit() -> Int {
         var hitNumber = 0
         DispatchQueue.test.sync {
             hitNumber = self.splitsChangesHits
-            self.splitsChangesHits+=1
+            self.splitsChangesHits += 1
         }
         return hitNumber
     }
-
 }

@@ -18,7 +18,6 @@ protocol SyncManager {
 }
 
 class DefaultSyncManager: SyncManager {
-
     private let splitConfig: SplitClientConfig
     private let synchronizer: Synchronizer
     private let broadcasterChannel: SyncEventBroadcaster
@@ -28,13 +27,14 @@ class DefaultSyncManager: SyncManager {
     private var isPaused: Atomic<Bool> = Atomic(false)
     private var syncGuardian: SyncGuardian
 
-    init(splitConfig: SplitClientConfig,
-         pushNotificationManager: PushNotificationManager?,
-         reconnectStreamingTimer: BackoffCounterTimer?,
-         notificationHelper: NotificationHelper,
-         synchronizer: Synchronizer,
-         syncGuardian: SyncGuardian,
-         broadcasterChannel: SyncEventBroadcaster) {
+    init(
+        splitConfig: SplitClientConfig,
+        pushNotificationManager: PushNotificationManager?,
+        reconnectStreamingTimer: BackoffCounterTimer?,
+        notificationHelper: NotificationHelper,
+        synchronizer: Synchronizer,
+        syncGuardian: SyncGuardian,
+        broadcasterChannel: SyncEventBroadcaster) {
         self.splitConfig = splitConfig
         self.pushNotificationManager = pushNotificationManager
         self.synchronizer = synchronizer
@@ -89,23 +89,23 @@ class DefaultSyncManager: SyncManager {
     }
 
     func pause() {
-#if !os(macOS)
-        isPaused.set(true)
-        pushNotificationManager?.pause()
-        synchronizer.pause()
-#endif
+        #if !os(macOS)
+            isPaused.set(true)
+            pushNotificationManager?.pause()
+            synchronizer.pause()
+        #endif
     }
 
     func resume() {
-#if !os(macOS)
-        isPaused.set(false)
-        synchronizer.resume()
-        pushNotificationManager?.resume()
-        if syncGuardian.mustSync() {
-            Logger.d("Triggering sync after being in background.")
-            synchronizer.syncAll()
-        }
-#endif
+        #if !os(macOS)
+            isPaused.set(false)
+            synchronizer.resume()
+            pushNotificationManager?.resume()
+            if syncGuardian.mustSync() {
+                Logger.d("Triggering sync after being in background.")
+                synchronizer.syncAll()
+            }
+        #endif
     }
 
     func stop() {
@@ -115,7 +115,6 @@ class DefaultSyncManager: SyncManager {
     }
 
     private func handle(pushEvent: SyncStatusEvent) {
-
         if isPaused.value {
             return
         }
@@ -154,7 +153,7 @@ class DefaultSyncManager: SyncManager {
                 scheduleStreamingReconnection()
             }
 
-        case .pushDelayReceived(let delaySeconds):
+        case let .pushDelayReceived(delaySeconds):
             Logger.d("Push delay received (\(delaySeconds) secs).")
             syncGuardian.setMaxSyncPeriod(delaySeconds * 1000)
 

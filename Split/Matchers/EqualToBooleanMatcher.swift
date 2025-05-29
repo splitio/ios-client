@@ -8,18 +8,19 @@
 import Foundation
 
 class EqualToBooleanMatcher: BaseMatcher, MatcherProtocol {
-
     var data: Bool?
 
-    init(data: Bool?, splitClient: DefaultSplitClient? = nil, negate: Bool? = nil,
-         attribute: String? = nil, type: MatcherType? = nil) {
-
+    init(
+        data: Bool?,
+        splitClient: DefaultSplitClient? = nil,
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
         self.data = data
     }
 
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
-
         guard let matchValueBool = values.matchValue, let booleanData = data else {
             return false
         }

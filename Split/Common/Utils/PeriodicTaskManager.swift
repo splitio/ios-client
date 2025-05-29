@@ -20,16 +20,16 @@ protocol PeriodicTask {
 }
 
 class PeriodicTaskExecutor: PeriodicTask {
-
     private var dispatchGroup: DispatchGroup?
     private var firstExecutionWindow: Int = 0
     private var rate: Int
     private var triggerAction: PeriodicTaskAction
     private var taskTimer: DispatchSourceTimer?
 
-    init(dispatchGroup: DispatchGroup?,
-         config: PeriodicTaskExecutorConfig,
-         triggerAction: @escaping PeriodicTaskAction) {
+    init(
+        dispatchGroup: DispatchGroup?,
+        config: PeriodicTaskExecutorConfig,
+        triggerAction: @escaping PeriodicTaskAction) {
         self.dispatchGroup = dispatchGroup
         self.rate = config.rate
         self.firstExecutionWindow = config.firstExecutionWindow
@@ -47,7 +47,7 @@ class PeriodicTaskExecutor: PeriodicTask {
     private func startTask() {
         let queue = DispatchQueue(label: "split-polling-queue")
         taskTimer = DispatchSource.makeTimerSource(queue: queue)
-        taskTimer?.schedule(deadline: .now() + .seconds(self.firstExecutionWindow), repeating: .seconds(self.rate))
+        taskTimer?.schedule(deadline: .now() + .seconds(firstExecutionWindow), repeating: .seconds(rate))
         taskTimer?.setEventHandler { [weak self] in
             guard let strongSelf = self else {
                 return

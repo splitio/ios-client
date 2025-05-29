@@ -9,6 +9,7 @@
 import Foundation
 
 // MARK: - SegmentType Enum
+
 @objc enum SegmentType: Int, Codable {
     case standard
     case ruleBased
@@ -69,8 +70,8 @@ class ExcludedSegment: NSObject, Codable {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        type = try container.decodeIfPresent(SegmentType.self, forKey: .type)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
+        self.type = try container.decodeIfPresent(SegmentType.self, forKey: .type)
+        self.name = try container.decodeIfPresent(String.self, forKey: .name)
         super.init()
     }
 
@@ -114,8 +115,8 @@ class Excluded: NSObject, Codable {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        keys = try container.decodeIfPresent(Set<String>.self, forKey: .keys)
-        segments = try container.decodeIfPresent(Set<ExcludedSegment>.self, forKey: .segments)
+        self.keys = try container.decodeIfPresent(Set<String>.self, forKey: .keys)
+        self.segments = try container.decodeIfPresent(Set<ExcludedSegment>.self, forKey: .segments)
         super.init()
     }
 
@@ -151,7 +152,13 @@ class RuleBasedSegment: NSObject, Codable {
         super.init()
     }
 
-    init(name: String, trafficTypeName: String? = nil, changeNumber: Int64 = -1, status: Status = .active, conditions: [Condition]? = nil, excluded: Excluded? = nil) {
+    init(
+        name: String,
+        trafficTypeName: String? = nil,
+        changeNumber: Int64 = -1,
+        status: Status = .active,
+        conditions: [Condition]? = nil,
+        excluded: Excluded? = nil) {
         self.name = name
         self.trafficTypeName = trafficTypeName
         self.changeNumber = changeNumber
@@ -164,13 +171,13 @@ class RuleBasedSegment: NSObject, Codable {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        trafficTypeName = try container.decodeIfPresent(String.self, forKey: .trafficTypeName)
-        changeNumber = try container.decodeIfPresent(Int64.self, forKey: .changeNumber) ?? -1
-        status = try container.decodeIfPresent(Status.self, forKey: .status) ?? .active
-        conditions = try container.decodeIfPresent([Condition].self, forKey: .conditions)
-        excluded = try container.decodeIfPresent(Excluded.self, forKey: .excluded)
-        isParsed = true
+        self.name = try container.decodeIfPresent(String.self, forKey: .name)
+        self.trafficTypeName = try container.decodeIfPresent(String.self, forKey: .trafficTypeName)
+        self.changeNumber = try container.decodeIfPresent(Int64.self, forKey: .changeNumber) ?? -1
+        self.status = try container.decodeIfPresent(Status.self, forKey: .status) ?? .active
+        self.conditions = try container.decodeIfPresent([Condition].self, forKey: .conditions)
+        self.excluded = try container.decodeIfPresent(Excluded.self, forKey: .excluded)
+        self.isParsed = true
         super.init()
     }
 

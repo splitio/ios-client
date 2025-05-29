@@ -13,7 +13,6 @@ import Foundation
 /// Also triggers MY SEGMENTS READY event when first fetch is succesful
 ///
 class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
-
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let avoidCache: Bool
     private let syncHelper: SegmentsSyncHelper
@@ -21,34 +20,36 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
 
     var changeChecker: MySegmentsChangesChecker
 
-    init(telemetryProducer: TelemetryRuntimeProducer?,
-         eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter,
-         avoidCache: Bool,
-         changeNumbers: SegmentsChangeNumber,
-         syncHelper: SegmentsSyncHelper) {
-
+    init(
+        telemetryProducer: TelemetryRuntimeProducer?,
+        eventsManager: SplitEventsManager,
+        reconnectBackoffCounter: ReconnectBackoffCounter,
+        avoidCache: Bool,
+        changeNumbers: SegmentsChangeNumber,
+        syncHelper: SegmentsSyncHelper) {
         self.telemetryProducer = telemetryProducer
         self.changeChecker = DefaultMySegmentsChangesChecker()
         self.avoidCache = avoidCache
         self.changeNumbers = changeNumbers
         self.syncHelper = syncHelper
 
-        super.init(eventsManager: eventsManager,
-                   reconnectBackoffCounter: reconnectBackoffCounter)
+        super.init(
+            eventsManager: eventsManager,
+            reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() throws -> Bool {
         do {
-            let result = try syncHelper.sync(msTill: changeNumbers.msChangeNumber,
-                                             mlsTill: changeNumbers.mlsChangeNumber,
-                                             headers: getHeaders())
+            let result = try syncHelper.sync(
+                msTill: changeNumbers.msChangeNumber,
+                mlsTill: changeNumbers.mlsChangeNumber,
+                headers: getHeaders())
             if result.success {
                 if !isSdkReadyTriggered() {
                     // Notifying both to trigger SDK Ready
                     notifyUpdate([.mySegmentsUpdated])
                     notifyUpdate([.myLargeSegmentsUpdated])
-                } else if  result.msUpdated || result.mlsUpdated {
+                } else if result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
                     notifyUpdate([.mySegmentsUpdated])
                 }
@@ -59,7 +60,6 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             errorHandler?(error)
         }
         return false
-
     }
 
     private func getHeaders() -> [String: String]? {
@@ -76,10 +76,10 @@ struct SegmentsSyncResult {
 }
 
 protocol SegmentsSyncHelper {
-    func sync(msTill: Int64,
-              mlsTill: Int64,
-              headers: HttpHeaders?) throws -> SegmentsSyncResult
-
+    func sync(
+        msTill: Int64,
+        mlsTill: Int64,
+        headers: HttpHeaders?) throws -> SegmentsSyncResult
 }
 
 class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
@@ -109,13 +109,13 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
         return splitConfig.cdnBackoffTimeMaxInSecs
     }
 
-    init(userKey: String,
-         segmentsFetcher: HttpMySegmentsFetcher,
-         mySegmentsStorage: ByKeyMySegmentsStorage,
-         myLargeSegmentsStorage: ByKeyMySegmentsStorage,
-         changeChecker: MySegmentsChangesChecker,
-         splitConfig: SplitClientConfig) {
-
+    init(
+        userKey: String,
+        segmentsFetcher: HttpMySegmentsFetcher,
+        mySegmentsStorage: ByKeyMySegmentsStorage,
+        myLargeSegmentsStorage: ByKeyMySegmentsStorage,
+        changeChecker: MySegmentsChangesChecker,
+        splitConfig: SplitClientConfig) {
         self.userKey = userKey
         self.segmentsFetcher = segmentsFetcher
         self.mySegmentsStorage = mySegmentsStorage
@@ -124,76 +124,87 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
         self.changeChecker = changeChecker
     }
 
-    func sync(msTill: Int64 = -1,
-              mlsTill: Int64 = -1,
-              headers: HttpHeaders? = nil) throws -> SegmentsSyncResult {
+    func sync(
+        msTill: Int64 = -1,
+        mlsTill: Int64 = -1,
+        headers: HttpHeaders? = nil) throws -> SegmentsSyncResult {
         do {
-            let res = try tryToSync(msTill: msTill,
-                                    mlsTill: mlsTill,
-                                    headers: headers)
+            let res = try tryToSync(
+                msTill: msTill,
+                mlsTill: mlsTill,
+                headers: headers)
 
             if res.success {
                 return res
             }
 
-            return try tryToSync(msTill: res.msChangeNumber,
-                                 mlsTill: res.mlsChangeNumber,
-                                 headers: headers,
-                                 useTillParam: true)
-        } catch let error {
+            return try tryToSync(
+                msTill: res.msChangeNumber,
+                mlsTill: res.mlsChangeNumber,
+                headers: headers,
+                useTillParam: true)
+        } catch {
             Logger.e("Problem fetching segments %@", error.localizedDescription)
             throw error
         }
     }
 
-    private func tryToSync(msTill: Int64,
-                           mlsTill: Int64,
-                           headers: HttpHeaders? = nil,
-                           useTillParam: Bool = false) throws -> SegmentsSyncResult {
-
-        let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffTimeBaseInSecs,
-                                                            maxTimeLimit: backoffTimeMaxInSecs)
+    private func tryToSync(
+        msTill: Int64,
+        mlsTill: Int64,
+        headers: HttpHeaders? = nil,
+        useTillParam: Bool = false) throws -> SegmentsSyncResult {
+        let backoffCounter = DefaultReconnectBackoffCounter(
+            backoffBase: backoffTimeBaseInSecs,
+            maxTimeLimit: backoffTimeMaxInSecs)
         var attemptCount = 0
         let goalTill = SegmentsChangeNumber(msChangeNumber: msTill, mlsChangeNumber: mlsTill)
         let till = useTillParam ? goalTill.max() : nil
         while attemptCount < maxAttempts {
-            let result = try fetchUntil(till: till,
-                                        headers: headers)
+            let result = try fetchUntil(
+                till: till,
+                headers: headers)
 
             if goalReached(goalTill: goalTill, result: result) {
-                return SegmentsSyncResult(success: true,
-                                          msChangeNumber: result.msTill,
-                                          mlsChangeNumber: result.mlsTill,
-                                          msUpdated: result.msUpdated,
-                                          mlsUpdated: result.mlsUdated)
+                return SegmentsSyncResult(
+                    success: true,
+                    msChangeNumber: result.msTill,
+                    mlsChangeNumber: result.mlsTill,
+                    msUpdated: result.msUpdated,
+                    mlsUpdated: result.mlsUdated)
             }
-            attemptCount+=1
+            attemptCount += 1
             if attemptCount < maxAttempts {
                 Thread.sleep(forTimeInterval: backoffCounter.getNextRetryTime())
             }
         }
-        return SegmentsSyncResult(success: false,
-                                  msChangeNumber: -1,
-                                  mlsChangeNumber: -1,
-                                  msUpdated: false,
-                                  mlsUpdated: false)
+        return SegmentsSyncResult(
+            success: false,
+            msChangeNumber: -1,
+            mlsChangeNumber: -1,
+            msUpdated: false,
+            mlsUpdated: false)
     }
 
-    private func fetchUntil(till: Int64?,
-                            headers: HttpHeaders? = nil) throws -> FetchResult {
+    private func fetchUntil(
+        till: Int64?,
+        headers: HttpHeaders? = nil) throws -> FetchResult {
+        let oldChange = SegmentChange(
+            segments: mySegmentsStorage.getAll().asArray(),
+            changeNumber: mySegmentsStorage.changeNumber)
 
-        let oldChange = SegmentChange(segments: mySegmentsStorage.getAll().asArray(),
-                                      changeNumber: mySegmentsStorage.changeNumber)
+        let oldLargeChange = SegmentChange(
+            segments: myLargeSegmentsStorage.getAll().asArray(),
+            changeNumber: myLargeSegmentsStorage.changeNumber)
 
-        let oldLargeChange = SegmentChange(segments: myLargeSegmentsStorage.getAll().asArray(),
-                                           changeNumber: myLargeSegmentsStorage.changeNumber)
-
-        var prevChange = AllSegmentsChange(mySegmentsChange: oldChange,
-                                           myLargeSegmentsChange: oldLargeChange)
+        var prevChange = AllSegmentsChange(
+            mySegmentsChange: oldChange,
+            myLargeSegmentsChange: oldLargeChange)
         while true {
-            guard let change = try segmentsFetcher.execute(userKey: userKey,
-                                                           till: till,
-                                                           headers: headers) else {
+            guard let change = try segmentsFetcher.execute(
+                userKey: userKey,
+                till: till,
+                headers: headers) else {
                 throw HttpError.unknown(code: -1, message: "Segment result is null")
             }
 
@@ -201,33 +212,36 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
             let myLargeSegmentsChange = change.myLargeSegmentsChange
 
             if !isOutdated(change, prevChange) {
-                let msChanged =  changeChecker.mySegmentsHaveChanged(old: oldChange,
-                                                                     new: mySegmentsChange)
-                let mlsChanged = changeChecker.mySegmentsHaveChanged(old: oldLargeChange,
-                                                                     new: myLargeSegmentsChange)
+                let msChanged = changeChecker.mySegmentsHaveChanged(
+                    old: oldChange,
+                    new: mySegmentsChange)
+                let mlsChanged = changeChecker.mySegmentsHaveChanged(
+                    old: oldLargeChange,
+                    new: myLargeSegmentsChange)
                 Logger.d("Checking my segments update")
                 checkAndUpdate(isChanged: msChanged, change: mySegmentsChange, storage: mySegmentsStorage)
                 Logger.d("Checking my large segments update")
                 checkAndUpdate(isChanged: mlsChanged, change: myLargeSegmentsChange, storage: myLargeSegmentsStorage)
 
-                return FetchResult(msTill: mySegmentsChange.unwrappedChangeNumber,
-                                   mlsTill: myLargeSegmentsChange.unwrappedChangeNumber,
-                                   msUpdated: msChanged,
-                                   mlsUdated: mlsChanged)
+                return FetchResult(
+                    msTill: mySegmentsChange.unwrappedChangeNumber,
+                    mlsTill: myLargeSegmentsChange.unwrappedChangeNumber,
+                    msUpdated: msChanged,
+                    mlsUdated: mlsChanged)
             }
             prevChange = change
         }
     }
 
-    private func isOutdated(_ change: AllSegmentsChange,
-                            _ prevChange: AllSegmentsChange?) -> Bool {
-
+    private func isOutdated(
+        _ change: AllSegmentsChange,
+        _ prevChange: AllSegmentsChange?) -> Bool {
         guard let prevChange = prevChange else {
             return true
         }
 
         return change.changeNumbers.msChangeNumber < prevChange.changeNumbers.msChangeNumber ||
-        change.changeNumbers.mlsChangeNumber < prevChange.changeNumbers.mlsChangeNumber
+            change.changeNumbers.mlsChangeNumber < prevChange.changeNumbers.mlsChangeNumber
     }
 
     private func checkAndUpdate(isChanged: Bool, change: SegmentChange, storage: ByKeyMySegmentsStorage) {
@@ -239,6 +253,6 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
     }
 
     private func goalReached(goalTill: SegmentsChangeNumber, result: FetchResult) -> Bool {
-        return (result.msTill >= goalTill.msChangeNumber && result.mlsTill >= goalTill.mlsChangeNumber)
+        return result.msTill >= goalTill.msChangeNumber && result.mlsTill >= goalTill.mlsChangeNumber
     }
 }

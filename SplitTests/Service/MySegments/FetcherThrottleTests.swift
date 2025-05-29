@@ -7,21 +7,31 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class FetcherThrottleTests: XCTestCase {
-
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testDelayValues() {
         let v1 = FetcherThrottle.computeDelay(algo: .murmur332, userKey: "nicolas@split.io", seed: 0, timeMillis: 300)
         let v2 = FetcherThrottle.computeDelay(algo: .murmur332, userKey: "emi@split.io", seed: 1, timeMillis: 60000)
         let v3 = FetcherThrottle.computeDelay(algo: .murmur332, userKey: "emi@split.io", seed: 0, timeMillis: 60000)
-        let v4 = FetcherThrottle.computeDelay(algo: .murmur332, userKey: IntegrationHelper.dummyUserKey, seed: 1, timeMillis: 2900)
-        let v5 = FetcherThrottle.computeDelay(algo: .murmur332, userKey: IntegrationHelper.dummyUserKey, seed: 0, timeMillis: 0)
-        let v6 = FetcherThrottle.computeDelay(algo: .murmur364, userKey: IntegrationHelper.dummyUserKey, seed: 0, timeMillis: 0)
+        let v4 = FetcherThrottle.computeDelay(
+            algo: .murmur332,
+            userKey: IntegrationHelper.dummyUserKey,
+            seed: 1,
+            timeMillis: 2900)
+        let v5 = FetcherThrottle.computeDelay(
+            algo: .murmur332,
+            userKey: IntegrationHelper.dummyUserKey,
+            seed: 0,
+            timeMillis: 0)
+        let v6 = FetcherThrottle.computeDelay(
+            algo: .murmur364,
+            userKey: IntegrationHelper.dummyUserKey,
+            seed: 0,
+            timeMillis: 0)
 
         XCTAssertEqual(241, v1)
         XCTAssertEqual(14389, v2)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct RestClientConfiguration {
+enum RestClientConfiguration {
     static var httpClient: HttpClient {
         return DefaultHttpClient.shared
     }

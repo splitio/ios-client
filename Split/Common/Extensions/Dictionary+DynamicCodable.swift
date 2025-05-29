@@ -10,7 +10,7 @@ import Foundation
 
 extension Dictionary: DynamicEncodable where Key: Hashable, Value: DynamicEncodable {
     func toJsonObject() -> Any {
-        let dic = self.mapValues({ $0.toJsonObject() })
+        let dic = mapValues { $0.toJsonObject() }
         return dic
     }
 }
@@ -18,7 +18,7 @@ extension Dictionary: DynamicEncodable where Key: Hashable, Value: DynamicEncoda
 extension Dictionary: DynamicDecodable where Key: Hashable, Value: DynamicDecodable {
     init(jsonObject: Any) throws {
         if let elements = jsonObject as? [Key: Any] {
-            self = try elements.mapValues({ try Value.init(jsonObject: $0) })
+            self = try elements.mapValues { try Value(jsonObject: $0) }
         } else {
             Logger.i("DynamicDecodable: Could not parse objects")
             self = [:]

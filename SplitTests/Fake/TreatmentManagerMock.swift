@@ -11,7 +11,7 @@ import Foundation
 
 class TreatmentManagerMock: TreatmentManager {
     let fSplits = ["split1", "split2"]
-    
+
     // Track method calls with evaluationOptions
     var getTreatmentCalled = false
     var getTreatmentWithConfigCalled = false
@@ -21,7 +21,7 @@ class TreatmentManagerMock: TreatmentManager {
     var getTreatmentsByFlagSetsCalled = false
     var getTreatmentsWithConfigByFlagSetCalled = false
     var getTreatmentsWithConfigByFlagSetsCalled = false
-    
+
     // Store the last evaluationOptions passed to each method
     var lastGetTreatmentEvaluationOptions: EvaluationOptions?
     var lastGetTreatmentWithConfigEvaluationOptions: EvaluationOptions?
@@ -31,57 +31,80 @@ class TreatmentManagerMock: TreatmentManager {
     var lastGetTreatmentsByFlagSetsEvaluationOptions: EvaluationOptions?
     var lastGetTreatmentsWithConfigByFlagSetEvaluationOptions: EvaluationOptions?
     var lastGetTreatmentsWithConfigByFlagSetsEvaluationOptions: EvaluationOptions?
-    
-    func getTreatment(_ splitName: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> String {
+
+    func getTreatment(
+        _ splitName: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions? = nil) -> String {
         getTreatmentCalled = true
         lastGetTreatmentEvaluationOptions = evaluationOptions
         return SplitConstants.control
     }
-    
-    func getTreatmentWithConfig(_ splitName: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> SplitResult {
+
+    func getTreatmentWithConfig(
+        _ splitName: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions? = nil) -> SplitResult {
         getTreatmentWithConfigCalled = true
         lastGetTreatmentWithConfigEvaluationOptions = evaluationOptions
         return SplitResult(treatment: SplitConstants.control)
     }
-    
-    func getTreatments(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: String] {
+
+    func getTreatments(
+        splits: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions? = nil) -> [String: String] {
         getTreatmentsCalled = true
         lastGetTreatmentsEvaluationOptions = evaluationOptions
         return dicTreatment(splits: splits)
     }
-    
-    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: SplitResult] {
+
+    func getTreatmentsWithConfig(
+        splits: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions? = nil) -> [String: SplitResult] {
         getTreatmentsWithConfigCalled = true
         lastGetTreatmentsWithConfigEvaluationOptions = evaluationOptions
         return dicResult(splits: splits)
     }
-    
-    func getTreatmentsByFlagSet(flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: String] {
+
+    func getTreatmentsByFlagSet(
+        flagSet: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions? = nil) -> [String: String] {
         getTreatmentsByFlagSetCalled = true
         lastGetTreatmentsByFlagSetEvaluationOptions = evaluationOptions
         return dicTreatment(splits: fSplits)
     }
-    
-    func getTreatmentsByFlagSets(flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: String] {
+
+    func getTreatmentsByFlagSets(
+        flagSets: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions? = nil) -> [String: String] {
         getTreatmentsByFlagSetsCalled = true
         lastGetTreatmentsByFlagSetsEvaluationOptions = evaluationOptions
         return dicTreatment(splits: fSplits)
     }
-    
-    func getTreatmentsWithConfigByFlagSet(flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: SplitResult] {
+
+    func getTreatmentsWithConfigByFlagSet(
+        flagSet: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions? = nil) -> [String: SplitResult] {
         getTreatmentsWithConfigByFlagSetCalled = true
         lastGetTreatmentsWithConfigByFlagSetEvaluationOptions = evaluationOptions
         return dicResult(splits: fSplits)
     }
-    
-    func getTreatmentsWithConfigByFlagSets(flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions? = nil) -> [String: SplitResult] {
+
+    func getTreatmentsWithConfigByFlagSets(
+        flagSets: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions? = nil) -> [String: SplitResult] {
         getTreatmentsWithConfigByFlagSetsCalled = true
         lastGetTreatmentsWithConfigByFlagSetsEvaluationOptions = evaluationOptions
         return dicResult(splits: fSplits)
     }
-    
-    func destroy() {
-    }
+
+    func destroy() {}
 
     private func dicTreatment(splits: [String]) -> [String: String] {
         var result = [String: String]()

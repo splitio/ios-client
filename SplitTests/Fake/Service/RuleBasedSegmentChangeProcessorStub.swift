@@ -9,7 +9,11 @@ import Foundation
 @testable import Split
 
 class RuleBasedSegmentChangeProcessorStub: RuleBasedSegmentChangeProcessor {
-    var processedRuleBasedSegmentsChange: ProcessedRuleBasedSegmentChange = ProcessedRuleBasedSegmentChange(activeSegments: [], archivedSegments: [], changeNumber: -1, updateTimestamp: -1)
+    var processedRuleBasedSegmentsChange: ProcessedRuleBasedSegmentChange = .init(
+        activeSegments: [],
+        archivedSegments: [],
+        changeNumber: -1,
+        updateTimestamp: -1)
 
     var segmentChange: RuleBasedSegmentChange?
     func process(_ segmentChange: RuleBasedSegmentChange) -> ProcessedRuleBasedSegmentChange {

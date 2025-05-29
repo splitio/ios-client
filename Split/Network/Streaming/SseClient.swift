@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct SseClientConstants {
+enum SseClientConstants {
     static let pushNotificationChannelsParam = "channels"
     static let pushNotificationTokenParam = "accessToken"
     static let pushNotificationVersionParam = "v"
@@ -23,7 +23,6 @@ protocol SseClient: AnyObject {
 }
 
 class DefaultSseClient: SseClient {
-
     ///
     /// NOTE:
     /// Keep alive is managed through timeoutRequestInverval from URLSession
@@ -55,17 +54,18 @@ class DefaultSseClient: SseClient {
             let parameters: [String: Any] = [
                 SseClientConstants.pushNotificationTokenParam: token,
                 SseClientConstants.pushNotificationChannelsParam: self.createChannelsQueryString(channels: channels),
-                SseClientConstants.pushNotificationVersionParam: SseClientConstants.pushNotificationVersionValue
+                SseClientConstants.pushNotificationVersionParam: SseClientConstants.pushNotificationVersionValue,
             ]
             do {
                 self.streamRequest = try self.httpClient.sendStreamRequest(
                     endpoint: self.endpoint,
                     parameters: HttpParameters(values: parameters),
                     headers: self.endpoint.headers)
-                .getResponse(responseHandler: self.responseHandler(completion: completion),
-                             incomingDataHandler: self.incommingDataHandler(completion: completion),
-                             closeHandler: self.closeHandler(),
-                             errorHandler: self.errorHandler())
+                    .getResponse(
+                        responseHandler: self.responseHandler(completion: completion),
+                        incomingDataHandler: self.incommingDataHandler(completion: completion),
+                        closeHandler: self.closeHandler(),
+                        errorHandler: self.errorHandler())
             } catch {
                 Logger.e("Error while connecting to streaming: \(error.localizedDescription)")
                 self.handleError(retryable: false)
@@ -82,17 +82,17 @@ class DefaultSseClient: SseClient {
     }
 
     func handleError(retryable: Bool) {
-        self.isConnected.set(false)
+        isConnected.set(false)
         sseHandler.reportError(isRetryable: retryable)
     }
 
     func handleConnectionClosed() {
-        self.isConnected.set(false)
+        isConnected.set(false)
         sseHandler.reportError(isRetryable: true)
     }
 
     func handleError(_ error: HttpError) {
-        self.isConnected.set(false)
+        isConnected.set(false)
         sseHandler.reportError(isRetryable: !isClientRelatedError(error))
     }
 
@@ -113,6 +113,7 @@ class DefaultSseClient: SseClient {
     }
 
     // MARK: Handlers for Stream request
+
     func responseHandler(completion: @escaping CompletionHandler) -> HttpStreamRequest.ResponseHandler {
         return { [weak self] response in
             guard let self = self else { return }
@@ -122,7 +123,6 @@ class DefaultSseClient: SseClient {
                 return
             }
             Logger.d("Streaming connected")
-
         }
     }
 
@@ -172,6 +172,7 @@ class DefaultSseClient: SseClient {
 }
 
 // MARK: Private
+
 extension DefaultSseClient {
     private func createChannelsQueryString(channels: [String]) -> String {
         return channels.joined(separator: ",")

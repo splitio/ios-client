@@ -6,11 +6,10 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-@testable import Split
 import Foundation
+@testable import Split
 
 class GeneralInfoDaoStub: GeneralInfoDao {
-
     var updatedString = [String: String]()
     var updatedLong = [String: Int64]()
 

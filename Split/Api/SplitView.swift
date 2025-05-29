@@ -9,7 +9,6 @@
 import Foundation
 
 public class SplitView: NSObject, Codable {
-
     @objc public var name: String?
     @objc public var trafficType: String?
     @objc public var defaultTreatment: String?
@@ -17,6 +16,7 @@ public class SplitView: NSObject, Codable {
     @objc public var isKilled: Bool {
         return killed ?? false
     }
+
     @objc public var treatments: [String]?
     @objc public var sets: [String]?
     public var changeNumber: Int64?
@@ -24,6 +24,7 @@ public class SplitView: NSObject, Codable {
     @objc public var changeNum: NSNumber? {
         return changeNumber as NSNumber?
     }
+
     @objc public var configs: [String: String]?
 
     @objc public var impressionsDisabled: Bool = false

@@ -57,7 +57,7 @@ import Foundation
     // Also is not public to force SDK users to use static functions "byName" and "byPrefix"
     init(type: FilterType, values: [String]) {
         self.type = type
-        self.values = values.map {$0.trimmingCharacters(in: .whitespacesAndNewlines) }
+        self.values = values.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
     }
 
     @objc(byName:)

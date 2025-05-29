@@ -15,7 +15,6 @@ protocol PersistentAttributesStorage {
 }
 
 class DefaultPersistentAttributesStorage: PersistentAttributesStorage {
-
     private let attributesDao: AttributesDao
 
     init(database: SplitDatabase) {

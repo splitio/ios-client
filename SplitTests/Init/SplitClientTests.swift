@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class SplitClientTests: XCTestCase {
-
     var client: SplitClient!
     let key = Key(matchingKey: "key1")
     var treatmentManager: TreatmentManager!
@@ -32,16 +31,20 @@ class SplitClientTests: XCTestCase {
         config.logLevel = .verbose
         eventsTracker = EventsTrackerStub()
 
-        client = DefaultSplitClient(config: config, key: key,
-                                    treatmentManager: treatmentManager, apiFacade: apiFacade,
-                                    storageContainer: storageContainer,
-                                    eventsManager: eventsManager,
-                                    eventsTracker: eventsTracker, clientManager: clientManager)
+        client = DefaultSplitClient(
+            config: config,
+            key: key,
+            treatmentManager: treatmentManager,
+            apiFacade: apiFacade,
+            storageContainer: storageContainer,
+            eventsManager: eventsManager,
+            eventsTracker: eventsTracker,
+            clientManager: clientManager)
     }
 
     func testOnMain() {
         for event in events {
-            client.on(event: event, execute: { print("exec")})
+            client.on(event: event, execute: { print("exec") })
         }
 
         for event in events {
@@ -57,7 +60,7 @@ class SplitClientTests: XCTestCase {
 
     func testOnBg() {
         for event in events {
-            client.on(event: event, runInBackground: true, execute: { print("exec")})
+            client.on(event: event, runInBackground: true, execute: { print("exec") })
         }
 
         for event in events {
@@ -73,7 +76,7 @@ class SplitClientTests: XCTestCase {
 
     func testOnQueue() {
         for event in events {
-            client.on(event: event, queue: DispatchQueue(label: "queue1"), execute: { print("exec")})
+            client.on(event: event, queue: DispatchQueue(label: "queue1"), execute: { print("exec") })
         }
 
         for event in events {
@@ -86,7 +89,7 @@ class SplitClientTests: XCTestCase {
             XCTAssertNotNil(task.takeQueue())
         }
     }
-    
+
     func testGetTreatmentWithEvaluationOptions() {
         testEvaluationOptionsPassedCorrectly(
             resetMock: { mock in
@@ -97,14 +100,13 @@ class SplitClientTests: XCTestCase {
                 _ = self.client.getTreatment("split1", attributes: nil, evaluationOptions: options)
             },
             verifyMethodCalled: { mock in
-                return mock.getTreatmentCalled
+                mock.getTreatmentCalled
             },
             getEvaluationOptions: { mock in
-                return mock.lastGetTreatmentEvaluationOptions
-            }
-        )
+                mock.lastGetTreatmentEvaluationOptions
+            })
     }
-    
+
     func testGetTreatmentWithConfigAndEvaluationOptions() {
         testEvaluationOptionsPassedCorrectly(
             resetMock: { mock in
@@ -115,14 +117,13 @@ class SplitClientTests: XCTestCase {
                 _ = self.client.getTreatmentWithConfig("split1", attributes: nil, evaluationOptions: options)
             },
             verifyMethodCalled: { mock in
-                return mock.getTreatmentWithConfigCalled
+                mock.getTreatmentWithConfigCalled
             },
             getEvaluationOptions: { mock in
-                return mock.lastGetTreatmentWithConfigEvaluationOptions
-            }
-        )
+                mock.lastGetTreatmentWithConfigEvaluationOptions
+            })
     }
-    
+
     func testGetTreatmentsWithEvaluationOptions() {
         testEvaluationOptionsPassedCorrectly(
             resetMock: { mock in
@@ -133,14 +134,13 @@ class SplitClientTests: XCTestCase {
                 _ = self.client.getTreatments(splits: ["split1", "split2"], attributes: nil, evaluationOptions: options)
             },
             verifyMethodCalled: { mock in
-                return mock.getTreatmentsCalled
+                mock.getTreatmentsCalled
             },
             getEvaluationOptions: { mock in
-                return mock.lastGetTreatmentsEvaluationOptions
-            }
-        )
+                mock.lastGetTreatmentsEvaluationOptions
+            })
     }
-    
+
     func testGetTreatmentsWithConfigAndEvaluationOptions() {
         testEvaluationOptionsPassedCorrectly(
             resetMock: { mock in
@@ -148,17 +148,19 @@ class SplitClientTests: XCTestCase {
                 mock.lastGetTreatmentsWithConfigEvaluationOptions = nil
             },
             callMethod: { options in
-                _ = self.client.getTreatmentsWithConfig(splits: ["split1", "split2"], attributes: nil, evaluationOptions: options)
+                _ = self.client.getTreatmentsWithConfig(
+                    splits: ["split1", "split2"],
+                    attributes: nil,
+                    evaluationOptions: options)
             },
             verifyMethodCalled: { mock in
-                return mock.getTreatmentsWithConfigCalled
+                mock.getTreatmentsWithConfigCalled
             },
             getEvaluationOptions: { mock in
-                return mock.lastGetTreatmentsWithConfigEvaluationOptions
-            }
-        )
+                mock.lastGetTreatmentsWithConfigEvaluationOptions
+            })
     }
-    
+
     func testGetTreatmentsByFlagSetWithEvaluationOptions() {
         testEvaluationOptionsPassedCorrectly(
             resetMock: { mock in
@@ -169,14 +171,13 @@ class SplitClientTests: XCTestCase {
                 _ = self.client.getTreatmentsByFlagSet("set1", attributes: nil, evaluationOptions: options)
             },
             verifyMethodCalled: { mock in
-                return mock.getTreatmentsByFlagSetCalled
+                mock.getTreatmentsByFlagSetCalled
             },
             getEvaluationOptions: { mock in
-                return mock.lastGetTreatmentsByFlagSetEvaluationOptions
-            }
-        )
+                mock.lastGetTreatmentsByFlagSetEvaluationOptions
+            })
     }
-    
+
     func testGetTreatmentsByFlagSetsWithEvaluationOptions() {
         testEvaluationOptionsPassedCorrectly(
             resetMock: { mock in
@@ -187,14 +188,13 @@ class SplitClientTests: XCTestCase {
                 _ = self.client.getTreatmentsByFlagSets(["set1", "set2"], attributes: nil, evaluationOptions: options)
             },
             verifyMethodCalled: { mock in
-                return mock.getTreatmentsByFlagSetsCalled
+                mock.getTreatmentsByFlagSetsCalled
             },
             getEvaluationOptions: { mock in
-                return mock.lastGetTreatmentsByFlagSetsEvaluationOptions
-            }
-        )
+                mock.lastGetTreatmentsByFlagSetsEvaluationOptions
+            })
     }
-    
+
     func testGetTreatmentsWithConfigByFlagSetWithEvaluationOptions() {
         testEvaluationOptionsPassedCorrectly(
             resetMock: { mock in
@@ -205,14 +205,13 @@ class SplitClientTests: XCTestCase {
                 _ = self.client.getTreatmentsWithConfigByFlagSet("set1", attributes: nil, evaluationOptions: options)
             },
             verifyMethodCalled: { mock in
-                return mock.getTreatmentsWithConfigByFlagSetCalled
+                mock.getTreatmentsWithConfigByFlagSetCalled
             },
             getEvaluationOptions: { mock in
-                return mock.lastGetTreatmentsWithConfigByFlagSetEvaluationOptions
-            }
-        )
+                mock.lastGetTreatmentsWithConfigByFlagSetEvaluationOptions
+            })
     }
-    
+
     func testGetTreatmentsWithConfigByFlagSetsWithEvaluationOptions() {
         testEvaluationOptionsPassedCorrectly(
             resetMock: { mock in
@@ -220,19 +219,20 @@ class SplitClientTests: XCTestCase {
                 mock.lastGetTreatmentsWithConfigByFlagSetsEvaluationOptions = nil
             },
             callMethod: { options in
-                _ = self.client.getTreatmentsWithConfigByFlagSets(["set1", "set2"], attributes: nil, evaluationOptions: options)
+                _ = self.client.getTreatmentsWithConfigByFlagSets(
+                    ["set1", "set2"],
+                    attributes: nil,
+                    evaluationOptions: options)
             },
             verifyMethodCalled: { mock in
-                return mock.getTreatmentsWithConfigByFlagSetsCalled
+                mock.getTreatmentsWithConfigByFlagSetsCalled
             },
             getEvaluationOptions: { mock in
-                return mock.lastGetTreatmentsWithConfigByFlagSetsEvaluationOptions
-            }
-        )
+                mock.lastGetTreatmentsWithConfigByFlagSetsEvaluationOptions
+            })
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 
     private func verifyProperties(in evaluationOptions: EvaluationOptions?) {
         XCTAssertNotNil(evaluationOptions, "evaluationOptions should be passed to TreatmentManager")
@@ -249,7 +249,7 @@ class SplitClientTests: XCTestCase {
         return [
             "string": "test",
             "number": 123,
-            "boolean": true
+            "boolean": true,
         ]
     }
 
@@ -257,8 +257,7 @@ class SplitClientTests: XCTestCase {
         resetMock: (TreatmentManagerMock) -> Void,
         callMethod: (EvaluationOptions) -> Void,
         verifyMethodCalled: (TreatmentManagerMock) -> Bool,
-        getEvaluationOptions: (TreatmentManagerMock) -> EvaluationOptions?
-    ) {
+        getEvaluationOptions: (TreatmentManagerMock) -> EvaluationOptions?) {
         // Create evaluation options with properties
         let evaluationOptions = EvaluationOptions(properties: createTestProperties())
 

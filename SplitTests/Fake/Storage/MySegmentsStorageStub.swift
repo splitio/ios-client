@@ -7,12 +7,11 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class MySegmentsStorageStub: MySegmentsStorage {
-
-    var segments: [String: Set<String>] = [String: Set<String>]()
+    var segments: [String: Set<String>] = .init()
     var persistedSegments = [String: Set<String>]()
 
     var updateExpectation = [String: XCTestExpectation]()
@@ -24,7 +23,6 @@ class MySegmentsStorageStub: MySegmentsStorage {
     var keys: Set<String> {
         return Set(segments.keys.map { $0 })
     }
-    
 
     func changeNumber(forKey key: String) -> Int64? {
         return changeNumber
@@ -39,14 +37,14 @@ class MySegmentsStorageStub: MySegmentsStorage {
         loadLocalForKeyCalled[key] = true
         segments = persistedSegments
     }
-    
+
     func getAll(forKey key: String) -> Set<String> {
         return segments[key] ?? Set()
     }
 
     func set(_ change: SegmentChange, forKey key: String) {
-        self.segments[key] = change.segments.map { $0.name }.asSet()
-        self.changeNumber = change.changeNumber ?? -1
+        segments[key] = change.segments.map { $0.name }.asSet()
+        changeNumber = change.changeNumber ?? -1
         if let exp = updateExpectation[key] {
             exp.fulfill()
         }
@@ -70,7 +68,7 @@ class MySegmentsStorageStub: MySegmentsStorage {
     }
 
     func getCount() -> Int {
-        getCountCalledCount+=1
+        getCountCalledCount += 1
         var count = 0
         for (_, value) in segments {
             count += value.count
@@ -80,12 +78,11 @@ class MySegmentsStorageStub: MySegmentsStorage {
 
     var clearCalledTimes = 0
     var clearCalled: Bool {
-        get {
-            return clearCalledTimes > 0
-        }
+        return clearCalledTimes > 0
     }
+
     func clear() {
-        clearCalledTimes+=1
+        clearCalledTimes += 1
         segments.removeAll()
     }
 }

@@ -14,12 +14,20 @@ class PropertyValidatorStub: PropertyValidator {
     var validateCalled = false
     var lastPropertiesValidated: [String: Any]?
     var lastInitialSizeInBytes: Int = 0
-    let delegate = DefaultPropertyValidator(anyValueValidator: AnyValueValidatorStub(), validationLogger: ValidationMessageLoggerStub())
-    
-    func validate(properties: [String: Any]?, initialSizeInBytes: Int, validationTag: String) -> PropertyValidationResult {
+    let delegate = DefaultPropertyValidator(
+        anyValueValidator: AnyValueValidatorStub(),
+        validationLogger: ValidationMessageLoggerStub())
+
+    func validate(
+        properties: [String: Any]?,
+        initialSizeInBytes: Int,
+        validationTag: String) -> PropertyValidationResult {
         validateCalled = true
         lastPropertiesValidated = properties
         lastInitialSizeInBytes = initialSizeInBytes
-        return validateResult ?? delegate.validate(properties: properties, initialSizeInBytes: initialSizeInBytes, validationTag: validationTag)
+        return validateResult ?? delegate.validate(
+            properties: properties,
+            initialSizeInBytes: initialSizeInBytes,
+            validationTag: validationTag)
     }
 }

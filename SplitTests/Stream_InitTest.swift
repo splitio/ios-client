@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class StreamingInitTest: XCTestCase {
     var httpClient: HttpClient!
@@ -24,8 +24,7 @@ class StreamingInitTest: XCTestCase {
     }
 
     func testInit() {
-
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
         splitConfig.segmentsRefreshRate = 30
         splitConfig.impressionRefreshRate = 30
@@ -34,7 +33,7 @@ class StreamingInitTest: XCTestCase {
         splitConfig.eventsQueueSize = 100
         splitConfig.eventsPushRate = 5
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -62,17 +61,16 @@ class StreamingInitTest: XCTestCase {
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertTrue(isSseAuthHit)
-
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             switch request.url.absoluteString {
-            case let(urlString) where urlString.contains("splitChanges"):
+            case let urlString where urlString.contains("splitChanges"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges.utf8))
-            case let(urlString) where urlString.contains("mysegments"):
+            case let urlString where urlString.contains("mysegments"):
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
-            case let(urlString) where urlString.contains("auth"):
+            case let urlString where urlString.contains("auth"):
                 self.isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             default:
@@ -80,5 +78,4 @@ class StreamingInitTest: XCTestCase {
             }
         }
     }
-
 }

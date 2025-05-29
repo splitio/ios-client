@@ -11,5 +11,4 @@ import Foundation
 @objc enum SplitError: Int, Error {
     case timeout
     case matcherNoFound
-
 }

@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 
 class NotificationHelperStub: NotificationHelper {
-    private let queue = DispatchQueue(label: UUID.init().uuidString, attributes: .concurrent)
+    private let queue = DispatchQueue(label: UUID().uuidString, attributes: .concurrent)
     private var actions = [String: [ObserverAction]]()
 
     func addObserver(for notification: AppNotification, action: @escaping ObserverAction) {
@@ -31,7 +31,7 @@ class NotificationHelperStub: NotificationHelper {
         queue.sync {
             actions = self.actions[notification.rawValue]
         }
-        if let actions =  actions {
+        if let actions = actions {
             for action in actions {
                 action(info)
             }

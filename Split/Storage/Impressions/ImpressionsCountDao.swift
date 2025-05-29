@@ -6,8 +6,8 @@
 //  Copyright © 2021 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 protocol ImpressionsCountDao {
     func insert(_ count: ImpressionsCountPerFeature)
@@ -18,7 +18,6 @@ protocol ImpressionsCountDao {
 }
 
 class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
-
     private let cipher: Cipher?
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
         self.cipher = cipher
@@ -26,7 +25,6 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
     }
 
     func insert(_ count: ImpressionsCountPerFeature) {
-
         executeAsync { [weak self] in
             guard let self = self else {
                 return
@@ -36,7 +34,7 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
     }
 
     func insert(_ counts: [ImpressionsCountPerFeature]) {
-        if counts.count == 0 {
+        if counts.isEmpty {
             return
         }
         executeAsync { [weak self] in
@@ -58,10 +56,11 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
             }
 
             let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
-            let entities = self.coreDataHelper.fetch(entity: .impressionsCount,
-                                                     where: predicate,
-                                                     rowLimit: maxRows)
-                .compactMap { return $0 as? ImpressionsCountEntity }
+            let entities = self.coreDataHelper.fetch(
+                entity: .impressionsCount,
+                where: predicate,
+                rowLimit: maxRows)
+                .compactMap { $0 as? ImpressionsCountEntity }
 
             entities.forEach { entity in
                 if let model = try? self.mapEntityToModel(entity) {
@@ -73,7 +72,7 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
     }
 
     func update(ids: [String], newStatus: Int32) {
-        if ids.count == 0 {
+        if ids.isEmpty {
             return
         }
 
@@ -84,8 +83,9 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
                 return
             }
             let entities =
-            self.coreDataHelper.fetch(entity: .impressionsCount,
-                                      where: predicate).compactMap { return $0 as? ImpressionsCountEntity }
+                self.coreDataHelper.fetch(
+                    entity: .impressionsCount,
+                    where: predicate).compactMap { $0 as? ImpressionsCountEntity }
             for entity in entities {
                 entity.status = newStatus
             }
@@ -94,31 +94,34 @@ class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
     }
 
     func delete(_ counts: [ImpressionsCountPerFeature]) {
-        if counts.count == 0 {
+        if counts.isEmpty {
             return
         }
         executeAsync { [weak self] in
             guard let self = self else {
                 return
             }
-            self.coreDataHelper.delete(entity: .impressionsCount, by: "storageId",
-                                       values: counts.map { $0.storageId ?? "" })
+            self.coreDataHelper.delete(
+                entity: .impressionsCount,
+                by: "storageId",
+                values: counts.map { $0.storageId ?? "" })
             self.coreDataHelper.save()
         }
     }
 
     private func insert(count: ImpressionsCountPerFeature) {
-        if let obj = self.coreDataHelper.create(entity: .impressionsCount) as? ImpressionsCountEntity {
+        if let obj = coreDataHelper.create(entity: .impressionsCount) as? ImpressionsCountEntity {
             do {
                 obj.storageId = coreDataHelper.generateId()
                 let body = try Json.encodeToJson(count)
                 obj.body = cipher?.encrypt(body) ?? body
                 obj.createdAt = Date().unixTimestamp()
                 obj.status = StorageRecordStatus.active
-                self.coreDataHelper.save()
+                coreDataHelper.save()
             } catch {
-                Logger.e("An error occurred while inserting impressions " +
-                         "counts in storage: \(error.localizedDescription)")
+                Logger.e(
+                    "An error occurred while inserting impressions " +
+                        "counts in storage: \(error.localizedDescription)")
             }
         }
     }

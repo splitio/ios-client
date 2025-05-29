@@ -9,7 +9,10 @@
 import Foundation
 
 class StreamingIntegrationHelper {
-    static func ruleBasedSegmentUpdateMessage(timestamp: Int = 1000, changeNumber: Int = 1000, segmentData: String) -> String {
+    static func ruleBasedSegmentUpdateMessage(
+        timestamp: Int = 1000,
+        changeNumber: Int = 1000,
+        segmentData: String) -> String {
         return """
         id:cf74eb42-f687-48e4-ad18-af2125110aac
         event:message
@@ -28,8 +31,11 @@ class StreamingIntegrationHelper {
             .replacingOccurrences(of: "$CHANGE_NUMBER$", with: "\(changeNumber)")
     }
 
-    static func splitKillMessagge(splitName: String, defaultTreatment: String,
-                                  timestamp: Int = 1000, changeNumber: Int = 1000) -> String {
+    static func splitKillMessagge(
+        splitName: String,
+        defaultTreatment: String,
+        timestamp: Int = 1000,
+        changeNumber: Int = 1000) -> String {
         return """
         id:cf74eb42-f687-48e4-ad18-af2125110aac
         event:message

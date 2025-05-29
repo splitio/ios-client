@@ -22,7 +22,7 @@ import Foundation
 
         private var expiration = ServiceConstants.defaultRolloutCacheExpiration
         private var clearOnInit = false
-        
+
         override init() {
             super.init()
         }

@@ -17,11 +17,11 @@ enum SecureItem {
         switch self {
         case .backgroundSyncSchedule:
             return "bgSyncSchedule"
-        case .dbEncryptionLevel(let apiKey):
+        case let .dbEncryptionLevel(apiKey):
             return "dbEncryptionLevel_\(apiKey)"
-        case .dbEncryptionKey(let apiKey):
+        case let .dbEncryptionKey(apiKey):
             return "dbEncryptionKey_\(apiKey)"
-        case .pinsConfig(let apiKey):
+        case let .pinsConfig(apiKey):
             return "pinsConfig_\(apiKey)"
         }
     }

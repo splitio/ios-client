@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class StreamingAuthFail4xxTest: XCTestCase {
     var httpClient: HttpClient!
@@ -26,20 +26,21 @@ class StreamingAuthFail4xxTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
     func testInit() {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 2
         splitConfig.segmentsRefreshRate = 2
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -82,21 +83,23 @@ class StreamingAuthFail4xxTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                self.splitsChangesHits+=1
+                self.splitsChangesHits += 1
                 if self.splitsChangesHits > 1 {
                     self.splitsChgExp.fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             }
             if request.isMySegmentsEndpoint() {
-                self.mySegmentsHits+=1
+                self.mySegmentsHits += 1
                 if self.mySegmentsHits > 1 {
                     self.mySegExp.fulfill()
                 }
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
             if request.isAuthEndpoint() {
-                self.sseAuthHits+=1
+                self.sseAuthHits += 1
                 return TestDispatcherResponse(code: 401, data: Data(IntegrationHelper.dummySseResponse().utf8))
             }
             return TestDispatcherResponse(code: 500)
@@ -105,11 +108,9 @@ class StreamingAuthFail4xxTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            self.sseConnHits+=1
+            self.sseConnHits += 1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             return self.streamingBinding!
         }
     }
-
 }
-

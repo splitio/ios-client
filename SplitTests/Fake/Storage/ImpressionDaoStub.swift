@@ -6,11 +6,10 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-@testable import Split
 import Foundation
+@testable import Split
 
 class ImpressionDaoStub: ImpressionDao {
-
     var insertedImpressions = [KeyImpression]()
     var getByImpressions = [KeyImpression]()
     var updatedImpressions = [String: Int32]()

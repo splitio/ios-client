@@ -8,15 +8,13 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SplitsEncoderTest: XCTestCase {
-
     var encoder: SplitsParallelEncoder!
 
     func testDecodeOneThread() throws {
-
         // Less than 15 will use 1 thread
         let splits = Array(loadSplits()[..<10])
 
@@ -27,7 +25,6 @@ class SplitsEncoderTest: XCTestCase {
     }
 
     func testDecodeTwoThread() throws {
-
         // Less than 30 will use 2 threads
         let splits = Array(loadSplits()[..<30])
 
@@ -47,7 +44,7 @@ class SplitsEncoderTest: XCTestCase {
 
     func loadSplits(times: Int = 1) -> [Split] {
         var splits = [Split]()
-        for _ in 0..<times {
+        for _ in 0 ..< times {
             let news = FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_1")!.splits
             splits.append(contentsOf: news.map { split in
                 split.name = UUID().uuidString
@@ -57,4 +54,3 @@ class SplitsEncoderTest: XCTestCase {
         return splits
     }
 }
-

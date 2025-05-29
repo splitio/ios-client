@@ -8,4 +8,4 @@
 
 import Foundation
 
-@objc public protocol SplitBase { }
+@objc public protocol SplitBase {}

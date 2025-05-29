@@ -7,15 +7,14 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class InMemoryTelemetryStorageTest: XCTestCase {
-
     var storage: TelemetryStorage!
 
     var rnd: Int64 {
-        return Int64.random(in: 1..<5) * 100000
+        return Int64.random(in: 1 ..< 5) * 100000
     }
 
     override func setUp() {
@@ -23,7 +22,6 @@ class InMemoryTelemetryStorageTest: XCTestCase {
     }
 
     func testLatencies() {
-
         recordLatency(method: .treatment, count: 3)
         recordLatency(method: .treatments, count: 2)
         recordLatency(method: .treatmentWithConfig, count: 4)
@@ -51,7 +49,6 @@ class InMemoryTelemetryStorageTest: XCTestCase {
     }
 
     func testExceptions() {
-
         recordException(method: .treatment, count: 3)
         recordException(method: .treatments, count: 2)
         recordException(method: .treatmentWithConfig, count: 4)
@@ -149,7 +146,6 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         XCTAssertEqual(2000, sync1.impressionsCount)
         XCTAssertEqual(2000, sync1.telemetry)
         XCTAssertEqual(2000, sync1.token)
-
     }
 
     func testHttpErrors() {
@@ -167,7 +163,6 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         recordHttpError(resource: .splits, factor: 1)
 
         let httpErrorsNew = storage.popHttpErrors()
-
 
         XCTAssertEqual(1, httpErrors.splits?[400] ?? 0)
         XCTAssertEqual(1, httpErrors.splits?[401] ?? 0)
@@ -197,7 +192,6 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         XCTAssertEqual(7, httpErrors.events?[401] ?? 0)
         XCTAssertEqual(7, httpErrors.events?[402] ?? 0)
 
-
         XCTAssertEqual(0, httpErrorsPop.splits?.count ?? 0)
         XCTAssertEqual(0, httpErrorsPop.mySegments?.count ?? 0)
         XCTAssertEqual(0, httpErrorsPop.impressions?.count ?? 0)
@@ -210,14 +204,12 @@ class InMemoryTelemetryStorageTest: XCTestCase {
     }
 
     func testHttpLatencies() {
-
         recordHttpLatency(resource: .splits, count: 3)
         recordHttpLatency(resource: .mySegments, count: 2)
         recordHttpLatency(resource: .impressions, count: 4)
         recordHttpLatency(resource: .impressionsCount, count: 9)
         recordHttpLatency(resource: .events, count: 3)
         recordHttpLatency(resource: .telemetry, count: 2)
-
 
         let latencies = storage.popHttpLatencies()
         let emptyPopLatencies = storage.popHttpLatencies()
@@ -246,7 +238,7 @@ class InMemoryTelemetryStorageTest: XCTestCase {
     }
 
     func testAuthRejections() {
-        for _ in 0..<10 {
+        for _ in 0 ..< 10 {
             storage.recordAuthRejections()
         }
         let count = storage.popAuthRejections()
@@ -260,7 +252,7 @@ class InMemoryTelemetryStorageTest: XCTestCase {
     }
 
     func testTokenRefreshes() {
-        for _ in 0..<10 {
+        for _ in 0 ..< 10 {
             storage.recordTokenRefreshes()
         }
         let count = storage.popTokenRefreshes()
@@ -275,30 +267,41 @@ class InMemoryTelemetryStorageTest: XCTestCase {
 
     func testStreamingEvents() {
         recordStreamingEvent(type: .ablyError, data: 4, count: 3)
-        recordStreamingEvent(type: .streamingStatus,
-                             data: TelemetryStreamingEventValue.streamingDisabled, count: 2)
-        recordStreamingEvent(type: .streamingStatus,
-                             data: TelemetryStreamingEventValue.streamingEnabled, count: 2)
+        recordStreamingEvent(
+            type: .streamingStatus,
+            data: TelemetryStreamingEventValue.streamingDisabled,
+            count: 2)
+        recordStreamingEvent(
+            type: .streamingStatus,
+            data: TelemetryStreamingEventValue.streamingEnabled,
+            count: 2)
 
-        recordStreamingEvent(type: .ablyError,
-                             data: 2000, count: 10)
-        recordStreamingEvent(type: .occupancyPri,
-                             data: 3, count: 1)
-        recordStreamingEvent(type: .occupancySec,
-                             data: 1, count: 1)
+        recordStreamingEvent(
+            type: .ablyError,
+            data: 2000,
+            count: 10)
+        recordStreamingEvent(
+            type: .occupancyPri,
+            data: 3,
+            count: 1)
+        recordStreamingEvent(
+            type: .occupancySec,
+            data: 1,
+            count: 1)
 
         let events = storage.popStreamingEvents()
         let eventsPop = storage.popStreamingEvents()
 
-        recordStreamingEvent(type: .ablyError,
-                             data: 2000, count: 40)
+        recordStreamingEvent(
+            type: .ablyError,
+            data: 2000,
+            count: 40)
 
         let eventsNew = storage.popStreamingEvents()
 
         XCTAssertEqual(19, events.count)
         XCTAssertEqual(0, eventsPop.count)
         XCTAssertEqual(20, eventsNew.count)
-
     }
 
     func testTags() {
@@ -363,8 +366,7 @@ class InMemoryTelemetryStorageTest: XCTestCase {
     }
 
     func testUpdatesFromSse() {
-
-        for i in 0..<10 {
+        for i in 0 ..< 10 {
             storage.recordUpdatesFromSse(type: .splits)
             if (i % 2) == 0 {
                 storage.recordUpdatesFromSse(type: .mySegments)
@@ -380,14 +382,12 @@ class InMemoryTelemetryStorageTest: XCTestCase {
     }
 
     func testConcurrence() {
-
         let queue = DispatchQueue(label: "concurrent-test", attributes: .concurrent)
         let group = DispatchGroup()
         let count = AtomicInt(0)
-        for _ in 0..<50 {
+        for _ in 0 ..< 50 {
             group.enter()
             queue.async {
-
                 self.storage.recordLatency(method: .track, latency: 1)
                 self.storage.recordException(method: .treatment)
                 self.storage.recordHttpError(resource: .events, status: 1)
@@ -406,7 +406,6 @@ class InMemoryTelemetryStorageTest: XCTestCase {
 
             group.enter()
             queue.async {
-
                 self.storage.recordAuthRejections()
                 self.storage.recordTokenRefreshes()
                 self.storage.recordStreamingEvent(type: .ablyError, data: 3)
@@ -428,23 +427,23 @@ class InMemoryTelemetryStorageTest: XCTestCase {
         }
     }
 
-
-    private func recordStreamingEvent(type: TelemetryStreamingEventType,
-                              data: Int64,
-                              count: Int) {
-        for _ in 0..<count {
+    private func recordStreamingEvent(
+        type: TelemetryStreamingEventType,
+        data: Int64,
+        count: Int) {
+        for _ in 0 ..< count {
             storage.recordStreamingEvent(type: type, data: data)
         }
     }
 
     private func addTags(prefix: String, count: Int) {
-        for i in 0..<count {
+        for i in 0 ..< count {
             storage.addTag(tag: "\(prefix)\(i)")
         }
     }
 
     private func recordHttpError(resource: Resource, factor: Int) {
-        for _ in 0..<factor {
+        for _ in 0 ..< factor {
             storage.recordHttpError(resource: resource, status: 400)
             storage.recordHttpError(resource: resource, status: 401)
             storage.recordHttpError(resource: resource, status: 402)
@@ -452,31 +451,31 @@ class InMemoryTelemetryStorageTest: XCTestCase {
     }
 
     private func recordLatency(method: TelemetryMethod, count: Int) {
-        for _ in (0..<count) {
+        for _ in 0 ..< count {
             storage.recordLatency(method: method, latency: rnd)
         }
     }
 
     private func recordHttpLatency(resource: Resource, count: Int) {
-        for _ in (0..<count) {
+        for _ in 0 ..< count {
             storage.recordHttpLatency(resource: resource, latency: rnd)
         }
     }
 
     private func recordException(method: TelemetryMethod, count: Int) {
-        for _ in (0..<count) {
+        for _ in 0 ..< count {
             storage.recordException(method: method)
         }
     }
 
     private func recordImpression(type: TelemetryImpressionsDataType, countStat: Int, count: Int) {
-        for _ in (0..<count) {
+        for _ in 0 ..< count {
             storage.recordImpressionStats(type: type, count: countStat)
         }
     }
 
     private func recordEvent(type: TelemetryEventsDataType, countStat: Int, count: Int) {
-        for _ in (0..<count) {
+        for _ in 0 ..< count {
             storage.recordEventStats(type: type, count: countStat)
         }
     }

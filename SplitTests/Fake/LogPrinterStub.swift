@@ -10,11 +10,11 @@ import Foundation
 @testable import Split
 
 class LogPrinterStub: LogPrinter {
-
     private(set) var logs = [String]()
 
-    private let queue = DispatchQueue(label: "Split.LogPrinterStub",
-                                  target: .global())
+    private let queue = DispatchQueue(
+        label: "Split.LogPrinterStub",
+        target: .global())
 
     func stdout(_ items: Any...) {
         queue.sync {

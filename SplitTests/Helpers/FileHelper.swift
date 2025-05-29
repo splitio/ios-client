@@ -10,9 +10,9 @@ import Foundation
 @testable import Split
 
 class FileHelper {
-    static func readDataFromFile(sourceClass: Any, name: String,  type fileType: String)-> String? {
-        
-        guard let filepath = Bundle(for: type(of: sourceClass) as! AnyClass).path(forResource: name, ofType: fileType) else {
+    static func readDataFromFile(sourceClass: Any, name: String, type fileType: String) -> String? {
+        guard let filepath = Bundle(for: type(of: sourceClass) as! AnyClass).path(forResource: name, ofType: fileType)
+        else {
             return nil
         }
 
@@ -24,9 +24,9 @@ class FileHelper {
         }
     }
 
-    static func loadFileData(sourceClass: Any, name: String,  type fileType: String)-> Data? {
-
-        guard let filepath = Bundle(for: type(of: sourceClass) as! AnyClass).path(forResource: name, ofType: fileType) else {
+    static func loadFileData(sourceClass: Any, name: String, type fileType: String) -> Data? {
+        guard let filepath = Bundle(for: type(of: sourceClass) as! AnyClass).path(forResource: name, ofType: fileType)
+        else {
             return nil
         }
 

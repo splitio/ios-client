@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class PersistentUniqueKeyStorageStub: PersistentUniqueKeysStorage {
-
     struct Record {
         var uniqueKey: UniqueKey
         var sendAttempCount: Int16
@@ -30,8 +29,8 @@ class PersistentUniqueKeyStorageStub: PersistentUniqueKeysStorage {
     func pop(count: Int) -> [UniqueKey] {
         let resp = uniqueKeys.values.filter {
             $0.recordStatus == StorageRecordStatus.active
-            
-        } .prefix(count)
+
+        }.prefix(count)
         for value in resp {
             uniqueKeys[value.uniqueKey.userKey]?.recordStatus = StorageRecordStatus.deleted
         }
@@ -41,12 +40,14 @@ class PersistentUniqueKeyStorageStub: PersistentUniqueKeysStorage {
     func pushMany(keys: [UniqueKey]) {
         for key in keys {
             let storageId = UUID().uuidString
-            let newKey = UniqueKey(storageId: storageId,
-                                   userKey: key.userKey,
-                                   features: key.features)
-            uniqueKeys[storageId] = Record(uniqueKey: newKey,
-                                           sendAttempCount: 0,
-                                           recordStatus: StorageRecordStatus.active)
+            let newKey = UniqueKey(
+                storageId: storageId,
+                userKey: key.userKey,
+                features: key.features)
+            uniqueKeys[storageId] = Record(
+                uniqueKey: newKey,
+                sendAttempCount: 0,
+                recordStatus: StorageRecordStatus.active)
         }
     }
 
@@ -54,7 +55,7 @@ class PersistentUniqueKeyStorageStub: PersistentUniqueKeysStorage {
         for elementId in ids {
             if var key = uniqueKeys[elementId] {
                 key.recordStatus = StorageRecordStatus.active
-                key.sendAttempCount+=1
+                key.sendAttempCount += 1
                 uniqueKeys[elementId] = key
             }
         }

@@ -28,7 +28,7 @@ class DefaultTargetingRulePayloadDecoder<T: Decodable>: TargetingRulePayloadDeco
     }
 
     private func decodeAsBytes(payload: String, compressionUtil: CompressionUtil) throws -> Data {
-        guard let dec =  Base64Utils.decodeBase64(payload) else {
+        guard let dec = Base64Utils.decodeBase64(payload) else {
             throw NotificationPayloadParsingException.errorDecodingBase64
         }
         let descomp = try compressionUtil.decompress(data: dec)

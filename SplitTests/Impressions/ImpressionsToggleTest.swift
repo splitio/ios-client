@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ImpressionsToggleTest: XCTestCase {
-
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = "key"
@@ -33,8 +32,9 @@ class ImpressionsToggleTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         uniqueKeys = [UniqueKeys]()
         counts = [String: Int]()
@@ -131,14 +131,14 @@ class ImpressionsToggleTest: XCTestCase {
     }
 
     private func getReadyFactory(impressionsMode: String) -> SplitFactory {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.impressionsMode = impressionsMode
         splitConfig.uniqueKeysRefreshRate = 1
         splitConfig.impressionRefreshRate = 1
         splitConfig.impressionsCountsRefreshRate = 1
         splitConfig.logLevel = .verbose
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -171,9 +171,11 @@ class ImpressionsToggleTest: XCTestCase {
                     self.firstSplitHit = false
                     return TestDispatcherResponse(code: 200, data: Data(self.loadSplitsChangeFile().utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
             }
-            
+
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
@@ -184,7 +186,7 @@ class ImpressionsToggleTest: XCTestCase {
             }
 
             if request.isImpressionsEndpoint() {
-                self.impressionsHitCount+=1
+                self.impressionsHitCount += 1
                 self.queue.sync {
                     if let exp = self.impExp {
                         exp.fulfill()
@@ -213,7 +215,7 @@ class ImpressionsToggleTest: XCTestCase {
                 }
                 return TestDispatcherResponse(code: 200)
             }
-            
+
             if request.isUniqueKeysEndpoint() {
                 self.queue.sync {
                     if let body = request.body?.stringRepresentation.utf8 {
@@ -232,7 +234,8 @@ class ImpressionsToggleTest: XCTestCase {
     }
 
     private func loadSplitsChangeFile() -> String {
-        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_toggle", type: "json") else {
+        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_toggle", type: "json")
+        else {
             return IntegrationHelper.emptySplitChanges(since: 99999, till: 99999)
         }
         return splitJson

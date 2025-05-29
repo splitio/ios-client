@@ -12,11 +12,9 @@ import XCTest
 @testable import Split
 
 class SseHandlerStub: SseHandler {
-
     var errorExpectation: XCTestExpectation?
     var messageExpectation: XCTestExpectation?
     var isConfirmed = true
-
 
     var errorReportedCalled = false
     var errorRetryableReported = false
@@ -29,7 +27,7 @@ class SseHandlerStub: SseHandler {
     }
 
     var handleIncomingCalled = false
-    func handleIncomingMessage(message: [String : String]) {
+    func handleIncomingMessage(message: [String: String]) {
         handleIncomingCalled = true
         print("Stub SSE Handler message arrived: \(message)")
         if let exp = messageExpectation {

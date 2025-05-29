@@ -1,7 +1,7 @@
 import Foundation
 
 protocol RolloutCacheManager {
-    func validateCache(listener: (() -> Void))
+    func validateCache(listener: () -> Void)
 }
 
 class DefaultRolloutCacheManager: RolloutCacheManager {
@@ -10,15 +10,16 @@ class DefaultRolloutCacheManager: RolloutCacheManager {
     private let rolloutCacheConfiguration: RolloutCacheConfiguration
     private let rolloutDefinitionsCache: [RolloutDefinitionsCache]
 
-    init(generalInfoStorage: GeneralInfoStorage,
-         rolloutCacheConfiguration: RolloutCacheConfiguration,
-         storages: RolloutDefinitionsCache...) {
+    init(
+        generalInfoStorage: GeneralInfoStorage,
+        rolloutCacheConfiguration: RolloutCacheConfiguration,
+        storages: RolloutDefinitionsCache...) {
         self.generalInfoStorage = generalInfoStorage
         self.rolloutCacheConfiguration = rolloutCacheConfiguration
         self.rolloutDefinitionsCache = storages
     }
 
-    func validateCache(listener: (() -> Void)) {
+    func validateCache(listener: () -> Void) {
         defer {
             listener()
         }

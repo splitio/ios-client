@@ -8,22 +8,23 @@
 import Foundation
 
 class BetweenSemverMatcher: BaseMatcher, MatcherProtocol {
-
     var startTarget: Semver?
     var endTarget: Semver?
 
-    init(data: BetweenStringMatcherData?,
-         negate: Bool? = nil,
-         attribute: String? = nil,
-         type: MatcherType? = nil) {
+    init(
+        data: BetweenStringMatcherData?,
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
         self.startTarget = Semver.build(version: data?.start as? String)
         self.endTarget = Semver.build(version: data?.end as? String)
     }
+
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
         guard let keyValue = values.matchValue as? String,
-                let startTarget = startTarget,
-                let endTarget = endTarget else {
+              let startTarget = startTarget,
+              let endTarget = endTarget else {
             return false
         }
 
@@ -33,8 +34,9 @@ class BetweenSemverMatcher: BaseMatcher, MatcherProtocol {
 
         let result = keySemver.compare(to: startTarget) >= 0 && keySemver.compare(to: endTarget) <= 0
 
-        Logger.d("\(startTarget.getVersion()) <= \(keySemver.getVersion()) " +
-                 "<= \(endTarget.getVersion()) | Result: \(result)")
+        Logger.d(
+            "\(startTarget.getVersion()) <= \(keySemver.getVersion()) " +
+                "<= \(endTarget.getVersion()) | Result: \(result)")
 
         return result
     }

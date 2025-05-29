@@ -7,13 +7,11 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class ServiceEndpointsTests: XCTestCase {
-
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testBuilderValidationOk() {
         let se = ServiceEndpoints.builder()
@@ -72,7 +70,5 @@ class ServiceEndpointsTests: XCTestCase {
         XCTAssertEqual("Endpoint is invalid: wrong url streaming\n", se.endpointsInvalidMessage)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

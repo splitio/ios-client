@@ -6,8 +6,8 @@
 //  Copyright © 2021 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(ImpressionsCountEntity)
 class ImpressionsCountEntity: NSManagedObject {

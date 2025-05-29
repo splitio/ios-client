@@ -8,18 +8,19 @@
 
 import Foundation
 protocol RestClientMySegments: RestClient {
-    func getMySegments(user: String,
-                       till: Int64?,
-                       headers: [String: String]?,
-                       completion: @escaping (DataResult<AllSegmentsChange>) -> Void)
+    func getMySegments(
+        user: String,
+        till: Int64?,
+        headers: [String: String]?,
+        completion: @escaping (DataResult<AllSegmentsChange>) -> Void)
 }
 
 extension DefaultRestClient: RestClientMySegments {
-    func getMySegments(user: String,
-                       till: Int64?,
-                       headers: [String: String]? = nil,
-                       completion: @escaping (DataResult<AllSegmentsChange>) -> Void) {
-
+    func getMySegments(
+        user: String,
+        till: Int64?,
+        headers: [String: String]? = nil,
+        completion: @escaping (DataResult<AllSegmentsChange>) -> Void) {
         let completionHandler: ((DataResult<AllSegmentsChange>) -> Void) = { result in
             do {
                 let data = try result.unwrap()
@@ -27,18 +28,20 @@ extension DefaultRestClient: RestClientMySegments {
                     completion(DataResult.success(value: segmentsChange))
                 } else {
                     completion(
-                        DataResult.failure(error: HttpError.unknown(code: -1,
-                                                                    message: "No data received") as NSError))
+                        DataResult.failure(error: HttpError.unknown(
+                            code: -1,
+                            message: "No data received") as NSError))
                 }
 
             } catch {
                 completion(DataResult.failure(error: error as NSError))
             }
         }
-        self.execute(endpoint: endpointFactory.mySegmentsEndpoint(userKey: user),
-                     parameters: buildParams(till),
-                     headers: headers,
-                     completion: completionHandler)
+        execute(
+            endpoint: endpointFactory.mySegmentsEndpoint(userKey: user),
+            parameters: buildParams(till),
+            headers: headers,
+            completion: completionHandler)
     }
 
     private func buildParams(_ till: Int64?) -> HttpParameters? {

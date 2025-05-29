@@ -7,7 +7,7 @@
 //
 // This class was created as a workaround to fix some convertion problems
 // related to Int datatypes until doing a full refactor.
-// ToDo: Refactor Int usages
+// TODO: Refactor Int usages
 
 import Foundation
 

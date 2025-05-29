@@ -9,7 +9,6 @@
 import Foundation
 
 class MyLargeSegmentsStorage: MySegmentsStorage {
-
     private var inMemorySegments: SynchronizedDictionary<String, SegmentChange> = SynchronizedDictionary()
     private let persistentStorage: PersistentMySegmentsStorage
     private let defaultChangeNumber = ServiceConstants.defaultSegmentsChangeNumber
@@ -73,7 +72,7 @@ class MyLargeSegmentsStorage: MySegmentsStorage {
             let keys = inMemorySegments.keys
             var count = 0
             for key in keys {
-                count+=(inMemorySegments.value(forKey: key)?.segments.count ?? 0)
+                count += (inMemorySegments.value(forKey: key)?.segments.count ?? 0)
             }
             return count
         }

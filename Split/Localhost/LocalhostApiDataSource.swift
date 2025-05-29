@@ -14,14 +14,11 @@ protocol LocalhostInputDataProducer {
 }
 
 class LocalhostApiDataSource: LocalhostDataSource, LocalhostInputDataProducer {
-
     var loadHandler: IncomingDataHandler?
 
-    func start() {
-    }
+    func start() {}
 
-    func stop() {
-    }
+    func stop() {}
 
     func update(yaml: String) {
         loadHandler?(LocalhostParserProvider.parser(for: .yaml).parseContent(yaml))

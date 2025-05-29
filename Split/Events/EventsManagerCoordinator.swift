@@ -19,10 +19,11 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
     private var triggered = Set<SplitInternalEvent>()
     private let queue = DispatchQueue(label: "split-event-manager-coordinator")
     private let eventsToHandle: Set<SplitInternalEvent> = Set(
-        [.splitsLoadedFromCache,
-        .splitsUpdated,
-        .splitKilledNotification]
-    )
+        [
+            .splitsLoadedFromCache,
+            .splitsUpdated,
+            .splitKilledNotification,
+        ])
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         if !eventsToHandle.contains(event) {

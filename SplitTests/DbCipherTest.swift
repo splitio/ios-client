@@ -7,20 +7,20 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class DbCipherTest: XCTestCase {
-
     let userKey = IntegrationHelper.dummyUserKey
     var dbHelper: CoreDataHelper!
     var db: SplitDatabase!
 
     override func setUp() {
         dbHelper = createDbHelper()
-        db = TestingHelper.createTestDatabase(name: "test",
-                                              queue: DispatchQueue.global(),
-                                              helper: dbHelper)
+        db = TestingHelper.createTestDatabase(
+            name: "test",
+            queue: DispatchQueue.global(),
+            helper: dbHelper)
     }
 
     func testEncryptDecryptDb() throws {
@@ -103,22 +103,32 @@ class DbCipherTest: XCTestCase {
     private func loadData(dbHelper: CoreDataHelper) -> DataResult {
         var result: DataResult?
         dbHelper.performAndWait {
-            result = DataResult(splits: dbHelper.fetch(entity: .split).compactMap { $0 as? SplitEntity }.map { (name: $0.name,
-                                                                                                                body: $0.body)}[0],
-                                segments: dbHelper.fetch(entity: .mySegment).compactMap { $0 as? MySegmentEntity }.map { (userKey: $0.userKey!,
-                                                                                                                          segments: $0.segmentList!) }[0],
-                                largeSegments: dbHelper.fetch(entity: .myLargeSegment).compactMap { $0 as? MySegmentEntity }.map { (userKey: $0.userKey!,
-                                                                                                                                    segments: $0.segmentList!) }[0],
-                                impressions: dbHelper.fetch(entity: .impression).compactMap { $0 as? ImpressionEntity }.map { (testName: $0.testName,
-                                                                                                                               body: $0.body) }[0],
-                                events: dbHelper.fetch(entity: .event).compactMap { $0 as? EventEntity }.map { $0.body }[0],
-                                impressionsCount: dbHelper.fetch(entity: .impressionsCount).compactMap { $0 as? ImpressionsCountEntity }.map { $0.body }[0],
-                                uniqueKeys: dbHelper.fetch(entity: .uniqueKey).compactMap { $0 as? UniqueKeyEntity }.map { (userKey: $0.userKey,
-                                                                                                                            features: $0.featureList) }[0],
-                                attributes: dbHelper.fetch(entity: .attribute).compactMap { $0 as? AttributeEntity }.map { (userKey: $0.userKey!,
-                                                                                                                            attributes: $0.attributes!) }[0],
-                                ruleBasedSegments: dbHelper.fetch(entity: .ruleBasedSegment).compactMap { $0 as? RuleBasedSegmentEntity }.map { (name: $0.name, body: $0.body )}[0]
-            )
+            result = DataResult(
+                splits: dbHelper.fetch(entity: .split).compactMap { $0 as? SplitEntity }.map { (
+                    name: $0.name,
+                    body: $0.body) }[0],
+                segments: dbHelper.fetch(entity: .mySegment).compactMap { $0 as? MySegmentEntity }.map { (
+                    userKey: $0.userKey!,
+                    segments: $0.segmentList!) }[0],
+                largeSegments: dbHelper.fetch(entity: .myLargeSegment).compactMap { $0 as? MySegmentEntity }.map { (
+                    userKey: $0.userKey!,
+                    segments: $0.segmentList!) }[0],
+                impressions: dbHelper.fetch(entity: .impression).compactMap { $0 as? ImpressionEntity }.map { (
+                    testName: $0.testName,
+                    body: $0.body) }[0],
+                events: dbHelper.fetch(entity: .event).compactMap { $0 as? EventEntity }.map { $0.body }[0],
+                impressionsCount: dbHelper.fetch(entity: .impressionsCount).compactMap { $0 as? ImpressionsCountEntity }
+                    .map { $0.body }[0],
+                uniqueKeys: dbHelper.fetch(entity: .uniqueKey).compactMap { $0 as? UniqueKeyEntity }.map { (
+                    userKey: $0.userKey,
+                    features: $0.featureList) }[0],
+                attributes: dbHelper.fetch(entity: .attribute).compactMap { $0 as? AttributeEntity }.map { (
+                    userKey: $0.userKey!,
+                    attributes: $0.attributes!) }[0],
+                ruleBasedSegments: dbHelper.fetch(entity: .ruleBasedSegment)
+                    .compactMap { $0 as? RuleBasedSegmentEntity }.map { (
+                        name: $0.name,
+                        body: $0.body) }[0])
         }
         return result!
     }
@@ -134,24 +144,30 @@ class DbCipherTest: XCTestCase {
 
         db.impressionDao.insert(TestingHelper.createKeyImpressions().suffix(1))
         db.eventDao.insert(TestingHelper.createEvents(count: 1, randomId: false).suffix(1))
-        db.impressionsCountDao.insert(ImpressionsCountPerFeature(storageId: "id1", feature: "pepe", timeframe: 111111, count: 1) )
+        db.impressionsCountDao.insert(ImpressionsCountPerFeature(
+            storageId: "id1",
+            feature: "pepe",
+            timeframe: 111111,
+            count: 1))
         db.uniqueKeyDao.insert(UniqueKey(userKey: IntegrationHelper.dummyUserKey, features: ["split1"]))
         db.attributesDao.update(userKey: userKey, attributes: ["att1": 1])
         db.ruleBasedSegmentDao.insertOrUpdate(segment: TestingHelper.createRuleBasedSegment())
     }
 
     private func createDbHelper() -> CoreDataHelper {
-        return IntegrationCoreDataHelper.get(databaseName: "test",
-                                             dispatchQueue: DispatchQueue.global())
+        return IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: DispatchQueue.global())
     }
 
-    private func createCipher(fromLevel: SplitEncryptionLevel,
-                              toLevel: SplitEncryptionLevel,
-                              dbHelper: CoreDataHelper) throws -> DbCipher {
-        return try DbCipher(cipherKey: IntegrationHelper.dummyCipherKey,
-                            from: fromLevel,
-                            to: toLevel,
-                            coreDataHelper: dbHelper)
+    private func createCipher(
+        fromLevel: SplitEncryptionLevel,
+        toLevel: SplitEncryptionLevel,
+        dbHelper: CoreDataHelper) throws -> DbCipher {
+        return try DbCipher(
+            cipherKey: IntegrationHelper.dummyCipherKey,
+            from: fromLevel,
+            to: toLevel,
+            coreDataHelper: dbHelper)
     }
 }
-

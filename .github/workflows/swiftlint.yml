@@ -1,0 +1,26 @@
+name: SwiftLint
+
+on:
+  push:
+    paths:
+      - '**/*.swift'
+      - '.swiftlint.yml'
+  pull_request:
+    paths:
+      - '**/*.swift'
+      - '.swiftlint.yml'
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: SwiftLint (Serious Violations Only)
+        uses: norio-nomura/action-swiftlint@v3
+        with:
+          args: --strict
+          reporter: github-actions-logging
+          fail_on_error: true

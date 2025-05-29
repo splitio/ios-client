@@ -8,12 +8,11 @@
 
 import Foundation
 
-struct LegacyStorageCleaner {
-
+enum LegacyStorageCleaner {
     static private let kImpressionsFileName: String = "SPLITIO.impressions"
     static private let kEventsFileName: String = "SPLITIO.events_track"
     static private let kSplitsFileName: String = "SPLITIO.splits"
-    static private let kMySegmentsFileNamePrefix  = "SPLITIO.mySegments"
+    static private let kMySegmentsFileNamePrefix = "SPLITIO.mySegments"
 
     static func deleteFiles(fileStorage: FileStorage, userKey: String) {
         DispatchQueue.general.async {

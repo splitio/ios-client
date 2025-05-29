@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class MultiClientStreamingResetTest: XCTestCase {
-
     let splitName = "workm"
     var streamingBinding: TestStreamResponseBinding?
     let defaultKey = "key_default"
@@ -43,7 +42,7 @@ class MultiClientStreamingResetTest: XCTestCase {
     }
 
     func testStress() {
-        for _ in 0..<2 {
+        for _ in 0 ..< 2 {
             sseHitCount = 0
             authHitCount = 0
             clients.removeAll()
@@ -54,7 +53,6 @@ class MultiClientStreamingResetTest: XCTestCase {
             clients.removeAll()
             execTest(delay: 3)
         }
-
     }
 
     func testNoStreamingDelay() {
@@ -66,7 +64,6 @@ class MultiClientStreamingResetTest: XCTestCase {
     }
 
     private func execTest(delay: Int = 0) {
-
         let expReady = XCTestExpectation(description: "Ready \(defaultKey)")
         expAuth = XCTestExpectation(description: "Auth \(defaultKey)")
 
@@ -82,20 +79,20 @@ class MultiClientStreamingResetTest: XCTestCase {
 
         var exps = [expReady, expAuth!]
         if delay < 1 {
-            expSse = (XCTestExpectation(description: "Streaming \(defaultKey)"))
+            expSse = XCTestExpectation(description: "Streaming \(defaultKey)")
             exps.append(expSse!)
         }
         wait(for: exps, timeout: 20)
         let keyCount = 3
-        for i in 1...3 {
+        for i in 1 ... 3 {
             let key = Key(matchingKey: "key_\(i)")
             let expReady = XCTestExpectation(description: "Ready \(key.matchingKey)")
-            self.expAuth = XCTestExpectation(description: "Auth \(key.matchingKey)")
+            expAuth = XCTestExpectation(description: "Auth \(key.matchingKey)")
             let client = factory.client(key: key)
-            self.clients[key] = client
+            clients[key] = client
             var exps = [expReady, expAuth!]
             if delay < 1 || i == keyCount {
-                self.expSse = (XCTestExpectation(description: "Streaming \(key.matchingKey)"))
+                expSse = XCTestExpectation(description: "Streaming \(key.matchingKey)")
                 exps.append(expSse!)
             }
 
@@ -109,8 +106,13 @@ class MultiClientStreamingResetTest: XCTestCase {
         // defaultKey is whitelisted.
         // key1 to key3 has its own whitelist
         // key4 evaluates to default treatment
-        let expectedResults = [defaultKey: "on_key_default", key1: "on_key_1",
-                                     key2: "on_key_2", key3: "on_key_3", key4: "default_t"]
+        let expectedResults = [
+            defaultKey: "on_key_default",
+            key1: "on_key_1",
+            key2: "on_key_2",
+            key3: "on_key_3",
+            key4: "default_t",
+        ]
         doInAllClients { key, _ in
             XCTAssertEqual(expectedResults[key.matchingKey] ?? "", results[key.matchingKey] ?? "")
         }
@@ -129,7 +131,10 @@ class MultiClientStreamingResetTest: XCTestCase {
 
     private func getChanges() -> Data {
         let changeNumber = 5000
-        var content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: "multi_client_test", type: "json")!
+        var content = FileHelper.readDataFromFile(
+            sourceClass: IntegrationHelper(),
+            name: "multi_client_test",
+            type: "json")!
         content = content.replacingOccurrences(of: "<FIELD_SINCE>", with: "\(changeNumber)")
         content = content.replacingOccurrences(of: "<FIELD_TILL>", with: "\(changeNumber)")
         return Data(content.utf8)
@@ -146,9 +151,11 @@ class MultiClientStreamingResetTest: XCTestCase {
             }
 
             if request.isAuthEndpoint() {
-                self.authHitCount+=1
+                self.authHitCount += 1
                 self.expAuth?.fulfill()
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse(delay: streamingDelay).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.dummySseResponse(delay: streamingDelay).utf8))
             }
             return TestDispatcherResponse(code: 200)
         }
@@ -162,7 +169,7 @@ class MultiClientStreamingResetTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            self.sseHitCount+=1
+            self.sseHitCount += 1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             self.expSse?.fulfill()
             return self.streamingBinding!
@@ -170,7 +177,7 @@ class MultiClientStreamingResetTest: XCTestCase {
     }
 
     private func basicSplitConfig() -> SplitClientConfig {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
         splitConfig.impressionRefreshRate = 999999
@@ -179,18 +186,19 @@ class MultiClientStreamingResetTest: XCTestCase {
         return splitConfig
     }
 
-    private func setupFactory(database: SplitDatabase? = nil,streamDelay: Int = 0) {
+    private func setupFactory(database: SplitDatabase? = nil, streamDelay: Int = 0) {
         // When feature flags and connection available, ready from cache and Ready should be fired
         let splitDatabase = database ?? TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(streamingDelay: streamDelay),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(streamingDelay: streamDelay),
+            streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
         splitConfig.trafficType = trafficType
 
-        let key: Key = Key(matchingKey: defaultKey)
+        let key = Key(matchingKey: defaultKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -213,7 +221,7 @@ class MultiClientStreamingResetTest: XCTestCase {
     private func impressions(from data: Data?) -> [KeyImpression]? {
         guard let data = data else { return nil }
         do {
-            let tests =  try Json.decodeFrom(json: data.stringRepresentation, to: [ImpressionsTest].self)
+            let tests = try Json.decodeFrom(json: data.stringRepresentation, to: [ImpressionsTest].self)
             return tests.flatMap { $0.keyImpressions }
         } catch {
             print(error)
@@ -221,5 +229,3 @@ class MultiClientStreamingResetTest: XCTestCase {
         return nil
     }
 }
-
-

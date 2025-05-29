@@ -9,7 +9,6 @@
 import Foundation
 
 class TargetingRulesChangeDecoder {
-    
     /// Decodes a JSON response into a TargetingRulesChange object.
     /// This decoder can handle both the new TargetingRulesChange format and the legacy SplitChange format.
     /// If the legacy format is detected, it will create a TargetingRulesChange with the SplitChange data
@@ -32,24 +31,22 @@ class TargetingRulesChangeDecoder {
                    let splitsArray = jsonDict["splits"],
                    let since = jsonDict["since"] as? Int64,
                    let till = jsonDict["till"] as? Int64 {
-                    
                     // Convert to the format with short keys that SplitChange expects
                     var newJsonDict = [String: Any]()
                     newJsonDict["d"] = splitsArray
                     newJsonDict["s"] = since
                     newJsonDict["t"] = till
-                    
+
                     let newJsonData = try JSONSerialization.data(withJSONObject: newJsonDict, options: [])
                     let decoder = JSONDecoder()
                     let splitChange = try decoder.decode(SplitChange.self, from: newJsonData)
-                    
+
                     // Create a TargetingRulesChange with the SplitChange data and an empty RuleBasedSegmentChange
                     return TargetingRulesChange(
                         featureFlags: splitChange,
-                        ruleBasedSegments: RuleBasedSegmentChange.empty()
-                    )
+                        ruleBasedSegments: RuleBasedSegmentChange.empty())
                 }
-                
+
                 // If we get here, no format matched
                 throw error
             } catch {

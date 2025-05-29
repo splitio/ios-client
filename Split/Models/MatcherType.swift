@@ -9,7 +9,6 @@
 import Foundation
 // swiftlint:disable inclusive_language
 enum MatcherType: String, Codable {
-
     case allKeys = "ALL_KEYS"
     case inSegment = "IN_SEGMENT"
     case inLargeSegment = "IN_LARGE_SEGMENT"

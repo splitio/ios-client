@@ -18,7 +18,6 @@ protocol HttpSession: AnyObject {
 }
 
 class DefaultHttpSession: HttpSession {
-
     var urlSession: URLSession
 
     init(urlSession: URLSession) {
@@ -26,17 +25,15 @@ class DefaultHttpSession: HttpSession {
     }
 
     func startTask(with request: HttpRequest) -> HttpTask? {
-
         guard let request = request as? BaseHttpRequest else {
             return nil
         }
 
-        guard let task = createSessionTask(request: request, body: request.body)  else {
+        guard let task = createSessionTask(request: request, body: request.body) else {
             return nil
         }
         task.resume()
         return HttpDataTask(sessionTask: task)
-
     }
 
     private func createSessionTask(request: BaseHttpRequest, body: Data?) -> URLSessionTask? {

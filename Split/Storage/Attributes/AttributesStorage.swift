@@ -20,13 +20,12 @@ protocol AttributesStorage {
 }
 
 class DefaultAttributesStorage: AttributesStorage {
-
     private let inMemoryAttributes: SynchronizedDictionaryComposed<String, String>
     private let persistentStorage: PersistentAttributesStorage?
 
     init(persistentAttributesStorage: PersistentAttributesStorage? = nil) {
-        persistentStorage = persistentAttributesStorage
-        inMemoryAttributes = SynchronizedDictionaryComposed()
+        self.persistentStorage = persistentAttributesStorage
+        self.inMemoryAttributes = SynchronizedDictionaryComposed()
     }
 
     func loadLocal(forKey key: String) {

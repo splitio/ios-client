@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class EventsStorageTest: XCTestCase {
-
     var persistentStorage: PersistentEventsStorageStub!
 
     override func setUp() {
@@ -20,8 +19,9 @@ class EventsStorageTest: XCTestCase {
     }
 
     func testStartDisabledPersistence() {
-        let eventsStorage = MainEventsStorage(persistentStorage: persistentStorage,
-                                              persistenceEnabled: false)
+        let eventsStorage = MainEventsStorage(
+            persistentStorage: persistentStorage,
+            persistenceEnabled: false)
 
         TestingHelper.createEvents(count: 10).forEach {
             eventsStorage.push($0)
@@ -33,8 +33,9 @@ class EventsStorageTest: XCTestCase {
     }
 
     func testStartEnabledPersistence() {
-        let eventsStorage = MainEventsStorage(persistentStorage: persistentStorage,
-                                              persistenceEnabled: true)
+        let eventsStorage = MainEventsStorage(
+            persistentStorage: persistentStorage,
+            persistenceEnabled: true)
 
         TestingHelper.createEvents(count: 10).forEach {
             eventsStorage.push($0)
@@ -46,11 +47,11 @@ class EventsStorageTest: XCTestCase {
     }
 
     func testEnablePersistence() {
-
         // When enabling persistence data should be persisted and
         // in memory cache cleared
-        let eventsStorage = MainEventsStorage(persistentStorage: persistentStorage,
-                                              persistenceEnabled: false)
+        let eventsStorage = MainEventsStorage(
+            persistentStorage: persistentStorage,
+            persistenceEnabled: false)
 
         TestingHelper.createEvents(count: 10).forEach {
             eventsStorage.push($0)
@@ -71,11 +72,11 @@ class EventsStorageTest: XCTestCase {
     }
 
     func testDisablePersistence() {
-
         // When enabling persistence data should be persisted and
         // in memory cache cleared
-        let eventsStorage = MainEventsStorage(persistentStorage: persistentStorage,
-                                              persistenceEnabled: true)
+        let eventsStorage = MainEventsStorage(
+            persistentStorage: persistentStorage,
+            persistenceEnabled: true)
 
         TestingHelper.createEvents(count: 10).forEach {
             eventsStorage.push($0)
@@ -96,8 +97,9 @@ class EventsStorageTest: XCTestCase {
     }
 
     func testClear() {
-        let eventsStorage = MainEventsStorage(persistentStorage: persistentStorage,
-                                              persistenceEnabled: false)
+        let eventsStorage = MainEventsStorage(
+            persistentStorage: persistentStorage,
+            persistenceEnabled: false)
 
         TestingHelper.createEvents(count: 10).forEach {
             eventsStorage.push($0)
@@ -114,4 +116,3 @@ class EventsStorageTest: XCTestCase {
         XCTAssertEqual(0, countAfterEnable)
     }
 }
-

@@ -11,7 +11,6 @@ import Foundation
 @testable import Split
 
 class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
-
     var managers = [Key: SplitEventsManager]()
 
     func add(_ manager: SplitEventsManager, forKey key: Key) {
@@ -22,9 +21,7 @@ class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
         managers[key] = nil
     }
 
-    func register(event: SplitEvent, task: SplitEventTask) {
-
-    }
+    func register(event: SplitEvent, task: SplitEventTask) {}
 
     var notifiedEvents = Set<String>()
     func notifyInternalEvent(_ event: SplitInternalEvent) {
@@ -45,4 +42,3 @@ class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
         return false
     }
 }
-

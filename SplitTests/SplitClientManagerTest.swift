@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class SplitClientManagerTest: XCTestCase {
-
     var clientManager: SplitClientManager!
     var config: SplitClientConfig! = SplitClientConfig()
     var byKeyFacade: ByKeyFacadeMock!
@@ -34,7 +33,6 @@ class SplitClientManagerTest: XCTestCase {
     }
 
     func testInit() {
-
         XCTAssertEqual(1, byKeyFacade.matchingKeys.count)
         XCTAssertTrue(syncManager.startCalled)
         XCTAssertNotNil(clientManager.defaultClient)
@@ -73,7 +71,6 @@ class SplitClientManagerTest: XCTestCase {
     }
 
     func testDestroyLastKey() {
-
         sleep(1)
         clientManager.destroy(forKey: key)
 
@@ -102,26 +99,32 @@ class SplitClientManagerTest: XCTestCase {
             splitClientConfig: config, apiKey: IntegrationHelper.dummyApiKey,
             userKey: key.matchingKey, databaseName: "dummy",
             telemetryStorage: telemetryProducer, testDatabase: splitDatabase)
-        clientManager = DefaultClientManager(config: config,
-                                             key: key,
-                                             splitManager: splitManager,
-                                             apiFacade: apiFacade,
-                                             byKeyFacade: byKeyFacade,
-                                             storageContainer: storageContainer,
-                                             rolloutCacheManager: DefaultRolloutCacheManager(generalInfoStorage: storageContainer.generalInfoStorage, rolloutCacheConfiguration: config.rolloutCacheConfiguration ?? RolloutCacheConfiguration.builder().build(), storages: storageContainer.splitsStorage, storageContainer.mySegmentsStorage, storageContainer.myLargeSegmentsStorage),
-                                             syncManager: syncManager,
-                                             synchronizer: synchronizer,
-                                             eventsTracker: EventsTrackerStub(),
-                                             eventsManagerCoordinator: splitEventsCoordinator,
-                                             mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactoryStub(),
-                                             telemetryStopwatch: stopwatch,
-                                             propertyValidator: DefaultPropertyValidator(
-                                                anyValueValidator: DefaultAnyValueValidator(),
-                                                validationLogger: DefaultValidationMessageLogger()
-                                             ),
-                                             factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
+        clientManager = DefaultClientManager(
+            config: config,
+            key: key,
+            splitManager: splitManager,
+            apiFacade: apiFacade,
+            byKeyFacade: byKeyFacade,
+            storageContainer: storageContainer,
+            rolloutCacheManager: DefaultRolloutCacheManager(
+                generalInfoStorage: storageContainer.generalInfoStorage,
+                rolloutCacheConfiguration: config
+                    .rolloutCacheConfiguration ?? RolloutCacheConfiguration.builder()
+                    .build(),
+                storages: storageContainer.splitsStorage,
+                storageContainer.mySegmentsStorage,
+                storageContainer.myLargeSegmentsStorage),
+            syncManager: syncManager,
+            synchronizer: synchronizer,
+            eventsTracker: EventsTrackerStub(),
+            eventsManagerCoordinator: splitEventsCoordinator,
+            mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactoryStub(),
+            telemetryStopwatch: stopwatch,
+            propertyValidator: DefaultPropertyValidator(
+                anyValueValidator: DefaultAnyValueValidator(),
+                validationLogger: DefaultValidationMessageLogger()),
+            factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }

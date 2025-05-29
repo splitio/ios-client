@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
-
     var segments: Set = ["s1", "s2", "s3"]
     var updatedSegments: [String]?
     var loadLocalCalled = false
@@ -32,7 +31,7 @@ class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
 
     func set(_ change: SegmentChange) {
         updatedSegments = change.segments.map { $0.name }
-        self.segments = Set(segments)
+        segments = Set(segments)
         if let exp = updateExpectation {
             exp.fulfill()
         }
@@ -45,11 +44,10 @@ class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
         clearCalled = true
     }
 
-    func destroy() {
-    }
+    func destroy() {}
 
     func getCount() -> Int {
-        getCountCalledCount+=1
+        getCountCalledCount += 1
         return segments.count
     }
 }

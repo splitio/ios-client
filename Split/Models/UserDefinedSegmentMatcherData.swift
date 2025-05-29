@@ -13,8 +13,6 @@ class UserDefinedBaseSegmentMatcherData: Codable {
     var largeSegmentName: String?
 }
 
-class UserDefinedSegmentMatcherData: UserDefinedBaseSegmentMatcherData {
-}
+class UserDefinedSegmentMatcherData: UserDefinedBaseSegmentMatcherData {}
 
-class UserDefinedLargeSegmentMatcherData: UserDefinedBaseSegmentMatcherData {
-}
+class UserDefinedLargeSegmentMatcherData: UserDefinedBaseSegmentMatcherData {}

@@ -31,7 +31,6 @@ struct Json {
     func isNull() -> Bool { return data == nil }
 
     func decode<T>(_ type: T.Type) throws -> T? where T: Decodable {
-
         guard let data = data else {
             return nil
         }
@@ -52,11 +51,12 @@ struct Json {
 
     func dynamicDecode<T>(_ type: T.Type) throws -> T? where T: DynamicDecodable {
         var obj: T?
-        if let data = self.data {
-            if let jsondObj = try JSONSerialization.jsonObject(with: data,
-                                                               options: []) as? [String: DynamicDecodable] {
+        if let data = data {
+            if let jsondObj = try JSONSerialization.jsonObject(
+                with: data,
+                options: []) as? [String: DynamicDecodable] {
                 if let jsondObj = jsondObj as? DynamicDecodable {
-                    obj = try T.init(jsonObject: jsondObj)
+                    obj = try T(jsonObject: jsondObj)
                 }
             }
         }
@@ -108,7 +108,7 @@ extension Json {
             throw GenericError.jsonParsingFail
         }
         let encoded = try JSONSerialization.jsonObject(with: jsonData, options: [])
-        return try T.init(jsonObject: encoded)
+        return try T(jsonObject: encoded)
     }
 }
 
@@ -117,8 +117,9 @@ typealias JSON = Json
 class JsonWrapper {
     let encoder: JSONEncoder
     init() {
-        encoder = JSONEncoder()
+        self.encoder = JSONEncoder()
     }
+
     func encodeToJson<T: Encodable>(_ data: T) throws -> String {
         let jsonData = try encoder.encode(data)
         return String(data: jsonData, encoding: .utf8) ?? ""

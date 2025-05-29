@@ -9,7 +9,6 @@
 import Foundation
 
 class LocalhostSplitsStorage: SplitsStorage {
-
     var changeNumber: Int64 = -1
     var updateTimestamp: Int64 = 1
     var splitsFilterQueryString: String = ""
@@ -17,11 +16,9 @@ class LocalhostSplitsStorage: SplitsStorage {
 
     private let inMemorySplits = ConcurrentDictionary<String, Split>()
 
-    init() {
-    }
+    init() {}
 
-    func loadLocal() {
-    }
+    func loadLocal() {}
 
     func get(name: String) -> Split? {
         return inMemorySplits.value(forKey: name)
@@ -29,11 +26,11 @@ class LocalhostSplitsStorage: SplitsStorage {
 
     func getMany(splits: [String]) -> [String: Split] {
         let names = Set(splits)
-        return self.inMemorySplits.all.filter { return names.contains($0.key) }
+        return inMemorySplits.all.filter { names.contains($0.key) }
     }
 
     func getAll() -> [String: Split] {
-        return self.inMemorySplits.all
+        return inMemorySplits.all
     }
 
     func update(splitChange: ProcessedSplitChange) -> Bool {
@@ -48,17 +45,13 @@ class LocalhostSplitsStorage: SplitsStorage {
         return true
     }
 
-    func update(filterQueryString: String) {
-    }
+    func update(filterQueryString: String) {}
 
-    func update(flagsSpec: String) {
-    }
+    func update(flagsSpec: String) {}
 
-    func update(bySetsFilter: SplitFilter?) {
-    }
+    func update(bySetsFilter: SplitFilter?) {}
 
-    func updateWithoutChecks(split: Split) {
-    }
+    func updateWithoutChecks(split: Split) {}
 
     func isValidTrafficType(name: String) -> Bool {
         return true

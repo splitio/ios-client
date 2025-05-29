@@ -29,15 +29,15 @@ class GeneralInfoStorageMock: GeneralInfoStorage {
     func getSplitsFilterQueryString() -> String {
         return splitsFilterQueryString
     }
-    
+
     func setSplitsFilterQueryString(filterQueryString: String) {
         splitsFilterQueryString = filterQueryString
     }
-    
+
     func getFlagSpec() -> String {
         return flagsSpec
     }
-    
+
     func setFlagSpec(flagsSpec: String) {
         self.flagsSpec = flagsSpec
     }

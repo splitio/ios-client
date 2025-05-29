@@ -8,13 +8,13 @@
 import Foundation
 
 class EqualToSemverMatcher: BaseMatcher, MatcherProtocol {
-
     var target: Semver?
 
-    init(data: String?,
-         negate: Bool? = nil,
-         attribute: String? = nil,
-         type: MatcherType? = nil) {
+    init(
+        data: String?,
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
         self.target = Semver.build(version: data)
     }

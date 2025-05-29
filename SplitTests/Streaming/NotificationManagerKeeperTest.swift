@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class NotificationManagerKeeperTest: XCTestCase {
-
     private let kControlPriChannel = "[?occupancy=metrics.publishers]control_pri"
     private let kControlSecChannel = "[?occupancy=metrics.publishers]control_sec"
 
@@ -23,8 +22,9 @@ class NotificationManagerKeeperTest: XCTestCase {
     override func setUp() {
         telemetryProducer = TelemetryStorageStub()
         broadcasterChannel = SyncEventBroadcasterStub()
-        notificationManager = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel,
-                                                               telemetryProducer: telemetryProducer)
+        notificationManager = DefaultNotificationManagerKeeper(
+            broadcasterChannel: broadcasterChannel,
+            telemetryProducer: telemetryProducer)
     }
 
     func testNoAvailablePublishers() {
@@ -36,7 +36,7 @@ class NotificationManagerKeeperTest: XCTestCase {
         notificationManager.handleIncomingPresenceEvent(notification: notification)
 
         let streamEvents = telemetryProducer.streamingEvents
-        
+
         XCTAssertEqual(SyncStatusEvent.pushSubsystemDown, broadcasterChannel.lastPushedEvent)
 
         XCTAssertNotNil(streamEvents[.occupancyPri])
@@ -82,12 +82,10 @@ class NotificationManagerKeeperTest: XCTestCase {
         XCTAssertNil(streamEvents[.occupancySec])
     }
 
-
     func testSecondaryAvailableNotificationReceivedWhenNoPublishers() {
         // Notification manager keeper start assuming one publisher in primary channel
         // Receiving 0 publishers in primary and having 0 in sec to enable polling
         // Receiving 1 publisher in secondary channel must enable polling
-
 
         // making channel pri unavailable
         var n1 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 0))
@@ -111,7 +109,6 @@ class NotificationManagerKeeperTest: XCTestCase {
         // Notification manager keeper start assuming one publisher in primary channel
         // Receiving 0 publishers in primary and having 0 in sec to enable polling
         // Receiving 1 publisher in secondary channel must enable polling
-
 
         // making channel pri unavailable
         var n1 = OccupancyNotification(metrics: OccupancyNotification.Metrics(publishers: 0))
@@ -215,7 +212,5 @@ class NotificationManagerKeeperTest: XCTestCase {
         XCTAssertNotNil(streamEvents[.streamingStatus])
     }
 
-    override func tearDown() {
-
-    }
+    override func tearDown() {}
 }

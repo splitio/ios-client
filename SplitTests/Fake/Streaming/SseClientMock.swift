@@ -13,7 +13,6 @@ import XCTest
 class SseClientMock: SseClient {
     var isConnectionOpened: Bool = true
 
-
     private var resultIndex = 0
     var connectCalled = false
     var disconnectCalled = false
@@ -25,16 +24,16 @@ class SseClientMock: SseClient {
     var disconnectDelay: Double?
 
     init(connected: Bool = true) {
-        isConnectionOpened = connected
+        self.isConnectionOpened = connected
     }
 
     func connect(token: String, channels: [String], completion: @escaping CompletionHandler) {
-        self.successHandler = completion
+        successHandler = completion
         self.token = token
         self.channels = channels
         let result = results![resultIndex]
         if resultIndex < results!.count - 1 {
-            resultIndex+=1
+            resultIndex += 1
         }
         connectCalled = true
         if result {
@@ -47,7 +46,7 @@ class SseClientMock: SseClient {
         if let exp = closeExp {
             exp.fulfill()
         }
-        if let delay = self.disconnectDelay {
+        if let delay = disconnectDelay {
             Thread.sleep(forTimeInterval: delay)
         }
     }

@@ -11,12 +11,12 @@ import Foundation
 @objc class TargetingRulesChange: NSObject, Codable {
     var featureFlags: SplitChange
     var ruleBasedSegments: RuleBasedSegmentChange
-    
+
     enum CodingKeys: String, CodingKey {
         case featureFlags = "ff"
         case ruleBasedSegments = "rbs"
     }
-    
+
     init(featureFlags: SplitChange, ruleBasedSegments: RuleBasedSegmentChange) {
         self.featureFlags = featureFlags
         self.ruleBasedSegments = ruleBasedSegments
@@ -30,8 +30,8 @@ import Foundation
 
 extension TargetingRulesChange {
     override public var description: String {
-        let ff = String(describing: self.featureFlags)
-        let rbs = String(describing: self.ruleBasedSegments)
+        let ff = String(describing: featureFlags)
+        let rbs = String(describing: ruleBasedSegments)
         return "{\nfeatureFlags: \(ff),\nruleBasedSegments: \(rbs)\n}"
     }
 }

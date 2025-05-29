@@ -13,19 +13,18 @@ protocol HttpEventsRecorder {
 }
 
 class DefaultHttpEventsRecorder: HttpEventsRecorder {
-
     private let restClient: RestClientTrackEvents
     private let syncHelper: SyncHelper
     private let resource = Resource.events
 
-    init(restClient: RestClientTrackEvents,
-         syncHelper: SyncHelper) {
+    init(
+        restClient: RestClientTrackEvents,
+        syncHelper: SyncHelper) {
         self.restClient = restClient
         self.syncHelper = syncHelper
     }
 
     func execute(_ items: [EventDTO]) throws {
-
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)

@@ -6,8 +6,8 @@
 //  Copyright © 2025 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(RuleBasedSegmentEntity)
 public class RuleBasedSegmentEntity: NSManagedObject {

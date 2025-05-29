@@ -6,16 +6,14 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 class CoreDataHelperBuilder {
-
     private static let kDataModelName = "split_cache"
     private static let kDataModelExtentsion = "momd"
 
     static func build(databaseName: String) -> CoreDataHelper? {
-
         let bundle = Bundle.split
         guard let modelUrl = bundle.url(forResource: kDataModelName, withExtension: kDataModelExtentsion) else {
             Logger.e("Error loading model from bundle")
@@ -43,14 +41,19 @@ class CoreDataHelperBuilder {
         let databaseUrl = docURL.appendingPathComponent("\(databaseName).\(ServiceConstants.databaseExtension)")
         Logger.v("Cache URL: \(databaseUrl.absoluteString)")
         do {
-            let options = [NSMigratePersistentStoresAutomaticallyOption: true,
-                           NSInferMappingModelAutomaticallyOption: true]
-            try persistenceCoordinator.addPersistentStore(ofType: NSSQLiteStoreType,
-                                                          configurationName: nil,
-                                                          at: databaseUrl, options: options)
+            let options = [
+                NSMigratePersistentStoresAutomaticallyOption: true,
+                NSInferMappingModelAutomaticallyOption: true,
+            ]
+            try persistenceCoordinator.addPersistentStore(
+                ofType: NSSQLiteStoreType,
+                configurationName: nil,
+                at: databaseUrl,
+                options: options)
 
-            return CoreDataHelper(managedObjectContext: managedObjContext,
-                                  persistentCoordinator: persistenceCoordinator)
+            return CoreDataHelper(
+                managedObjectContext: managedObjContext,
+                persistentCoordinator: persistenceCoordinator)
 
         } catch {
             return nil

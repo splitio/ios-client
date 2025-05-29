@@ -18,16 +18,14 @@ class ClientManagerMock: SplitClientManager {
     func get(forKey key: Key) -> SplitClient {
         return clients[key] ?? SplitClientStub()
     }
-    
+
     var flushCalled = false
     func flush() {
         flushCalled = true
     }
-    
+
     var destroyCalled = [Key: Bool]()
     func destroy(forKey key: Key) {
         destroyCalled[key] = true
     }
-    
-
 }

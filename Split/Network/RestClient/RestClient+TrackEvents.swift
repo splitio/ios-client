@@ -15,10 +15,10 @@ protocol RestClientTrackEvents: RestClient {
 extension DefaultRestClient: RestClientTrackEvents {
     func sendTrackEvents(events: [EventDTO], completion: @escaping (DataResult<EmptyValue>) -> Void) {
         do {
-            self.execute(
-                    endpoint: endpointFactory.eventsEndpoint,
-                    body: try Json.dynamicEncodeToJsonData(events),
-                    completion: completion)
+            execute(
+                endpoint: endpointFactory.eventsEndpoint,
+                body: try Json.dynamicEncodeToJsonData(events),
+                completion: completion)
         } catch {
             Logger.e("Could not send time metrics. Error: " + error.localizedDescription)
         }

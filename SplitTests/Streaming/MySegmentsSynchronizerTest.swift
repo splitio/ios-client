@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class MySegmentsSynchronizerTest: XCTestCase {
-
     var mySegmentsSync: MySegmentsSynchronizer!
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
     var myLargeSegmentsStorage: ByKeyMySegmentsStorageStub!
@@ -36,12 +35,14 @@ class MySegmentsSynchronizerTest: XCTestCase {
         syncWorkerFactory.periodicMySegmentsSyncWorker = periodicMySegmentsSyncWorker
         timerManager = TimersManagerMock()
 
-        mySegmentsSync = DefaultMySegmentsSynchronizer(userKey: userKey, splitConfig: SplitClientConfig(),
-                                                       mySegmentsStorage: mySegmentsStorage,
-                                                       myLargeSegmentsStorage: myLargeSegmentsStorage,
-                                                       syncWorkerFactory: syncWorkerFactory,
-                                                       eventsManager: eventsManager,
-                                                       timerManager: timerManager)
+        mySegmentsSync = DefaultMySegmentsSynchronizer(
+            userKey: userKey,
+            splitConfig: SplitClientConfig(),
+            mySegmentsStorage: mySegmentsStorage,
+            myLargeSegmentsStorage: myLargeSegmentsStorage,
+            syncWorkerFactory: syncWorkerFactory,
+            eventsManager: eventsManager,
+            timerManager: timerManager)
     }
 
     func testLoadMySegmentsFromCache() {
@@ -66,8 +67,9 @@ class MySegmentsSynchronizerTest: XCTestCase {
         let changeNumbers = SegmentsChangeNumber(msChangeNumber: 10, mlsChangeNumber: 100)
         let delay: Int64 = 1
 
-        mySegmentsSync.forceMySegmentsSync(changeNumbers: changeNumbers,
-                                           delay: delay)
+        mySegmentsSync.forceMySegmentsSync(
+            changeNumbers: changeNumbers,
+            delay: delay)
         XCTAssertTrue(timerManager.timerIsAdded(timer: .syncSegments))
     }
 
@@ -78,8 +80,9 @@ class MySegmentsSynchronizerTest: XCTestCase {
 
         mySegmentsForceWorker.startExp = exp
 
-        mySegmentsSync.forceMySegmentsSync(changeNumbers: changeNumbers,
-                                           delay: delay)
+        mySegmentsSync.forceMySegmentsSync(
+            changeNumbers: changeNumbers,
+            delay: delay)
 
         wait(for: [exp], timeout: 5.0)
         XCTAssertFalse(timerManager.timerIsAdded(timer: .syncSegments))
@@ -121,4 +124,3 @@ class MySegmentsSynchronizerTest: XCTestCase {
         XCTAssertTrue(periodicMySegmentsSyncWorker.stopCalled)
     }
 }
-

@@ -7,14 +7,13 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class HttpRequestListTest: XCTestCase {
     var requestList: HttpRequestList!
     override func setUp() {
         requestList = HttpRequestList()
-
     }
 
     func testAddRequest() {
@@ -53,6 +52,5 @@ class HttpRequestListTest: XCTestCase {
         XCTAssertEqual(HttpMethod.post, r?.method)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }

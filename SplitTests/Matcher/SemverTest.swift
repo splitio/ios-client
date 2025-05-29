@@ -6,11 +6,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 final class SemverTest: XCTestCase {
-
     func testBetween() {
         if let data = CsvHelper.readDataFromCSV(sourceClass: self, fileName: "between_semver") {
             let lines = CsvHelper.csv(data: data)
@@ -19,8 +18,8 @@ final class SemverTest: XCTestCase {
                 let version1 = Semver.build(version: line[0])!
                 let version2 = Semver.build(version: line[1])!
                 let version3 = Semver.build(version: line[2])!
-                let expectedResult: Bool = Bool(line[3])!
-                
+                let expectedResult = Bool(line[3])!
+
                 let result: Bool = version2.compare(to: version1) >= 0 && version2.compare(to: version3) <= 0
 
                 if expectedResult != result {
@@ -38,7 +37,7 @@ final class SemverTest: XCTestCase {
                 let version1 = Semver.build(version: line[0])!
                 let version2 = Semver.build(version: line[1])!
                 let expectedResult = Bool(line[2])!
-                
+
                 let result: Bool = version1 == version2
 
                 if expectedResult != result {
@@ -55,7 +54,7 @@ final class SemverTest: XCTestCase {
             lines.forEach { line in
                 let version1 = Semver.build(version: line[0])!
                 let version2 = Semver.build(version: line[1])!
-                
+
                 XCTAssertEqual(0, version1.compare(to: version1))
                 XCTAssertEqual(0, version2.compare(to: version2))
             }

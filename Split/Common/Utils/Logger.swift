@@ -7,8 +7,7 @@
 
 import Foundation
 
-struct TimeChecker {
-
+enum TimeChecker {
     private static var startTime: Int64 = 0
     private static let tag = "[SPTPRF] "
     private static let showTimestamp = true
@@ -72,19 +71,18 @@ class Logger {
     var level: SplitLogLevel = .none
 
     static let shared: Logger = {
-        return Logger()
+        Logger()
     }()
 
     private init() {}
 
     private func log(level: SplitLogLevel, msg: String, _ ctx: Any ...) {
-
         if level.order() < self.level.order() {
             return
         }
 
         let timeLabel = Date.nowLabel()
-        if ctx.count == 0 {
+        if ctx.isEmpty {
             printer.stdout(timeLabel, level.rawValue, tag, msg)
         } else {
             printer.stdout(timeLabel, level.rawValue, tag, msg, ctx[0])

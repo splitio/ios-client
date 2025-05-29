@@ -7,16 +7,17 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class UserConsentModeOptimizedTest: XCTestCase {
-
     var impExp: XCTestExpectation!
     var countExp: XCTestExpectation!
     var impDao: ImpressionDao!
     var countDao: ImpressionsCountDao!
-    var splitChange = IntegrationHelper.loadSplitChangeFileJson(name: "splitchanges_1", sourceClass: IntegrationHelper())
+    var splitChange = IntegrationHelper.loadSplitChangeFileJson(
+        name: "splitchanges_1",
+        sourceClass: IntegrationHelper())
     let trafficType = "account"
     var httpClient: HttpClient!
     var notificationHelper: NotificationHelperStub!
@@ -26,8 +27,9 @@ class UserConsentModeOptimizedTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         impPosted = false
         impPosted = false
@@ -220,7 +222,7 @@ class UserConsentModeOptimizedTest: XCTestCase {
         let splits = [
             "FACUNDO_TEST", "FACUNDO_TEST", "testing", "testing",
             "testing222", "testing222", "a_new_split_2", "a_new_split_2",
-            "test_string_without_attr", "test_string_without_attr"
+            "test_string_without_attr", "test_string_without_attr",
         ]
 
         for split in splits {
@@ -236,7 +238,7 @@ class UserConsentModeOptimizedTest: XCTestCase {
 
         // If User consent is granted, it would be data in storage and
         // Impressions posted
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.impressionRefreshRate = 3
         splitConfig.trafficType = trafficType
         splitConfig.eventsPushRate = 3
@@ -253,12 +255,11 @@ class UserConsentModeOptimizedTest: XCTestCase {
         return builder.setApiKey(IntegrationHelper.dummyApiKey)
             .setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
             .setConfig(splitConfig).build()!
-
     }
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            return TestStreamResponseBinding.createFor(request: request, code: 200)
+            TestStreamResponseBinding.createFor(request: request, code: 200)
         }
     }
 
@@ -267,10 +268,12 @@ class UserConsentModeOptimizedTest: XCTestCase {
         return { request in
             if request.isSplitEndpoint() {
                 if self.changeHit == 0 {
-                    self.changeHit+=1
+                    self.changeHit += 1
                     return TestDispatcherResponse(code: 200, data: Data(self.splitChange!.utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999999, till: 999999999).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 999999999, till: 999999999).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
@@ -299,4 +302,3 @@ class UserConsentModeOptimizedTest: XCTestCase {
         }
     }
 }
-

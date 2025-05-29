@@ -37,7 +37,6 @@ enum LocalhostFile {
 }
 
 class FeatureFlagsFileLoader: LocalhostDataSource {
-
     var loadHandler: LocalhostDataSource.IncomingDataHandler?
 
     typealias FileInfo = (name: String, type: String)
@@ -48,22 +47,23 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
     private var fileParser: LocalhostSplitsParser?
     private let fileName: String
     private var lastContent = ""
-    private let dataQueue = DispatchQueue(label: "split-yaml-storage",
-                                          attributes: .concurrent)
+    private let dataQueue = DispatchQueue(
+        label: "split-yaml-storage",
+        attributes: .concurrent)
 
-    init(fileStorage: FileStorage,
-         config: FeatureFlagsFileLoaderConfig = FeatureFlagsFileLoaderConfig(),
-         dataFolderName: String,
-         splitsFileName: String,
-         bundle: Bundle) throws {
-
+    init(
+        fileStorage: FileStorage,
+        config: FeatureFlagsFileLoaderConfig = FeatureFlagsFileLoaderConfig(),
+        dataFolderName: String,
+        splitsFileName: String,
+        bundle: Bundle) throws {
         self.fileName = splitsFileName
         self.fileStorage = fileStorage
         self.refreshInterval = Self.sanitizeRefreshInterval(config.refreshInterval)
-        if !self.setup(bundle: bundle, dataFolderName: dataFolderName) {
+        if !setup(bundle: bundle, dataFolderName: dataFolderName) {
             throw GenericError.unknown(message: "Could setup localhost file loader.")
         }
-        self.taskExecutor = self.createTaskExecutor()
+        self.taskExecutor = createTaskExecutor()
     }
 
     func start() {
@@ -97,12 +97,11 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
         return PeriodicTaskExecutor(
             dispatchGroup: nil,
             config: config,
-            triggerAction: {[weak self] in
+            triggerAction: { [weak self] in
                 if let self = self {
                     self.loadHandler?(self.loadFile())
                 }
-            }
-        )
+            })
     }
 
     private func logFileInfo(dataFolder: String, name: String) {
@@ -124,15 +123,15 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
     }
 
     private func isSupportedExtensionType(_ type: String) -> Bool {
-        return LocalhostFile.extensions.filter({ $0 == type.lowercased() }).count == 1
+        return LocalhostFile.extensions.filter { $0 == type.lowercased() }.count == 1
     }
 
     private func validateAndCopyFile(bundle: Bundle) -> FileInfo? {
         guard let fileInfo = splitFileName(fileName) else {
             Logger.e("""
-                Localhost file name \(fileName) has not the correct format.
-                It should be similar to 'name.yaml', 'name.yml'
-                """)
+            Localhost file name \(fileName) has not the correct format.
+            It should be similar to 'name.yaml', 'name.yml'
+            """)
             return nil
         }
 
@@ -141,10 +140,11 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
             return nil
         }
 
-        if !FileUtil.copySourceFile(name: fileInfo.name,
-                                               type: fileInfo.type,
-                                               fileStorage: fileStorage,
-                                               bundle: bundle) {
+        if !FileUtil.copySourceFile(
+            name: fileInfo.name,
+            type: fileInfo.type,
+            fileStorage: fileStorage,
+            bundle: bundle) {
             Logger.e("Localhost file name \(fileName) not found. Please check name.")
             return nil
         }

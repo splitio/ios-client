@@ -10,12 +10,13 @@ import Foundation
 @testable import Split
 
 class PersistentSplitsStorageStub: PersistentSplitsStorage {
-
     var changeNumber: Int64 = -1
     var updateTimestamp: Int64 = 0
 
-    var snapshot: SplitsSnapshot = SplitsSnapshot(changeNumber: -1, splits: [Split](),
-                                                  updateTimestamp: -1)
+    var snapshot: SplitsSnapshot = .init(
+        changeNumber: -1,
+        splits: [Split](),
+        updateTimestamp: -1)
 
     var processedSplitChange: ProcessedSplitChange?
 
@@ -26,7 +27,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var closeCalled = false
     var updateSplitCalled = false
     var deletedSplits = [String]()
-    
+
     var filterQueryString = ""
     var flagsSpec = ""
     var updateFlagsSpecCalled = false
@@ -39,10 +40,12 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     }
 
     func update(split: Split) {
-        updateSplitCalled  = true
+        updateSplitCalled = true
         splits[split.name ?? ""] = split
-        snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: splits.values.compactMap { $0 },
-                                  updateTimestamp: snapshot.updateTimestamp)
+        snapshot = SplitsSnapshot(
+            changeNumber: snapshot.changeNumber,
+            splits: splits.values.compactMap { $0 },
+            updateTimestamp: snapshot.updateTimestamp)
     }
 
     func getSplitsSnapshot() -> SplitsSnapshot {
@@ -66,7 +69,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     func close() {
         closeCalled = true
     }
-    
+
     func getChangeNumber() -> Int64 {
         return changeNumber
     }

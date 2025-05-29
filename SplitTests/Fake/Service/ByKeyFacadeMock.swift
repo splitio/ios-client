@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class ByKeyFacadeMock: ByKeyFacade {
-
     var stopSyncCalled = false
     var components = [Key: ByKeyComponentGroup]()
     var loadMySegmentsFromCacheCalled = [String: Bool]()
@@ -73,12 +72,14 @@ class ByKeyFacadeMock: ByKeyFacade {
     }
 
     var forceMySegmentsCalledParams = [String: ForceMySegmentsParams]()
-    func forceMySegmentsSync(forKey key: String,
-                             changeNumbers: SegmentsChangeNumber,
-                             delay: Int64) {
+    func forceMySegmentsSync(
+        forKey key: String,
+        changeNumbers: SegmentsChangeNumber,
+        delay: Int64) {
         forceMySegmentsSyncCalled[key] = true
-        forceMySegmentsCalledParams[key] = ForceMySegmentsParams(segmentsCn:changeNumbers,
-                                                                 delay: delay)
+        forceMySegmentsCalledParams[key] = ForceMySegmentsParams(
+            segmentsCn: changeNumbers,
+            delay: delay)
 
 //        if let exp = forceMySegmentsSyncExp[key] {
 //            exp.fulfill()
@@ -119,7 +120,7 @@ class ByKeyFacadeMock: ByKeyFacade {
     }
 
     func isEmpty() -> Bool {
-        return components.count == 0
+        return components.isEmpty
     }
 
     var notifyMySegmentsUpdatedCalled = false
@@ -131,9 +132,8 @@ class ByKeyFacadeMock: ByKeyFacade {
     func notifyMyLargeSegmentsUpdated(forKey key: String) {
         notifyMyLargeSegmentsUpdatedCalled = true
     }
-   
+
     func stopSync() {
         stopSyncCalled = true
     }
 }
-

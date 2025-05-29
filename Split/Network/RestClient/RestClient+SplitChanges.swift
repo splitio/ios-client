@@ -10,7 +10,6 @@ import Foundation
 
 /// A handler for specific error conditions in Split Changes requests
 fileprivate class SplitChangesErrorHandler {
-
     private let serviceEndpoints: ServiceEndpoints
 
     init(serviceEndpoints: ServiceEndpoints) {
@@ -23,8 +22,8 @@ fileprivate class SplitChangesErrorHandler {
     ///   - spec: The spec version used in the request
     /// - Returns: A specific HttpError if the conditions match, or nil to fall back to default error handling
     func handleError(statusCode: Int, spec: String) -> Error? {
-        if statusCode == HttpCode.badRequest &&
-           serviceEndpoints.isCustomSdkEndpoint &&
+        if statusCode == HttpCode.badRequest,
+           serviceEndpoints.isCustomSdkEndpoint,
            spec == "1.3" {
             return HttpError.outdatedProxyError(code: statusCode, spec: spec)
         }
@@ -34,39 +33,41 @@ fileprivate class SplitChangesErrorHandler {
 }
 
 protocol RestClientSplitChanges: RestClient {
-    func getSplitChanges(since: Int64,
-                         rbSince: Int64?,
-                         till: Int64?,
-                         headers: HttpHeaders?,
-                         spec: String,
-                         completion: @escaping (DataResult<TargetingRulesChange>) -> Void)
+    func getSplitChanges(
+        since: Int64,
+        rbSince: Int64?,
+        till: Int64?,
+        headers: HttpHeaders?,
+        spec: String,
+        completion: @escaping (DataResult<TargetingRulesChange>) -> Void)
 }
 
 extension DefaultRestClient: RestClientSplitChanges {
-    func getSplitChanges(since: Int64,
-                         rbSince: Int64?,
-                         till: Int64?,
-                         headers: HttpHeaders?,
-                         spec: String = Spec.flagsSpec,
-                         completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
-
+    func getSplitChanges(
+        since: Int64,
+        rbSince: Int64?,
+        till: Int64?,
+        headers: HttpHeaders?,
+        spec: String = Spec.flagsSpec,
+        completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
         let errorHandler = SplitChangesErrorHandler(serviceEndpoints: endpointFactory.serviceEndpoints)
 
-        self.execute(
+        execute(
             endpoint: endpointFactory.splitChangesEndpoint,
             parameters: buildParameters(since: since, rbSince: rbSince, till: till, spec: spec),
             headers: headers,
             customDecoder: TargetingRulesChangeDecoder.decode,
             customFailureHandler: { statusCode in
-                return errorHandler.handleError(statusCode: statusCode, spec: spec)
+                errorHandler.handleError(statusCode: statusCode, spec: spec)
             },
             completion: completion)
     }
 
-    private func buildParameters(since: Int64,
-                                 rbSince: Int64?,
-                                 till: Int64?,
-                                 spec: String) -> HttpParameters {
+    private func buildParameters(
+        since: Int64,
+        rbSince: Int64?,
+        till: Int64?,
+        spec: String) -> HttpParameters {
         var parameters: [HttpParameter] = []
         if !spec.isEmpty {
             parameters.append(HttpParameter(key: "s", value: spec))

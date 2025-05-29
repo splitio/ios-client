@@ -10,13 +10,12 @@ import Foundation
 @testable import Split
 
 class HttpImpressionsCountRecorderStub: HttpImpressionsCountRecorder {
-
     var countsSent = [ImpressionsCountPerFeature]()
     var errorOccurredCallCount = -1
     var executeCallCount = 0
 
     func execute(_ counts: ImpressionsCount) throws {
-        executeCallCount+=1
+        executeCallCount += 1
         if errorOccurredCallCount == executeCallCount {
             throw HttpError.unknown(code: -1, message: "something happend")
         }

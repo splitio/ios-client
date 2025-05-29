@@ -15,7 +15,6 @@ protocol PersistentHashedImpressionsStorage {
 }
 
 class DefaultPersistentHashedImpressionsStorage: PersistentHashedImpressionsStorage {
-
     private let hashedImpressionDao: HashedImpressionDao
 
     init(database: SplitDatabase) {

@@ -10,22 +10,27 @@ import Foundation
 @testable import Split
 
 class MySegmentsSyncWorkerFactoryStub: MySegmentsSyncWorkerFactory {
-
     private var mySegmentsSyncWorkers = [String: RetryableMySegmentsSyncWorkerStub]()
     var periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()
 
-    func createRetryableMySegmentsSyncWorker(forKey key: String, avoidCache: Bool,
-                                             eventsManager: SplitEventsManager,
-                                             changeNumbers: SegmentsChangeNumber?) -> RetryableSyncWorker {
+    func createRetryableMySegmentsSyncWorker(
+        forKey key: String,
+        avoidCache: Bool,
+        eventsManager: SplitEventsManager,
+        changeNumbers: SegmentsChangeNumber?) -> RetryableSyncWorker {
         return mySegmentsSyncWorkers["\(key)_\(avoidCache)"] ?? RetryableMySegmentsSyncWorkerStub()
     }
 
-    func createPeriodicMySegmentsSyncWorker(forKey key: String, eventsManager: SplitEventsManager) -> PeriodicSyncWorker {
+    func createPeriodicMySegmentsSyncWorker(
+        forKey key: String,
+        eventsManager: SplitEventsManager) -> PeriodicSyncWorker {
         return periodicMySegmentsSyncWorker
     }
 
-    func addMySegmentWorker(_ worker: RetryableMySegmentsSyncWorkerStub,
-                            forKey key: String, avoidCache: Bool) {
+    func addMySegmentWorker(
+        _ worker: RetryableMySegmentsSyncWorkerStub,
+        forKey key: String,
+        avoidCache: Bool) {
         mySegmentsSyncWorkers["\(key)_\(avoidCache)"] = worker
     }
 }

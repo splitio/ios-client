@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 protocol AttributesDao {
     func getBy(userKey: String) -> [String: Any]?
@@ -16,7 +16,6 @@ protocol AttributesDao {
 }
 
 class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao {
-
     private let cipher: Cipher?
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
         self.cipher = cipher
@@ -48,7 +47,6 @@ class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao {
 
     // For testing purposes only
     func syncUpdate(userKey: String, attributes: [String: Any]?) {
-
         execute { [weak self] in
             guard let self = self else {
                 return
@@ -60,13 +58,15 @@ class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao {
     private func updateAttributes(_ attributes: [String: Any]?, userKey: String) {
         let encUserKey = cipher?.encrypt(userKey) ?? userKey
         guard let attributes = attributes else {
-            self.coreDataHelper.delete(entity: .attribute, by: "userKey",
-                                       values: [encUserKey])
+            coreDataHelper.delete(
+                entity: .attribute,
+                by: "userKey",
+                values: [encUserKey])
             return
         }
 
-        if let entity = self.getByUserKey(encUserKey) ??
-            self.coreDataHelper.create(entity: .attribute) as? AttributeEntity {
+        if let entity = getByUserKey(encUserKey) ??
+            coreDataHelper.create(entity: .attribute) as? AttributeEntity {
             entity.userKey = encUserKey
             do {
                 let json = try Json.dynamicEncodeToJson(AttributeMap(attributes: attributes))
@@ -74,15 +74,16 @@ class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao {
             } catch {
                 Logger.e("Error while parsing attributes to store them in DB: \(error)")
             }
-            self.coreDataHelper.save()
+            coreDataHelper.save()
         }
     }
 
     private func getByUserKey(_ userKey: String) -> AttributeEntity? {
         let predicate = NSPredicate(format: "userKey == %@", userKey)
-        let entities = self.coreDataHelper.fetch(entity: .attribute,
-                                                 where: predicate).compactMap { return $0 as? AttributeEntity }
-        if entities.count > 0 {
+        let entities = coreDataHelper.fetch(
+            entity: .attribute,
+            where: predicate).compactMap { $0 as? AttributeEntity }
+        if !entities.isEmpty {
             return entities[0]
         }
         return nil

@@ -17,10 +17,10 @@ struct DefaultAnyValueValidator: AnyValueValidator {
     func isPrimitiveValue(value: Any) -> Bool {
         return !(
             value as? String == nil &&
-            value as? Int == nil &&
-            value as? Double == nil &&
-            value as? Float == nil &&
-            value as? Bool == nil)
+                value as? Int == nil &&
+                value as? Double == nil &&
+                value as? Float == nil &&
+                value as? Bool == nil)
     }
 
     func isList(value: Any) -> Bool {

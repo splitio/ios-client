@@ -15,39 +15,38 @@ struct WarningMessageItemStub {
 }
 
 class ValidationMessageLoggerStub: ValidationMessageLogger {
-    
     var errorTag: String?
     var errorMessage: String?
-    
+
     var hasError: Bool {
-        return (errorMessage != nil)
+        return errorMessage != nil
     }
-    
+
     var hasWarnings: Bool {
-        return (warnings.count > 0)
+        return !warnings.isEmpty
     }
-    
+
     var warnings: [WarningMessageItemStub]
-    
+
     init() {
-        errorTag = nil
-        errorMessage = nil
-        warnings = [WarningMessageItemStub]()
+        self.errorTag = nil
+        self.errorMessage = nil
+        self.warnings = [WarningMessageItemStub]()
     }
-    
+
     func e(message: String, tag: String) {
         errorTag = tag
         errorMessage = message
     }
-    
+
     func w(message: String, tag: String) {
         warnings.append(WarningMessageItemStub(tag: tag, message: message))
     }
-    
+
     var messages = [String]()
     func log(errorInfo: ValidationErrorInfo, tag: String) {
         messages.append(errorInfo.errorMessage ?? "")
-        if(errorInfo.isError) {
+        if errorInfo.isError {
             errorMessage = errorInfo.errorMessage
             errorTag = tag
         } else {

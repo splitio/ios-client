@@ -6,8 +6,8 @@
 //  Copyright © 2021 Split. All rights reserved.
 //
 
-import Foundation
 import Compression
+import Foundation
 
 enum CompressionType: Decodable {
     case none
@@ -61,7 +61,7 @@ protocol CompressionUtil {
     func decompress(data: Data) throws -> Data
 }
 
-private struct CompressionBase {
+private enum CompressionBase {
     static func decompress(data: Data) throws -> Data {
         //
         // A typical zlib compression ratios are on the order of 2:1 to 5:1.
@@ -76,8 +76,13 @@ private struct CompressionBase {
         let srcBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: srcBufferSize)
         data.copyBytes(to: srcBuffer, count: data.count)
 
-        let compCount = compression_decode_buffer(dstBuffer, dstBufferSize, srcBuffer,
-                                                  srcBufferSize, nil, COMPRESSION_ZLIB)
+        let compCount = compression_decode_buffer(
+            dstBuffer,
+            dstBufferSize,
+            srcBuffer,
+            srcBufferSize,
+            nil,
+            COMPRESSION_ZLIB)
         if compCount == 0 {
             throw CompressionError.couldNotDecompressData
         }
@@ -93,7 +98,7 @@ private struct CompressionBase {
     // Based on https://datatracker.ietf.org/doc/html/rfc1951
     static func removeHeader(type: CompressionType, from data: Data, headerSize: Int) -> Data {
         var mutableData = Data(data)
-        mutableData.removeSubrange(0..<headerSize)
+        mutableData.removeSubrange(0 ..< headerSize)
         return mutableData
     }
 }
@@ -103,10 +108,10 @@ struct Zlib: CompressionUtil {
     let kDicSize = 4
 
     func decompress(data: Data) throws -> Data {
-
-        let deflatedData = CompressionBase.removeHeader(type: .zlib,
-                                                        from: data,
-                                                        headerSize: kZlibHeaderSize)
+        let deflatedData = CompressionBase.removeHeader(
+            type: .zlib,
+            from: data,
+            headerSize: kZlibHeaderSize)
         do {
             return try CompressionBase.decompress(data: deflatedData)
         } catch {
@@ -135,7 +140,7 @@ struct Zlib: CompressionUtil {
 
         // FCHECK
         // The FCHECK value must be such that CMF and FLG, when viewed as
-       // a 16-bit unsigned integer stored in MSB order (CMF*256 + FLG),
+        // a 16-bit unsigned integer stored in MSB order (CMF*256 + FLG),
         // is a multiple of 31.
         if UInt16(0xf & data[1]) != UInt16(data[1] << 8 | data[0]) {
             Logger.e("Incorrect fcheck value found while trying to decompress zlib data")
@@ -145,7 +150,7 @@ struct Zlib: CompressionUtil {
         // Check for FDICT info
         // If set, dict info (bytes 2, 3, 4, 5) should be available
         if (data[1] & 0x20) != 0 {
-            headerSize+=kDicSize
+            headerSize += kDicSize
         }
 
         return headerSize
@@ -158,15 +163,15 @@ struct Gzip: CompressionUtil {
     private let kId2 = 139 // 0x8b
     private let kCm: UInt8 = 8
     func decompress(data: Data) throws -> Data {
-
         let headerSize = checkAndGetHeaderSize(data: data)
         if headerSize == -1 {
             throw CompressionError.headerSizeError
         }
 
-        let deflatedData = CompressionBase.removeHeader(type: .gzip,
-                                                        from: data,
-                                                        headerSize: headerSize)
+        let deflatedData = CompressionBase.removeHeader(
+            type: .gzip,
+            from: data,
+            headerSize: headerSize)
         do {
             return try CompressionBase.decompress(data: deflatedData)
         } catch {
@@ -179,7 +184,6 @@ struct Gzip: CompressionUtil {
     // Returns -1 if something is wrong
     // Based on https://datatracker.ietf.org/doc/html/rfc1951
     func checkAndGetHeaderSize(data: Data) -> Int {
-
         if data.count < kGzipHeaderSize {
             return -1
         }
@@ -220,9 +224,9 @@ struct Gzip: CompressionUtil {
         // use current header size to count file name field size
         // because it's 0 terminated
         if flg & (1 << 3) != 0 {
-            let range = Data(data[headerSize..<data.count])
+            let range = Data(data[headerSize ..< data.count])
             if let nameEnd = range.firstIndex(of: 0) {
-                headerSize+=(nameEnd + 1)
+                headerSize += (nameEnd + 1)
             } else {
                 Logger.e("Incorrect gzip format. File name end not present.")
                 return -1
@@ -235,9 +239,9 @@ struct Gzip: CompressionUtil {
         // use current header size to count file name field size
         // because it's 0 terminated
         if flg & (1 << 4) != 0 {
-            let range = Data(data[headerSize..<data.count])
+            let range = Data(data[headerSize ..< data.count])
             if let nameEnd = range.firstIndex(of: 0) {
-                headerSize+=(nameEnd + 1)
+                headerSize += (nameEnd + 1)
             } else {
                 Logger.e("Incorrect gzip format. Comment end not present.")
                 return -1
@@ -247,7 +251,7 @@ struct Gzip: CompressionUtil {
         // Crc check, byte 3 , bit 1
         if flg & (1 << 1) != 0 {
             // crc info is 2 bytes
-            headerSize+=2
+            headerSize += 2
         }
 
         return headerSize

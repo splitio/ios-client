@@ -6,11 +6,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class InRuleBasedSegmentMatcherTest: XCTestCase {
-
     private var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
     private var mySegmentsStorage: MySegmentsStorageStub!
     private var evalContext: EvalContext!
@@ -24,8 +23,7 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
             evaluator: nil,
             mySegmentsStorage: mySegmentsStorage,
             myLargeSegmentsStorage: nil,
-            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage
-        )
+            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage)
     }
 
     override func tearDown() {
@@ -38,7 +36,9 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
 
     func testEvaluateWithNilSegmentName() {
         let matcher = createMatcher(data: nil)
-        XCTAssertFalse(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
+        XCTAssertFalse(matcher.evaluate(
+            values: EvalValues(matchValue: "key1", matchingKey: "key1"),
+            context: evalContext))
     }
 
     func testEvaluateWithNilRuleBasedSegmentsStorage() {
@@ -54,11 +54,13 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
         data.segmentName = "non_existing_segment"
         let matcher = createMatcher(data: data)
 
-        XCTAssertFalse(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
+        XCTAssertFalse(matcher.evaluate(
+            values: EvalValues(matchValue: "key1", matchingKey: "key1"),
+            context: evalContext))
     }
 
     // MARK: - Exclusion Tests
-    
+
     func testEvaluateWithKeyInExcludedKeys() {
         // Setup a segment with excluded keys
         let segment = createSegment(name: "segment1")
@@ -70,7 +72,9 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
         data.segmentName = "segment1"
         let matcher = createMatcher(data: data)
 
-        XCTAssertFalse(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
+        XCTAssertFalse(matcher.evaluate(
+            values: EvalValues(matchValue: "key1", matchingKey: "key1"),
+            context: evalContext))
     }
 
     func testEvaluateWithKeyInExcludedSegments() {
@@ -85,7 +89,9 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
         data.segmentName = "segment1"
         let matcher = createMatcher(data: data)
 
-        XCTAssertFalse(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
+        XCTAssertFalse(matcher.evaluate(
+            values: EvalValues(matchValue: "key1", matchingKey: "key1"),
+            context: evalContext))
     }
 
     func testEvaluateWithNoConditions() {
@@ -97,7 +103,9 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
         data.segmentName = "segment1"
         let matcher = createMatcher(data: data)
 
-        XCTAssertFalse(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
+        XCTAssertFalse(matcher.evaluate(
+            values: EvalValues(matchValue: "key1", matchingKey: "key1"),
+            context: evalContext))
     }
 
     func testEvaluateWithEmptyConditions() {
@@ -109,9 +117,11 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
         data.segmentName = "segment1"
         let matcher = createMatcher(data: data)
 
-        XCTAssertFalse(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
+        XCTAssertFalse(matcher.evaluate(
+            values: EvalValues(matchValue: "key1", matchingKey: "key1"),
+            context: evalContext))
     }
-    
+
     func testEvaluateWithMatchingCondition() {
         let segment = createSegment(name: "segment1")
         let allKeysMatcher = createAllKeysMatcher()
@@ -125,7 +135,9 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
         data.segmentName = "segment1"
         let matcher = createMatcher(data: data)
 
-        XCTAssertTrue(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
+        XCTAssertTrue(matcher.evaluate(
+            values: EvalValues(matchValue: "key1", matchingKey: "key1"),
+            context: evalContext))
     }
 
     func testEvaluateWithNonMatchingCondition() {
@@ -137,14 +149,16 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
 
         segment.conditions = [condition]
         ruleBasedSegmentsStorage.segments["segment1"] = segment
-        
+
         let data = UserDefinedBaseSegmentMatcherData()
         data.segmentName = "segment1"
         let matcher = createMatcher(data: data)
-        
-        XCTAssertFalse(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
+
+        XCTAssertFalse(matcher.evaluate(
+            values: EvalValues(matchValue: "key1", matchingKey: "key1"),
+            context: evalContext))
     }
-    
+
     func testEvaluateWithMultipleConditions() {
         let segment = createSegment(name: "segment1")
 
@@ -165,20 +179,22 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
         data.segmentName = "segment1"
         let matcher = createMatcher(data: data)
 
-        XCTAssertTrue(matcher.evaluate(values: EvalValues(matchValue: "key1", matchingKey: "key1"), context: evalContext))
+        XCTAssertTrue(matcher.evaluate(
+            values: EvalValues(matchValue: "key1", matchingKey: "key1"),
+            context: evalContext))
     }
 
     private func createSegment(name: String, status: Status = .active) -> RuleBasedSegment {
         return RuleBasedSegment(name: name, status: status)
     }
-    
+
     private func createAllKeysMatcher(negate: Bool = false) -> Matcher {
         let matcher = Matcher()
         matcher.matcherType = .allKeys
         matcher.negate = negate
         return matcher
     }
-    
+
     private func createWhitelistMatcher(whitelist: [String], negate: Bool = false) -> Matcher {
         let matcher = Matcher()
         matcher.matcherType = .whitelist
@@ -187,21 +203,21 @@ class InRuleBasedSegmentMatcherTest: XCTestCase {
         matcher.whitelistMatcherData?.whitelist = whitelist
         return matcher
     }
-    
+
     private func createMatcherGroup(matchers: [Matcher], combiner: MatcherCombiner = .and) -> MatcherGroup {
         let matcherGroup = MatcherGroup()
         matcherGroup.matcherCombiner = combiner
         matcherGroup.matchers = matchers
         return matcherGroup
     }
-    
+
     private func createCondition(matcherGroup: MatcherGroup, conditionType: ConditionType = .rollout) -> Condition {
         let condition = Condition()
         condition.conditionType = conditionType
         condition.matcherGroup = matcherGroup
         return condition
     }
-    
+
     private func createMatcher(data: UserDefinedBaseSegmentMatcherData?) -> InRuleBasedSegmentMatcher {
         return InRuleBasedSegmentMatcher(data: data)
     }

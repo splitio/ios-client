@@ -12,8 +12,9 @@ struct AllSegmentsChange: Codable {
     var mySegmentsChange: SegmentChange
     var myLargeSegmentsChange: SegmentChange
     var changeNumbers: SegmentsChangeNumber {
-        return SegmentsChangeNumber(msChangeNumber: mySegmentsChange.unwrappedChangeNumber,
-                                    mlsChangeNumber: myLargeSegmentsChange.unwrappedChangeNumber)
+        return SegmentsChangeNumber(
+            msChangeNumber: mySegmentsChange.unwrappedChangeNumber,
+            mlsChangeNumber: myLargeSegmentsChange.unwrappedChangeNumber)
     }
 
     enum CodingKeys: String, CodingKey {

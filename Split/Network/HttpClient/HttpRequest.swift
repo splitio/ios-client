@@ -25,7 +25,6 @@ protocol HttpRequest {
     func notifyIncomingData(_ data: Data)
     func complete(error: HttpError?)
     func notifyPinnedCredentialFail()
-
 }
 
 protocol HttpDataReceivingRequest {
@@ -33,8 +32,8 @@ protocol HttpDataReceivingRequest {
 }
 
 // MARK: BaseHttpRequest
-class BaseHttpRequest: HttpRequest {
 
+class BaseHttpRequest: HttpRequest {
     private(set) var responseCode: Int = 1
     private(set) var url: URL
     private(set) var body: Data?
@@ -55,19 +54,23 @@ class BaseHttpRequest: HttpRequest {
         return task?.identifier ?? -1
     }
 
-    init(session: HttpSession, url: URL, method: HttpMethod,
-         parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
-
+    init(
+        session: HttpSession,
+        url: URL,
+        method: HttpMethod,
+        parameters: HttpParameters? = nil,
+        headers: HttpHeaders?,
+        body: Data? = nil) throws {
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
 
         if let parameters = parameters {
             let initialQueryItems = components?.queryItems ?? []
             components?.queryItems?.removeAll()
-            var queryItems: [String: Any] = initialQueryItems.reduce(into: [:], { (dict, item) in
+            var queryItems: [String: Any] = initialQueryItems.reduce(into: [:]) { dict, item in
                 dict[item.name] = item.value
-            })
+            }
 
-            queryItems.merge(parameters.values) { (current, _) in current }
+            queryItems.merge(parameters.values) { current, _ in current }
 
             var finalQueryItems: [URLQueryItem] = []
             // Use order array, otherwise default order
@@ -96,7 +99,7 @@ class BaseHttpRequest: HttpRequest {
         self.headers = headers ?? HttpHeaders()
         self.body = body
 
-        urlRequest = URLRequest(url: finalUrl)
+        self.urlRequest = URLRequest(url: finalUrl)
         urlRequest?.httpMethod = method.rawValue
         if let headers = headers {
             for (key, value) in headers {
@@ -106,7 +109,7 @@ class BaseHttpRequest: HttpRequest {
     }
 
     func send() {
-        guard let session = self.session else { return }
+        guard let session = session else { return }
         requestQueue.sync {
             task = session.startTask(with: self)
         }

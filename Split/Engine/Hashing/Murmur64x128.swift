@@ -70,10 +70,15 @@ class Murmur64x128 {
         return Murmur64x128.hash(data: Array(key.utf8), offset: 0, length: UInt32(key.count), seed: 0)[0]
     }
 
-    private static func body(h1: inout UInt64, h2: inout UInt64, data: [UInt8], offset: Int32,
-                             length: UInt32, seed: UInt64, nblocks: Int32) {
-
-        for i in 0..<nblocks {
+    private static func body(
+        h1: inout UInt64,
+        h2: inout UInt64,
+        data: [UInt8],
+        offset: Int32,
+        length: UInt32,
+        seed: UInt64,
+        nblocks: Int32) {
+        for i in 0 ..< nblocks {
             let index = offset + (i << 4)
             var k1 = getLittleEndianLong(data: data, index: Int(index))
             var k2 = getLittleEndianLong(data: data, index: Int(index) + 8)
@@ -98,11 +103,16 @@ class Murmur64x128 {
         }
     }
 
-    private static func tail(h1: inout UInt64, h2: inout UInt64, data: [UInt8], offset: Int32,
-                             length: UInt32, nblocks: Int32) {
+    private static func tail(
+        h1: inout UInt64,
+        h2: inout UInt64,
+        data: [UInt8],
+        offset: Int32,
+        length: UInt32,
+        nblocks: Int32) {
         var k1: UInt64 = 0
         var k2: UInt64 = 0
-        let index: Int = Int(offset + (nblocks << 4))
+        let index = Int(offset + (nblocks << 4))
         switch Int(offset) + Int(length) - index {
         case 15:
             k2 ^= (UInt64(data[index + 14]) & 0xff) << 48
@@ -141,7 +151,7 @@ class Murmur64x128 {
             fallthrough
 
         case 7:
-            k1 ^= (UInt64( data[index + 6]) & 0xff) << 48
+            k1 ^= (UInt64(data[index + 6]) & 0xff) << 48
             fallthrough
 
         case 6:

@@ -18,7 +18,6 @@ protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
 }
 
 class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
-
     private var persistentStorage: PersistentRuleBasedSegmentsStorage
     private var inMemorySegments: ConcurrentDictionary<String, RuleBasedSegment>
 

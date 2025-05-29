@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class TimersManagerTest: XCTestCase {
-
     var timersManager: TimersManager!
 
     override func setUp() {
@@ -59,7 +58,5 @@ class TimersManagerTest: XCTestCase {
         XCTAssertTrue(cancelled)
     }
 
-    override func tearDown() {
-
-    }
+    override func tearDown() {}
 }

@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class MySegmentUpdateTest: XCTestCase {
     var httpClient: HttpClient!
@@ -174,7 +174,6 @@ class MySegmentUpdateTest: XCTestCase {
         pushMessage(TestingData.unboundedNotification(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 5)
 
-
         // Pushed key list message. Key 1 should add a segment
         sdkUpdExp = XCTestExpectation()
         sdkUpdMExp = XCTestExpectation()
@@ -192,7 +191,6 @@ class MySegmentUpdateTest: XCTestCase {
         pushMessage(TestingData.escapedBoundedNotificationMalformed(type: type, cn: mySegmentsCns[cnIndex()]))
 
         wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 15)
-
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual(4, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
@@ -244,7 +242,7 @@ class MySegmentUpdateTest: XCTestCase {
         let msHitBefore = msHit
         segUboundFetchExp = XCTestExpectation()
         pushMessage(TestingData.delayedUnboundedNotification(type: .myLargeSegmentsUpdate, cn: cn, delay: 2900))
-        for i in 1..<count {
+        for i in 1 ..< count {
             pushMessage(TestingData.delayedUnboundedNotification(type: .myLargeSegmentsUpdate, cn: cn + i, delay: 500))
         }
 
@@ -280,9 +278,11 @@ class MySegmentUpdateTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
-            
+
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             }
 
             if request.isMySegmentsEndpoint() {
@@ -310,7 +310,7 @@ class MySegmentUpdateTest: XCTestCase {
     private func updatedSegments(index: Int) -> String {
         var resp = [String]()
         let cn = mySegmentsCns[min(index, mySegmentsCns.count - 1)]
-        for i in (1..<index) {
+        for i in 1 ..< index {
             let seg = "{ \"n\":\"segment\(i)\"}"
             resp.append(seg)
         }
@@ -332,7 +332,7 @@ class MySegmentUpdateTest: XCTestCase {
     }
 
     private func wait() {
-        ThreadUtils.delay(seconds: Double(self.kRefreshRate) * 2.0)
+        ThreadUtils.delay(seconds: Double(kRefreshRate) * 2.0)
     }
 
     private func loadNotificationTemplate() {

@@ -42,7 +42,6 @@ import Foundation
 ///
 
 public final class LocalhostSplitClient: NSObject, SplitClient {
-
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage = EmptyMySegmentsStorage()
 
@@ -51,10 +50,12 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     private let key: Key
     weak var clientManger: SplitClientManager?
 
-    init(key: Key, splitsStorage: SplitsStorage,
-         clientManager: SplitClientManager?,
-         eventsManager: SplitEventsManager? = nil,
-         evaluator: Evaluator) {
+    init(
+        key: Key,
+        splitsStorage: SplitsStorage,
+        clientManager: SplitClientManager?,
+        eventsManager: SplitEventsManager? = nil,
+        evaluator: Evaluator) {
         self.eventsManager = eventsManager
         self.key = key
         self.splitsStorage = splitsStorage
@@ -71,17 +72,24 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     public func getTreatment(_ split: String) -> String {
         return getTreatment(split, attributes: nil)
     }
-    
-    public func getTreatment(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> String {
+
+    public func getTreatment(
+        _ split: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> String {
         return getTreatmentWithConfig(split, attributes: attributes, evaluationOptions: evaluationOptions).treatment
     }
 
     public func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String] {
-        return getTreatmentsWithConfig(splits: splits, attributes: nil).mapValues({ $0.treatment })
+        return getTreatmentsWithConfig(splits: splits, attributes: nil).mapValues { $0.treatment }
     }
-    
-    public func getTreatments(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
-        return getTreatmentsWithConfig(splits: splits, attributes: attributes, evaluationOptions: evaluationOptions).mapValues({ $0.treatment })
+
+    public func getTreatments(
+        splits: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: String] {
+        return getTreatmentsWithConfig(splits: splits, attributes: attributes, evaluationOptions: evaluationOptions)
+            .mapValues { $0.treatment }
     }
 
     public func getTreatmentWithConfig(_ split: String) -> SplitResult {
@@ -91,17 +99,21 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     public func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?) -> SplitResult {
         var result: EvaluationResult?
         do {
-            result = try evaluator.evalTreatment(matchingKey: key.matchingKey,
-                                                 bucketingKey: key.bucketingKey,
-                                                 splitName: split,
-                                                 attributes: nil)
+            result = try evaluator.evalTreatment(
+                matchingKey: key.matchingKey,
+                bucketingKey: key.bucketingKey,
+                splitName: split,
+                attributes: nil)
         } catch {
             return SplitResult(treatment: SplitConstants.control)
         }
         return SplitResult(treatment: result!.treatment, config: result!.configuration)
     }
-    
-    public func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult {
+
+    public func getTreatmentWithConfig(
+        _ split: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> SplitResult {
         return getTreatmentWithConfig(split, attributes: attributes)
     }
 
@@ -112,8 +124,11 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         }
         return results
     }
-    
-    public func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+
+    public func getTreatmentsWithConfig(
+        splits: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         var results = [String: SplitResult]()
         for split in splits {
             results[split] = getTreatmentWithConfig(split, attributes: attributes, evaluationOptions: evaluationOptions)
@@ -121,8 +136,10 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return results
     }
 
-    public func on(event: SplitEvent, runInBackground: Bool,
-                   execute action: @escaping SplitAction) {
+    public func on(
+        event: SplitEvent,
+        runInBackground: Bool,
+        execute action: @escaping SplitAction) {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
     }
 
@@ -134,15 +151,19 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         on(event: event, runInBackground: false, queue: nil, execute: action)
     }
 
-    private func on(event: SplitEvent, runInBackground: Bool,
-                    queue: DispatchQueue?, execute action: @escaping SplitAction) {
-
+    private func on(
+        event: SplitEvent,
+        runInBackground: Bool,
+        queue: DispatchQueue?,
+        execute action: @escaping SplitAction) {
         guard let factory = clientManger?.splitFactory else { return }
-        if let eventsManager = self.eventsManager {
-            let task = SplitEventActionTask(action: action, event: event,
-                                            runInBackground: runInBackground,
-                                            factory: factory,
-                                            queue: queue)
+        if let eventsManager = eventsManager {
+            let task = SplitEventActionTask(
+                action: action,
+                event: event,
+                runInBackground: runInBackground,
+                factory: factory,
+                queue: queue)
             eventsManager.register(event: event, task: task)
         }
     }
@@ -179,11 +200,9 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return true
     }
 
-    public func setUserConsent(enabled: Bool) {
-    }
+    public func setUserConsent(enabled: Bool) {}
 
-    public func flush() {
-    }
+    public func flush() {}
 
     public func destroy() {
         splitsStorage.destroy()
@@ -196,8 +215,8 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
 }
 
 // MARK: Persistent attributes feature
-extension LocalhostSplitClient {
 
+extension LocalhostSplitClient {
     public func setAttribute(name: String, value: Any) -> Bool {
         return true
     }
@@ -224,6 +243,7 @@ extension LocalhostSplitClient {
 }
 
 // MARK: TreatmentBySets Feature
+
 extension LocalhostSplitClient {
     public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return [String: String]()
@@ -233,29 +253,43 @@ extension LocalhostSplitClient {
         return [String: String]()
     }
 
-    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSet(
+        _ flagSet: String,
+        attributes: [String: Any]?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 
-    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSets(
+        _ flagSets: [String],
+        attributes: [String: Any]?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 
-    public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
+    public func getTreatmentsByFlagSet(
+        _ flagSet: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: String] {
         return [String: String]()
     }
 
-    public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
+    public func getTreatmentsByFlagSets(
+        _ flagSets: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: String] {
         return [String: String]()
     }
 
-    public func getTreatmentsWithConfigByFlagSet(_ flagSet: String,
-                                                 attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSet(
+        _ flagSet: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 
-    public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
-                                                  attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+    public func getTreatmentsWithConfigByFlagSets(
+        _ flagSets: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return [String: SplitResult]()
     }
 }

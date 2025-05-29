@@ -7,39 +7,54 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class HttpDataRequestTest: XCTestCase {
-
     var httpSession = HttpSessionMock()
     let url = URL(string: "http://split.com")!
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testRequestCreation() throws {
         // Testing parameter setup on request creation
         let parameters: HttpParameters = ["p1": "v1", "p2": 2]
         let headers: HttpHeaders = ["h1": "v1", "h2": "v2"]
-        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: parameters, headers: headers)
+        let httpRequest = try DefaultHttpDataRequest(
+            session: httpSession,
+            url: url,
+            method: .get,
+            parameters: parameters,
+            headers: headers)
 
         XCTAssertEqual("v1", httpRequest.parameters!["p1"] as! String)
         XCTAssertEqual(2, httpRequest.parameters!["p2"] as! Int)
         XCTAssertEqual("v1", httpRequest.headers["h1"])
         XCTAssertEqual("v2", httpRequest.headers["h2"])
         XCTAssertEqual(headers, httpRequest.headers)
-        XCTAssertTrue("http://split.com?p2=2&p1=v1" == httpRequest.url.absoluteString || "http://split.com?p1=v1&p2=2" == httpRequest.url.absoluteString)
+        XCTAssertTrue(
+            "http://split.com?p2=2&p1=v1" == httpRequest.url
+                .absoluteString || "http://split.com?p1=v1&p2=2" == httpRequest.url.absoluteString)
     }
 
     func testRequestCreationWithOrder() throws {
         // Testing parameter setup on request creation
-        let parameters: HttpParameters = HttpParameters([HttpParameter(key: "p2", value: 2), HttpParameter(key: "p3", value: [1,2,3]), HttpParameter(key: "defaultParam"), HttpParameter(key: "p1", value: "v1")])
+        let parameters = HttpParameters([
+            HttpParameter(key: "p2", value: 2),
+            HttpParameter(key: "p3", value: [1, 2, 3]),
+            HttpParameter(key: "defaultParam"),
+            HttpParameter(key: "p1", value: "v1"),
+        ])
         let headers: HttpHeaders = ["h1": "v1", "h2": "v2"]
-        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: URL(string: (url.absoluteString + "?defaultParam=4"))!, method: .get, parameters: parameters, headers: headers)
+        let httpRequest = try DefaultHttpDataRequest(
+            session: httpSession,
+            url: URL(string: url.absoluteString + "?defaultParam=4")!,
+            method: .get,
+            parameters: parameters,
+            headers: headers)
 
         XCTAssertEqual("v1", httpRequest.parameters!["p1"] as! String)
         XCTAssertEqual(2, httpRequest.parameters!["p2"] as! Int)
-        XCTAssertEqual([1,2,3], httpRequest.parameters!["p3"] as! [Int])
+        XCTAssertEqual([1, 2, 3], httpRequest.parameters!["p3"] as! [Int])
         XCTAssertEqual("v1", httpRequest.headers["h1"])
         XCTAssertEqual("v2", httpRequest.headers["h2"])
         XCTAssertEqual(headers, httpRequest.headers)
@@ -49,12 +64,16 @@ class HttpDataRequestTest: XCTestCase {
     func testRequestEnquedOnSend() throws {
         // When a request is sent, it has to be created in
         // in an http session
-        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
+        let httpRequest = try DefaultHttpDataRequest(
+            session: httpSession,
+            url: url,
+            method: .get,
+            parameters: nil,
+            headers: nil)
 
         httpRequest.send()
 
         XCTAssertEqual(1, httpSession.dataTaskCallCount)
-
     }
 
     func testOnResponseCompletedOk() throws {
@@ -65,7 +84,12 @@ class HttpDataRequestTest: XCTestCase {
         let textData = "{\"d\":[], \"s\":1, \"t\":2}"
         var receivedData: SplitChange? = nil
         let onCloseExpectation = XCTestExpectation(description: "complete request")
-        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
+        let httpRequest = try DefaultHttpDataRequest(
+            session: httpSession,
+            url: url,
+            method: .get,
+            parameters: nil,
+            headers: nil)
 
         _ = httpRequest.getResponse(completionHandler: { response in
             responseIsSuccess = response.result.isSuccess
@@ -101,7 +125,12 @@ class HttpDataRequestTest: XCTestCase {
         var responseIsSuccess = true
         var receivedData: Json? = nil
         let onCloseExpectation = XCTestExpectation(description: "complete request")
-        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
+        let httpRequest = try DefaultHttpDataRequest(
+            session: httpSession,
+            url: url,
+            method: .get,
+            parameters: nil,
+            headers: nil)
 
         _ = httpRequest.getResponse(completionHandler: { response in
             responseIsSuccess = response.result.isSuccess
@@ -129,7 +158,12 @@ class HttpDataRequestTest: XCTestCase {
         var errorHasOcurred = false
         var theError: HttpError?
         let onCloseExpectation = XCTestExpectation(description: "complete request")
-        let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: url, method: .get, parameters: nil, headers: nil)
+        let httpRequest = try DefaultHttpDataRequest(
+            session: httpSession,
+            url: url,
+            method: .get,
+            parameters: nil,
+            headers: nil)
 
         _ = httpRequest.getResponse(completionHandler: { response in
             responseIsSuccess = true
@@ -149,6 +183,5 @@ class HttpDataRequestTest: XCTestCase {
         XCTAssertEqual("Req error", theError?.message)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }

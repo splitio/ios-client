@@ -13,12 +13,11 @@ struct WeakFactory {
 }
 
 class FactoryRegistry {
-
     private var queue: DispatchQueue
     private var weakFactories: [String: [WeakFactory]]
 
     var count: Int {
-        var count: Int = 0
+        var count = 0
         queue.sync {
             let weakFactories = self.weakFactories
             for (key, _) in weakFactories {
@@ -30,13 +29,13 @@ class FactoryRegistry {
     }
 
     var activeCount: Int {
-        var count: Int = 0
+        var count = 0
         queue.sync {
             let weakFactories = self.weakFactories
             for (key, _) in weakFactories {
                 self.compact(for: key)
                 if self.weakFactories[key] != nil {
-                    count+=1
+                    count += 1
                 }
             }
         }
@@ -44,12 +43,12 @@ class FactoryRegistry {
     }
 
     init() {
-        queue = DispatchQueue(label: "split-factory-monitor")
-        weakFactories = [String: [WeakFactory]]()
+        self.queue = DispatchQueue(label: "split-factory-monitor")
+        self.weakFactories = [String: [WeakFactory]]()
     }
 
     func count(for key: String) -> Int {
-        var count: Int = 0
+        var count = 0
         queue.sync {
             self.compact(for: key)
             count = self.weakFactories[key]?.count ?? 0
@@ -58,9 +57,9 @@ class FactoryRegistry {
     }
 
     private func compact(for key: String) {
-        if let refs = self.weakFactories[key] {
-            let aliveRefs = refs.filter({$0.factory != nil})
-            self.weakFactories[key] = aliveRefs
+        if let refs = weakFactories[key] {
+            let aliveRefs = refs.filter { $0.factory != nil }
+            weakFactories[key] = aliveRefs
         }
     }
 
@@ -87,7 +86,6 @@ protocol FactoryMonitor {
 }
 
 class DefaultFactoryMonitor: FactoryMonitor {
-
     var factoryRegistry: FactoryRegistry
 
     var allCount: Int {
@@ -95,7 +93,7 @@ class DefaultFactoryMonitor: FactoryMonitor {
     }
 
     init() {
-        factoryRegistry = FactoryRegistry()
+        self.factoryRegistry = FactoryRegistry()
     }
 
     func instanceCount(for apiKey: String) -> Int {

@@ -11,12 +11,13 @@ import Foundation
 /// HttpClient is main wrapper component to handle HTTP activity
 /// This file also includes some complementary HTTP client components
 ///
-struct HttpQueue {
+enum HttpQueue {
     public static let `default`: String = "split-rest-queue"
 }
 
 // MARK: HTTP codes
-struct HttpCode {
+
+enum HttpCode {
     static let requestOk = 200
     static let multipleChoice = 300
     static let badRequest = 400
@@ -29,6 +30,7 @@ struct HttpCode {
 }
 
 // MARK: HttpMethod
+
 enum HttpMethod: String, CustomStringConvertible {
     case get
     case post
@@ -40,7 +42,7 @@ enum HttpMethod: String, CustomStringConvertible {
 
     public var isUpload: Bool {
         switch self {
-        case .post, .patch, .put:
+        case .patch, .post, .put:
             return true
         default:
             return false
@@ -68,14 +70,16 @@ enum HttpMethod: String, CustomStringConvertible {
 }
 
 // MARK: HttpSession Delegate
+
 typealias HttpHeaders = [String: String]
 
 class HttpSessionConfig {
     static let kDefaultConnectionTimeout: TimeInterval = 30
 
-    static let  `default`: HttpSessionConfig = {
-        return HttpSessionConfig()
+    static let `default`: HttpSessionConfig = {
+        HttpSessionConfig()
     }()
+
     var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
     var httpsAuthenticator: SplitHttpsAuthenticator?
     var pinChecker: TlsPinChecker?
@@ -83,25 +87,30 @@ class HttpSessionConfig {
 }
 
 protocol HttpClient {
+    func sendRequest(
+        endpoint: Endpoint,
+        parameters: HttpParameters?,
+        headers: [String: String]?,
+        body: Data?) throws -> HttpDataRequest
 
-    func sendRequest(endpoint: Endpoint, parameters: HttpParameters?,
-                     headers: [String: String]?, body: Data?) throws -> HttpDataRequest
-
-    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?,
-                           headers: [String: String]?) throws -> HttpStreamRequest
+    func sendStreamRequest(
+        endpoint: Endpoint,
+        parameters: HttpParameters?,
+        headers: [String: String]?) throws -> HttpStreamRequest
 }
 
 extension HttpClient {
-    func sendRequest(endpoint: Endpoint, parameters: HttpParameters? = nil,
-                     headers: [String: String]? = nil) throws -> HttpDataRequest {
+    func sendRequest(
+        endpoint: Endpoint,
+        parameters: HttpParameters? = nil,
+        headers: [String: String]? = nil) throws -> HttpDataRequest {
         return try sendRequest(endpoint: endpoint, parameters: parameters, headers: headers, body: nil)
     }
 }
 
 class DefaultHttpClient {
-
     static let shared: HttpClient = {
-        return DefaultHttpClient()
+        DefaultHttpClient()
     }()
 
     private var testSession: HttpSession?
@@ -113,10 +122,10 @@ class DefaultHttpClient {
     private var isStarted = false
     private var startQueue = DispatchQueue(label: "http-client-start", target: DispatchQueue.general)
 
-    init(configuration: HttpSessionConfig = HttpSessionConfig.default,
-         session: HttpSession? = nil,
-         requestManager: HttpRequestManager? = nil) {
-
+    init(
+        configuration: HttpSessionConfig = HttpSessionConfig.default,
+        session: HttpSession? = nil,
+        requestManager: HttpRequestManager? = nil) {
         self.configuration = configuration
         self.testSession = session
         self.testRequestManager = requestManager
@@ -132,9 +141,11 @@ class DefaultHttpClient {
                 if let requestManager = testRequestManager {
                     self.requestManager = requestManager
                 } else {
-                    self.requestManager = DefaultHttpRequestManager(authententicator: configuration.httpsAuthenticator,
-                                                                    pinChecker: configuration.pinChecker,
-                                                                    notificationHelper: configuration.notificationHelper)
+                    self.requestManager = DefaultHttpRequestManager(
+                        authententicator: configuration.httpsAuthenticator,
+                        pinChecker: configuration.pinChecker,
+                        notificationHelper: configuration
+                            .notificationHelper)
                 }
 
                 if let httpSession = testSession {
@@ -157,46 +168,68 @@ class DefaultHttpClient {
 }
 
 // MARK: DefaultHttpClient - Private
+
 extension DefaultHttpClient {
-
-    private func createRequest(_ url: URL, method: HttpMethod = .get, parameters: HttpParameters? = nil,
-                               headers: HttpHeaders? = nil, body: Data? = nil) throws -> HttpDataRequest {
+    private func createRequest(
+        _ url: URL,
+        method: HttpMethod = .get,
+        parameters: HttpParameters? = nil,
+        headers: HttpHeaders? = nil,
+        body: Data? = nil) throws -> HttpDataRequest {
         startIfNeeded()
-        let request = try DefaultHttpDataRequest(session: httpSession, url: url, method: method,
-                                                 parameters: parameters, headers: headers, body: body)
+        let request = try DefaultHttpDataRequest(
+            session: httpSession,
+            url: url,
+            method: method,
+            parameters: parameters,
+            headers: headers,
+            body: body)
         return request
     }
 
-    private func createStreamRequest(_ url: URL, parameters: HttpParameters? = nil,
-                                     headers: HttpHeaders? = nil) throws -> HttpStreamRequest {
+    private func createStreamRequest(
+        _ url: URL,
+        parameters: HttpParameters? = nil,
+        headers: HttpHeaders? = nil) throws -> HttpStreamRequest {
         startIfNeeded()
-        let request = try DefaultHttpStreamRequest(session: httpSession, url: url,
-                                                   parameters: parameters, headers: headers)
+        let request = try DefaultHttpStreamRequest(
+            session: httpSession,
+            url: url,
+            parameters: parameters,
+            headers: headers)
         return request
     }
-
 }
 
 // MARK: DefaultHttpClient - HttpClient
-extension DefaultHttpClient: HttpClient {
 
-    func sendRequest(endpoint: Endpoint, parameters: HttpParameters?, headers: [String: String]?,
-                     body: Data?) throws -> HttpDataRequest {
+extension DefaultHttpClient: HttpClient {
+    func sendRequest(
+        endpoint: Endpoint,
+        parameters: HttpParameters?,
+        headers: [String: String]?,
+        body: Data?) throws -> HttpDataRequest {
         var httpHeaders = endpoint.headers
         if let headers = headers {
             httpHeaders += headers
         }
 
-        let request = try self.createRequest(endpoint.url, method: endpoint.method, parameters: parameters,
-                                             headers: httpHeaders, body: body)
+        let request = try createRequest(
+            endpoint.url,
+            method: endpoint.method,
+            parameters: parameters,
+            headers: httpHeaders,
+            body: body)
         request.send()
         requestManager.addRequest(request)
         return request
     }
 
-    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?,
-                           headers: [String: String]?) throws -> HttpStreamRequest {
-            let request = try self.createStreamRequest(endpoint.url, parameters: parameters, headers: headers)
+    func sendStreamRequest(
+        endpoint: Endpoint,
+        parameters: HttpParameters?,
+        headers: [String: String]?) throws -> HttpStreamRequest {
+        let request = try createStreamRequest(endpoint.url, parameters: parameters, headers: headers)
         request.send()
         requestManager.addRequest(request)
         return request

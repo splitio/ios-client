@@ -7,6 +7,7 @@
 import Foundation
 
 // MARK: HttpStreamResponse
+
 struct HttpStreamResponse {
     let response: HTTPURLResponse?
     let error: Error? = nil

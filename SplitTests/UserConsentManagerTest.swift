@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class UserConsentManagerTest: XCTestCase {
-
     var userConsentManager: UserConsentManager!
     var config: SplitClientConfig!
     var impressionsStorage: ImpressionsStorageStub!
@@ -22,7 +21,6 @@ class UserConsentManagerTest: XCTestCase {
     var impressionsTracker: ImpressionsTrackerStub!
 
     func testSetGranted() {
-
         createUserConsentManager(status: .unknown) // Init to unknown
         let exp = XCTestExpectation()
         syncManager.setupUserConsentExp = exp
@@ -41,7 +39,6 @@ class UserConsentManagerTest: XCTestCase {
     }
 
     func testSetDeclined() {
-
         createUserConsentManager(status: .granted) // Init to unknown
         let exp = XCTestExpectation()
         syncManager.setupUserConsentExp = exp
@@ -60,7 +57,6 @@ class UserConsentManagerTest: XCTestCase {
     }
 
     func testSetUnknown() {
-
         createUserConsentManager(status: .granted) // Init to unknown
         let exp = XCTestExpectation()
         syncManager.setupUserConsentExp = exp
@@ -87,11 +83,11 @@ class UserConsentManagerTest: XCTestCase {
         impressionsTracker = ImpressionsTrackerStub()
         impressionsStorage = (storageContainer.impressionsStorage as? ImpressionsStorageStub)!
         eventsStorage = (storageContainer.eventsStorage as? EventsStorageStub)!
-        userConsentManager = DefaultUserConsentManager(splitConfig: config,
-                                                       storageContainer: storageContainer,
-                                                       syncManager: syncManager,
-                                                       eventsTracker: eventsTracker,
-                                                       impressionsTracker: impressionsTracker)
+        userConsentManager = DefaultUserConsentManager(
+            splitConfig: config,
+            storageContainer: storageContainer,
+            syncManager: syncManager,
+            eventsTracker: eventsTracker,
+            impressionsTracker: impressionsTracker)
     }
 }
-

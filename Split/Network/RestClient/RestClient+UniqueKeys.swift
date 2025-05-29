@@ -15,10 +15,10 @@ protocol RestClientUniqueKeys: RestClient {
 extension DefaultRestClient: RestClientUniqueKeys {
     func send(uniqueKeys: UniqueKeys, completion: @escaping (DataResult<EmptyValue>) -> Void) {
         do {
-            self.execute(
-                    endpoint: endpointFactory.uniqueKeysEndpoint,
-                    body: try Json.encodeToJsonData(uniqueKeys),
-                    completion: completion)
+            execute(
+                endpoint: endpointFactory.uniqueKeysEndpoint,
+                body: try Json.encodeToJsonData(uniqueKeys),
+                completion: completion)
         } catch {
             Logger.e("Could not send impressions. Error: " + error.localizedDescription)
         }

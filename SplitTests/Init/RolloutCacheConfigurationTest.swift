@@ -1,8 +1,7 @@
-import XCTest
 @testable import Split
+import XCTest
 
 final class RolloutCacheConfigurationTest: XCTestCase {
-
     func testDefaultValues() throws {
         let config = RolloutCacheConfiguration.builder().build()
         XCTAssertEqual(config.expirationDays, 10)

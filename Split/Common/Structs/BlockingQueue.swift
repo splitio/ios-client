@@ -19,10 +19,11 @@ class GenericBlockingQueue<Item> {
     private let semaphore: DispatchSemaphore
     private var isStopped = false
     init() {
-        dispatchQueue = DispatchQueue(label: "split-generic-blocking-queue",
-                                      attributes: .concurrent)
-        semaphore = DispatchSemaphore(value: 0)
-        elements = [Item]()
+        self.dispatchQueue = DispatchQueue(
+            label: "split-generic-blocking-queue",
+            attributes: .concurrent)
+        self.semaphore = DispatchSemaphore(value: 0)
+        self.elements = [Item]()
     }
 
     func add(_ item: Item) {
@@ -39,11 +40,11 @@ class GenericBlockingQueue<Item> {
         var item: Item?
         // Checks if stopped before waiting
         try checkIfStopped()
-        self.semaphore.wait()
+        semaphore.wait()
         try dispatchQueue.sync(flags: .barrier) {
             // Checks if thread was awaked by stop or interruption
             try checkIfStopped()
-            if elements.count > 0 {
+            if !elements.isEmpty {
                 item = elements.removeFirst()
             }
         }
@@ -65,7 +66,7 @@ class GenericBlockingQueue<Item> {
 
     // Use this function within the queue
     private func checkIfStopped() throws {
-        if self.isStopped {
+        if isStopped {
             throw BlockingQueueError.hasBeenStopped
         }
     }
@@ -85,7 +86,7 @@ class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
     }
 
     func take() throws -> SplitInternalEvent {
-        let value =  try blockingQueue.take()
+        let value = try blockingQueue.take()
         return value
     }
 

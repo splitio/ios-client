@@ -10,17 +10,16 @@ import Foundation
 @testable import Split
 
 class FileStorageStub: FileStorage {
-
     private var queue: DispatchQueue
     private var files: [String: String]
     var lastModified: [String: Int64]
-    
-    init(){
-        queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
-        files = [String: String]()
-        lastModified = [String: Int64]()
+
+    init() {
+        self.queue = DispatchQueue(label: NSUUID().uuidString, attributes: .concurrent)
+        self.files = [String: String]()
+        self.lastModified = [String: Int64]()
     }
-    
+
     func read(fileName: String) -> String? {
         var content: String?
         queue.sync {
@@ -28,14 +27,13 @@ class FileStorageStub: FileStorage {
         }
         return content
     }
-    
+
     func write(fileName: String, content: String?) {
         queue.async(flags: .barrier) {
             self.files[fileName] = content
         }
-        
     }
-    
+
     func delete(fileName: String) {
         queue.sync {
             _ = files.removeValue(forKey: fileName)

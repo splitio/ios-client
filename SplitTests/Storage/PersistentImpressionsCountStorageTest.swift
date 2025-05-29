@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class PersistentImpressionsCountStorageTests: XCTestCase {
-
     var countsStorage: PersistentImpressionsCountStorage!
     var countDao: ImpressionsCountDaoStub!
 
@@ -19,12 +18,13 @@ class PersistentImpressionsCountStorageTests: XCTestCase {
         countDao = ImpressionsCountDaoStub()
         var daoProvider = CoreDataDaoProviderMock()
         daoProvider.impressionsCountDao = countDao
-        countsStorage = DefaultImpressionsCountStorage(database: SplitDatabaseStub(daoProvider: daoProvider), expirationPeriod: 100)
-
+        countsStorage = DefaultImpressionsCountStorage(
+            database: SplitDatabaseStub(daoProvider: daoProvider),
+            expirationPeriod: 100)
     }
 
     func testPush() {
-        self.countsStorage.pushMany(counts: createImpressionsCounts())
+        countsStorage.pushMany(counts: createImpressionsCounts())
 
         XCTAssertEqual(20, countDao.insertedCounts.count)
     }
@@ -50,17 +50,20 @@ class PersistentImpressionsCountStorageTests: XCTestCase {
 
         countsStorage.setActive(counts)
 
-        XCTAssertEqual(counts.count, countDao.updatedCounts.values.filter { $0 ==  StorageRecordStatus.active }.count)
-        XCTAssertEqual(0, countDao.updatedCounts.values.filter { $0 ==  StorageRecordStatus.deleted }.count )
+        XCTAssertEqual(counts.count, countDao.updatedCounts.values.filter { $0 == StorageRecordStatus.active }.count)
+        XCTAssertEqual(0, countDao.updatedCounts.values.filter { $0 == StorageRecordStatus.deleted }.count)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 
     func createImpressionsCounts() -> [ImpressionsCountPerFeature] {
         var counts = [ImpressionsCountPerFeature]()
-        for _ in 0..<20 {
-            let count = ImpressionsCountPerFeature(storageId: UUID().uuidString, feature: "f1", timeframe: 1000, count: 1)
+        for _ in 0 ..< 20 {
+            let count = ImpressionsCountPerFeature(
+                storageId: UUID().uuidString,
+                feature: "f1",
+                timeframe: 1000,
+                count: 1)
             counts.append(count)
         }
         return counts

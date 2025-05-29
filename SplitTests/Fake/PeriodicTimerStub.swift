@@ -11,24 +11,22 @@ import Foundation
 @testable import Split
 
 class PeriodicTimerStub: PeriodicTimer {
-
     var stopCallCount = 0
     var destroyCallCount = 0
 
     var timerHandler: (() -> Void)?
 
-    func trigger() {
-    }
+    func trigger() {}
 
     func stop() {
-        stopCallCount+=1
+        stopCallCount += 1
     }
 
     func destroy() {
-        destroyCallCount+=1
+        destroyCallCount += 1
     }
 
-    func handler( _ handler: @escaping () -> Void) {
+    func handler(_ handler: @escaping () -> Void) {
         timerHandler = handler
     }
 }

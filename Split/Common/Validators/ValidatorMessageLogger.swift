@@ -11,7 +11,7 @@ import Foundation
 ///
 /// Tags to use when logging message on validation
 ///
-struct ValidationTag {
+enum ValidationTag {
     static let getTreatmentWithConfig = "getTreatmentWithConfig"
     static let getTreatmentsWithConfig = "getTreatmentsWithConfig"
     static let getTreatment = "getTreatment"
@@ -58,7 +58,6 @@ protocol ValidationMessageLogger {
 ///  Default implementation of ValidationMessageLogger protocol
 ///
 class DefaultValidationMessageLogger: ValidationMessageLogger {
-
     func log(errorInfo: ValidationErrorInfo, tag: String) {
         if errorInfo.isError, let message = errorInfo.errorMessage {
             logError(message: message, tag: tag)

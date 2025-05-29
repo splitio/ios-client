@@ -6,23 +6,22 @@
 //  Copyright © 2021 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class AnyValueValidatorTests: XCTestCase {
-
     struct TestValue {
         var someProp: String
     }
+
     var validator: AnyValueValidator!
-    
+
     override func setUp() {
         validator = DefaultAnyValueValidator()
     }
-    
-    override func tearDown() {
-    }
-    
+
+    override func tearDown() {}
+
     func testValidPrimitiveValues() {
         XCTAssertTrue(validator.isPrimitiveValue(value: 1))
         XCTAssertTrue(validator.isPrimitiveValue(value: 1.1))
@@ -57,5 +56,4 @@ class AnyValueValidatorTests: XCTestCase {
         XCTAssertFalse(validator.isList(value: [true, false, true]))
         XCTAssertFalse(validator.isList(value: Set(["a", "b", "c"])))
     }
-
 }

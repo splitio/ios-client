@@ -6,8 +6,8 @@
 //  Copyright © 2025 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 protocol RuleBasedSegmentDao {
     func insertOrUpdate(segments: [RuleBasedSegment])
@@ -31,13 +31,14 @@ class CoreDataRuleBasedSegmentDao: BaseCoreDataDao, RuleBasedSegmentDao {
     }
 
     func insertOrUpdate(segments: [RuleBasedSegment]) {
-        let parsed = self.encoder.encode(segments)
+        let parsed = encoder.encode(segments)
         executeAsync { [weak self] in
             guard let self = self else {
                 return
             }
             parsed.forEach { name, json in
-                if let obj = self.getBy(name: name) ?? self.coreDataHelper.create(entity: .ruleBasedSegment) as? RuleBasedSegmentEntity {
+                if let obj = self.getBy(name: name) ?? self.coreDataHelper
+                    .create(entity: .ruleBasedSegment) as? RuleBasedSegmentEntity {
                     obj.name = name
                     obj.body = json
                     obj.updatedAt = Date.now()
@@ -75,8 +76,8 @@ class CoreDataRuleBasedSegmentDao: BaseCoreDataDao, RuleBasedSegmentDao {
             }
 
             let jsonSegments = self.coreDataHelper.fetch(entity: .ruleBasedSegment)
-                .compactMap { return $0 as? RuleBasedSegmentEntity }
-                .compactMap { return $0.body }
+                .compactMap { $0 as? RuleBasedSegmentEntity }
+                .compactMap { $0.body }
             TimeChecker.logInterval("Time to load rule based segments", startTime: start)
             segments = self.decoder.decode(jsonSegments).map { $0 }
         }
@@ -84,7 +85,7 @@ class CoreDataRuleBasedSegmentDao: BaseCoreDataDao, RuleBasedSegmentDao {
     }
 
     func delete(_ segments: [String]) {
-        if segments.count == 0 {
+        if segments.isEmpty {
             return
         }
 
@@ -113,7 +114,8 @@ class CoreDataRuleBasedSegmentDao: BaseCoreDataDao, RuleBasedSegmentDao {
 
     private func insertOrUpdate(_ segment: RuleBasedSegment) {
         if let segmentName = cipher?.encrypt(segment.name) ?? segment.name,
-           let obj = self.getBy(name: segmentName) ?? self.coreDataHelper.create(entity: .ruleBasedSegment) as? RuleBasedSegmentEntity {
+           let obj = getBy(name: segmentName) ?? coreDataHelper
+           .create(entity: .ruleBasedSegment) as? RuleBasedSegmentEntity {
             do {
                 obj.name = segmentName
                 let json = try Json.encodeToJson(segment)
@@ -121,17 +123,20 @@ class CoreDataRuleBasedSegmentDao: BaseCoreDataDao, RuleBasedSegmentDao {
                 obj.updatedAt = Date.now()
                 // Saving one by one to avoid losing all
                 // if an error occurs
-                self.coreDataHelper.save()
+                coreDataHelper.save()
             } catch {
-                Logger.e("An error occurred while inserting rule based segments in storage: \(error.localizedDescription)")
+                Logger
+                    .e(
+                        "An error occurred while inserting rule based segments in storage: \(error.localizedDescription)")
             }
         }
     }
 
     private func getBy(name: String) -> RuleBasedSegmentEntity? {
         let predicate = NSPredicate(format: "name == %@", name)
-        let entities = coreDataHelper.fetch(entity: .ruleBasedSegment,
-                                          where: predicate).compactMap { return $0 as? RuleBasedSegmentEntity }
-        return entities.count > 0 ? entities[0] : nil
+        let entities = coreDataHelper.fetch(
+            entity: .ruleBasedSegment,
+            where: predicate).compactMap { $0 as? RuleBasedSegmentEntity }
+        return !entities.isEmpty ? entities[0] : nil
     }
 }

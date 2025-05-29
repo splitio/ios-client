@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class SplitEventsCoordinatorTest: XCTestCase {
-
     var coordinator: SplitEventsManagerCoordinator!
 
     override func setUp() {
@@ -50,7 +49,7 @@ class SplitEventsCoordinatorTest: XCTestCase {
 
         sleep(1)
 
-        for i in 0..<count {
+        for i in 0 ..< count {
             XCTAssertEqual(1, managers[i].splitsLoadedEventFiredCount)
             XCTAssertEqual(1, managers[i].splitsUpdatedEventFiredCount)
             XCTAssertEqual(1, managers[i].splitsKilledEventFiredCount)
@@ -67,7 +66,7 @@ class SplitEventsCoordinatorTest: XCTestCase {
 
         sleep(1)
 
-        for i in 0..<count {
+        for i in 0 ..< count {
             XCTAssertEqual(1, managers[i].splitsLoadedEventFiredCount)
             XCTAssertEqual(1, managers[i].splitsUpdatedEventFiredCount)
             XCTAssertEqual(1, managers[i].splitsKilledEventFiredCount)
@@ -91,7 +90,7 @@ class SplitEventsCoordinatorTest: XCTestCase {
 
         sleep(1)
 
-        for i in 0..<count {
+        for i in 0 ..< count {
             XCTAssertEqual(0, managers[i].splitsLoadedEventFiredCount)
             XCTAssertEqual(0, managers[i].splitsUpdatedEventFiredCount)
             XCTAssertEqual(0, managers[i].splitsKilledEventFiredCount)
@@ -99,10 +98,9 @@ class SplitEventsCoordinatorTest: XCTestCase {
     }
 
     func testStop() {
-
         var managers = [SplitEventsManagerStub]()
-        for i in 0..<10 {
-        let manager = SplitEventsManagerStub()
+        for i in 0 ..< 10 {
+            let manager = SplitEventsManagerStub()
             managers.append(manager)
             coordinator.add(manager, forKey: buildKey("k\(i)"))
         }
@@ -113,10 +111,9 @@ class SplitEventsCoordinatorTest: XCTestCase {
         }
     }
 
-
     private func addManagersToCoordinator(count: Int) -> [SplitEventsManagerStub] {
         var managers = [SplitEventsManagerStub]()
-        for i in 0..<count {
+        for i in 0 ..< count {
             let manager = SplitEventsManagerStub()
             managers.append(manager)
             coordinator.add(manager, forKey: buildKey("k\(i)"))
@@ -128,9 +125,5 @@ class SplitEventsCoordinatorTest: XCTestCase {
         return Key(matchingKey: matchingKey)
     }
 
-
-
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

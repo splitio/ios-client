@@ -14,7 +14,6 @@ import Foundation
 ///  with Feature flags Config values
 ///
 struct ValidationConfig {
-
     ///
     ///  Maximum character length for Matching key
     ///  and Bucketing key
@@ -37,6 +36,6 @@ struct ValidationConfig {
     let maxEventPropertiesCount = 300
 
     static var `default`: ValidationConfig = {
-        return ValidationConfig()
+        ValidationConfig()
     }()
 }

@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class HttpRequestManagerMock: HttpRequestManager {
-
     // Function counters
     var addRequestCallCount = 0
     var appendDataCallCount = 0
@@ -21,12 +20,12 @@ class HttpRequestManagerMock: HttpRequestManager {
     var setResponseCodeDummyValue = false
 
     func addRequest(_ request: HttpRequest) {
-        addRequestCallCount+=1
+        addRequestCallCount += 1
         self.request = request
     }
 
     func append(data: Data, to taskIdentifier: Int) {
-        appendDataCallCount+=1
+        appendDataCallCount += 1
 
         if let r = request as? HttpDataRequest {
             r.notifyIncomingData(data)
@@ -36,12 +35,12 @@ class HttpRequestManagerMock: HttpRequestManager {
     }
 
     func complete(taskIdentifier: Int, error: HttpError?) {
-        notifyErrorCallCount+=1
+        notifyErrorCallCount += 1
         request.complete(error: error)
     }
 
     func set(responseCode: Int, to taskIdentifier: Int) -> Bool {
-        setResponseCodeCallCount+=1
+        setResponseCodeCallCount += 1
         request.setResponse(code: responseCode)
         request.complete(error: nil)
         return setResponseCodeDummyValue

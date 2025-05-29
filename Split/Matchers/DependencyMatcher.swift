@@ -8,18 +8,18 @@
 import Foundation
 
 class DependencyMatcher: BaseMatcher, MatcherProtocol {
-
     var dependencyData: DependencyMatcherData?
 
-    init(negate: Bool? = nil,
-         attribute: String? = nil, type: MatcherType? = nil, dependencyData: DependencyMatcherData?) {
-
+    init(
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil,
+        dependencyData: DependencyMatcherData?) {
         super.init(negate: negate, attribute: attribute, type: type)
         self.dependencyData = dependencyData
     }
 
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
-
         if let splitName = dependencyData?.split {
             var treatment = SplitConstants.control
             do {

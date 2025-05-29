@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class SyncPostBgTest: XCTestCase {
-
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = "key0"
@@ -30,11 +29,11 @@ class SyncPostBgTest: XCTestCase {
     let delays = [1, 1, 10, 10, 10, 10, 10, 10, 10, 10]
     var delaySum = 0
 
-
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         notificationHelper = NotificationHelperStub()
         mySegmentsHitCount = 0
@@ -69,7 +68,7 @@ class SyncPostBgTest: XCTestCase {
         _ = takeMySegmentsHitCount()
 
         simulateBgFg(forTime: 1.0)
-        //Thread.sleep(forTimeInterval: 0.3) // Wait for a hit
+        // Thread.sleep(forTimeInterval: 0.3) // Wait for a hit
         ThreadUtils.delay(seconds: 0.3)
         let changesHitCount1 = takeChangesHitCount()
         let mySegmentsHitCount1 = takeMySegmentsHitCount()
@@ -81,7 +80,6 @@ class SyncPostBgTest: XCTestCase {
         wait(for: [changesExp!, mySegmentsExp!], timeout: 5.0)
         let changesHitCount2 = takeChangesHitCount()
         let mySegmentsHitCount2 = takeMySegmentsHitCount()
-
 
         // Now, increasing auth delay time for a match bigger number than current LST
         // so, wait for the delay to be increased
@@ -119,7 +117,7 @@ class SyncPostBgTest: XCTestCase {
 
     private func takeChangesHitCount() -> Int {
         queue.sync {
-            let  count = changesHitCount
+            let count = changesHitCount
             changesHitCount = 0
             return count
         }
@@ -135,17 +133,16 @@ class SyncPostBgTest: XCTestCase {
 
     private func increaseChangesHitCount() -> Int {
         queue.sync {
-            changesHitCount+=1
+            changesHitCount += 1
             return changesHitCount
         }
     }
 
     private func increaseMySegmentsHitCount() -> Int {
         queue.sync {
-            mySegmentsHitCount+=1
+            mySegmentsHitCount += 1
             return mySegmentsHitCount
         }
-
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
@@ -169,14 +166,16 @@ class SyncPostBgTest: XCTestCase {
 
             if request.isAuthEndpoint() {
                 let delay = self.delays[self.authHit]
-                self.delaySum+=delay
+                self.delaySum += delay
                 print("auth delay \(delay) for hit \(self.authHit) ==> delay sum \(self.delaySum)")
-                self.authHit+=1
+                self.authHit += 1
                 if self.delaySum > 20 {
                     print("Auth fulfill")
                     self.authExp?.fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse(delay: delay).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.dummySseResponse(delay: delay).utf8))
             }
             if request.isImpressionsEndpoint() {
                 return TestDispatcherResponse(code: 200)
@@ -197,12 +196,13 @@ class SyncPostBgTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            return TestStreamResponseBinding.createFor(request: request, code: 200)
+            TestStreamResponseBinding.createFor(request: request, code: 200)
         }
     }
 
     private func loadSplitsChangeFile() -> String {
-        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json") else {
+        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json")
+        else {
             return IntegrationHelper.emptySplitChanges(since: 99999, till: 99999)
         }
         return splitJson
@@ -213,7 +213,7 @@ class SyncPostBgTest: XCTestCase {
         // Here that situation is simulated
         notificationHelper.simulateApplicationDidEnterBackground()
         print("IN BG")
-        //Thread.sleep(forTimeInterval: time)
+        // Thread.sleep(forTimeInterval: time)
         ThreadUtils.delay(seconds: time)
         // Make app active again
         notificationHelper.simulateApplicationDidBecomeActive()
@@ -231,7 +231,7 @@ class SyncPostBgTest: XCTestCase {
         splitConfig.uniqueKeysRefreshRate = 999999
         splitConfig.logLevel = TestingHelper.testLogLevel
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -241,5 +241,4 @@ class SyncPostBgTest: XCTestCase {
         return builder.setApiKey(apiKey).setKey(key)
             .setConfig(splitConfig).build()!
     }
-
 }

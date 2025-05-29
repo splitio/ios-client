@@ -6,8 +6,8 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 protocol RestClientTest {
     func update(segments: [AllSegmentsChange]?)
@@ -35,15 +35,15 @@ class RestClientStub: SplitApiRestClient {
     private var largeSegmentsChangeHitIndex = 0
 
     func getSendTrackEventsCount() -> Int {
-        return sendTrackEventsCount;
+        return sendTrackEventsCount
     }
-    
+
     func getSendImpressionsCount() -> Int {
-        return sendImpressionsCount;
+        return sendImpressionsCount
     }
 
     func getSendImpressionsCountCount() -> Int {
-        return sendImpressionsCountCount;
+        return sendImpressionsCountCount
     }
 }
 
@@ -55,8 +55,14 @@ extension RestClientStub: RestClient {
 }
 
 extension RestClientStub: RestClientSplitChanges {
-    func getSplitChanges(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders?, spec: String = Spec.flagsSpec, completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
-        if splitChanges.count == 0 {
+    func getSplitChanges(
+        since: Int64,
+        rbSince: Int64?,
+        till: Int64?,
+        headers: HttpHeaders?,
+        spec: String = Spec.flagsSpec,
+        completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
+        if splitChanges.isEmpty {
             completion(DataResult.success(value: nil))
             return
         }
@@ -77,8 +83,12 @@ extension RestClientStub: RestClientSplitChanges {
 }
 
 extension RestClientStub: RestClientMySegments {
-    func getMySegments(user: String, till: Int64?, headers: [String: String]?, completion: @escaping (DataResult<AllSegmentsChange>) -> Void) {
-        if segments?.count == 0 {
+    func getMySegments(
+        user: String,
+        till: Int64?,
+        headers: [String: String]?,
+        completion: @escaping (DataResult<AllSegmentsChange>) -> Void) {
+        if segments?.isEmpty == true {
             completion(DataResult.success(value: nil))
             return
         }
@@ -95,79 +105,79 @@ extension RestClientStub: RestClientMySegments {
 
 extension RestClientStub: RestClientTrackEvents {
     func sendTrackEvents(events: [EventDTO], completion: @escaping (DataResult<EmptyValue>) -> Void) {
-        sendTrackEventsCount+=1
+        sendTrackEventsCount += 1
         completion(DataResult.success(value: nil))
     }
 }
 
 extension RestClientStub: RestClientImpressions {
     func sendImpressions(impressions: [ImpressionsTest], completion: @escaping (DataResult<EmptyValue>) -> Void) {
-        sendImpressionsCount+=1
+        sendImpressionsCount += 1
         completion(DataResult.success(value: nil))
     }
 }
 
 extension RestClientStub: RestClientImpressionsCount {
     func send(counts: ImpressionsCount, completion: @escaping (DataResult<EmptyValue>) -> Void) {
-        sendImpressionsCountCount+=1
+        sendImpressionsCountCount += 1
         completion(DataResult.success(value: nil))
     }
 }
 
 extension RestClientStub: RestClientSseAuthenticator {
     func authenticate(userKeys: [String], completion: @escaping (DataResult<SseAuthenticationResponse>) -> Void) {
-        completion(self.sseAuthResult!)
+        completion(sseAuthResult!)
     }
 }
 
 extension RestClientStub: RestClientTelemetryConfig {
     func send(config: TelemetryConfig, completion: @escaping (DataResult<EmptyValue>) -> Void) {
-        sendTelemetryConfigCount+=1
+        sendTelemetryConfigCount += 1
         completion(DataResult.success(value: nil))
     }
 }
 
 extension RestClientStub: RestClientTelemetryStats {
     func send(stats: TelemetryStats, completion: @escaping (DataResult<EmptyValue>) -> Void) {
-        sendTelemetryStatsCount+=1
+        sendTelemetryStatsCount += 1
         completion(DataResult.success(value: nil))
     }
 }
 
 extension RestClientStub: RestClientUniqueKeys {
     func send(uniqueKeys: UniqueKeys, completion: @escaping (DataResult<EmptyValue>) -> Void) {
-        sendUniqueKeysCount+=1
+        sendUniqueKeysCount += 1
         completion(DataResult.success(value: nil))
     }
 }
 
 extension RestClientStub: RestClientTest {
     func update(changes: [TargetingRulesChange]) {
-        self.splitChanges = changes
+        splitChanges = changes
     }
-    
+
     func update(segments: [AllSegmentsChange]?) {
         self.segments = segments
     }
 
     func update(largeSegments: [SegmentChange]?) {
         self.largeSegments = largeSegments
-    }   
+    }
 
     func update(change: TargetingRulesChange?) {
         if let change = change {
-            self.splitChanges.append(change)
-            
+            splitChanges.append(change)
+
         } else {
-            self.splitChanges.removeAll()
+            splitChanges.removeAll()
         }
     }
 
     func update(response: SseAuthenticationResponse?) {
-        self.sseAuthResult = DataResult.success(value: response)
+        sseAuthResult = DataResult.success(value: response)
     }
 
     func updateFailedSseAuth(error: Error) {
-        self.sseAuthResult = DataResult.failure(error: error as NSError)
+        sseAuthResult = DataResult.failure(error: error as NSError)
     }
 }

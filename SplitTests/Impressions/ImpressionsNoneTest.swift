@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ImpressionsNoneTest: XCTestCase {
-
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = "key"
@@ -59,8 +58,9 @@ class ImpressionsNoneTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         uniqueKeys = [UniqueKeys]()
         counts = [String: Int]()
@@ -70,10 +70,9 @@ class ImpressionsNoneTest: XCTestCase {
     }
 
     func testCorrectData() {
-    
         let notificationHelper = NotificationHelperStub()
 
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
         splitConfig.segmentsRefreshRate = 30
         splitConfig.sdkReadyTimeOut = 60000
@@ -87,7 +86,7 @@ class ImpressionsNoneTest: XCTestCase {
         splitConfig.impressionsMode = "NONE"
         splitConfig.uniqueKeysRefreshRate = 9999
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -99,7 +98,7 @@ class ImpressionsNoneTest: XCTestCase {
         var clients = [SplitClient]()
         var exps = [XCTestExpectation]()
         clients.append(factory.client)
-        for i in 1..<3 {
+        for i in 1 ..< 3 {
             let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
             let client = factory.client(matchingKey: "key\(i)")
             clients.append(client)
@@ -117,23 +116,23 @@ class ImpressionsNoneTest: XCTestCase {
         exps.append(sseExp)
         wait(for: exps, timeout: 20)
 
-        for i in 0..<clients.count {
+        for i in 0 ..< clients.count {
             let client = clients[i]
             switch i {
             case 0:
-                for _ in 0..<100 {
+                for _ in 0 ..< 100 {
                     _ = client.getTreatment(Splits.facundoTest.str)
                     _ = client.getTreatment(Splits.testSave1.str)
                     _ = client.getTreatment(Splits.test.str)
                 }
             case 1:
-                for _ in 0..<50 {
+                for _ in 0 ..< 50 {
                     _ = client.getTreatment(Splits.testSave1.str)
                     _ = client.getTreatment(Splits.testing.str)
                 }
 
             case 2:
-                for _ in 0..<10 {
+                for _ in 0 ..< 10 {
                     _ = client.getTreatment(Splits.aNewSplit2.str)
                     _ = client.getTreatment(Splits.testStringWithoutAttr.str)
                     _ = client.getTreatment(Splits.test.str)
@@ -151,7 +150,7 @@ class ImpressionsNoneTest: XCTestCase {
             Splits.testing: 50,
             Splits.aNewSplit2: 10,
             Splits.testStringWithoutAttr: 10,
-            Splits.testo2222: 10
+            Splits.testo2222: 10,
         ]
 
         sleep(1)
@@ -171,20 +170,19 @@ class ImpressionsNoneTest: XCTestCase {
         impExp = XCTestExpectation()
         countExp = XCTestExpectation()
 
-        wait(for: [impExp!, countExp!] , timeout: 10)
+        wait(for: [impExp!, countExp!], timeout: 10)
 
         sleep(1)
 
         var keys = [UniqueKey]()
         var features = [String: Set<String>]()
-        if uniqueKeys.count > 0 {
+        if !uniqueKeys.isEmpty {
             keys.append(contentsOf: uniqueKeys[0].keys)
         }
 
-
         if keys.count > 2 { // It means we have all the keys
             for key in keys {
-                features[key.userKey] = keys.filter { $0.userKey == key.userKey}[0].features
+                features[key.userKey] = keys.filter { $0.userKey == key.userKey }[0].features
             }
         }
 
@@ -213,9 +211,8 @@ class ImpressionsNoneTest: XCTestCase {
         XCTAssertEqual(countsExp[Splits.testStringWithoutAttr], counts[Splits.testStringWithoutAttr.str] ?? 0)
         XCTAssertEqual(countsExp[Splits.testo2222], counts[Splits.testo2222.str] ?? 0)
 
-
         let semaphore = DispatchSemaphore(value: 0)
-        for i in 1..<clients.count {
+        for i in 1 ..< clients.count {
             let client = clients[0]
             if i > clients.count - 1 {
                 client.destroy()
@@ -229,13 +226,12 @@ class ImpressionsNoneTest: XCTestCase {
     }
 
     func testPeriodicRecording() {
-
         let notificationHelper = NotificationHelperStub()
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.impressionsMode = "none" // Currently unavailable
         splitConfig.uniqueKeysRefreshRate = 1
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -248,7 +244,6 @@ class ImpressionsNoneTest: XCTestCase {
         let client = factory.client
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-
 
         exps.append(sdkReadyExpectation)
 
@@ -263,7 +258,7 @@ class ImpressionsNoneTest: XCTestCase {
         exps.append(sseExp)
         wait(for: exps, timeout: 5)
 
-        for _ in 0..<10 {
+        for _ in 0 ..< 10 {
             _ = client.getTreatment(Splits.aNewSplit2.str)
             _ = client.getTreatment(Splits.testStringWithoutAttr.str)
             _ = client.getTreatment(Splits.test.str)
@@ -283,7 +278,7 @@ class ImpressionsNoneTest: XCTestCase {
         // Unique key should arrive if periodic recording works
         wait(for: [impExp!], timeout: 5)
 
-        XCTAssertTrue(uniqueKeys.count > 0)
+        XCTAssertTrue(!uniqueKeys.isEmpty)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -299,9 +294,11 @@ class ImpressionsNoneTest: XCTestCase {
                     self.firstSplitHit = false
                     return TestDispatcherResponse(code: 200, data: Data(self.loadSplitsChangeFile().utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
-            } 
-            
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
+            }
+
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
@@ -312,7 +309,7 @@ class ImpressionsNoneTest: XCTestCase {
             }
 
             if request.isImpressionsEndpoint() {
-                self.impressionsHitCount+=1
+                self.impressionsHitCount += 1
                 return TestDispatcherResponse(code: 200)
             }
 
@@ -331,7 +328,7 @@ class ImpressionsNoneTest: XCTestCase {
                 }
                 return TestDispatcherResponse(code: 200)
             }
-            
+
             if request.isUniqueKeysEndpoint() {
                 self.queue.sync {
                     if let body = request.body?.stringRepresentation.utf8 {
@@ -350,11 +347,11 @@ class ImpressionsNoneTest: XCTestCase {
     }
 
     private func loadSplitsChangeFile() -> String {
-        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json") else {
+        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json")
+        else {
             return IntegrationHelper.emptySplitChanges(since: 99999, till: 99999)
         }
         return splitJson
-
     }
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
@@ -366,4 +363,3 @@ class ImpressionsNoneTest: XCTestCase {
         }
     }
 }
-

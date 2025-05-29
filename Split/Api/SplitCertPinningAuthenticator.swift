@@ -10,6 +10,4 @@ import Foundation
 
 typealias AuthCompletion = (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
 
-class SplitCertPinningAuthenticator {
-
-}
+class SplitCertPinningAuthenticator {}

@@ -6,11 +6,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
-class EqualToSemverMatcherTest : XCTestCase {
-
+class EqualToSemverMatcherTest: XCTestCase {
     func testMatchShouldReturnFalseWhenPatchDiffers() {
         XCTAssertFalse(match(this: "1.0.0", to: "1.0.1"))
     }
@@ -52,6 +51,8 @@ class EqualToSemverMatcherTest : XCTestCase {
     }
 
     private func match(this: String?, to: String?) -> Bool {
-        return EqualToSemverMatcher(data: this).evaluate(values: EvalValues(matchValue: to, matchingKey: "test"), context: nil)
+        return EqualToSemverMatcher(data: this).evaluate(
+            values: EvalValues(matchValue: to, matchingKey: "test"),
+            context: nil)
     }
 }

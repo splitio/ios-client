@@ -8,16 +8,15 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class PersistentMySegmentsStorageTests: XCTestCase {
-    
     var mySegmentsStorage: PersistentMySegmentsStorage!
     var mySegmentsDao: MySegmentsDaoStub!
     let dummyKey = "dummyKey"
     let otherKey = "otherKey"
-    
+
     override func setUp() {
         mySegmentsDao = MySegmentsDaoStub()
         var daoProvider = CoreDataDaoProviderMock()
@@ -25,8 +24,8 @@ class PersistentMySegmentsStorageTests: XCTestCase {
         mySegmentsStorage =
             DefaultPersistentMySegmentsStorage(database: SplitDatabaseStub(daoProvider: daoProvider))
     }
-    
-    func  testSet() {
+
+    func testSet() {
         let change = SegmentChange(segments: ["se1", "se2", "se3"])
         mySegmentsStorage.set(change, forKey: dummyKey)
 
@@ -38,7 +37,7 @@ class PersistentMySegmentsStorageTests: XCTestCase {
         XCTAssertEqual(1, segments.filter { $0 == "se3" }.count)
     }
 
-    func  testClear() {
+    func testClear() {
         mySegmentsDao.segments[dummyKey] = SegmentChange(segments: ["s1", "s2"])
         mySegmentsStorage.set(SegmentChange(segments: []), forKey: dummyKey)
 
@@ -46,12 +45,12 @@ class PersistentMySegmentsStorageTests: XCTestCase {
 
         XCTAssertEqual(0, segments.count)
     }
-    
+
     func testGetSnapshot() {
         mySegmentsDao.segments[dummyKey] = SegmentChange(segments: ["s1", "s2"])
 
         let segments = mySegmentsStorage.getSnapshot(forKey: dummyKey)
-        
+
         XCTAssertEqual(2, segments?.segments.count)
         XCTAssertEqual(1, segments?.segments.filter { $0.name == "s1" }.count)
         XCTAssertEqual(1, segments?.segments.filter { $0.name == "s2" }.count)
@@ -82,4 +81,3 @@ class PersistentMySegmentsStorageTests: XCTestCase {
         XCTAssertTrue(finalDeleteAllCalled)
     }
 }
-

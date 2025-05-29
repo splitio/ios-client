@@ -7,13 +7,11 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class BlockingQueueTest: XCTestCase {
-
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testAddAndTake() {
         let endExp = XCTestExpectation()
@@ -29,8 +27,7 @@ class BlockingQueueTest: XCTestCase {
                     if local.count == 4 {
                         endExp.fulfill()
                     }
-                } catch {
-                }
+                } catch {}
             }
         }
         globalQ.asyncAfter(deadline: .now() + 1) {
@@ -102,19 +99,17 @@ class BlockingQueueTest: XCTestCase {
         let queue = DefaultInternalEventBlockingQueue()
 
         globalQ.async {
-            for _ in 0..<50000 {
+            for _ in 0 ..< 50000 {
                 do {
                     let event = try queue.take()
                     local.append(event)
                     print("Took: \(event)")
-                } catch {
-                }
+                } catch {}
             }
-
         }
 
         quA1.async {
-            for _ in 0..<50000 {
+            for _ in 0 ..< 50000 {
                 do {
                     let event = try queue.take()
                     local.append(event)
@@ -126,31 +121,29 @@ class BlockingQueueTest: XCTestCase {
         }
 
         quA2.async {
-            for _ in 0..<50000 {
+            for _ in 0 ..< 50000 {
                 do {
                     let event = try queue.take()
                     local.append(event)
                     Thread.sleep(forTimeInterval: 0.3)
                     print("Took QA2: \(event)")
-                } catch {
-                }
+                } catch {}
             }
         }
 
         quA3.async {
-            for _ in 0..<50000 {
+            for _ in 0 ..< 50000 {
                 do {
                     Thread.sleep(forTimeInterval: 0.5)
                     let event = try queue.take()
                     local.append(event)
                     print("Took QA3: \(event)")
-                } catch {
-                }
+                } catch {}
             }
         }
 
         qu1.async {
-            for _ in 1..<100000 {
+            for _ in 1 ..< 100000 {
                 queue.add(SplitInternalEvent.splitsUpdated)
                 print("qu1 add")
                 Thread.sleep(forTimeInterval: 0.2)
@@ -158,7 +151,7 @@ class BlockingQueueTest: XCTestCase {
         }
 
         qu2.async {
-            for _ in 1..<10000 {
+            for _ in 1 ..< 10000 {
                 print("qu2 add")
                 queue.add(SplitInternalEvent.sdkReadyTimeoutReached)
                 Thread.sleep(forTimeInterval: 0.5)
@@ -166,7 +159,7 @@ class BlockingQueueTest: XCTestCase {
         }
 
         qu3.async {
-            for _ in 1..<10000 {
+            for _ in 1 ..< 10000 {
                 print("qu3 add")
                 queue.add(SplitInternalEvent.splitsUpdated)
                 Thread.sleep(forTimeInterval: 0.8)
@@ -174,7 +167,7 @@ class BlockingQueueTest: XCTestCase {
         }
 
         qu4.async {
-            for _ in 1..<10000 {
+            for _ in 1 ..< 10000 {
                 print("qu4 add")
                 queue.add(SplitInternalEvent.mySegmentsUpdated)
                 sleep(1)
@@ -192,7 +185,7 @@ class BlockingQueueTest: XCTestCase {
         }
 
         stopq.async {
-            for i in 1..<10000 {
+            for i in 1 ..< 10000 {
                 Thread.sleep(forTimeInterval: 2)
                 print("\n\n\n\n\n\n**************** STOP i=\(i) \n\n\n\n\n")
                 queue.stop()
@@ -202,4 +195,3 @@ class BlockingQueueTest: XCTestCase {
         wait(for: [endExp], timeout: 50)
     }
 }
-

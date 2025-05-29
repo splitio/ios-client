@@ -7,22 +7,22 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class HttpStreamRequestTest: XCTestCase {
-
     var httpSession = HttpSessionMock()
     let url = URL(string: "http://split.com")!
-    override func setUp() {
-
-    }
+    override func setUp() {}
 
     func testRequestCreation() throws {
-
         let parameters: HttpParameters = ["p1": "v1", "p2": 2]
         let headers: HttpHeaders = ["h1": "v1", "h2": "v2"]
-        let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, parameters: parameters, headers: headers)
+        let httpRequest = try DefaultHttpStreamRequest(
+            session: httpSession,
+            url: url,
+            parameters: parameters,
+            headers: headers)
 
         XCTAssertEqual("v1", httpRequest.parameters!["p1"] as! String)
         XCTAssertEqual(2, httpRequest.parameters!["p2"] as! Int)
@@ -38,8 +38,7 @@ class HttpStreamRequestTest: XCTestCase {
 
         httpRequest.send()
 
-       XCTAssertEqual(1, httpSession.dataTaskCallCount)
-
+        XCTAssertEqual(1, httpSession.dataTaskCallCount)
     }
 
     func testOnResponseOk() throws {
@@ -68,7 +67,7 @@ class HttpStreamRequestTest: XCTestCase {
         httpRequest.send()
         httpRequest.setResponse(code: 200)
         httpRequest.complete(error: nil)
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             httpRequest.notifyIncomingData(Data("a\(i)".utf8))
         }
 
@@ -96,8 +95,7 @@ class HttpStreamRequestTest: XCTestCase {
         }, incomingDataHandler: { data in
             receivedData.append(data.stringRepresentation)
 
-        }, closeHandler: {
-        }, errorHandler: { error in
+        }, closeHandler: {}, errorHandler: { error in
         })
 
         httpRequest.send()
@@ -110,6 +108,5 @@ class HttpStreamRequestTest: XCTestCase {
         XCTAssertEqual("", receivedData)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }

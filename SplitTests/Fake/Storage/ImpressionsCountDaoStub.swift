@@ -6,11 +6,10 @@
 //  Copyright © 2021 Split. All rights reserved.
 //
 
-@testable import Split
 import Foundation
+@testable import Split
 
 class ImpressionsCountDaoStub: ImpressionsCountDao {
-
     var insertedCounts = [ImpressionsCountPerFeature]()
     var getByCounts = [ImpressionsCountPerFeature]()
     var updatedCounts = [String: Int32]()

@@ -7,12 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
-
+import XCTest
 
 class VersionTest: XCTestCase {
-
     func testSemanticVersion() {
         let semanticVersion = Version.semantic
         let sdkVersion = Version.sdk
@@ -26,8 +24,6 @@ class VersionTest: XCTestCase {
     }
 
     func testFactoryVersion() {
-
         XCTAssertEqual(Version.semantic, DefaultSplitFactory.sdkVersion)
     }
-
 }

@@ -47,6 +47,7 @@ enum TelemetryInitCounter: CaseIterable {
 }
 
 // MARK: Config Telemtry
+
 protocol TelemetryInitProducer {
     func recordNonReadyUsage()
     func recordFactories(active: Int, redundant: Int)
@@ -67,6 +68,7 @@ protocol TelemetryInitConsumer {
 }
 
 // MARK: Evaluation Telemetry
+
 protocol TelemetryEvaluationProducer {
     func recordLatency(method: TelemetryMethod, latency: Int64)
     func recordException(method: TelemetryMethod)
@@ -78,7 +80,6 @@ protocol TelemetryEvaluationConsumer {
 }
 
 protocol TelemetryRuntimeProducer {
-
     func recordImpressionStats(type: TelemetryImpressionsDataType, count: Int)
     func recordEventStats(type: TelemetryEventsDataType, count: Int)
     func recordLastSync(resource: Resource, time: Int64)
@@ -107,14 +108,11 @@ protocol TelemetryRuntimeConsumer {
 }
 
 protocol TelemetryProducer: TelemetryInitProducer,
-                         TelemetryEvaluationProducer,
-                         TelemetryRuntimeProducer {
-}
+    TelemetryEvaluationProducer,
+    TelemetryRuntimeProducer {}
 
 protocol TelemetryConsumer: TelemetryInitConsumer,
-                         TelemetryEvaluationConsumer,
-                         TelemetryRuntimeConsumer {
-}
+    TelemetryEvaluationConsumer,
+    TelemetryRuntimeConsumer {}
 
-protocol TelemetryStorage: TelemetryProducer, TelemetryConsumer {
-}
+protocol TelemetryStorage: TelemetryProducer, TelemetryConsumer {}

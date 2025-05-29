@@ -17,7 +17,6 @@ import Foundation
 /// [Split iOS SDK](https://docs.split.io/docs/ios-sdk-overview#section-localhost)
 ///
 public class LocalhostSplitFactory: NSObject, SplitFactory {
-
     @objc public static var sdkVersion: String {
         return Version.semantic
     }
@@ -53,21 +52,23 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         self.externalDataSource = dataSource as? LocalhostInputDataProducer
         let eventsManager = MainSplitEventsManager()
         let splitsStorage = LocalhostSplitsStorage()
-        localhostManager = DefaultSplitManager(splitsStorage: splitsStorage)
+        self.localhostManager = DefaultSplitManager(splitsStorage: splitsStorage)
 
-        self.synchronizer = LocalhostSynchronizer(featureFlagsStorage: splitsStorage,
-                                                   featureFlagsDataSource: dataSource,
-                                                   eventsManager: eventsManager)
+        self.synchronizer = LocalhostSynchronizer(
+            featureFlagsStorage: splitsStorage,
+            featureFlagsDataSource: dataSource,
+            eventsManager: eventsManager)
         super.init()
-        clientManager = LocalhostClientManager(config: config,
-                                               key: key,
-                                               splitManager: localhostManager,
-                                               splitsStorage: splitsStorage,
-                                               synchronizer: synchronizer,
-                                               eventsManagerCoordinator: eventsManager,
-                                               factory: self)
+        self.clientManager = LocalhostClientManager(
+            config: config,
+            key: key,
+            splitManager: localhostManager,
+            splitsStorage: splitsStorage,
+            synchronizer: synchronizer,
+            eventsManagerCoordinator: eventsManager,
+            factory: self)
 
-        self.synchronizer.synchronize()
+        synchronizer.synchronize()
     }
 
     public func client(key: Key) -> SplitClient {
@@ -82,15 +83,14 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         return client(forKey: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
     }
 
-    private func client(forKey key: Key,
-                        eventsManager: SplitEventsManager? = nil,
-                        splitsStorage: SplitsStorage? = nil) -> SplitClient {
-
+    private func client(
+        forKey key: Key,
+        eventsManager: SplitEventsManager? = nil,
+        splitsStorage: SplitsStorage? = nil) -> SplitClient {
         clientManager?.get(forKey: key) ?? FailedClient()
     }
 
-    public func setUserConsent(enabled: Bool) {
-    }
+    public func setUserConsent(enabled: Bool) {}
 
     private static func splitsDataSource(config: SplitClientConfig, bundle: Bundle) -> LocalhostDataSource {
         let dataFolderName = SplitDatabaseHelper.sanitizeForFolderName(config.localhostDataFolder)
@@ -99,11 +99,12 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         loaderConfig.refreshInterval = config.offlineRefreshRate
 
         do {
-            return try FeatureFlagsFileLoader(fileStorage: fileStorage,
-                                              config: loaderConfig,
-                                              dataFolderName: config.localhostDataFolder,
-                                              splitsFileName: config.splitFile,
-                                              bundle: bundle)
+            return try FeatureFlagsFileLoader(
+                fileStorage: fileStorage,
+                config: loaderConfig,
+                dataFolderName: config.localhostDataFolder,
+                splitsFileName: config.splitFile,
+                bundle: bundle)
         } catch {
             Logger.i("Split file not found. Using inMemory datasource for localhost mode")
         }

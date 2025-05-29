@@ -9,17 +9,16 @@
 import Foundation
 
 class EventsRecorderWorker: RecorderWorker {
-
     private let persistentEventsStorage: PersistentEventsStorage
     private let eventsRecorder: HttpEventsRecorder
     private let eventsPerPush: Int
     private let eventsSyncHelper: EventsRecorderSyncHelper?
 
-    init(persistentEventsStorage: PersistentEventsStorage,
-         eventsRecorder: HttpEventsRecorder,
-         eventsPerPush: Int,
-         eventsSyncHelper: EventsRecorderSyncHelper? = nil) {
-
+    init(
+        persistentEventsStorage: PersistentEventsStorage,
+        eventsRecorder: HttpEventsRecorder,
+        eventsPerPush: Int,
+        eventsSyncHelper: EventsRecorderSyncHelper? = nil) {
         self.persistentEventsStorage = persistentEventsStorage
         self.eventsRecorder = eventsRecorder
         self.eventsPerPush = eventsPerPush
@@ -39,7 +38,7 @@ class EventsRecorderWorker: RecorderWorker {
                     // Removing sent events
                     persistentEventsStorage.delete(events)
                     Logger.i("Events posted successfully")
-                } catch let error {
+                } catch {
                     Logger.e("Events error: \(String(describing: error))")
                     failedEvents.append(contentsOf: events)
                 }
@@ -48,8 +47,9 @@ class EventsRecorderWorker: RecorderWorker {
         // Activate non sent events to retry in next iteration
         persistentEventsStorage.setActive(failedEvents)
         if let syncHelper = eventsSyncHelper {
-            syncHelper.updateAccumulator(count: failedEvents.count,
-                                         bytes: failedEvents.reduce(0, { $0 + $1.sizeInBytes }))
+            syncHelper.updateAccumulator(
+                count: failedEvents.count,
+                bytes: failedEvents.reduce(0) { $0 + $1.sizeInBytes })
         }
     }
 }

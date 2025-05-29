@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class RecorderFlusherCheckerTests: XCTestCase {
-
     var checker: RecorderFlushChecker!
     let maxBytes = 1000
     let maxCount = 100
@@ -31,7 +30,7 @@ class RecorderFlusherCheckerTests: XCTestCase {
     }
 
     func testCountLimit() {
-        for _ in 1..<(maxCount - 2) {
+        for _ in 1 ..< (maxCount - 2) {
             _ = checker.checkIfFlushIsNeeded(sizeInBytes: 1)
         }
 
@@ -44,7 +43,5 @@ class RecorderFlusherCheckerTests: XCTestCase {
         XCTAssertTrue(r3)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

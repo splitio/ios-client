@@ -8,8 +8,7 @@
 
 import Foundation
 
-struct EmptyValue: Codable {
-}
+struct EmptyValue: Codable {}
 
 enum DataResult<Value> {
     case success(value: Value?)
@@ -26,9 +25,9 @@ enum DataResult<Value> {
 
     func unwrap() throws -> Value? {
         switch self {
-        case .success(let value):
+        case let .success(value):
             return value
-        case .failure(let error):
+        case let .failure(error):
             throw error
         }
     }

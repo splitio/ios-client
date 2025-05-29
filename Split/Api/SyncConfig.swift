@@ -30,13 +30,13 @@ import Foundation
             var validatedFilters = [SplitFilter]()
             builderFilters.forEach { filter in
                 let validatedValues = filter.values.filter { value in
-                 if self.splitValidator.validate(name: value) != nil {
-                     Logger.w("Warning: Malformed value in filter ignored: \(value)")
-                     return false
-                 }
-                 return true
+                    if self.splitValidator.validate(name: value) != nil {
+                        Logger.w("Warning: Malformed value in filter ignored: \(value)")
+                        return false
+                    }
+                    return true
                 }
-                if validatedValues.count > 0 {
+                if !validatedValues.isEmpty {
                     validatedFilters.append(SplitFilter(type: filter.type, values: validatedValues))
                 } else {
                     Logger.w("Warning: filter of type \(filter.type) is empty. The filter is ignored")

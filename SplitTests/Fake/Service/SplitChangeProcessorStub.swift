@@ -10,8 +10,11 @@ import Foundation
 @testable import Split
 
 class SplitChangeProcessorStub: SplitChangeProcessor {
-    var processedSplitChange: ProcessedSplitChange = ProcessedSplitChange(activeSplits: [], archivedSplits: [],
-                                                                          changeNumber: -1, updateTimestamp: -1)
+    var processedSplitChange: ProcessedSplitChange = .init(
+        activeSplits: [],
+        archivedSplits: [],
+        changeNumber: -1,
+        updateTimestamp: -1)
     var splitChange: SplitChange?
     func process(_ splitChange: SplitChange) -> ProcessedSplitChange {
         self.splitChange = splitChange

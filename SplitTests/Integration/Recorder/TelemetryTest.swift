@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class TelemetryTest: XCTestCase {
-
     var telemetryStorage: TelemetryStorage!
     var streamingBinding: TestStreamResponseBinding?
     var splitDatabase: SplitDatabase!
@@ -26,7 +25,6 @@ class TelemetryTest: XCTestCase {
 
     let splitName = "some_split"
 
-
     override func setUp() {
         splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: true)
         telemetryStorage = InMemoryTelemetryStorage()
@@ -36,10 +34,10 @@ class TelemetryTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         session = HttpSessionMock()
-        reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                      streamingHandler: buildStreamingHandler())
+        reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
-
 
         builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
@@ -49,7 +47,6 @@ class TelemetryTest: XCTestCase {
     }
 
     func testReadyTime() {
-
         let timeUntilReadyBefore = telemetryStorage.getTimeUntilReady()
         let timeUntilReadyFromCacheBefore = telemetryStorage.getTimeUntilReadyFromCache()
         let factory = builder.setApiKey(apiKey).setKey(key)
@@ -138,7 +135,7 @@ class TelemetryTest: XCTestCase {
 
         wait(for: [sdkReadyExp], timeout: 10)
 
-        for _ in 0..<10 {
+        for _ in 0 ..< 10 {
             _ = client.getTreatment(splitName)
             _ = client.getTreatments(splits: [splitName], attributes: nil)
             _ = client.getTreatmentWithConfig(splitName)
@@ -189,55 +186,59 @@ class TelemetryTest: XCTestCase {
         XCTAssertEqual(3, after)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 
     func sum(_ values: [Int]?) -> Int {
         guard let values = values else { return 0 }
-        return values.reduce(0)  { return $0 + $1 }
+        return values.reduce(0) { $0 + $1 }
     }
 
     func createTreatmentManager(userKey: Key) -> DefaultTreatmentManager {
-
         let storageContainer = TestingHelper.createStorageContainer()
         let splitHelper = SplitHelper()
         let splitsStorage = storageContainer.splitsStorage
         let split = splitHelper.createDefaultSplit(named: "SPLIT")
-        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split],
-                                                                   archivedSplits: [],
-                                                                   changeNumber: -1, 
-                                                                   updateTimestamp: 100))
+        _ = splitsStorage.update(splitChange: ProcessedSplitChange(
+            activeSplits: [split],
+            archivedSplits: [],
+            changeNumber: -1,
+            updateTimestamp: 100))
         let mySegmentsStorage = storageContainer.mySegmentsStorage
 
-        _ = InternalSplitClientStub(splitsStorage: splitsStorage,
-                                    mySegmentsStorage: mySegmentsStorage,
-                                    myLargeSegmentsStorage: mySegmentsStorage)
+        _ = InternalSplitClientStub(
+            splitsStorage: splitsStorage,
+            mySegmentsStorage: mySegmentsStorage,
+            myLargeSegmentsStorage: mySegmentsStorage)
         let eventsManager = SplitEventsManagerMock()
         eventsManager.isSegmentsReadyFired = false
         eventsManager.isSplitsReadyFired = true
         eventsManager.isSegmentsReadyFromCacheFired = false
         eventsManager.isSplitsReadyFromCacheFired = true
 
-        return DefaultTreatmentManager(evaluator: DefaultEvaluator(splitsStorage: splitsStorage, 
-                                                                   mySegmentsStorage: mySegmentsStorage,
-                                                                  myLargeSegmentsStorage: EmptyMySegmentsStorage()),
-                                       key: userKey,
-                                       splitConfig: SplitClientConfig(),
-                                       eventsManager: eventsManager,
-                                       impressionLogger: ImpressionsLoggerStub(),
-                                       telemetryProducer: telemetryStorage,
-                                       storageContainer: storageContainer,
-                                       flagSetsValidator: FlagSetsValidatorMock(),
-                                       keyValidator: DefaultKeyValidator(),
-                                       splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
-                                       validationLogger: ValidationMessageLoggerStub(),
-                                       propertyValidator: PropertyValidatorStub())
+        return DefaultTreatmentManager(
+            evaluator: DefaultEvaluator(
+                splitsStorage: splitsStorage,
+                mySegmentsStorage: mySegmentsStorage,
+                myLargeSegmentsStorage: EmptyMySegmentsStorage()),
+            key: userKey,
+            splitConfig: SplitClientConfig(),
+            eventsManager: eventsManager,
+            impressionLogger: ImpressionsLoggerStub(),
+            telemetryProducer: telemetryStorage,
+            storageContainer: storageContainer,
+            flagSetsValidator: FlagSetsValidatorMock(),
+            keyValidator: DefaultKeyValidator(),
+            splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
+            validationLogger: ValidationMessageLoggerStub(),
+            propertyValidator: PropertyValidatorStub())
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))

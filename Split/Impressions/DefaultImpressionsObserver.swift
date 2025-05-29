@@ -46,8 +46,7 @@ struct DefaultImpressionsObserver: ImpressionsObserver {
     }
 }
 
-struct ImpressionHasher {
-
+enum ImpressionHasher {
     private static let kSeed: UInt32 = 0
     private static let kOffset: Int64 = 0
     private static let kUnknown = "UNKNOWN"

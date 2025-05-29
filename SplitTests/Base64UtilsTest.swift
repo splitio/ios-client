@@ -8,13 +8,11 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class Base64UtilsTest: XCTestCase {
-    override func setUp() {
-
-    }
+    override func setUp() {}
 
     func testBasicUrlEncoded() {
         let expDecoded = "{\"fieldString\":\"value\", \"fieldInt\": 1, \"fieldBoolean\":true}"
@@ -41,14 +39,13 @@ class Base64UtilsTest: XCTestCase {
     }
 
     func testRealToken() {
-        let token = "eyJ4LWFibHktY2FwYWJpbGl0eSI6IntcIk1qRXlNekE1TURZeE1nPT1fTWpVNE5qYzJOekk0TUE9PV9NVGs1TlRnM09UTTFfbXlTZWdtZW50c1wiOltcInN1YnNjcmliZVwiXSxcIk1qRXlNekE1TURZeE1nPT1fTWpVNE5qYzJOekk0TUE9PV9zcGxpdHNcIjpbXCJzdWJzY3JpYmVcIl0sXCJjb250cm9sX3ByaVwiOltcInN1YnNjcmliZVwiLFwiY2hhbm5lbC1tZXRhZGF0YTpwdWJsaXNoZXJzXCJdLFwiY29udHJvbF9zZWNcIjpbXCJzdWJzY3JpYmVcIixcImNoYW5uZWwtbWV0YWRhdGE6cHVibGlzaGVyc1wiXX0iLCJ4LWFibHktY2xpZW50SWQiOiJjbGllbnRJZCIsImV4cCI6MTYwMzQwODUwNywiaWF0IjoxNjAzNDA0OTA3fQ=="
+        let token =
+            "eyJ4LWFibHktY2FwYWJpbGl0eSI6IntcIk1qRXlNekE1TURZeE1nPT1fTWpVNE5qYzJOekk0TUE9PV9NVGs1TlRnM09UTTFfbXlTZWdtZW50c1wiOltcInN1YnNjcmliZVwiXSxcIk1qRXlNekE1TURZeE1nPT1fTWpVNE5qYzJOekk0TUE9PV9zcGxpdHNcIjpbXCJzdWJzY3JpYmVcIl0sXCJjb250cm9sX3ByaVwiOltcInN1YnNjcmliZVwiLFwiY2hhbm5lbC1tZXRhZGF0YTpwdWJsaXNoZXJzXCJdLFwiY29udHJvbF9zZWNcIjpbXCJzdWJzY3JpYmVcIixcImNoYW5uZWwtbWV0YWRhdGE6cHVibGlzaGVyc1wiXX0iLCJ4LWFibHktY2xpZW50SWQiOiJjbGllbnRJZCIsImV4cCI6MTYwMzQwODUwNywiaWF0IjoxNjAzNDA0OTA3fQ=="
 
-        let dec = Data(base64Encoded: token, options: Data.Base64DecodingOptions.init(rawValue: 0))
+        let dec = Data(base64Encoded: token, options: Data.Base64DecodingOptions(rawValue: 0))
 
         XCTAssertNotNil(dec)
     }
 
-    override func tearDown() {
-
-    }
+    override func tearDown() {}
 }

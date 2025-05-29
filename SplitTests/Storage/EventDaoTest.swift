@@ -8,22 +8,24 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class EventDaoTest: XCTestCase {
-
     var eventDao: EventDao!
     var eventDaoAes128Cbc: EventDao!
 
     override func setUp() {
         let queue = DispatchQueue(label: "event dao test")
-        eventDao = CoreDataEventDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue))
+        eventDao = CoreDataEventDao(coreDataHelper: IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: queue))
 
-        eventDaoAes128Cbc = CoreDataEventDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                           dispatchQueue: queue),
-                                             cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
+        eventDaoAes128Cbc = CoreDataEventDao(
+            coreDataHelper: IntegrationCoreDataHelper.get(
+                databaseName: "test",
+                dispatchQueue: queue),
+            cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
         let events = createEvents()
         for event in events {
             eventDao.insert(event)
@@ -72,7 +74,7 @@ class EventDaoTest: XCTestCase {
 
     func update(dao: EventDao) {
         let loadedEvents = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
-        dao.update(ids: loadedEvents.prefix(5).compactMap { return $0.storageId }, newStatus: StorageRecordStatus.deleted)
+        dao.update(ids: loadedEvents.prefix(5).compactMap { $0.storageId }, newStatus: StorageRecordStatus.deleted)
         let active = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
         let deleted = dao.getBy(createdAt: 200, status: StorageRecordStatus.deleted, maxRows: 20)
 
@@ -102,11 +104,13 @@ class EventDaoTest: XCTestCase {
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
-        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
-                                                   dispatchQueue: DispatchQueue(label: "event dao test"))
+        let helper = IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: DispatchQueue(label: "event dao test"))
         eventDao = CoreDataEventDao(coreDataHelper: helper)
-        eventDaoAes128Cbc = CoreDataEventDao(coreDataHelper: helper,
-                                                       cipher: cipher)
+        eventDaoAes128Cbc = CoreDataEventDao(
+            coreDataHelper: helper,
+            cipher: cipher)
 
         // create impressions and get one encrypted feature name
         let events = createEvents()
@@ -129,17 +133,18 @@ class EventDaoTest: XCTestCase {
     func getBy(coreDataHelper: CoreDataHelper) -> String? {
         var body: String? = nil
         coreDataHelper.performAndWait {
-            let entities = coreDataHelper.fetch(entity: .event,
-                                                where: nil,
-                                                rowLimit: 1).compactMap { return $0 as? EventEntity }
-            if entities.count > 0 {
+            let entities = coreDataHelper.fetch(
+                entity: .event,
+                where: nil,
+                rowLimit: 1).compactMap { $0 as? EventEntity }
+            if !entities.isEmpty {
                 body = entities[0].body
             }
         }
         return body
     }
 
-    /// TODO: Check how to test delete in inMemoryDb
+    // TODO: Check how to test delete in inMemoryDb
     func PausedtestDelete() {
         let toDelete = eventDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20).prefix(5)
 
@@ -149,12 +154,12 @@ class EventDaoTest: XCTestCase {
         let notFound = Set(toDelete.map { $0.storageId })
 
         XCTAssertEqual(5, loadedEvents.count)
-        XCTAssertEqual(0, loadedEvents.filter { notFound.contains($0.storageId)}.count)
+        XCTAssertEqual(0, loadedEvents.filter { notFound.contains($0.storageId) }.count)
     }
 
     func createEvents() -> [EventDTO] {
         var events = [EventDTO]()
-        for i in 0..<10 {
+        for i in 0 ..< 10 {
             let event = EventDTO(trafficType: "name", eventType: "type")
             event.key = "key1"
             event.eventTypeId = "type1"

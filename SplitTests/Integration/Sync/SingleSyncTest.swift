@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SingleSyncTest: XCTestCase {
-
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = "key"
@@ -35,8 +34,9 @@ class SingleSyncTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         notificationHelper = NotificationHelperStub()
         impExp = nil
@@ -63,9 +63,8 @@ class SingleSyncTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation], timeout: 5)
 
-
         impCountExp = XCTestExpectation(description: "counts")
-        for i in 0..<3 {
+        for i in 0 ..< 3 {
             _ = factory.client(matchingKey: "key").getTreatment("TEST")
             _ = factory.client(matchingKey: "key\(i)").getTreatment("TEST")
             _ = client.track(eventType: "eve\(i)")
@@ -107,7 +106,7 @@ class SingleSyncTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation], timeout: 5)
 
-        for i in 0..<3 {
+        for i in 0 ..< 3 {
             _ = factory.client(matchingKey: "key\(i)").getTreatment("TEST")
             _ = client.track(eventType: "eve\(i)")
 
@@ -147,10 +146,9 @@ class SingleSyncTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation], timeout: 5)
 
-
         impCountExp = XCTestExpectation(description: "counts")
         uKeyExp = XCTestExpectation(description: "UniqueKeys")
-        for i in 0..<3 {
+        for i in 0 ..< 3 {
             _ = factory.client(matchingKey: "key\(i)").getTreatment("TEST")
             _ = client.track(eventType: "eve\(i)")
             eveExp = XCTestExpectation(description: "events")
@@ -179,34 +177,34 @@ class SingleSyncTest: XCTestCase {
             print("URL: \(request.url.absoluteString)")
             if request.isSplitEndpoint() {
                 let json = self.loadSplitsChangeFile()
-                self.splitsHitCount+=1
+                self.splitsHitCount += 1
                 return TestDispatcherResponse(code: 200, data: Data(json.utf8))
             }
 
             if request.isMySegmentsEndpoint() {
-                self.mySegmentsHitCount+=1
+                self.mySegmentsHitCount += 1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
 
             if request.isAuthEndpoint() {
-                self.sseAuthHitCount+=1
+                self.sseAuthHitCount += 1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             }
 
             if request.isImpressionsEndpoint() {
-                self.impressionsHitCount+=1
+                self.impressionsHitCount += 1
                 self.impExp?.fulfill()
                 return TestDispatcherResponse(code: 200)
             }
 
             if request.isEventsEndpoint() {
-                self.eventsHitCount+=1
+                self.eventsHitCount += 1
                 self.eveExp?.fulfill()
                 return TestDispatcherResponse(code: 200)
             }
 
             if request.isImpressionsCountEndpoint() {
-                self.impressionsCountHitCount+=1
+                self.impressionsCountHitCount += 1
                 if self.impressionsCountHitCount == 1 {
                     self.impCountExp?.fulfill()
                 }
@@ -214,7 +212,7 @@ class SingleSyncTest: XCTestCase {
             }
 
             if request.isUniqueKeysEndpoint() {
-                self.uniqueKeysHitCount+=1
+                self.uniqueKeysHitCount += 1
                 self.uKeyExp?.fulfill()
                 return TestDispatcherResponse(code: 200)
             }
@@ -224,12 +222,13 @@ class SingleSyncTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            return TestStreamResponseBinding.createFor(request: request, code: 200)
+            TestStreamResponseBinding.createFor(request: request, code: 200)
         }
     }
 
     private func loadSplitsChangeFile() -> String {
-        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json") else {
+        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json")
+        else {
             return IntegrationHelper.emptySplitChanges(since: 99999, till: 99999)
         }
         return splitJson
@@ -258,7 +257,7 @@ class SingleSyncTest: XCTestCase {
         splitConfig.uniqueKeysRefreshRate = 1
         splitConfig.logLevel = TestingHelper.testLogLevel
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -269,4 +268,3 @@ class SingleSyncTest: XCTestCase {
             .setConfig(splitConfig).build()!
     }
 }
-

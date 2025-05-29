@@ -7,47 +7,42 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class HttpResponseTest: XCTestCase {
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testHttp200() {
         // Create http response code > 200 and < 300 should be SUCCESS
-        let  response = HttpResponse(code: 200)
+        let response = HttpResponse(code: 200)
 
         XCTAssertTrue(response.result.isSuccess)
     }
-
 
     func testHttp299() {
         // Create http response code > 200 and < 300 should be SUCCESS
         // Put some values in input stream (from output stream anywhere)
         // Check values received
-        let  response = HttpResponse(code: 299)
+        let response = HttpResponse(code: 299)
 
         XCTAssertTrue(response.result.isSuccess)
     }
 
-
     func testHttp104() {
         // Http 104-199 is unassgned so far
         // Create http response code < 104 should not be considered SUCCESSs
-        let  response = HttpResponse(code: 104)
+        let response = HttpResponse(code: 104)
 
         XCTAssertFalse(response.result.isSuccess)
     }
 
     func testHttp300() {
         // Create http response code > 299 should be considered ERROR
-        let  response = HttpResponse(code: 300)
+        let response = HttpResponse(code: 300)
 
         XCTAssertFalse(response.result.isSuccess)
     }
 
-
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }

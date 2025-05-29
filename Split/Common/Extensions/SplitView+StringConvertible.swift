@@ -10,39 +10,39 @@ import Foundation
 
 extension SplitView {
     override public var description: String {
-        var output: String = "SplitView {\n"
+        var output = "SplitView {\n"
         if let name = name {
-            output+="name = \(String(reflecting: name)) \n"
+            output += "name = \(String(reflecting: name)) \n"
         } else {
-            output+="name = nil\n"
+            output += "name = nil\n"
         }
         if let defaultTreatment = defaultTreatment {
-            output+="defaultTreatment = \(defaultTreatment) \n"
+            output += "defaultTreatment = \(defaultTreatment) \n"
         } else {
-            output+="defaultTreatment = nil\n"
+            output += "defaultTreatment = nil\n"
         }
         if let trafficType = trafficType {
-            output+="trafficType = \(trafficType) \n"
+            output += "trafficType = \(trafficType) \n"
         } else {
-            output+="trafficType = nil\n"
+            output += "trafficType = nil\n"
         }
         if let treatments = treatments {
-            output+="treatments = [\(treatments.joined(separator: ","))]\n"
+            output += "treatments = [\(treatments.joined(separator: ","))]\n"
         } else {
-            output+="treatments = nil\n"
+            output += "treatments = nil\n"
         }
         if let sets = sets {
-            output+="sets = [\(sets.joined(separator: ","))]\n"
+            output += "sets = [\(sets.joined(separator: ","))]\n"
         } else {
-            output+="sets = nil\n"
+            output += "sets = nil\n"
         }
         if let changeNumber = changeNumber {
-            output+="changeNumber = \(changeNumber) \n"
+            output += "changeNumber = \(changeNumber) \n"
         } else {
-            output+="changeNumber = nil\n"
+            output += "changeNumber = nil\n"
         }
-        output+="killed = \(String(describing: killed)) \n"
-        output+="}"
+        output += "killed = \(String(describing: killed)) \n"
+        output += "}"
         return output
     }
 }

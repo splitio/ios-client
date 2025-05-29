@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 protocol SplitDao {
     func insertOrUpdate(splits: [Split])
@@ -31,7 +31,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     }
 
     func insertOrUpdate(splits: [Split]) {
-        let parsed = self.encoder.encode(splits)
+        let parsed = encoder.encode(splits)
         executeAsync { [weak self] in
             guard let self = self else {
                 return
@@ -67,7 +67,6 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     }
 
     func getAll() -> [Split] {
-
         var splits: [Split]?
         execute { [weak self] in
             let start = Date.nowMillis()
@@ -76,8 +75,8 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             }
 
             let jsonSplits = self.coreDataHelper.fetch(entity: .split)
-                .compactMap { return $0 as? SplitEntity }
-                .compactMap { return $0.body }
+                .compactMap { $0 as? SplitEntity }
+                .compactMap { $0.body }
             TimeChecker.logInterval("Time to load feature flags", startTime: start)
             splits = self.decoder.decode(jsonSplits).map { $0 }
         }
@@ -85,7 +84,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     }
 
     func delete(_ splits: [String]) {
-        if splits.count == 0 {
+        if splits.isEmpty {
             return
         }
 
@@ -114,7 +113,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
 
     private func insertOrUpdate(_ split: Split) {
         if let splitName = cipher?.encrypt(split.name) ?? split.name,
-           let obj = self.getBy(name: splitName) ?? self.coreDataHelper.create(entity: .split) as? SplitEntity {
+           let obj = getBy(name: splitName) ?? coreDataHelper.create(entity: .split) as? SplitEntity {
             do {
                 obj.name = splitName
                 let json = try Json.encodeToJson(split)
@@ -122,7 +121,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
                 obj.updatedAt = Date.now()
                 // Saving one by one to avoid losing all
                 // if an error occurs
-                self.coreDataHelper.save()
+                coreDataHelper.save()
             } catch {
                 Logger.e("An error occurred while inserting feature flags in storage: \(error.localizedDescription)")
             }
@@ -131,8 +130,9 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
 
     private func getBy(name: String) -> SplitEntity? {
         let predicate = NSPredicate(format: "name == %@", name)
-        let entities = coreDataHelper.fetch(entity: .split,
-                                            where: predicate).compactMap { return $0 as? SplitEntity }
-        return entities.count > 0 ? entities[0] : nil
+        let entities = coreDataHelper.fetch(
+            entity: .split,
+            where: predicate).compactMap { $0 as? SplitEntity }
+        return !entities.isEmpty ? entities[0] : nil
     }
 }

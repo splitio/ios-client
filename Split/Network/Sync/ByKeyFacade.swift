@@ -43,7 +43,6 @@ struct ByKeyComponentGroup {
 }
 
 class DefaultByKeyFacade: ByKeyFacade {
-
     private let byKeyComponents = SplitKeyDictionary<ByKeyComponentGroup>()
     private var isPollingEnabled = Atomic(false)
 
@@ -168,7 +167,7 @@ class DefaultByKeyFacade: ByKeyFacade {
     }
 
     func isEmpty() -> Bool {
-        return byKeyComponents.count == 0
+        return byKeyComponents.isEmpty
     }
 
     private func doInAll(_ action: (ByKeyComponentGroup) -> Void) {
@@ -178,10 +177,10 @@ class DefaultByKeyFacade: ByKeyFacade {
         }
     }
 
-    private func doInAll(forMatchingKey key: String,
-                         action: (ByKeyComponentGroup) -> Void) {
-
-        byKeyComponents.values(forMatchingKey: key).forEach {  group in
+    private func doInAll(
+        forMatchingKey key: String,
+        action: (ByKeyComponentGroup) -> Void) {
+        byKeyComponents.values(forMatchingKey: key).forEach { group in
             action(group)
         }
     }

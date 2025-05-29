@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
-
     var segments = [String: RuleBasedSegment]()
     var changeNumber: Int64 = -1
 
@@ -64,7 +63,7 @@ class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
         self.changeNumber = changeNumber
         return true
     }
-    
+
     func clear() {
         clearCalled = true
         segments.removeAll()

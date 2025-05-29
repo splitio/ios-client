@@ -16,7 +16,6 @@ protocol PersistentImpressionsCountStorage {
 }
 
 class DefaultImpressionsCountStorage: PersistentImpressionsCountStorage {
-
     private let impressionsCountDao: ImpressionsCountDao
     private let expirationPeriod: Int64
 
@@ -26,12 +25,14 @@ class DefaultImpressionsCountStorage: PersistentImpressionsCountStorage {
     }
 
     func pop(count: Int) -> [ImpressionsCountPerFeature] {
-        let createdAt = Date().unixTimestamp() - self.expirationPeriod
-        let counts = impressionsCountDao.getBy(createdAt: createdAt,
-                                                    status: StorageRecordStatus.active,
-                                                    maxRows: count)
-        impressionsCountDao.update(ids: counts.compactMap { $0.storageId },
-                                   newStatus: StorageRecordStatus.deleted)
+        let createdAt = Date().unixTimestamp() - expirationPeriod
+        let counts = impressionsCountDao.getBy(
+            createdAt: createdAt,
+            status: StorageRecordStatus.active,
+            maxRows: count)
+        impressionsCountDao.update(
+            ids: counts.compactMap { $0.storageId },
+            newStatus: StorageRecordStatus.deleted)
         return counts
     }
 
@@ -48,8 +49,9 @@ class DefaultImpressionsCountStorage: PersistentImpressionsCountStorage {
         if counts.count < 1 {
             return
         }
-        impressionsCountDao.update(ids: counts.compactMap { return $0.storageId },
-                                   newStatus: StorageRecordStatus.active)
+        impressionsCountDao.update(
+            ids: counts.compactMap { $0.storageId },
+            newStatus: StorageRecordStatus.active)
     }
 
     func delete(_ counts: [ImpressionsCountPerFeature]) {

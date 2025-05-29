@@ -12,7 +12,6 @@ import Foundation
 class FlagSetsCacheMock: FlagSetsCache {
     var setsInFilter: Set<String>?
 
-
     var flagSets: [String: Set<String>] = [:]
 
     func getFeatureFlagNamesBySet(byFlagSets sets: [String]) -> [String: Set<String>] {

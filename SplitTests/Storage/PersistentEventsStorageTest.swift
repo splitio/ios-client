@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class PersistentEventsStorageTests: XCTestCase {
-
     var eventsStorage: PersistentEventsStorage!
     var eventDao: EventDaoStub!
 
@@ -19,7 +18,9 @@ class PersistentEventsStorageTests: XCTestCase {
         eventDao = EventDaoStub()
         var daoProvider = CoreDataDaoProviderMock()
         daoProvider.eventDao = eventDao
-        eventsStorage = DefaultEventsStorage(database: SplitDatabaseStub(daoProvider: daoProvider), expirationPeriod: 100)
+        eventsStorage = DefaultEventsStorage(
+            database: SplitDatabaseStub(daoProvider: daoProvider),
+            expirationPeriod: 100)
     }
 
     func testPush() {
@@ -58,16 +59,15 @@ class PersistentEventsStorageTests: XCTestCase {
 
         eventsStorage.setActive(events)
 
-        XCTAssertEqual(events.count, eventDao.updatedEvents.values.filter { $0 ==  StorageRecordStatus.active }.count)
-        XCTAssertEqual(0, eventDao.updatedEvents.values.filter { $0 ==  StorageRecordStatus.deleted }.count )
+        XCTAssertEqual(events.count, eventDao.updatedEvents.values.filter { $0 == StorageRecordStatus.active }.count)
+        XCTAssertEqual(0, eventDao.updatedEvents.values.filter { $0 == StorageRecordStatus.deleted }.count)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 
     func createEvents() -> [EventDTO] {
         var events = [EventDTO]()
-        for i in 0..<20 {
+        for i in 0 ..< 20 {
             let event = EventDTO(trafficType: "name", eventType: "type")
             event.storageId = UUID().uuidString
             event.key = "key1"

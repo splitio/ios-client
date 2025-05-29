@@ -9,10 +9,10 @@
 import Foundation
 
 protocol SseNotificationParser {
-
     func parseIncoming(jsonString: String) -> IncomingNotification?
 
-    func parseTargetingRuleNotification(jsonString: String, type: NotificationType) throws -> TargetingRuleUpdateNotification
+    func parseTargetingRuleNotification(jsonString: String, type: NotificationType) throws
+        -> TargetingRuleUpdateNotification
 
     func parseSplitKill(jsonString: String) throws -> SplitKillNotification
 
@@ -30,7 +30,6 @@ protocol SseNotificationParser {
 }
 
 class DefaultSseNotificationParser: SseNotificationParser {
-
     private static let kErrorNotificationName = "error"
 
     func parseIncoming(jsonString: String) -> IncomingNotification? {
@@ -40,19 +39,25 @@ class DefaultSseNotificationParser: SseNotificationParser {
                 return IncomingNotification(type: .sseError)
             }
             var type = NotificationType.occupancy
-            if let notificationType = try? Json.decodeFrom(json: rawNotification.data,
-                                                           to: NotificationTypeValue.self) {
+            if let notificationType = try? Json.decodeFrom(
+                json: rawNotification.data,
+                to: NotificationTypeValue.self) {
                 type = notificationType.type
             }
-            return IncomingNotification(type: type, channel: rawNotification.channel,
-                                        jsonData: rawNotification.data, timestamp: rawNotification.timestamp ?? 0)
+            return IncomingNotification(
+                type: type,
+                channel: rawNotification.channel,
+                jsonData: rawNotification.data,
+                timestamp: rawNotification.timestamp ?? 0)
         } catch {
             Logger.e("Unexpected error while parsing streaming notification \(error.localizedDescription)")
         }
         return nil
     }
 
-    func parseTargetingRuleNotification(jsonString: String, type: NotificationType) throws -> TargetingRuleUpdateNotification {
+    func parseTargetingRuleNotification(
+        jsonString: String,
+        type: NotificationType) throws -> TargetingRuleUpdateNotification {
         var notification = try Json.decodeFrom(json: jsonString, to: TargetingRuleUpdateNotification.self)
         notification.entityType = type
         return notification

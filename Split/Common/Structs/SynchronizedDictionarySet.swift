@@ -9,15 +9,15 @@
 import Foundation
 
 class SynchronizedDictionarySet<K: Hashable, T: Hashable> {
-
-    private var queue: DispatchQueue = DispatchQueue(label: "split-synchronized-dictionary-set",
-                                                     target: .global())
+    private var queue: DispatchQueue = .init(
+        label: "split-synchronized-dictionary-set",
+        target: .global())
     private var items = [K: Set<T>]()
 
     var keys: Set<K> {
         queue.sync {
             let keys = items.keys
-            return Set(keys.map { $0 as K})
+            return Set(keys.map { $0 as K })
         }
     }
 
@@ -94,7 +94,6 @@ class SynchronizedDictionarySet<K: Hashable, T: Hashable> {
             } else {
                 items[key] = values
             }
-
         }
     }
 

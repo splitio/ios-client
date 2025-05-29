@@ -23,12 +23,11 @@ class DefaultReconnectBackoffCounter: ReconnectBackoffCounter {
         self.backoffBase = backoffBase
         self.attemptCount = AtomicInt(0)
         if let max = maxTimeLimit {
-            maxTimeLimitInSecs = Double(max)
+            self.maxTimeLimitInSecs = Double(max)
         }
     }
 
     func getNextRetryTime() -> Double {
-
         let base = Decimal(backoffBase * Self.kRetryExponentialBase)
         let decimalResult = pow(base, attemptCount.getAndAdd(1))
 
@@ -40,6 +39,6 @@ class DefaultReconnectBackoffCounter: ReconnectBackoffCounter {
     }
 
     func resetCounter() {
-        attemptCount .mutate { $0 = 0 }
+        attemptCount.mutate { $0 = 0 }
     }
 }

@@ -16,7 +16,6 @@ protocol HttpTask {
 }
 
 class HttpDataTask: HttpTask {
-
     var identifier: Int {
         return urlSessionTask.taskIdentifier
     }
@@ -30,5 +29,4 @@ class HttpDataTask: HttpTask {
     func cancel() {
         urlSessionTask.cancel()
     }
-
 }

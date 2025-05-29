@@ -9,13 +9,11 @@
 import Foundation
 
 class Endpoint {
-
     private(set) var url: URL
     private(set) var method: HttpMethod
     private(set) var headers = [String: String]()
 
     private init(baseUrl: URL, path: String?, isPathEncoded: Bool = false, defaultQueryString: String? = nil) {
-
         var comp = URLComponents()
         comp.host = baseUrl.host
         comp.scheme = baseUrl.scheme
@@ -33,8 +31,11 @@ class Endpoint {
 
         if var queryString = defaultQueryString, let from = queryString.firstIndex(of: "&") {
             let upperLimit = queryString.index(from, offsetBy: 1)
-            queryString = queryString.replacingOccurrences(of: "&", with: "",
-                                                           options: .caseInsensitive, range: from..<upperLimit)
+            queryString = queryString.replacingOccurrences(
+                of: "&",
+                with: "",
+                options: .caseInsensitive,
+                range: from ..< upperLimit)
             comp.query = queryString
         }
         self.url = comp.url ?? baseUrl
@@ -53,8 +54,11 @@ class Endpoint {
         private var endpoint: Endpoint
 
         init(baseUrl: URL, path: String?, isPathEncoded: Bool, defaultQueryString: String? = nil) {
-            endpoint = Endpoint(baseUrl: baseUrl, path: path,
-                                isPathEncoded: isPathEncoded, defaultQueryString: defaultQueryString)
+            self.endpoint = Endpoint(
+                baseUrl: baseUrl,
+                path: path,
+                isPathEncoded: isPathEncoded,
+                defaultQueryString: defaultQueryString)
         }
 
         func add(header: String, withValue value: String) -> Self {

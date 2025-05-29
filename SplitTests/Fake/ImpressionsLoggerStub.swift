@@ -18,6 +18,6 @@ class ImpressionsLoggerStub: ImpressionLogger {
             return
         }
         impressions[splitName] = impression
-        impressionsPushedCount+=1
+        impressionsPushedCount += 1
     }
 }

@@ -9,19 +9,19 @@
 import Foundation
 
 #if canImport(UIKit)
-import UIKit
+    import UIKit
 #endif
 
 #if canImport(AppKit)
-import AppKit
+    import AppKit
 #endif
 
 #if canImport(WatchKit)
-import WatchKit
+    import WatchKit
 #endif
 
 #if canImport(TVUIKit)
-import TVUIKit
+    import TVUIKit
 #endif
 
 typealias ObserverAction = (AnyObject?) -> Void
@@ -45,34 +45,33 @@ protocol NotificationHelper {
 }
 
 class DefaultNotificationHelper: NotificationHelper {
-
     private let queue = DispatchQueue(label: "split-notification-helper", attributes: .concurrent)
     private var actions = [String: [ObserverAction]]()
 
     static let pinnedCredentialValidationFailed = NSNotification.Name("pinnedCredentialValidationFailed")
 
-#if os(iOS) || os(tvOS)
+    #if os(iOS) || os(tvOS)
 
-#if swift(>=4.2)
-    static let didEnterBgNotification = UIApplication.didEnterBackgroundNotification
-    static let didBecomeActiveNotification = UIApplication.didBecomeActiveNotification
-#else
-    static let didEnterBgNotification = NSNotification.Name.UIApplicationDidEnterBackground
-    static let didBecomeActiveNotification = NSNotification.Name.UIApplicationDidBecomeActive
-#endif
+        #if swift(>=4.2)
+            static let didEnterBgNotification = UIApplication.didEnterBackgroundNotification
+            static let didBecomeActiveNotification = UIApplication.didBecomeActiveNotification
+        #else
+            static let didEnterBgNotification = NSNotification.Name.UIApplicationDidEnterBackground
+            static let didBecomeActiveNotification = NSNotification.Name.UIApplicationDidBecomeActive
+        #endif
 
-#elseif os(macOS)
-    static let didEnterBgNotification = NSApplication.didResignActiveNotification
-    static let didBecomeActiveNotification = NSApplication.didBecomeActiveNotification
+    #elseif os(macOS)
+        static let didEnterBgNotification = NSApplication.didResignActiveNotification
+        static let didBecomeActiveNotification = NSApplication.didBecomeActiveNotification
 
-#elseif os(watchOS)
-    static let didEnterBgNotification = WKExtension.applicationDidEnterBackgroundNotification
-    static let didBecomeActiveNotification = WKExtension.applicationDidBecomeActiveNotification
+    #elseif os(watchOS)
+        static let didEnterBgNotification = WKExtension.applicationDidEnterBackgroundNotification
+        static let didBecomeActiveNotification = WKExtension.applicationDidBecomeActiveNotification
 
-#endif
+    #endif
 
     static let instance: DefaultNotificationHelper = {
-        return DefaultNotificationHelper()
+        DefaultNotificationHelper()
     }()
 
     private init() {
@@ -94,15 +93,16 @@ class DefaultNotificationHelper: NotificationHelper {
     }
 
     private func subscribe() {
-
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidEnterBackground),
-                                               name: Self.didEnterBgNotification,
-                                               object: nil)
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidBecomeActive),
-                                               name: Self.didBecomeActiveNotification,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidEnterBackground),
+            name: Self.didEnterBgNotification,
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive),
+            name: Self.didBecomeActiveNotification,
+            object: nil)
     }
 
     private func unsubscribe() {
@@ -115,7 +115,7 @@ class DefaultNotificationHelper: NotificationHelper {
         queue.sync {
             actions = self.actions[notification.rawValue]
         }
-        if let actions =  actions {
+        if let actions = actions {
             for action in actions {
                 action(info)
             }

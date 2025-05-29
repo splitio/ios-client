@@ -8,7 +8,6 @@
 import Foundation
 
 class GlobalSecureStorage: KeyValueStorage {
-
     private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
 
     // Only for testing
@@ -28,11 +27,10 @@ class GlobalSecureStorage: KeyValueStorage {
     }
 
     func getString(item: SecureItem) -> String? {
-
         let itemName = item.toString()
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: itemName
+            kSecAttrAccount as String: itemName,
         ]
         query[kSecMatchLimit as String] = kSecMatchLimitOne
         query[kSecReturnAttributes as String] = kCFBooleanTrue
@@ -74,13 +72,14 @@ class GlobalSecureStorage: KeyValueStorage {
         let itemName = item.toString()
         let queryDelete: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: itemName
+            kSecAttrAccount as String: itemName,
         ]
 
         let resultCode = SecItemDelete(queryDelete as CFDictionary)
-        Logger.d((resultCode == noErr ?
-                    "Removed '\(item)'" :
-                    "Error deleting from Keychain: \(resultCode)"))
+        Logger.d(
+            resultCode == noErr ?
+                "Removed '\(item)'" :
+                "Error deleting from Keychain: \(resultCode)")
     }
 
     func set(item: Int, for key: SecureItem) {
@@ -88,7 +87,6 @@ class GlobalSecureStorage: KeyValueStorage {
     }
 
     func set(item: String, for key: SecureItem) {
-
         if getString(item: key) != nil {
             remove(item: key)
         }
@@ -102,13 +100,13 @@ class GlobalSecureStorage: KeyValueStorage {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: key.toString(),
             kSecValueData as String: itemData,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
         ]
 
         let resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
-        Logger.d((resultCode == noErr ?
-                    "Updated \(key)" :
-                    "Could not update '\(key)': \(resultCode)"))
+        Logger.d(
+            resultCode == noErr ?
+                "Updated \(key)" :
+                "Could not update '\(key)': \(resultCode)")
     }
-
 }

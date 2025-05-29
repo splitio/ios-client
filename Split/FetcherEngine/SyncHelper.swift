@@ -18,7 +18,6 @@ protocol SyncHelper {
 }
 
 class DefaultSyncHelper: SyncHelper {
-
     let telemetryProducer: TelemetryRuntimeProducer?
 
     init(telemetryProducer: TelemetryRuntimeProducer?) {
@@ -35,8 +34,8 @@ class DefaultSyncHelper: SyncHelper {
     func handleError(_ error: Error, resource: Resource, startTime: Int64) -> HttpError {
         Logger.e("\(resource) -> Error: while syncing data:  \(String(describing: error))")
         if let error = error as? HttpError {
-            self.telemetryProducer?.recordHttpError(resource: resource, status: error.code)
-            self.telemetryProducer?.recordHttpLatency(resource: resource, latency: Stopwatch.interval(from: startTime))
+            telemetryProducer?.recordHttpError(resource: resource, status: error.code)
+            telemetryProducer?.recordHttpLatency(resource: resource, latency: Stopwatch.interval(from: startTime))
             return error
         }
         return HttpError.unknown(code: -1, message: error.localizedDescription)
@@ -54,8 +53,8 @@ class DefaultSyncHelper: SyncHelper {
     }
 
     func recordHttpError(code: Int, resource: Resource, startTime: Int64) {
-        self.telemetryProducer?.recordHttpError(resource: resource, status: code)
-        self.telemetryProducer?.recordHttpLatency(resource: resource, latency: Stopwatch.interval(from: startTime))
+        telemetryProducer?.recordHttpError(resource: resource, status: code)
+        telemetryProducer?.recordHttpLatency(resource: resource, latency: Stopwatch.interval(from: startTime))
     }
 
     func time() -> Int64 {

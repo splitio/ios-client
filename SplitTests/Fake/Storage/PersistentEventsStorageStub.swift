@@ -10,8 +10,6 @@ import Foundation
 @testable import Split
 
 class PersistentEventsStorageStub: PersistentEventsStorage {
-
-
     var storedEvents = [String: EventDTO]()
     var eventsStatus = [String: Int32]()
 

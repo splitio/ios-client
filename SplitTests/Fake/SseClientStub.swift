@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class SseClientMock: SseClient {
-
     var token: String?
     var channels: [String]?
 

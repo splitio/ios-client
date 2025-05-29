@@ -6,11 +6,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class InListSemverMatcherTest: XCTestCase {
-
     func testMatchShouldReturnTrueWhenInList() {
         XCTAssertTrue(match(target: "1.2.4", within: ["1.2.3", "1.2.5", "1.2.4"]))
     }
@@ -20,7 +19,7 @@ class InListSemverMatcherTest: XCTestCase {
     }
 
     func testMatchWithPreReleaseShouldReturnTrueWhenInList() {
-        XCTAssertTrue(match(target:"1.1.1-rc.1.1.2", within: ["1.1.1-rc.1.1.1", "1.1.1-rc.1.1.3", "1.1.1-rc.1.1.2"]))
+        XCTAssertTrue(match(target: "1.1.1-rc.1.1.2", within: ["1.1.1-rc.1.1.1", "1.1.1-rc.1.1.3", "1.1.1-rc.1.1.2"]))
     }
 
     func testMatchWithPreReleaseShouldReturnFalseWhenNotInList() {
@@ -40,7 +39,7 @@ class InListSemverMatcherTest: XCTestCase {
     }
 
     func testMatchWithEmptyListShouldReturnFalse() {
-        XCTAssertFalse(match(target:"1.2.6+meta", within: []))
+        XCTAssertFalse(match(target: "1.2.6+meta", within: []))
     }
 
     func testMatchWithNullKeyShouldReturnFalse() {
@@ -59,6 +58,8 @@ class InListSemverMatcherTest: XCTestCase {
     }
 
     private func match(target: Any?, within: [String]?) -> Bool {
-        return InListSemverMatcher(data: within).evaluate(values: EvalValues(matchValue: target, matchingKey: "test"), context: nil)
+        return InListSemverMatcher(data: within).evaluate(
+            values: EvalValues(matchValue: target, matchingKey: "test"),
+            context: nil)
     }
 }

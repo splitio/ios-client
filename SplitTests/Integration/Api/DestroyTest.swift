@@ -6,11 +6,10 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class DestroyTests: XCTestCase {
-    
     let kNeverRefreshRate = 9999999
     var splitChange: TargetingRulesChange?
 
@@ -34,25 +33,29 @@ class DestroyTests: XCTestCase {
         events = [EventDTO]()
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
-        private func buildTestDispatcher() -> HttpClientTestDispatcher {
-
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                self.splitChangesHitCount+=1
+                self.splitChangesHitCount += 1
                 let since = self.lastChangeNumber
-                return TestDispatcherResponse(code: 200,
-                                              data: self.splitChangesHitCount == 1 ?
-                                              Data(try! Json.encodeToJson(self.splitChange).utf8)
-                                              : Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: self.splitChangesHitCount == 1 ?
+                        Data(try! Json.encodeToJson(self.splitChange).utf8)
+                        :
+                        Data(
+                            IntegrationHelper
+                                .emptySplitChanges(since: since, till: since).utf8))
             }
 
             if request.isMySegmentsEndpoint() {
-                self.mySegmentsHitCount+=1
+                self.mySegmentsHitCount += 1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
 
@@ -61,7 +64,7 @@ class DestroyTests: XCTestCase {
             }
 
             if request.isImpressionsEndpoint() {
-                self.impressionsHitCount+=1
+                self.impressionsHitCount += 1
                 if let data = request.body {
                     if let tests = try? IntegrationHelper.buildImpressionsFromJson(content: data.stringRepresentation) {
                         for test in tests {
@@ -73,7 +76,7 @@ class DestroyTests: XCTestCase {
             }
 
             if request.isEventsEndpoint() {
-                self.trackHitCounter+=1
+                self.trackHitCounter += 1
                 if let data = request.body {
                     if let e = try? IntegrationHelper.buildEventsFromJson(content: data.stringRepresentation) {
                         self.events.append(contentsOf: e)
@@ -136,14 +139,14 @@ class DestroyTests: XCTestCase {
             return self.streamingBinding!
         }
     }
-    
+
     func testDestroy() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_h"
         let matchingKey = "CUSTOMER_ID"
         let trafficType = "account"
         let eventType = "testEvent"
-        
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 5
         splitConfig.segmentsRefreshRate = 5
         splitConfig.impressionRefreshRate = 5
@@ -157,32 +160,32 @@ class DestroyTests: XCTestCase {
         splitConfig.logLevel = .verbose
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
             .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
-        
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "GralIntegrationTest"))
         _ = builder.setHttpClient(httpClient)
         let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
-        
+
         let client = factory?.client
         let manager = factory?.manager
         let splitName = "FACUNDO_TEST"
-        
+
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
         var timeOutFired = false
         var sdkReadyFired = false
-        
+
         client?.on(event: SplitEvent.sdkReady) {
             sdkReadyFired = true
             sdkReadyExpectation.fulfill()
         }
-        
+
         client?.on(event: SplitEvent.sdkReadyTimedOut) {
             timeOutFired = true
             sdkReadyExpectation.fulfill()
         }
-        
+
         wait(for: [sdkReadyExpectation], timeout: 10)
 
         let treatmentBeforeDestroy = client?.getTreatment(splitName)

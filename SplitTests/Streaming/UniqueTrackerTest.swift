@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class UniqueKeyTrackerTest: XCTestCase {
-
     var uniqueKeyStorage: PersistentUniqueKeyStorageStub!
     var tracker: UniqueKeyTracker!
 
@@ -22,11 +21,11 @@ class UniqueKeyTrackerTest: XCTestCase {
     }
 
     func testTrackAndSave() {
-        for i in 0..<10 {
+        for i in 0 ..< 10 {
             track(userKey: "key1", featureNb: i)
         }
 
-        for i in 5..<10 {
+        for i in 5 ..< 10 {
             track(userKey: "key2", featureNb: i)
         }
 
@@ -40,8 +39,8 @@ class UniqueKeyTrackerTest: XCTestCase {
         let save2 = uniqueKeyStorage.uniqueKeys
 
         XCTAssertEqual(2, save1.count)
-        XCTAssertEqual(10, save1.values.filter { $0.uniqueKey.userKey == "key1"}[0].uniqueKey.features.count)
-        XCTAssertEqual(5, save1.values.filter { $0.uniqueKey.userKey == "key2"}[0].uniqueKey.features.count)
+        XCTAssertEqual(10, save1.values.filter { $0.uniqueKey.userKey == "key1" }[0].uniqueKey.features.count)
+        XCTAssertEqual(5, save1.values.filter { $0.uniqueKey.userKey == "key2" }[0].uniqueKey.features.count)
         XCTAssertEqual(0, save2.count)
     }
 
@@ -49,8 +48,5 @@ class UniqueKeyTrackerTest: XCTestCase {
         tracker.track(userKey: userKey, featureName: "feature\(featureNb)")
     }
 
-
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

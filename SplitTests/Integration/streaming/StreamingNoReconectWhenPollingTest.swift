@@ -6,8 +6,8 @@
 // Copyright (c) 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class StreamingNoReconectWhenPollingTest: XCTestCase {
     var httpClient: HttpClient!
@@ -19,8 +19,9 @@ class StreamingNoReconectWhenPollingTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
@@ -40,7 +41,7 @@ class StreamingNoReconectWhenPollingTest: XCTestCase {
 
         authHitCount = 0
 
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 99999
         splitConfig.segmentsRefreshRate = 99999
         splitConfig.impressionRefreshRate = 99999
@@ -48,7 +49,7 @@ class StreamingNoReconectWhenPollingTest: XCTestCase {
         splitConfig.eventsPushRate = 99999
         splitConfig.streamingEnabled = streamingEnabled
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -85,19 +86,20 @@ class StreamingNoReconectWhenPollingTest: XCTestCase {
             _ = semaphore.signal()
         })
         semaphore.wait()
-
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
             if request.isAuthEndpoint() {
-                self.authHitCount+=1
+                self.authHitCount += 1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             }
             return TestDispatcherResponse(code: 500)
@@ -110,5 +112,4 @@ class StreamingNoReconectWhenPollingTest: XCTestCase {
             return self.streamingBinding!
         }
     }
-
 }

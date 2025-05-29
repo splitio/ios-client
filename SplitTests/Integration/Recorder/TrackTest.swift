@@ -6,11 +6,10 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class TrackTest: XCTestCase {
-    
     let kNeverRefreshRate = 9999999
     let kChangeNbInterval: Int64 = 86400
     var reqTrackIndex = 0
@@ -24,7 +23,7 @@ class TrackTest: XCTestCase {
         XCTestExpectation(description: "error 2"),
         XCTestExpectation(description: "error 3"),
         XCTestExpectation(description: "upd 4"),
-        XCTestExpectation(description: "upd 5")
+        XCTestExpectation(description: "upd 5"),
     ]
 
     let queue = DispatchQueue(label: "ios.split.itest.track", attributes: .concurrent)
@@ -34,13 +33,13 @@ class TrackTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
-
         let respData = responseSlitChanges()
         var responses = [TestDispatcherResponse]()
         for data in respData {
@@ -49,7 +48,9 @@ class TrackTest: XCTestCase {
 
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 9999999, till: 9999999).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 9999999, till: 9999999).utf8))
             }
 
             if request.isMySegmentsEndpoint() {
@@ -64,14 +65,15 @@ class TrackTest: XCTestCase {
             }
 
             if request.isEventsEndpoint() {
-                var code: Int = 0
+                var code = 0
                 self.queue.sync {
                     let index = self.getAndIncrement()
                     print("Hit: \(index)")
                     if index > 0, index < 4 {
                         code = 500
                     } else {
-                        let data = try? IntegrationHelper.buildEventsFromJson(content: request.body!.stringRepresentation)
+                        let data = try? IntegrationHelper
+                            .buildEventsFromJson(content: request.body!.stringRepresentation)
                         self.trackHits.append(data!)
                         code = 200
                     }
@@ -79,7 +81,6 @@ class TrackTest: XCTestCase {
                     if index < 6 {
                         self.trExp[index].fulfill()
                     }
-
                 }
                 return TestDispatcherResponse(code: code)
             }
@@ -95,6 +96,7 @@ class TrackTest: XCTestCase {
     }
 
     // MARK: Test
+
     /// Getting changes from server and test treatments and change number
     func test() throws {
         let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_d"
@@ -103,8 +105,8 @@ class TrackTest: XCTestCase {
         var trackCounts = [Int]()
 
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
-        
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = kNeverRefreshRate
         splitConfig.segmentsRefreshRate = kNeverRefreshRate
         splitConfig.impressionRefreshRate = kNeverRefreshRate
@@ -115,39 +117,39 @@ class TrackTest: XCTestCase {
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+            .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
 
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
-        let builder: DefaultSplitFactoryBuilder = DefaultSplitFactoryBuilder()
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "TrackTest"))
         _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig)
             .build()
-        
+
         let client = factory!.client
 
         var sdkReadyFired = false
-        
+
         client.on(event: SplitEvent.sdkReady) {
             sdkReadyFired = true
             sdkReady.fulfill()
         }
-        
+
         wait(for: [sdkReady], timeout: 20)
 
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             _ = client.track(trafficType: "custom", eventType: "event1", value: Double(i), properties: ["value": i])
         }
         wait(for: [trExp[0]], timeout: 10)
         trackCounts.append(trackHits.count)
 
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             _ = client.track(trafficType: "custom", eventType: "event2", value: Double(i), properties: ["value": i])
         }
         wait(for: [trExp[1]], timeout: 10)
         trackCounts.append(trackHits.count)
 
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             _ = client.track(trafficType: "custom", eventType: "event3", value: Double(i), properties: ["value": i])
         }
         wait(for: [trExp[2], trExp[3]], timeout: 40)
@@ -190,10 +192,9 @@ class TrackTest: XCTestCase {
         })
         semaphore.wait()
         factory = nil
-
     }
 
-    private func  responseSlitChanges() -> [SplitChange] {
+    private func responseSlitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
 
         let c = loadSplitsChangeFile()!
@@ -212,9 +213,9 @@ class TrackTest: XCTestCase {
 
         split.conditions?.insert(inSegmentOneCondition, at: 0)
         split.conditions?.insert(inSegmentTwoCondition, at: 0)
-        
+
         changes.append(c)
-        
+
         return changes
     }
 
@@ -240,23 +241,22 @@ class TrackTest: XCTestCase {
     }
 
     private func findEvent(type: String, value: Double) -> EventDTO? {
-        if trackHits.count == 0 { return nil }
+        if trackHits.isEmpty { return nil }
         var e: EventDTO?
         var i = 0
         while e == nil, i < trackHits.count {
-            e = trackHits[i].first(where: { $0.eventTypeId == type && $0.value == value } )
-            i+=1
+            e = trackHits[i].first(where: { $0.eventTypeId == type && $0.value == value })
+            i += 1
         }
         return e
     }
 
     private func getAndIncrement() -> Int {
-        var i = 0;
+        var i = 0
         DispatchQueue.test.sync {
             i = self.reqTrackIndex
-            self.reqTrackIndex+=1
+            self.reqTrackIndex += 1
         }
         return i
     }
 }
-

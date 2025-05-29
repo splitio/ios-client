@@ -13,10 +13,10 @@ extension Data {
     }
 
     var hexadecimalRepresentation: String {
-        return self.map { String(format: "%02hhx", $0) + " " }.joined()
+        return map { String(format: "%02hhx", $0) + " " }.joined()
     }
 
     var binaryRepresentation: String {
-        return self.map { String($0, radix: 2) + "(\($0)) "  }.joined()
+        return map { String($0, radix: 2) + "(\($0)) " }.joined()
     }
 }

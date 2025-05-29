@@ -7,11 +7,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ImpressionsPropertiesE2ETest: XCTestCase {
-
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = IntegrationHelper.dummyUserKey
@@ -30,8 +29,9 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         impressions = [String: [KeyImpression]]()
         counts = [String: Int]()
@@ -69,7 +69,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
         // Check if properties are included in the request body as a stringified JSON
         let containsProperties = requestBodies.contains { body in
-            return body.contains("\"properties\":")
+            body.contains("\"properties\":")
         }
         XCTAssertTrue(containsProperties, "Request body should contain properties field")
 
@@ -159,31 +159,33 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         wait(for: [withPropertiesExpectation, withoutPropertiesExpectation], timeout: 5)
 
         XCTAssertTrue(seenFeatureFlags.contains("FACUNDO_TEST"), "Should have seen impression for FACUNDO_TEST")
-        XCTAssertTrue(seenFeatureFlags.contains("test_string_without_attr"), "Should have seen impression for test_string_without_attr")
+        XCTAssertTrue(
+            seenFeatureFlags.contains("test_string_without_attr"),
+            "Should have seen impression for test_string_without_attr")
 
         cleanupClient(client)
     }
 
     private func runTest(mode: String, withProperties: Bool, expectDeduplication: Bool) {
         let client = setupClient(mode: mode)
-        
+
         let featureName = "FACUNDO_TEST"
         let evalOptions = withProperties ?
             EvaluationOptions(properties: ["test": "value"]) : nil
 
         let treatmentTimes = 5
-        for _ in 0..<treatmentTimes {
+        for _ in 0 ..< treatmentTimes {
             _ = client.getTreatment(featureName, attributes: nil, evaluationOptions: evalOptions)
         }
 
         impExp = XCTestExpectation()
-        
+
         if expectDeduplication {
             countExp = XCTestExpectation()
         }
-        
+
         client.flush()
-        
+
         wait(for: [impExp!], timeout: 10)
         if expectDeduplication {
             wait(for: [countExp!], timeout: 10)
@@ -192,25 +194,29 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
         // Check the number of impressions recorded
         let expectedCount = 1
-        XCTAssertEqual(expectedCount, impressions[featureName]?.count ?? 0,
-                       "Expected \(expectedCount) impressions for feature \(featureName)")
-        
+        XCTAssertEqual(
+            expectedCount,
+            impressions[featureName]?.count ?? 0,
+            "Expected \(expectedCount) impressions for feature \(featureName)")
+
         if expectDeduplication {
-            XCTAssertEqual(treatmentTimes - 1, counts[featureName] ?? 0,
-                            "Expected \(treatmentTimes - 1) impression count for feature \(featureName)")
+            XCTAssertEqual(
+                treatmentTimes - 1,
+                counts[featureName] ?? 0,
+                "Expected \(treatmentTimes - 1) impression count for feature \(featureName)")
         }
 
         cleanupClient(client)
     }
-    
+
     private func setupClient(mode: String) -> SplitClient {
         let notificationHelper = NotificationHelperStub()
         db = TestingHelper.createTestDatabase(name: "test")
 
         let splitConfig = createSplitConfig()
         splitConfig.impressionsMode = mode
-        
-        let key: Key = Key(matchingKey: userKey)
+
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -232,10 +238,10 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         }
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
-        
+
         return client
     }
-    
+
     private func setupClientWithImpressionListener(_ listener: @escaping SplitImpressionListener) -> SplitClient {
         let notificationHelper = NotificationHelperStub()
         db = TestingHelper.createTestDatabase(name: "test")
@@ -244,7 +250,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         splitConfig.impressionsMode = "OPTIMIZED"
         splitConfig.impressionListener = listener
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -299,7 +305,9 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
                     self.firstSplitHit = false
                     return TestDispatcherResponse(code: 200, data: Data(self.loadSplitsChangeFile().utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
@@ -342,7 +350,8 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
                     if let body = request.body?.stringRepresentation.utf8 {
                         if let impressionsCount = try? Json.decodeFrom(json: String(body), to: ImpressionsCount.self) {
                             for countPerFeature in impressionsCount.perFeature {
-                                self.counts[countPerFeature.feature] = countPerFeature.count + (self.counts[countPerFeature.feature] ?? 0)
+                                self.counts[countPerFeature.feature] = countPerFeature
+                                    .count + (self.counts[countPerFeature.feature] ?? 0)
                             }
                         }
                     }
@@ -364,7 +373,8 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
     }
 
     private func loadSplitsChangeFile() -> String {
-        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json") else {
+        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json")
+        else {
             return IntegrationHelper.emptySplitChanges(since: 99999, till: 99999)
         }
         return splitJson

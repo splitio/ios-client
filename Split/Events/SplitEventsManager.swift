@@ -42,7 +42,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
         if config.sdkReadyTimeOut > 0 {
             let readyTimedoutQueue = DispatchQueue(label: "split-event-timedout")
-            readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.sdkReadyTimeOut)) {  [weak self] in
+            readyTimedoutQueue.asyncAfter(deadline: .now() + .milliseconds(config.sdkReadyTimeOut)) { [weak self] in
                 guard let self = self else { return }
                 self.notifyInternalEvent(SplitInternalEvent.sdkReadyTimeoutReached)
             }
@@ -102,7 +102,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 self.eventsQueue.stop()
                 self.eventsQueue.stop()
             }
-
         }
     }
 
@@ -113,11 +112,12 @@ class DefaultSplitEventsManager: SplitEventsManager {
      * EXAMPLE: SDK_READY should be triggered only once
      */
     private func registerMaxAllowedExecutionTimesPerEvent() {
-
-        executionTimes = [ SplitEvent.sdkReady.toString(): 1,
-                           SplitEvent.sdkUpdated.toString(): -1,
-                           SplitEvent.sdkReadyFromCache.toString(): 1,
-                           SplitEvent.sdkReadyTimedOut.toString(): 1]
+        executionTimes = [
+            SplitEvent.sdkReady.toString(): 1,
+            SplitEvent.sdkUpdated.toString(): -1,
+            SplitEvent.sdkReadyFromCache.toString(): 1,
+            SplitEvent.sdkReadyTimedOut.toString(): 1,
+        ]
     }
 
     private func isRunning() -> Bool {
@@ -144,17 +144,17 @@ class DefaultSplitEventsManager: SplitEventsManager {
             guard let event = takeEvent() else {
                 return
             }
-            self.triggered.append(event)
+            triggered.append(event)
             switch event {
-            case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
+            case .myLargeSegmentsUpdated, .mySegmentsUpdated, .splitsUpdated:
                 if isTriggered(external: .sdkReady) {
                     trigger(event: .sdkUpdated)
                     continue
                 }
-                self.triggerSdkReadyIfNeeded()
+                triggerSdkReadyIfNeeded()
 
-            case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache,
-                    .splitsLoadedFromCache, .attributesLoadedFromCache:
+            case .attributesLoadedFromCache, .myLargeSegmentsLoadedFromCache,
+                 .mySegmentsLoadedFromCache, .splitsLoadedFromCache:
                 Logger.v("Event \(event) triggered")
                 if isTriggered(internal: .splitsLoadedFromCache),
                    isTriggered(internal: .mySegmentsLoadedFromCache),
@@ -176,11 +176,12 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     // MARK: Helper functions.
+
     func isTriggered(external event: SplitEvent) -> Bool {
         var triggered = false
         dataAccessQueue.sync {
             if let times = executionTimes[event.toString()] {
-                triggered =  (times == 0)
+                triggered = (times == 0)
             } else {
                 triggered = false
             }
@@ -194,9 +195,9 @@ class DefaultSplitEventsManager: SplitEventsManager {
            isTriggered(internal: .myLargeSegmentsUpdated),
            !isTriggered(external: .sdkReady) {
             if !isTriggered(external: .sdkReadyFromCache) {
-                self.trigger(event: .sdkReadyFromCache)
+                trigger(event: .sdkReadyFromCache)
             }
-            self.trigger(event: .sdkReady)
+            trigger(event: .sdkReady)
         }
     }
 
@@ -223,7 +224,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func executeTask(event: SplitEvent, task: SplitEventTask) {
-
         let eventName = task.event.toString()
 
         if task.runInBackground {
@@ -245,10 +245,11 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func isTriggered(internal event: SplitInternalEvent) -> Bool {
-        return triggered.filter { $0 == event }.count > 0
+        return !triggered.filter { $0 == event }.isEmpty
     }
 
     // MARK: Safe Data Access
+
     func executionTimes(for eventName: String) -> Int? {
         var times: Int?
         dataAccessQueue.sync {

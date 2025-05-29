@@ -6,10 +6,10 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-struct StorageRecordStatus {
+enum StorageRecordStatus {
     static let active: Int32 = 0 // The record should be considered to be sent to the server
     static let deleted: Int32 = 1 // The record will be deleted if post succeded
 }
@@ -84,12 +84,14 @@ class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
         self.impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.impressionsCountDao = CoreDataImpressionsCountDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: coreDataHelper)
-        self.mySegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper,
-                                                   entity: .mySegment,
-                                                   cipher: cipher)
-        self.myLargeSegmentsDao = CoreDataMySegmentsDao(coreDataHelper: coreDataHelper,
-                                                        entity: .myLargeSegment,
-                                                        cipher: cipher)
+        self.mySegmentsDao = CoreDataMySegmentsDao(
+            coreDataHelper: coreDataHelper,
+            entity: .mySegment,
+            cipher: cipher)
+        self.myLargeSegmentsDao = CoreDataMySegmentsDao(
+            coreDataHelper: coreDataHelper,
+            entity: .myLargeSegment,
+            cipher: cipher)
         self.attributesDao = CoreDataAttributesDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.uniqueKeyDao = CoreDataUniqueKeyDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.hashedImpressionDao = CoreDataHashedImpressionDao(coreDataHelper: coreDataHelper)

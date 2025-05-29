@@ -8,7 +8,6 @@
 import Foundation
 
 struct HttpParameter {
-
     let key: String
     let value: Any?
 

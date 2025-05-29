@@ -6,11 +6,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class UnsupportedMatcherIntegrationTest: XCTestCase {
-
     let apiKey = IntegrationHelper.dummyApiKey
     let matchingKey = IntegrationHelper.dummyUserKey
     let trafficType = "user"
@@ -32,8 +31,9 @@ class UnsupportedMatcherIntegrationTest: XCTestCase {
         impressionsOnListener = []
         streamingHelper = StreamingTestingHelper()
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
@@ -48,7 +48,7 @@ class UnsupportedMatcherIntegrationTest: XCTestCase {
 
     func testFeatureFlagWithUnsupportedMatcherIsPresentInManager() {
         let factory = try? startTest()
-        
+
         XCTAssertEqual(1, factory?.manager.splits.count ?? 0)
         XCTAssertEqual(1, factory?.manager.splitNames.count ?? 0)
     }
@@ -75,7 +75,10 @@ class UnsupportedMatcherIntegrationTest: XCTestCase {
         _ = factory?.client.getTreatmentWithConfig("feature_flag_for_test")
 
         sleep(1)
-        let storedImpressions = testDb.impressionDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 100)
+        let storedImpressions = testDb.impressionDao.getBy(
+            createdAt: 200,
+            status: StorageRecordStatus.active,
+            maxRows: 100)
 
         XCTAssertEqual(1, storedImpressions.count)
         XCTAssertTrue(storedImpressions[0].label == "targeting rule type unsupported by sdk")
@@ -89,8 +92,8 @@ class UnsupportedMatcherIntegrationTest: XCTestCase {
         XCTAssertEqual("targeting rule type unsupported by sdk", impressionsOnListener[0].label)
     }
 
-    private func startTest() throws -> SplitFactory?  {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+    private func startTest() throws -> SplitFactory? {
+        let splitConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 6000
         splitConfig.logLevel = .warning
         splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: false)
@@ -104,7 +107,7 @@ class UnsupportedMatcherIntegrationTest: XCTestCase {
         splitConfig.impressionListener = { impression in
             self.impressionsOnListener.append(impression)
         }
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(testDb)
         _ = builder.setHttpClient(httpClient)
@@ -146,10 +149,11 @@ class UnsupportedMatcherIntegrationTest: XCTestCase {
             if request.isSplitEndpoint() {
                 if self.splitChangesHit == 0 {
                     return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(
-                        TargetingRulesChange(featureFlags: self.loadSplitsChangeFile()!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)
-                    )))
+                        TargetingRulesChange(
+                            featureFlags: self.loadSplitsChangeFile()!,
+                            ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))))
                 }
-                self.splitChangesHit+=1
+                self.splitChangesHit += 1
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
             }
             if request.isMySegmentsEndpoint() {

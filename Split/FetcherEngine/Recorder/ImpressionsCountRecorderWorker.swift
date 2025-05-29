@@ -9,13 +9,13 @@
 import Foundation
 
 class ImpressionsCountRecorderWorker: RecorderWorker {
-
     private let countsStorage: PersistentImpressionsCountStorage
     private let countsRecorder: HttpImpressionsCountRecorder
     private let kPopCount = ServiceConstants.defaultImpressionCountRowsPop
 
-    init(countsStorage: PersistentImpressionsCountStorage,
-         countsRecorder: HttpImpressionsCountRecorder) {
+    init(
+        countsStorage: PersistentImpressionsCountStorage,
+        countsRecorder: HttpImpressionsCountRecorder) {
         self.countsStorage = countsStorage
         self.countsRecorder = countsRecorder
     }
@@ -33,7 +33,7 @@ class ImpressionsCountRecorderWorker: RecorderWorker {
                     // Removing sent impressions
                     countsStorage.delete(counts)
                     Logger.i("Impressions counts posted successfully")
-                } catch let error {
+                } catch {
                     Logger.e("Impressions counts error: \(String(describing: error))")
                     failedCounts.append(contentsOf: counts)
                 }

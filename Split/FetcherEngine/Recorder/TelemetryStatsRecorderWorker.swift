@@ -9,19 +9,18 @@
 import Foundation
 
 class TelemetryStatsRecorderWorker: RecorderWorker {
-
     private let telemetryConsumer: TelemetryConsumer
     private let statsRecorder: HttpTelemetryStatsRecorder
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage: MySegmentsStorage
     private let myLargeSegmentsStorage: MySegmentsStorage
 
-    init(telemetryStatsRecorder: HttpTelemetryStatsRecorder,
-         telemetryConsumer: TelemetryConsumer,
-         splitsStorage: SplitsStorage,
-         mySegmentsStorage: MySegmentsStorage,
-         myLargeSegmentsStorage: MySegmentsStorage) {
-
+    init(
+        telemetryStatsRecorder: HttpTelemetryStatsRecorder,
+        telemetryConsumer: TelemetryConsumer,
+        splitsStorage: SplitsStorage,
+        mySegmentsStorage: MySegmentsStorage,
+        myLargeSegmentsStorage: MySegmentsStorage) {
         self.telemetryConsumer = telemetryConsumer
         self.statsRecorder = telemetryStatsRecorder
         self.splitsStorage = splitsStorage
@@ -38,7 +37,7 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
         let stats = buildRequestData()
         var sendCount = 1
         while !send(stats: stats) && sendCount < ServiceConstants.retryCount {
-            sendCount+=1
+            sendCount += 1
             ThreadUtils.delay(seconds: ServiceConstants.retryTimeInSeconds)
         }
     }
@@ -47,7 +46,7 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
         do {
             _ = try statsRecorder.execute(stats)
             Logger.d("Telemetry stats posted successfully")
-        } catch let error {
+        } catch {
             Logger.e("Telemetry stats: \(String(describing: error))")
             return false
         }
@@ -56,25 +55,26 @@ class TelemetryStatsRecorderWorker: RecorderWorker {
 
     private func buildRequestData() -> TelemetryStats {
         let storage = telemetryConsumer
-        return TelemetryStats(lastSynchronization: storage.getLastSync(),
-                              methodLatencies: storage.popMethodLatencies(),
-                              methodExceptions: storage.popMethodExceptions(),
-                              httpErrors: storage.popHttpErrors(),
-                              httpLatencies: storage.popHttpLatencies(),
-                              tokenRefreshes: storage.popTokenRefreshes(),
-                              authRejections: storage.popAuthRejections(),
-                              impressionsQueued: storage.getImpressionStats(type: .queued),
-                              impressionsDeduped: storage.getImpressionStats(type: .deduped),
-                              impressionsDropped: storage.getImpressionStats(type: .dropped),
-                              splitCount: splitsStorage.getCount(),
-                              segmentCount: mySegmentsStorage.getCount(),
-                              largeSegmentCount: myLargeSegmentsStorage.getCount(),
-                              segmentKeyCount: nil,
-                              sessionLengthMs: storage.getSessionLength(),
-                              eventsQueued: storage.getEventStats(type: .queued),
-                              eventsDropped: storage.getEventStats(type: .dropped),
-                              streamingEvents: storage.popStreamingEvents(),
-                              tags: storage.popTags(),
-                              updatesFromSse: storage.popUpdatesFromSse())
+        return TelemetryStats(
+            lastSynchronization: storage.getLastSync(),
+            methodLatencies: storage.popMethodLatencies(),
+            methodExceptions: storage.popMethodExceptions(),
+            httpErrors: storage.popHttpErrors(),
+            httpLatencies: storage.popHttpLatencies(),
+            tokenRefreshes: storage.popTokenRefreshes(),
+            authRejections: storage.popAuthRejections(),
+            impressionsQueued: storage.getImpressionStats(type: .queued),
+            impressionsDeduped: storage.getImpressionStats(type: .deduped),
+            impressionsDropped: storage.getImpressionStats(type: .dropped),
+            splitCount: splitsStorage.getCount(),
+            segmentCount: mySegmentsStorage.getCount(),
+            largeSegmentCount: myLargeSegmentsStorage.getCount(),
+            segmentKeyCount: nil,
+            sessionLengthMs: storage.getSessionLength(),
+            eventsQueued: storage.getEventStats(type: .queued),
+            eventsDropped: storage.getEventStats(type: .dropped),
+            streamingEvents: storage.popStreamingEvents(),
+            tags: storage.popTags(),
+            updatesFromSse: storage.popUpdatesFromSse())
     }
 }

@@ -8,13 +8,13 @@
 import Foundation
 
 class InListSemverMatcher: BaseMatcher, MatcherProtocol {
-
     var targetList: Set<Semver> = Set()
 
-    init(data: [String]?,
-         negate: Bool? = nil,
-         attribute: String? = nil,
-         type: MatcherType? = nil) {
+    init(
+        data: [String]?,
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
         self.targetList = Set<Semver>(data?.compactMap { item in
             Semver.build(version: item)

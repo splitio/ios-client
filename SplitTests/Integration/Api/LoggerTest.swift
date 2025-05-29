@@ -9,11 +9,10 @@
 import Foundation
 @testable import Split
 
-import XCTest
 @testable import Split
+import XCTest
 
-class LoggerTest : XCTestCase {
-
+class LoggerTest: XCTestCase {
     let printer = LogPrinterStub()
 
     override func setUp() {
@@ -94,7 +93,7 @@ class LoggerTest : XCTestCase {
     }
 
     private func isLogged(level: SplitLogLevel) -> Bool {
-        return printer.logs.filter { $0.contains("\(level.rawValue)") }.count > 0
+        return !printer.logs.filter { $0.contains("\(level.rawValue)") }.isEmpty
     }
 
     private func logAll() {
@@ -110,4 +109,3 @@ class LoggerTest : XCTestCase {
         printer.clear()
     }
 }
-

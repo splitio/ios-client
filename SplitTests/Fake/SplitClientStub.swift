@@ -10,8 +10,7 @@ import Foundation
 @testable import Split
 
 class SplitClientStub: SplitClient {
-
-    func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
+    func getTreatment(_ split: String, attributes: [String: Any]?) -> String {
         return SplitConstants.control
     }
 
@@ -19,15 +18,18 @@ class SplitClientStub: SplitClient {
         return SplitConstants.control
     }
 
-    func getTreatment(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> String {
+    func getTreatment(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> String {
         return SplitConstants.control
     }
 
-    func getTreatments(splits: [String], attributes: [String : Any]?) -> [String : String] {
+    func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String] {
         return ["feature": SplitConstants.control]
     }
-    
-    func getTreatments(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
+
+    func getTreatments(
+        splits: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: String] {
         return ["feature": SplitConstants.control]
     }
 
@@ -35,65 +37,79 @@ class SplitClientStub: SplitClient {
         return SplitResult(treatment: SplitConstants.control)
     }
 
-    func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?) -> SplitResult {
+    func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?) -> SplitResult {
         return SplitResult(treatment: SplitConstants.control)
     }
 
-    func getTreatmentWithConfig(_ split: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult {
+    func getTreatmentWithConfig(
+        _ split: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> SplitResult {
         return SplitResult(treatment: SplitConstants.control)
     }
-    
-    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?) -> [String : SplitResult] {
-        return ["feature": SplitResult(treatment: SplitConstants.control)]
-    }
-    
-    func getTreatmentsWithConfig(splits: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
+
+    func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult] {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : String] {
+    func getTreatmentsWithConfig(
+        splits: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
+        return ["feature": SplitResult(treatment: SplitConstants.control)]
+    }
+
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
         return ["feature": SplitConstants.control]
     }
 
-    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
+    func getTreatmentsByFlagSet(
+        _ flagSet: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: String] {
         return ["feature": SplitConstants.control]
     }
 
-    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : String] {
+    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String] {
         return ["feature": SplitConstants.control]
     }
 
-    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : String] {
+    func getTreatmentsByFlagSets(
+        _ flagSets: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: String] {
         return ["feature": SplitConstants.control]
     }
 
-    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?) -> [String : SplitResult] {
+    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
+    func getTreatmentsWithConfigByFlagSet(
+        _ flagSet: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?) -> [String : SplitResult] {
+    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult] {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String : Any]?, evaluationOptions: EvaluationOptions?) -> [String : SplitResult] {
+    func getTreatmentsWithConfigByFlagSets(
+        _ flagSets: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
         return ["feature": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
         return true
@@ -111,19 +127,19 @@ class SplitClientStub: SplitClient {
         return true
     }
 
-    func track(trafficType: String, eventType: String, properties: [String:Any]?) -> Bool {
+    func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool {
         return true
     }
 
-    func track(trafficType: String, eventType: String, value: Double, properties: [String:Any]?) -> Bool {
+    func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool {
         return true
     }
 
-    func track(eventType: String, properties: [String:Any]?) -> Bool {
+    func track(eventType: String, properties: [String: Any]?) -> Bool {
         return true
     }
 
-    func track(eventType: String, value: Double, properties: [String:Any]?) -> Bool {
+    func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool {
         return true
     }
 
@@ -151,12 +167,9 @@ class SplitClientStub: SplitClient {
         return true
     }
 
-    func flush() {
-    }
+    func flush() {}
 
-    func destroy() {
-    }
+    func destroy() {}
 
-    func destroy(completion: (() -> Void)?) {
-    }
+    func destroy(completion: (() -> Void)?) {}
 }

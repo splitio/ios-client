@@ -9,7 +9,6 @@
 import Foundation
 
 @objc enum Status: Int, Codable {
-
     public typealias RawValue = Int
 
     enum CodingKeys: String, CodingKey {

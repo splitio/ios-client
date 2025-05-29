@@ -9,11 +9,10 @@
 import Foundation
 import XCTest
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SegmentsSyncHelperTests: XCTestCase {
-
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
     var myLargeSegmentsStorage: ByKeyMySegmentsStorageStub!
@@ -31,12 +30,13 @@ class SegmentsSyncHelperTests: XCTestCase {
         config.cdnBackoffTimeBaseInSecs = 1
         config.cdnBackoffTimeMaxInSecs = 1
         changeChecker = MySegmentsChangesCheckerMock()
-        syncHelper = DefaultSegmentsSyncHelper(userKey: userKey,
-                                        segmentsFetcher: mySegmentsFetcher,
-                                        mySegmentsStorage: mySegmentsStorage,
-                                        myLargeSegmentsStorage: myLargeSegmentsStorage,
-                                        changeChecker: changeChecker,
-                                        splitConfig: config)
+        syncHelper = DefaultSegmentsSyncHelper(
+            userKey: userKey,
+            segmentsFetcher: mySegmentsFetcher,
+            mySegmentsStorage: mySegmentsStorage,
+            myLargeSegmentsStorage: myLargeSegmentsStorage,
+            changeChecker: changeChecker,
+            splitConfig: config)
     }
 
     func testCdnByPassNoTillNoChange() throws {
@@ -57,9 +57,10 @@ class SegmentsSyncHelperTests: XCTestCase {
         mySegmentsFetcher.countExp = exp
         mySegmentsFetcher.limitCountExp = 3
 
-        mySegmentsFetcher.segments = TestingHelper.buildSegmentsChange(count: 3,
-                                                                       mlsAscOrder: false,
-                                                                       segmentsChanged: segmentsChanged)
+        mySegmentsFetcher.segments = TestingHelper.buildSegmentsChange(
+            count: 3,
+            mlsAscOrder: false,
+            segmentsChanged: segmentsChanged)
         let res = try syncHelper.sync(msTill: goalCn, mlsTill: goalCn, headers: nil)
 
         sleep(1)
@@ -93,7 +94,7 @@ class SegmentsSyncHelperTests: XCTestCase {
         var msCn: Int64 = 0
         var mlsCn: Int64 = 0
 
-        for i in 0..<halfCount {
+        for i in 0 ..< halfCount {
             msCn = Int64(50 - i)
             mlsCn = Int64(62 - i)
             segments.append(TestingHelper.newAllSegmentsChange(ms: ["s1"], msCn: msCn, mls: ["ls1"], mlsCn: mlsCn))
@@ -116,7 +117,6 @@ class SegmentsSyncHelperTests: XCTestCase {
         XCTAssertNotNil(mySegmentsFetcher.lastTill)
         XCTAssertEqual(400, res.msChangeNumber)
         XCTAssertEqual(500, res.mlsChangeNumber)
-
     }
 
     func testDidffGoallCnMs() throws {
@@ -143,10 +143,18 @@ class SegmentsSyncHelperTests: XCTestCase {
         let goalMlsCn = 500.asInt64()
         if msCnBigger {
             segments.append(TestingHelper.newAllSegmentsChange(ms: ["s1"], msCn: goalMsCn, mls: ["ls1"], mlsCn: 400))
-            segments.append(TestingHelper.newAllSegmentsChange(ms: ["s1"], msCn: goalMsCn, mls: ["ls1"], mlsCn: goalMlsCn))
+            segments.append(TestingHelper.newAllSegmentsChange(
+                ms: ["s1"],
+                msCn: goalMsCn,
+                mls: ["ls1"],
+                mlsCn: goalMlsCn))
         } else {
             segments.append(TestingHelper.newAllSegmentsChange(ms: ["s1"], msCn: 300, mls: ["ls1"], mlsCn: goalMlsCn))
-            segments.append(TestingHelper.newAllSegmentsChange(ms: ["s1"], msCn: goalMsCn, mls: ["ls1"], mlsCn: goalMlsCn))
+            segments.append(TestingHelper.newAllSegmentsChange(
+                ms: ["s1"],
+                msCn: goalMsCn,
+                mls: ["ls1"],
+                mlsCn: goalMlsCn))
         }
         mySegmentsFetcher.segments = segments
 
@@ -161,5 +169,3 @@ class SegmentsSyncHelperTests: XCTestCase {
         XCTAssertEqual(goalMlsCn, res.mlsChangeNumber)
     }
 }
-
-

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ImpressionsConstants {
+enum ImpressionsConstants {
     static let noConditionMatched: String = "default rule"
     static let killed: String = "killed"
     static let splitNotFound: String = "definition not found"

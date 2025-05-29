@@ -29,7 +29,6 @@ import Foundation
 ///
 /// Only an explicit proxy outdated error triggers fallback. Generic 400s do not.
 class OutdatedSplitProxyHandler {
-
     /// Enum representing the proxy handling types.
     private enum ProxyHandlingType {
         /// No action
@@ -40,16 +39,16 @@ class OutdatedSplitProxyHandler {
         case recovery
     }
 
-    private static let PREVIOUS_SPEC = "1.2"
+    private static let previousSpecConst = "1.2"
 
     private let latestSpec: String
     private let previousSpec: String
     private let proxyCheckIntervalMillis: Int64
-    
+
     private var lastProxyCheckTimestamp: Int64 = 0
     private let generalInfoStorage: GeneralInfoStorage
     private var currentProxyHandlingType: ProxyHandlingType = .none
-    
+
     /// Initializes a new OutdatedSplitProxyHandler with default previous spec.
     ///
     /// - Parameters:
@@ -57,7 +56,11 @@ class OutdatedSplitProxyHandler {
     ///   - generalInfoStorage: The general info storage
     ///   - proxyCheckIntervalMillis: The custom proxy check interval
     convenience init(flagSpec: String, generalInfoStorage: GeneralInfoStorage, proxyCheckIntervalMillis: Int64) {
-        self.init(flagSpec: flagSpec, previousSpec: OutdatedSplitProxyHandler.PREVIOUS_SPEC, generalInfoStorage: generalInfoStorage, proxyCheckIntervalMillis: proxyCheckIntervalMillis)
+        self.init(
+            flagSpec: flagSpec,
+            previousSpec: OutdatedSplitProxyHandler.previousSpecConst,
+            generalInfoStorage: generalInfoStorage,
+            proxyCheckIntervalMillis: proxyCheckIntervalMillis)
     }
 
     /// Initializes a new OutdatedSplitProxyHandler with custom previous spec.
@@ -67,7 +70,11 @@ class OutdatedSplitProxyHandler {
     ///   - previousSpec: The previous spec version
     ///   - generalInfoStorage: The general info storage
     ///   - proxyCheckIntervalMillis: The custom proxy check interval
-    init(flagSpec: String, previousSpec: String, generalInfoStorage: GeneralInfoStorage, proxyCheckIntervalMillis: Int64) {
+    init(
+        flagSpec: String,
+        previousSpec: String,
+        generalInfoStorage: GeneralInfoStorage,
+        proxyCheckIntervalMillis: Int64) {
         self.latestSpec = flagSpec
         self.previousSpec = previousSpec
         self.proxyCheckIntervalMillis = proxyCheckIntervalMillis
@@ -83,7 +90,7 @@ class OutdatedSplitProxyHandler {
     /// Performs a periodic proxy check to attempt recovery.
     func performProxyCheck() {
         let lastTimestamp = getLastProxyCheckTimestamp()
-        
+
         if lastTimestamp == 0 {
             updateHandlingType(.none)
         } else if Date.nowMillis() - lastTimestamp > proxyCheckIntervalMillis {

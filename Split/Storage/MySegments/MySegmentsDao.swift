@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 protocol MySegmentsDao {
     func getBy(userKey: String) -> SegmentChange?
@@ -19,12 +19,12 @@ protocol MySegmentsDao {
 /// Since Segments and LargeSegments are handled the same way,
 /// it is not necessary to create a new DAO class for them.
 class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
-
     private let coreDataEntity: CoreDataEntity
     private let cipher: Cipher?
-    init(coreDataHelper: CoreDataHelper,
-         entity: CoreDataEntity,
-         cipher: Cipher? = nil) {
+    init(
+        coreDataHelper: CoreDataHelper,
+        entity: CoreDataEntity,
+        cipher: Cipher? = nil) {
         self.cipher = cipher
         self.coreDataEntity = entity
         super.init(coreDataHelper: coreDataHelper)
@@ -45,7 +45,6 @@ class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
     }
 
     func update(userKey: String, change: SegmentChange) {
-
         executeAsync { [weak self] in
             guard let self = self else {
                 return
@@ -77,9 +76,10 @@ class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
 
     private func getByUserKey(_ userKey: String) -> MySegmentEntity? {
         let predicate = NSPredicate(format: "userKey == %@", cipher?.encrypt(userKey) ?? userKey)
-        let entities = self.coreDataHelper.fetch(entity: coreDataEntity,
-                                                 where: predicate).compactMap { return $0 as? MySegmentEntity }
-        if entities.count > 0 {
+        let entities = coreDataHelper.fetch(
+            entity: coreDataEntity,
+            where: predicate).compactMap { $0 as? MySegmentEntity }
+        if !entities.isEmpty {
             return entities[0]
         }
         return nil

@@ -14,7 +14,6 @@ protocol FlagSetsValidator {
 }
 
 struct DefaultFlagSetsValidator: FlagSetsValidator {
-
     private var telemetryProducer: TelemetryInitProducer?
 
     init(telemetryProducer: TelemetryInitProducer?) {
@@ -26,9 +25,10 @@ struct DefaultFlagSetsValidator: FlagSetsValidator {
     func validateOnEvaluation(_ values: [String], calledFrom method: String, setsInFilter: [String]) -> [String] {
         let filterSet = Set(setsInFilter)
         return cleanAndValidateValues(values, calledFrom: method).filter { value in
-            if filterSet.count > 0, !filterSet.contains(value) {
-                Logger.w("\(method): you passed Flag Set: \(value) and is not part of " +
-                         "the configured Flag set list, ignoring the request.")
+            if !filterSet.isEmpty, !filterSet.contains(value) {
+                Logger.w(
+                    "\(method): you passed Flag Set: \(value) and is not part of " +
+                        "the configured Flag set list, ignoring the request.")
                 return false
             }
             return true
@@ -43,10 +43,11 @@ struct DefaultFlagSetsValidator: FlagSetsValidator {
                 Logger.w("\(method): Flag Set name <<\(value)>> has extra whitespace, trimming")
             }
             if !isValid(cleanValue) {
-                Logger.w("\(method): you passed \(cleanValue), Flag Set must adhere to the regular " +
-                         "expressions \(setRegex). This means an Flag Set must be start with a letter, " +
-                         "be in lowercase, alphanumeric and have a max length of 50 characters." +
-                         "\(cleanValue) was discarded.")
+                Logger.w(
+                    "\(method): you passed \(cleanValue), Flag Set must adhere to the regular " +
+                        "expressions \(setRegex). This means an Flag Set must be start with a letter, " +
+                        "be in lowercase, alphanumeric and have a max length of 50 characters." +
+                        "\(cleanValue) was discarded.")
                 continue
             }
             if !cleanSets.insert(cleanValue).inserted {

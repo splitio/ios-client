@@ -25,7 +25,6 @@ class UpdateWorker<T: NotificationTypeField> {
 }
 
 class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
-
     private let synchronizer: Synchronizer
     private let splitsStorage: SplitsStorage
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
@@ -36,14 +35,15 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
     private let telemetryProducer: TelemetryRuntimeProducer?
     var decomProvider: CompressionProvider = DefaultDecompressionProvider()
 
-    init(synchronizer: Synchronizer,
-         splitsStorage: SplitsStorage,
-         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
-         splitChangeProcessor: SplitChangeProcessor,
-         ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
-         featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder,
-         ruleBasedSegmentsPayloadDecoder: DefaultRuleBasedSegmentsPayloadDecoder,
-         telemetryProducer: TelemetryRuntimeProducer?) {
+    init(
+        synchronizer: Synchronizer,
+        splitsStorage: SplitsStorage,
+        ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
+        splitChangeProcessor: SplitChangeProcessor,
+        ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
+        featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder,
+        ruleBasedSegmentsPayloadDecoder: DefaultRuleBasedSegmentsPayloadDecoder,
+        telemetryProducer: TelemetryRuntimeProducer?) {
         self.synchronizer = synchronizer
         self.splitsStorage = splitsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
@@ -65,14 +65,14 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
             }
 
             if let previousChangeNumber = notification.previousChangeNumber,
-                previousChangeNumber == storedChangeNumber,
-                let payload = notification.definition,
-                let compressionType = notification.compressionType {
-
-                if processTargetingRuleUpdate(notification: notification,
-                                             payload: payload,
-                                             compressionType: compressionType,
-                                             previousChangeNumber: previousChangeNumber) {
+               previousChangeNumber == storedChangeNumber,
+               let payload = notification.definition,
+               let compressionType = notification.compressionType {
+                if processTargetingRuleUpdate(
+                    notification: notification,
+                    payload: payload,
+                    compressionType: compressionType,
+                    previousChangeNumber: previousChangeNumber) {
                     return
                 }
             }
@@ -100,23 +100,25 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
     }
 
     /// Process a targeting rule update notification and return true if successful
-    private func processTargetingRuleUpdate(notification: TargetingRuleUpdateNotification,
-                                           payload: String,
-                                           compressionType: CompressionType,
-                                           previousChangeNumber: Int64) -> Bool {
-
+    private func processTargetingRuleUpdate(
+        notification: TargetingRuleUpdateNotification,
+        payload: String,
+        compressionType: CompressionType,
+        previousChangeNumber: Int64) -> Bool {
         switch notification.type {
         case .splitUpdate:
-            return processSplitUpdate(payload: payload,
-                                     compressionType: compressionType,
-                                     previousChangeNumber: previousChangeNumber,
-                                     changeNumber: notification.changeNumber)
+            return processSplitUpdate(
+                payload: payload,
+                compressionType: compressionType,
+                previousChangeNumber: previousChangeNumber,
+                changeNumber: notification.changeNumber)
 
         case .ruleBasedSegmentUpdate:
-            return processRuleBasedSegmentUpdate(payload: payload,
-                                               compressionType: compressionType,
-                                               previousChangeNumber: previousChangeNumber,
-                                               changeNumber: notification.changeNumber)
+            return processRuleBasedSegmentUpdate(
+                payload: payload,
+                compressionType: compressionType,
+                previousChangeNumber: previousChangeNumber,
+                changeNumber: notification.changeNumber)
 
         default:
             return false
@@ -124,30 +126,32 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
     }
 
     /// Process a split update notification
-    private func processSplitUpdate(payload: String,
-                                   compressionType: CompressionType,
-                                   previousChangeNumber: Int64,
-                                   changeNumber: Int64) -> Bool {
+    private func processSplitUpdate(
+        payload: String,
+        compressionType: CompressionType,
+        previousChangeNumber: Int64,
+        changeNumber: Int64) -> Bool {
         do {
-            let split = try self.payloadDecoder.decode(
+            let split = try payloadDecoder.decode(
                 payload: payload,
-                compressionUtil: self.decomProvider.decompressor(for: compressionType))
+                compressionUtil: decomProvider.decompressor(for: compressionType))
 
             if !allRuleBasedSegmentsExist(in: split) {
                 return false
             }
 
-            let change = SplitChange(splits: [split],
-                                     since: previousChangeNumber,
-                                     till: changeNumber)
+            let change = SplitChange(
+                splits: [split],
+                since: previousChangeNumber,
+                till: changeNumber)
 
             Logger.v("Split update received: \(change)")
 
-            if self.splitsStorage.update(splitChange: self.splitChangeProcessor.process(change)) {
-                self.synchronizer.notifyFeatureFlagsUpdated()
+            if splitsStorage.update(splitChange: splitChangeProcessor.process(change)) {
+                synchronizer.notifyFeatureFlagsUpdated()
             }
 
-            self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
+            telemetryProducer?.recordUpdatesFromSse(type: .splits)
             return true
         } catch {
             Logger.e("Error decoding feature flags payload from notification: \(error)")
@@ -156,30 +160,33 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
     }
 
     /// Process a rule-based segment update notification
-    private func processRuleBasedSegmentUpdate(payload: String,
-                                             compressionType: CompressionType,
-                                             previousChangeNumber: Int64,
-                                             changeNumber: Int64) -> Bool {
+    private func processRuleBasedSegmentUpdate(
+        payload: String,
+        compressionType: CompressionType,
+        previousChangeNumber: Int64,
+        changeNumber: Int64) -> Bool {
         do {
-            let rbs = try self.ruleBasedSegmentsPayloadDecoder.decode(
+            let rbs = try ruleBasedSegmentsPayloadDecoder.decode(
                 payload: payload,
-                compressionUtil: self.decomProvider.decompressor(for: compressionType))
+                compressionUtil: decomProvider.decompressor(for: compressionType))
 
-            let change = RuleBasedSegmentChange(segments: [rbs],
-                                             since: previousChangeNumber,
-                                             till: changeNumber)
+            let change = RuleBasedSegmentChange(
+                segments: [rbs],
+                since: previousChangeNumber,
+                till: changeNumber)
 
             Logger.v("RBS update received: \(change)")
 
             let processedChange = ruleBasedSegmentsChangeProcessor.process(change)
 
-            if self.ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd,
-                                                  toRemove: processedChange.toRemove,
-                                                  changeNumber: processedChange.changeNumber) {
-                self.synchronizer.notifyFeatureFlagsUpdated()
+            if ruleBasedSegmentsStorage.update(
+                toAdd: processedChange.toAdd,
+                toRemove: processedChange.toRemove,
+                changeNumber: processedChange.changeNumber) {
+                synchronizer.notifyFeatureFlagsUpdated()
             }
 
-            self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
+            telemetryProducer?.recordUpdatesFromSse(type: .splits)
             return true
         } catch {
             Logger.e("Error decoding rule based segments payload from notification: \(error)")
@@ -206,7 +213,6 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
 }
 
 class SplitKillWorker: UpdateWorker<SplitKillNotification> {
-
     private let synchronizer: Synchronizer
     private let splitsStorage: SplitsStorage
 
@@ -249,7 +255,7 @@ struct DefaultDecompressionProvider: CompressionProvider {
         switch type {
         case .gzip:
             return gzip
-        case.zlib:
+        case .zlib:
             return zlib
         default:
             return compressionNone

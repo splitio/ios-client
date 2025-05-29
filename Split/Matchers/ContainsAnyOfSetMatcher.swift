@@ -8,14 +8,13 @@
 import Foundation
 
 class ContainsAnyOfSetMatcher: BaseMatcher, MatcherProtocol {
-
     var data: Set<String>?
 
-    init(data: [String]?,
-         negate: Bool? = nil,
-         attribute: String? = nil,
-         type: MatcherType? = nil) {
-
+    init(
+        data: [String]?,
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
 
         if let dataElements = data {
@@ -36,6 +35,6 @@ class ContainsAnyOfSetMatcher: BaseMatcher, MatcherProtocol {
         guard let matchValueSet = setToCompare, let dataElements = data else {
             return false
         }
-        return dataElements.intersection(matchValueSet).count > 0
+        return !dataElements.intersection(matchValueSet).isEmpty
     }
 }

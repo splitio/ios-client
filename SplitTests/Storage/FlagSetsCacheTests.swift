@@ -6,28 +6,26 @@
 //  Copyright © 2023 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class FlagSetsCacheTests: XCTestCase {
-
     var cache: FlagSetsCache!
 
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testAddToFlagSetsNoFilter() {
         cache = DefaultFlagSetsCache(setsInFilter: nil)
 
-        for i in 1..<3 {
+        for i in 1 ..< 3 {
             cache.addToFlagSets(TestingHelper.createSplit(name: "name_\(i)", sets: ["s1", "s2"]))
         }
 
-        for i in 1..<3 {
+        for i in 1 ..< 3 {
             cache.addToFlagSets(TestingHelper.createSplit(name: "name_1\(i)", sets: ["s2"]))
         }
 
-        for i in 1..<3 {
+        for i in 1 ..< 3 {
             cache.addToFlagSets(TestingHelper.createSplit(name: "name_2\(i)", sets: ["s3"]))
         }
 
@@ -38,7 +36,7 @@ class FlagSetsCacheTests: XCTestCase {
 
     func testRemoveFromFlagSetsNoFilter() {
         cache = DefaultFlagSetsCache(setsInFilter: nil)
-        for i in 1..<4 {
+        for i in 1 ..< 4 {
             cache.addToFlagSets(TestingHelper.createSplit(name: "name_\(i)", sets: ["s1", "s2", "s3"]))
         }
 
@@ -57,15 +55,15 @@ class FlagSetsCacheTests: XCTestCase {
     func testAddToFlagSetsWithFilter() {
         cache = DefaultFlagSetsCache(setsInFilter: ["s1", "s2", "s5"])
 
-        for i in 1..<3 {
+        for i in 1 ..< 3 {
             cache.addToFlagSets(TestingHelper.createSplit(name: "name_\(i)", sets: ["s1", "s2"]))
         }
 
-        for i in 1..<3 {
+        for i in 1 ..< 3 {
             cache.addToFlagSets(TestingHelper.createSplit(name: "name_1\(i)", sets: ["s2", "s5"]))
         }
 
-        for i in 1..<3 {
+        for i in 1 ..< 3 {
             cache.addToFlagSets(TestingHelper.createSplit(name: "name_2\(i)", sets: ["s3"]))
         }
 
@@ -82,5 +80,3 @@ class FlagSetsCacheTests: XCTestCase {
         return SplitFilter(type: .bySet, values: sets)
     }
 }
-
-

@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SynchronizerTest: XCTestCase {
-
     var mySegmentsSyncWorker: RetryableSyncWorkerStub!
     var persistentSplitsStorage: PersistentSplitsStorageStub!
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
@@ -37,10 +36,10 @@ class SynchronizerTest: XCTestCase {
         synchronizer = buildSynchronizer()
     }
 
-    func buildSynchronizer(impressionsAccumulator: RecorderFlushChecker? = nil,
-                           eventsAccumulator: RecorderFlushChecker? = nil,
-                           syncEnabled: Bool = true) -> Synchronizer {
-
+    func buildSynchronizer(
+        impressionsAccumulator: RecorderFlushChecker? = nil,
+        eventsAccumulator: RecorderFlushChecker? = nil,
+        syncEnabled: Bool = true) -> Synchronizer {
         eventsManager = SplitEventsManagerStub()
         mySegmentsSyncWorker = RetryableSyncWorkerStub()
 
@@ -51,27 +50,28 @@ class SynchronizerTest: XCTestCase {
         telemetryProducer = TelemetryStorageStub()
         flagSetsCache = FlagSetsCacheMock()
 
-        let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
-                                                     splitsStorage: SplitsStorageStub(),
-                                                     persistentSplitsStorage: PersistentSplitsStorageStub(),
-                                                     impressionsStorage: ImpressionsStorageStub(),
-                                                     persistentImpressionsStorage: PersistentImpressionsStorageStub(),
-                                                     impressionsCountStorage: PersistentImpressionsCountStorageStub(),
-                                                     eventsStorage: EventsStorageStub(),
-                                                     persistentEventsStorage: PersistentEventsStorageStub(),
-                                                     telemetryStorage: telemetryProducer,
-                                                     mySegmentsStorage: MySegmentsStorageStub(),
-                                                     myLargeSegmentsStorage: MySegmentsStorageStub(),
-                                                     attributesStorage: AttributesStorageStub(),
-                                                     uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
-                                                     flagSetsCache: flagSetsCache,
-                                                     persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
-                                                     hashedImpressionsStorage: HashedImpressionsStorageMock(),
-                                                     generalInfoStorage: GeneralInfoStorageMock(),
-                                                     ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
-                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
+        let storageContainer = SplitStorageContainer(
+            splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
+            splitsStorage: SplitsStorageStub(),
+            persistentSplitsStorage: PersistentSplitsStorageStub(),
+            impressionsStorage: ImpressionsStorageStub(),
+            persistentImpressionsStorage: PersistentImpressionsStorageStub(),
+            impressionsCountStorage: PersistentImpressionsCountStorageStub(),
+            eventsStorage: EventsStorageStub(),
+            persistentEventsStorage: PersistentEventsStorageStub(),
+            telemetryStorage: telemetryProducer,
+            mySegmentsStorage: MySegmentsStorageStub(),
+            myLargeSegmentsStorage: MySegmentsStorageStub(),
+            attributesStorage: AttributesStorageStub(),
+            uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
+            flagSetsCache: flagSetsCache,
+            persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
+            hashedImpressionsStorage: HashedImpressionsStorageMock(),
+            generalInfoStorage: GeneralInfoStorageMock(),
+            ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
+            persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
 
-        splitConfig =  SplitClientConfig()
+        splitConfig = SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled
         splitConfig.sync = SyncConfig.builder().addSplitFilter(SplitFilter.byName(["SPLIT1"])).build()
 
@@ -81,20 +81,20 @@ class SynchronizerTest: XCTestCase {
 
         fFlagsSynchronizer = FeatureFlagsSynchronizerStub()
 
-        synchronizer = DefaultSynchronizer(splitConfig: splitConfig,
-                                           defaultUserKey: userKey,
-                                           featureFlagsSynchronizer: fFlagsSynchronizer,
-                                           telemetrySynchronizer: telemetrySynchronizer,
-                                           byKeyFacade: byKeyApiFacade,
-                                           splitStorageContainer: storageContainer,
-                                           impressionsTracker: impressionsTracker,
-                                           eventsSynchronizer: eventsSynchronizer,
-                                           splitEventsManager: eventsManager)
+        synchronizer = DefaultSynchronizer(
+            splitConfig: splitConfig,
+            defaultUserKey: userKey,
+            featureFlagsSynchronizer: fFlagsSynchronizer,
+            telemetrySynchronizer: telemetrySynchronizer,
+            byKeyFacade: byKeyApiFacade,
+            splitStorageContainer: storageContainer,
+            impressionsTracker: impressionsTracker,
+            eventsSynchronizer: eventsSynchronizer,
+            splitEventsManager: eventsManager)
         return synchronizer
     }
 
     func testSyncAll() {
-
         synchronizer.syncAll()
 
         XCTAssertTrue(fFlagsSynchronizer.synchronizeCalled)
@@ -102,14 +102,12 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testLoadSplits() {
-
         synchronizer.loadSplitsFromCache()
 
         XCTAssertTrue(fFlagsSynchronizer.loadCalled)
     }
 
     func testLoadMySegmentsFromCache() {
-
         synchronizer.loadMySegmentsFromCache(forKey: userKey)
 
         ThreadUtils.delay(seconds: 0.2)
@@ -118,14 +116,12 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testSynchronizeMySegments() {
-
         synchronizer.synchronizeMySegments(forKey: userKey)
 
         XCTAssertTrue(byKeyApiFacade.syncMySegmentsCalled[userKey] ?? false)
     }
 
     func testForceSynchronizeMySegments() {
-
         let cn = SegmentsChangeNumber(msChangeNumber: 100, mlsChangeNumber: 200)
         synchronizer.forceMySegmentsSync(forKey: userKey, changeNumbers: cn, delay: 5)
 
@@ -136,14 +132,12 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testSynchronizeSplitsWithChangeNumber() {
-
         synchronizer.synchronizeSplits(changeNumber: 101)
 
         XCTAssertTrue(fFlagsSynchronizer.synchronizeNumberCalled)
     }
 
     func testStartPeriodicFetching() {
-
         synchronizer.startPeriodicFetching()
 
         XCTAssertTrue(fFlagsSynchronizer.startPeriodicSyncCalled)
@@ -151,7 +145,6 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testStartPeriodicFetchingSingleModeEnabled() {
-
         synchronizer = buildSynchronizer(syncEnabled: false)
         synchronizer.startPeriodicFetching()
 
@@ -160,7 +153,6 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testUpdateSplitsSingleModeEnabled() {
-
         synchronizer = buildSynchronizer(syncEnabled: false)
         synchronizer.synchronizeSplits(changeNumber: -1)
 
@@ -177,7 +169,6 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testStopPeriodicFetching() {
-
         synchronizer.stopPeriodicFetching()
 
         XCTAssertTrue(fFlagsSynchronizer.stopPeriodicSyncCalled)
@@ -225,7 +216,6 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testFlush() {
-
         synchronizer.flush()
         sleep(1)
         XCTAssertTrue(impressionsTracker.flushCalled)
@@ -233,8 +223,6 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testDestroy() {
-
-
         synchronizer.synchronizeSplits(changeNumber: 101)
         synchronizer.synchronizeSplits(changeNumber: 102)
 
@@ -246,16 +234,12 @@ class SynchronizerTest: XCTestCase {
     }
 
     func testEventPush() {
-
-
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             synchronizer.pushEvent(event: EventDTO(trafficType: "t1", eventType: "e\(i)"))
         }
 
-
         ThreadUtils.delay(seconds: 1)
         XCTAssertTrue(eventsSynchronizer.pushCalled)
-
     }
 
     // When SDK endpoint credential validation fails
@@ -276,7 +260,7 @@ class SynchronizerTest: XCTestCase {
     // Unique keys uses telemetry endpoint, so, it should be stopped too.
     func testDisableTelemetry() {
         // Simulate telemetry enabled
-        splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub.init(enabled: true)
+        splitConfig.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: true)
         synchronizer.disableTelemetry()
         XCTAssertFalse(fFlagsSynchronizer.destroyCalled)
         XCTAssertFalse(impressionsTracker.stopCalled)
@@ -299,5 +283,4 @@ class SynchronizerTest: XCTestCase {
         XCTAssertTrue(eventsSynchronizer.stopCalled)
         XCTAssertFalse(telemetrySynchronizer.destroyCalled)
     }
-
 }

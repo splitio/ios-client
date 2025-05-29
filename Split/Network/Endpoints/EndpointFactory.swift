@@ -18,7 +18,7 @@ class EndpointFactory {
     private static let kAblySplitSdkClientKey = "SplitSDKClientKey"
     private static let kAblySplitSdkClientKeyLength = 4
 
-    private struct EndpointsPath {
+    private enum EndpointsPath {
         static let sseAuth = "auth"
         static let splitChanges = "splitChanges"
         static let mySegments = "memberships"
@@ -49,58 +49,61 @@ class EndpointFactory {
         let commondHeaders = Self.basicHeaders(apiKey: apiKey)
         let typeHeader = Self.typeHeader()
 
-        splitChangesEndpoint = Endpoint
-            .builder(baseUrl: serviceEndpoints.sdkEndpoint, path: EndpointsPath.splitChanges,
-                     defaultQueryString: splitsQueryString)
+        self.splitChangesEndpoint = Endpoint
+            .builder(
+                baseUrl: serviceEndpoints.sdkEndpoint,
+                path: EndpointsPath.splitChanges,
+                defaultQueryString: splitsQueryString)
             .add(headers: commondHeaders).add(headers: typeHeader).build()
 
-        impressionsEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.impressions)
-                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+        self.impressionsEndpoint = Endpoint
+            .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.impressions)
+            .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
-        impressionsCountEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.impressionsCount)
-                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+        self.impressionsCountEndpoint = Endpoint
+            .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.impressionsCount)
+            .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
-        eventsEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.events)
-                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+        self.eventsEndpoint = Endpoint
+            .builder(baseUrl: serviceEndpoints.eventsEndpoint, path: EndpointsPath.events)
+            .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
-        telemetryConfigEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.telemetryConfig)
-                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+        self.telemetryConfigEndpoint = Endpoint
+            .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.telemetryConfig)
+            .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
-        telemetryUsageEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.telemetryUsage)
-                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+        self.telemetryUsageEndpoint = Endpoint
+            .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.telemetryUsage)
+            .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
 
-        sseAuthenticationEndpoint = Endpoint
+        self.sseAuthenticationEndpoint = Endpoint
             .builder(baseUrl: serviceEndpoints.authServiceEndpoint, path: EndpointsPath.sseAuth)
-                .set(method: .get).add(headers: commondHeaders).add(headers: typeHeader).build()
+            .set(method: .get).add(headers: commondHeaders).add(headers: typeHeader).build()
 
-        streamingEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.streamingServiceEndpoint)
-                .set(method: .get).add(headers: Self.streamingHeaders(apiKey: apiKey)).build()
+        self.streamingEndpoint = Endpoint
+            .builder(baseUrl: serviceEndpoints.streamingServiceEndpoint)
+            .set(method: .get).add(headers: Self.streamingHeaders(apiKey: apiKey)).build()
 
-        uniqueKeysEndpoint = Endpoint
-                .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.uniqueKeys)
-                .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
+        self.uniqueKeysEndpoint = Endpoint
+            .builder(baseUrl: serviceEndpoints.telemetryServiceEndpoint, path: EndpointsPath.uniqueKeys)
+            .set(method: .post).add(headers: commondHeaders).add(headers: typeHeader).build()
     }
 
     func mySegmentsEndpoint(userKey: String) -> Endpoint {
-        let commonHeaders = Self.basicHeaders(apiKey: self.apiKey)
+        let commonHeaders = Self.basicHeaders(apiKey: apiKey)
         let typeHeader = Self.typeHeader()
         let encodedUserKey = userKey.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) ?? userKey
         return Endpoint
-            .builder(baseUrl: serviceEndpoints.sdkEndpoint,
-                     encodedPath: "\(EndpointsPath.mySegments)/\(encodedUserKey)")
+            .builder(
+                baseUrl: serviceEndpoints.sdkEndpoint,
+                encodedPath: "\(EndpointsPath.mySegments)/\(encodedUserKey)")
             .add(headers: commonHeaders).add(headers: typeHeader).build()
     }
 
     private static func basicHeaders(apiKey: String) -> [String: String] {
         return [
             Self.kAuthorizationHeader: "\(Self.kAuthorizationBearer) \(apiKey)",
-            Self.kSplitVersionHeader: Version.sdk
+            Self.kSplitVersionHeader: Version.sdk,
         ]
     }
 
@@ -112,8 +115,7 @@ class EndpointFactory {
         return [
             Self.kContentTypeHeader: Self.kContentTypeEventStream,
             Self.kAblySplitSdkClientKey: String(apiKey.suffix(kAblySplitSdkClientKeyLength)),
-            Self.kSplitVersionHeader: Version.sdk
+            Self.kSplitVersionHeader: Version.sdk,
         ]
-
     }
 }

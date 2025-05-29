@@ -22,7 +22,6 @@ protocol FeatureFlagsSynchronizer {
 }
 
 class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
-
     private var storageContainer: SplitStorageContainer
     private var splitsSyncWorker: RetryableSyncWorker!
     private let splitsFilterQueryString: String
@@ -35,16 +34,16 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     private var broadcasterChannel: SyncEventBroadcaster
     private var isDestroyed = Atomic(false)
 
-    init(splitConfig: SplitClientConfig,
-         storageContainer: SplitStorageContainer,
-         syncWorkerFactory: SyncWorkerFactory,
-         broadcasterChannel: SyncEventBroadcaster,
-         syncTaskByChangeNumberCatalog: ConcurrentDictionary<SplitsUpdateChangeNumber, RetryableSyncWorker>
-        = ConcurrentDictionary<SplitsUpdateChangeNumber, RetryableSyncWorker>(),
-         splitsFilterQueryString: String,
-         flagsSpec: String,
-         splitEventsManager: SplitEventsManager) {
-
+    init(
+        splitConfig: SplitClientConfig,
+        storageContainer: SplitStorageContainer,
+        syncWorkerFactory: SyncWorkerFactory,
+        broadcasterChannel: SyncEventBroadcaster,
+        syncTaskByChangeNumberCatalog: ConcurrentDictionary<SplitsUpdateChangeNumber, RetryableSyncWorker>
+            = ConcurrentDictionary<SplitsUpdateChangeNumber, RetryableSyncWorker>(),
+        splitsFilterQueryString: String,
+        flagsSpec: String,
+        splitEventsManager: SplitEventsManager) {
         self.splitConfig = splitConfig
         self.storageContainer = storageContainer
         self.syncWorkerFactory = syncWorkerFactory
@@ -58,12 +57,12 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
         if splitConfig.syncEnabled {
             self.periodicSplitsSyncWorker = syncWorkerFactory.createPeriodicSplitsSyncWorker()
-            self.splitsSyncWorker.completion = {[weak self] success in
+            splitsSyncWorker.completion = { [weak self] success in
                 if let self = self, success {
                     self.broadcasterChannel.push(event: .syncExecuted)
                 }
             }
-            self.splitsSyncWorker.errorHandler = {[weak self] error in
+            splitsSyncWorker.errorHandler = { [weak self] error in
                 guard let self = self else { return }
                 if let error = error as? HttpError, error == HttpError.uriTooLong {
                     self.broadcasterChannel.push(event: .uriTooLongOnSync)
@@ -73,17 +72,16 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     }
 
     func load() {
-
         if isDestroyed.value {
             return
         }
 
-        let splitsStorage = self.storageContainer.splitsStorage
+        let splitsStorage = storageContainer.splitsStorage
         DispatchQueue.general.async {
             let start = Date.nowMillis()
             self.filterSplitsInCache()
             splitsStorage.loadLocal()
-            if splitsStorage.getAll().count > 0 {
+            if !splitsStorage.getAll().isEmpty {
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
@@ -117,11 +115,12 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
         if syncTaskByChangeNumberCatalog.value(forKey: changeNumberConfig) == nil {
             let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
-            var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(changeNumber: changeNumberConfig,
-                                                                             reconnectBackoffCounter: reconnectBackoff)
+            var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(
+                changeNumber: changeNumberConfig,
+                reconnectBackoffCounter: reconnectBackoff)
             syncTaskByChangeNumberCatalog.setValue(worker, forKey: changeNumberConfig)
             worker.start()
-            worker.completion = {[weak self] success in
+            worker.completion = { [weak self] success in
                 if let self = self, success {
                     self.broadcasterChannel.push(event: .syncExecuted)
                     self.syncTaskByChangeNumberCatalog.removeValue(forKey: changeNumberConfig)
@@ -191,7 +190,6 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                 splitsStorage.clear()
                 storageContainer.generalInfoStorage.setFlagSpec(flagsSpec: flagsSpec)
             } else if filterHasChanged {
-
                 // if the filter has changed, we need to delete according to it
                 var toDelete = [String]()
                 let filters = splitConfig.sync.filters
@@ -205,15 +203,15 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                     }
 
                     let prefix = getPrefix(for: splitName) ?? ""
-                    if setsToKeep.count > 0 && setsToKeep.isDisjoint(with: split.sets ?? Set()) {
+                    if !setsToKeep.isEmpty && setsToKeep.isDisjoint(with: split.sets ?? Set()) {
                         toDelete.append(splitName)
-                    } else if (prefix == "" && namesToKeep.count > 0 && !namesToKeep.contains(splitName)) ||
-                        (prefixesToKeep.count > 0 && prefix != "" && !prefixesToKeep.contains(prefix)) {
+                    } else if (prefix == "" && !namesToKeep.isEmpty && !namesToKeep.contains(splitName)) ||
+                        (!prefixesToKeep.isEmpty && prefix != "" && !prefixesToKeep.contains(prefix)) {
                         toDelete.append(splitName)
                     }
                 }
 
-                if toDelete.count > 0 {
+                if !toDelete.isEmpty {
                     splitsStorage.delete(splitNames: toDelete)
                     storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
                 }

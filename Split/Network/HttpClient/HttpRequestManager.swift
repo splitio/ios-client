@@ -28,9 +28,10 @@ class DefaultHttpRequestManager: NSObject {
 
     private let notificationHelper: NotificationHelper?
 
-    init(authententicator: SplitHttpsAuthenticator? = nil,
-         pinChecker: TlsPinChecker?,
-         notificationHelper: NotificationHelper?) {
+    init(
+        authententicator: SplitHttpsAuthenticator? = nil,
+        pinChecker: TlsPinChecker?,
+        notificationHelper: NotificationHelper?) {
         self.authenticator = authententicator
         self.pinChecker = pinChecker
         self.notificationHelper = notificationHelper
@@ -38,37 +39,39 @@ class DefaultHttpRequestManager: NSObject {
 }
 
 // MARK: HttpRequestManager - URLSessionTaskDelegate
+
 extension DefaultHttpRequestManager: URLSessionTaskDelegate {
-
-    func urlSession(_ session: URLSession, task: URLSessionTask,
-                    didReceive challenge: URLAuthenticationChallenge,
-                    completionHandler: @escaping @Sendable (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
-    ) {
-
+    func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping @Sendable (URLSession.AuthChallengeDisposition, URLCredential?)
+            -> Void) {
         // If doing certificate pinning and a custom authenticator is implemented
         // the pin checker has priority
-        if let pinChecker = self.pinChecker {
+        if let pinChecker = pinChecker {
             Logger.v("Checking pinned credentials")
-            checkPins(pinChecker: pinChecker,
-                      session: session,
-                      taskId: task.taskIdentifier,
-                      challenge: challenge,
-                      completionHandler: completionHandler)
+            checkPins(
+                pinChecker: pinChecker,
+                session: session,
+                taskId: task.taskIdentifier,
+                challenge: challenge,
+                completionHandler: completionHandler)
             return
         }
 
-        if let authenticator = self.authenticator {
+        if let authenticator = authenticator {
             Logger.v("Triggering external HTTPS authentication handler")
-            authenticator.authenticate(session: session,
-                                       challenge: challenge,
-                                       completionHandler: completionHandler)
+            authenticator.authenticate(
+                session: session,
+                challenge: challenge,
+                completionHandler: completionHandler)
             return
         }
         completionHandler(.performDefaultHandling, nil)
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-
         var httpError: HttpError?
         if let error = error as NSError? {
             Logger.v("HTTP Error: \(error)")
@@ -86,13 +89,13 @@ extension DefaultHttpRequestManager: URLSessionTaskDelegate {
 }
 
 // MARK: URLSessionDataDelegate
+
 extension DefaultHttpRequestManager: URLSessionDataDelegate {
-
-    func urlSession(_ session: URLSession,
-                    dataTask: URLSessionDataTask,
-                    didReceive response: URLResponse,
-                    completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-
+    func urlSession(
+        _ session: URLSession,
+        dataTask: URLSessionDataTask,
+        didReceive response: URLResponse,
+        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         if let urlResponse = response as? HTTPURLResponse {
             if set(responseCode: urlResponse.statusCode, to: dataTask.taskIdentifier) {
                 completionHandler(.allow)
@@ -138,6 +141,7 @@ extension DefaultHttpRequestManager: HttpRequestManager {
 }
 
 // MARK: Certificate pinning
+
 // Handle certificate pinning result
 extension DefaultHttpRequestManager {
     /// Authenticates the session with a URL authentication challenge.
@@ -145,12 +149,12 @@ extension DefaultHttpRequestManager {
     ///   - session: The URL session.
     ///   - challenge: The URL authentication challenge.
     ///   - completionHandler: The completion handler to call with the authentication disposition and credential.
-    func checkPins(pinChecker: TlsPinChecker,
-                   session: URLSession,
-                   taskId: Int,
-                   challenge: URLAuthenticationChallenge,
-                   completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-
+    func checkPins(
+        pinChecker: TlsPinChecker,
+        session: URLSession,
+        taskId: Int,
+        challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         // Validate the server trust using the PinValidator
         let checkResult = pinChecker.check(credential: challenge)
         switch checkResult {
@@ -163,13 +167,14 @@ extension DefaultHttpRequestManager {
             let credential = URLCredential(trust: serverTrust)
             completionHandler(.useCredential, credential)
 
-        case .error, .invalidChain, .credentialNotPinned, .spkiError,
-                .invalidCredential, .invalidParameter, .unavailableServerTrust:
-            notificationHelper?.post(notification: .pinnedCredentialValidationFail,
-                                     info: challenge.protectionSpace.host as AnyObject)
+        case .credentialNotPinned, .error, .invalidChain, .invalidCredential,
+             .invalidParameter, .spkiError, .unavailableServerTrust:
+            notificationHelper?.post(
+                notification: .pinnedCredentialValidationFail,
+                info: challenge.protectionSpace.host as AnyObject)
             completionHandler(.cancelAuthenticationChallenge, nil)
 
-        case .noServerTrustMethod, .noPinsForDomain:
+        case .noPinsForDomain, .noServerTrustMethod:
             completionHandler(.performDefaultHandling, nil)
             return
         }

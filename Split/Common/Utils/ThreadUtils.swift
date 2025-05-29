@@ -23,7 +23,6 @@ class ThreadUtils {
     // totalTaskCount: Total amount of task to run
     // minTaskPerThread: Minumum task amount to run per thread
     static func processCount(totalTaskCount: Int, minTaskPerThread: Int) -> Int {
-
         if minTaskPerThread == 0 {
             Logger.d("Min task per thread should be more that 0")
             return 1
@@ -39,8 +38,8 @@ class ThreadUtils {
         // Let's compute thread count if using all means run less
         // tasks than minTaskPerThread
         let minTaskTotal = minTaskPerThread * coreCount
-        if  minTaskTotal > totalTaskCount {
-            return coreCount - Int(((minTaskTotal - totalTaskCount) / minTaskPerThread))
+        if minTaskTotal > totalTaskCount {
+            return coreCount - Int((minTaskTotal - totalTaskCount) / minTaskPerThread)
         }
 
         // Task execeds min amount per task.
@@ -60,7 +59,6 @@ protocol CancellableTask {
 }
 
 class DefaultTask: CancellableTask {
-
     private(set) var taskId: Int64
     private(set) var isCancelled = false
     private(set) var delay: Double
@@ -71,6 +69,7 @@ class DefaultTask: CancellableTask {
         self.delay = Double(delay)
         self.work = work
     }
+
     func cancel() {
         isCancelled = true
     }
@@ -88,10 +87,10 @@ struct TaskExecutor {
 
 extension DispatchQueue {
     static var critical: DispatchQueue = {
-        return DispatchQueue(label: "split-critical", qos: .userInteractive, attributes: .concurrent)
+        DispatchQueue(label: "split-critical", qos: .userInteractive, attributes: .concurrent)
     }()
 
     static var general: DispatchQueue = {
-        return DispatchQueue(label: "split-general", attributes: .concurrent)
+        DispatchQueue(label: "split-general", attributes: .concurrent)
     }()
 }

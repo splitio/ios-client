@@ -9,7 +9,6 @@
 import Foundation
 // Data structure to replace old Impression
 struct KeyImpression: Codable {
-
     var storageId: String?
     var featureName: String?
     var keyName: String
@@ -21,17 +20,17 @@ struct KeyImpression: Codable {
     var previousTime: Int64?
     var properties: String?
 
-    init( featureName: String?,
-          keyName: String,
-          bucketingKey: String? = nil,
-          treatment: String,
-          label: String?,
-          time: Int64,
-          changeNumber: Int64?,
-          previousTime: Int64? = nil,
-          storageId: String? = nil,
-          properties: String? = nil) {
-
+    init(
+        featureName: String?,
+        keyName: String,
+        bucketingKey: String? = nil,
+        treatment: String,
+        label: String?,
+        time: Int64,
+        changeNumber: Int64?,
+        previousTime: Int64? = nil,
+        storageId: String? = nil,
+        properties: String? = nil) {
         self.storageId = storageId
         self.featureName = featureName
         self.keyName = keyName
@@ -52,38 +51,38 @@ struct KeyImpression: Codable {
         case label = "r"
         case bucketingKey = "b"
         case previousTime = "pt"
-        case properties = "properties"
+        case properties
     }
 
     func withPreviousTime(_ time: Int64?) -> KeyImpression {
-        return KeyImpression(featureName: self.featureName,
-                                 keyName: self.keyName,
-                                 bucketingKey: self.bucketingKey,
-                                 treatment: self.treatment,
-                                 label: self.label,
-                                 time: self.time,
-                                 changeNumber: self.changeNumber,
-                                 previousTime: time,
-                                 storageId: self.storageId,
-                                 properties: self.properties)
+        return KeyImpression(
+            featureName: featureName,
+            keyName: keyName,
+            bucketingKey: bucketingKey,
+            treatment: treatment,
+            label: label,
+            time: self.time,
+            changeNumber: changeNumber,
+            previousTime: time,
+            storageId: storageId,
+            properties: properties)
     }
 
     func toImpression() -> Impression {
-        let impression: Impression = Impression()
-        impression.feature = self.featureName
-        impression.keyName = self.keyName
-        impression.bucketingKey = self.bucketingKey
-        impression.label = self.label
-        impression.changeNumber = self.changeNumber
-        impression.treatment = self.treatment
-        impression.time = self.time
-        impression.properties = self.properties
+        let impression = Impression()
+        impression.feature = featureName
+        impression.keyName = keyName
+        impression.bucketingKey = bucketingKey
+        impression.label = label
+        impression.changeNumber = changeNumber
+        impression.treatment = treatment
+        impression.time = time
+        impression.properties = properties
         return impression
     }
 }
 
 struct DeprecatedImpression: Codable {
-
     var storageId: String?
     var featureName: String?
     var keyName: String
@@ -104,14 +103,15 @@ struct DeprecatedImpression: Codable {
     }
 
     func toKeyImpression() -> KeyImpression {
-        return KeyImpression(featureName: self.featureName,
-                             keyName: self.keyName,
-                             bucketingKey: self.bucketingKey,
-                             treatment: self.treatment,
-                             label: self.label,
-                             time: self.time,
-                             changeNumber: self.changeNumber,
-                             previousTime: self.previousTime,
-                             storageId: self.storageId)
+        return KeyImpression(
+            featureName: featureName,
+            keyName: keyName,
+            bucketingKey: bucketingKey,
+            treatment: treatment,
+            label: label,
+            time: time,
+            changeNumber: changeNumber,
+            previousTime: previousTime,
+            storageId: storageId)
     }
 }

@@ -30,7 +30,14 @@ class SplitDTO: NSObject, SplitBase, Codable {
 
     var isParsed = true
 
-    init(name: String, trafficType: String, status: Status, sets: Set<String>?, json: String, killed: Bool = false, impressionsDisabled: Bool = false) {
+    init(
+        name: String,
+        trafficType: String,
+        status: Status,
+        sets: Set<String>?,
+        json: String,
+        killed: Bool = false,
+        impressionsDisabled: Bool = false) {
         self.name = name
         self.trafficTypeName = trafficType
         self.status = status

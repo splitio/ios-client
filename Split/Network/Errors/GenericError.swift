@@ -19,6 +19,7 @@ enum GenericError: Error {
 }
 
 // MARK: Get message
+
 extension GenericError {
     var message: String {
         switch self {
@@ -30,7 +31,7 @@ extension GenericError {
             return "Some parameter is null when creating Split Api Facade"
         case .jsonParsingFail:
             return "Something has occured while parsing json data"
-        case .unknown(let message):
+        case let .unknown(message):
             return message
         case .couldNotCreateCiphers:
             return "Could not create ciphers"

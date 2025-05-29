@@ -10,16 +10,16 @@ import Foundation
 
 protocol EventsTracker: AnyObject {
     var isTrackingEnabled: Bool { get set }
-    func track(eventType: String,
-               trafficType: String?,
-               value: Double?,
-               properties: [String: Any]?,
-               matchingKey: String,
-               isSdkReady: Bool) -> Bool
+    func track(
+        eventType: String,
+        trafficType: String?,
+        value: Double?,
+        properties: [String: Any]?,
+        matchingKey: String,
+        isSdkReady: Bool) -> Bool
 }
 
 class DefaultEventsTracker: EventsTracker {
-
     private let config: SplitClientConfig
     private let eventValidator: EventValidator
     private let validationLogger: ValidationMessageLogger
@@ -28,13 +28,13 @@ class DefaultEventsTracker: EventsTracker {
     private let synchronizer: Synchronizer
     var isTrackingEnabled: Bool = true
 
-    init(config: SplitClientConfig,
-         synchronizer: Synchronizer,
-         eventValidator: EventValidator,
-         propertyValidator: PropertyValidator,
-         validationLogger: ValidationMessageLogger,
-         telemetryProducer: TelemetryEvaluationProducer?) {
-
+    init(
+        config: SplitClientConfig,
+        synchronizer: Synchronizer,
+        eventValidator: EventValidator,
+        propertyValidator: PropertyValidator,
+        validationLogger: ValidationMessageLogger,
+        telemetryProducer: TelemetryEvaluationProducer?) {
         self.config = config
         self.synchronizer = synchronizer
         self.eventValidator = eventValidator
@@ -43,11 +43,13 @@ class DefaultEventsTracker: EventsTracker {
         self.telemetryProducer = telemetryProducer
     }
 
-    func track(eventType: String, trafficType: String? = nil,
-               value: Double? = nil, properties: [String: Any]?,
-               matchingKey: String,
-               isSdkReady: Bool) -> Bool {
-
+    func track(
+        eventType: String,
+        trafficType: String? = nil,
+        value: Double? = nil,
+        properties: [String: Any]?,
+        matchingKey: String,
+        isSdkReady: Bool) -> Bool {
         if !isTrackingEnabled {
             Logger.v("Event not tracked because tracking is disabled")
             return false
@@ -58,9 +60,13 @@ class DefaultEventsTracker: EventsTracker {
 
         guard let trafficType = trafficType ?? config.trafficType else { return false }
 
-        if let errorInfo = eventValidator.validate(key: matchingKey, trafficTypeName: trafficType,
-                                                   eventTypeId: trafficType, value: value,
-                                                   properties: properties, isSdkReady: isSdkReady) {
+        if let errorInfo = eventValidator.validate(
+            key: matchingKey,
+            trafficTypeName: trafficType,
+            eventTypeId: trafficType,
+            value: value,
+            properties: properties,
+            isSdkReady: isSdkReady) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
                 return false
@@ -71,8 +77,7 @@ class DefaultEventsTracker: EventsTracker {
         let propertyValidationResult = propertyValidator.validate(
             properties: properties,
             initialSizeInBytes: config.initialEventSizeInBytes,
-            validationTag: validationTag
-        )
+            validationTag: validationTag)
 
         if !propertyValidationResult.isValid {
             if let errorMessage = propertyValidationResult.errorMessage {

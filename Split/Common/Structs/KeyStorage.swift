@@ -9,9 +9,9 @@
 import Foundation
 
 class SplitKeyDictionary<T> {
-
-    private var queue: DispatchQueue = DispatchQueue(label: "split-key-dictionary",
-                                                     target: .global())
+    private var queue: DispatchQueue = .init(
+        label: "split-key-dictionary",
+        target: .global())
     private var items = [Key: T]()
 
     var matchingKeys: Set<String> {
@@ -31,9 +31,9 @@ class SplitKeyDictionary<T> {
     }
 
     var count: Int {
-        var count: Int = 0
+        var count = 0
         queue.sync {
-            count  = items.count
+            count = items.count
         }
         return count
     }
@@ -115,7 +115,7 @@ class SplitKeyDictionary<T> {
     }
 
     func removeAndCount(forKey key: Key) -> Int {
-        var count: Int = 0
+        var count = 0
         queue.sync {
             items.removeValue(forKey: key)
             count = items.count

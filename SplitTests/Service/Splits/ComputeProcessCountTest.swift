@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ComputeProcessTest: XCTestCase {
-
     // This test should work as expected from iPhone 5+
 
     func testOneLessThanMinProcess() {
@@ -46,7 +45,5 @@ class ComputeProcessTest: XCTestCase {
         XCTAssertTrue(count >= 2)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

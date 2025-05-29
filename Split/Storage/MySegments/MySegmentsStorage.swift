@@ -22,7 +22,6 @@ protocol MySegmentsStorage: RolloutDefinitionsCache {
 }
 
 class DefaultMySegmentsStorage: MySegmentsStorage {
-
     private var inMemoryMySegments: SynchronizedDictionarySet<String, String> = SynchronizedDictionarySet()
     private let persistenStorage: PersistentMySegmentsStorage
 
@@ -31,7 +30,7 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
     }
 
     init(persistentMySegmentsStorage: PersistentMySegmentsStorage) {
-        persistenStorage = persistentMySegmentsStorage
+        self.persistenStorage = persistentMySegmentsStorage
     }
 
     func loadLocal(forKey key: String) {
@@ -74,7 +73,7 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
         let keys = inMemoryMySegments.keys
         var count = 0
         for key in keys {
-            count+=(inMemoryMySegments.values(forKey: key)?.count ?? 0)
+            count += (inMemoryMySegments.values(forKey: key)?.count ?? 0)
         }
         return count
     }

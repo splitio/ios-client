@@ -9,7 +9,6 @@
 import Foundation
 
 class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
-
     private let synchronizer: SegmentsSynchronizerWrapper
     private let mySegmentsStorage: MySegmentsStorage
     private let payloadDecoder: SegmentsPayloadDecoder
@@ -18,12 +17,12 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
     // Visible for testing
     var decomProvider: CompressionProvider = DefaultDecompressionProvider()
 
-    init(synchronizer: SegmentsSynchronizerWrapper,
-         mySegmentsStorage: MySegmentsStorage,
-         payloadDecoder: SegmentsPayloadDecoder,
-         telemetryProducer: TelemetryRuntimeProducer?,
-         resource: TelemetryUpdatesFromSseType) {
-
+    init(
+        synchronizer: SegmentsSynchronizerWrapper,
+        mySegmentsStorage: MySegmentsStorage,
+        payloadDecoder: SegmentsPayloadDecoder,
+        telemetryProducer: TelemetryRuntimeProducer?,
+        resource: TelemetryUpdatesFromSseType) {
         self.synchronizer = synchronizer
         self.mySegmentsStorage = mySegmentsStorage
         self.payloadDecoder = payloadDecoder
@@ -39,7 +38,6 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
     }
 
     func process(_ info: MembershipsUpdateNotification) {
-
         do {
             switch info.updateStrategy {
             case .unboundedFetchRequest:
@@ -48,18 +46,22 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
                 }
             case .boundedFetchRequest:
                 if let json = info.data {
-                    try handleBounded(encodedKeyMap: json,
-                                      compressionUtil: decomProvider.decompressor(for: info.compressionType ?? CompressionType.none),
-                                      info: info)
+                    try handleBounded(
+                        encodedKeyMap: json,
+                        compressionUtil: decomProvider
+                            .decompressor(for: info.compressionType ?? CompressionType.none),
+                        info: info)
                 }
             case .keyList:
-                if let json = info.data, info.uwSegments.count > 0 {
-                    try updateSegments(encodedkeyList: json,
-                                       segments: info.uwSegments,
-                                       compressionUtil: decomProvider.decompressor(for: info.compressionType ?? CompressionType.none))
+                if let json = info.data, !info.uwSegments.isEmpty {
+                    try updateSegments(
+                        encodedkeyList: json,
+                        segments: info.uwSegments,
+                        compressionUtil: decomProvider
+                            .decompressor(for: info.compressionType ?? CompressionType.none))
                 }
             case .segmentRemoval:
-                if info.uwSegments.count > 0 {
+                if !info.uwSegments.isEmpty {
                     remove(segments: info.uwSegments)
                 }
             case .unknown:
@@ -84,18 +86,21 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
     }
 
     private func fetchMySegments(forKey key: String, info: MembershipsUpdateNotification) {
-        let delay = FetcherThrottle.computeDelay(algo: info.uwHash,
-                                                 userKey: key,
-                                                 seed: info.uwSeed,
-                                                 timeMillis: info.uwTimeMillis)
+        let delay = FetcherThrottle.computeDelay(
+            algo: info.uwHash,
+            userKey: key,
+            seed: info.uwSeed,
+            timeMillis: info.uwTimeMillis)
 
         let changeNumber = SegmentsChangeNumber(
-            msChangeNumber: info.type == .mySegmentsUpdate ? info.uwChangeNumber : ServiceConstants.defaultSegmentsChangeNumber,
-            mlsChangeNumber: info.type == .myLargeSegmentsUpdate ? info.uwChangeNumber : ServiceConstants.defaultSegmentsChangeNumber
-        )
-        synchronizer.fetch(byKey: key,
-                           changeNumbers: changeNumber,
-                           delay: delay)
+            msChangeNumber: info.type == .mySegmentsUpdate ? info.uwChangeNumber : ServiceConstants
+                .defaultSegmentsChangeNumber,
+            mlsChangeNumber: info.type == .myLargeSegmentsUpdate ? info.uwChangeNumber : ServiceConstants
+                .defaultSegmentsChangeNumber)
+        synchronizer.fetch(
+            byKey: key,
+            changeNumbers: changeNumber,
+            delay: delay)
     }
 
     private func remove(segments: [String]) {
@@ -108,15 +113,15 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
         let segments = mySegmentsStorage.getAll(forKey: key)
         let newSegments = segments.subtracting(toRemove)
         if segments.count > newSegments.count {
-            mySegmentsStorage.set(SegmentChange(segments: newSegments.asArray()),
-                                  forKey: key)
+            mySegmentsStorage.set(
+                SegmentChange(segments: newSegments.asArray()),
+                forKey: key)
             synchronizer.notifyUpdate(forKey: key)
             telemetryProducer?.recordUpdatesFromSse(type: resource)
         }
     }
 
     private func updateSegments(encodedkeyList: String, segments: [String], compressionUtil: CompressionUtil) throws {
-
         let jsonKeyList = try payloadDecoder.decodeAsString(payload: encodedkeyList, compressionUtil: compressionUtil)
         let keyList = try payloadDecoder.parseKeyList(jsonString: jsonKeyList)
 
@@ -126,8 +131,9 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
                 let oldSegments = mySegmentsStorage.getAll(forKey: userKey)
                 let newSegments = oldSegments.union(segments)
                 if oldSegments.count < newSegments.count {
-                    mySegmentsStorage.set(SegmentChange(segments: newSegments.asArray()),
-                                          forKey: userKey)
+                    mySegmentsStorage.set(
+                        SegmentChange(segments: newSegments.asArray()),
+                        forKey: userKey)
                     synchronizer.notifyUpdate(forKey: userKey)
                     telemetryProducer?.recordUpdatesFromSse(type: .mySegments)
                 }
@@ -140,9 +146,10 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
         }
     }
 
-    private func handleBounded(encodedKeyMap: String,
-                               compressionUtil: CompressionUtil,
-                               info: MembershipsUpdateNotification) throws {
+    private func handleBounded(
+        encodedKeyMap: String,
+        compressionUtil: CompressionUtil,
+        info: MembershipsUpdateNotification) throws {
         let keyMap = try payloadDecoder.decodeAsBytes(payload: encodedKeyMap, compressionUtil: compressionUtil)
 
         doForAllUserKeys { userKey in
@@ -216,26 +223,26 @@ enum FetchDelayAlgo: Decodable {
     // 2: MURMUR3-64k
     case murmur364
 
-        init(from decoder: Decoder) throws {
-            let intValue = try? decoder.singleValueContainer().decode(Int.self)
-            self = FetchDelayAlgo.enumFromInt(intValue ?? 0)
-        }
+    init(from decoder: Decoder) throws {
+        let intValue = try? decoder.singleValueContainer().decode(Int.self)
+        self = FetchDelayAlgo.enumFromInt(intValue ?? 0)
+    }
 
     static func enumFromInt(_ intValue: Int) -> FetchDelayAlgo {
-            switch intValue {
-            case 0:
-                return FetchDelayAlgo.none
-            case 1:
-                return FetchDelayAlgo.murmur332
-            case 2:
-                return FetchDelayAlgo.murmur364
-            default:
-                return FetchDelayAlgo.none
-            }
+        switch intValue {
+        case 0:
+            return FetchDelayAlgo.none
+        case 1:
+            return FetchDelayAlgo.murmur332
+        case 2:
+            return FetchDelayAlgo.murmur364
+        default:
+            return FetchDelayAlgo.none
+        }
     }
 }
 
-struct FetcherThrottle {
+enum FetcherThrottle {
     static func computeDelay(algo: FetchDelayAlgo, userKey: String, seed: Int, timeMillis: Int64) -> Int64 {
         if timeMillis == 0 {
             return 0

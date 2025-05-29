@@ -17,15 +17,17 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
     private var resource: Resource = .mySegments
     private let restClient: RestClientMySegments
 
-    init(restClient: RestClientMySegments,
-         syncHelper: SyncHelper) {
-
+    init(
+        restClient: RestClientMySegments,
+        syncHelper: SyncHelper) {
         self.restClient = restClient
         self.syncHelper = syncHelper
     }
 
-    func execute(userKey: String, till: Int64?,
-                 headers: [String: String]? = nil) throws -> AllSegmentsChange? {
+    func execute(
+        userKey: String,
+        till: Int64?,
+        headers: [String: String]? = nil) throws -> AllSegmentsChange? {
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
         Logger.d("Fetching segments from \(resource)")
 
@@ -52,5 +54,5 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
         }
         semaphore.wait()
         return requestResult
-   }
+    }
 }

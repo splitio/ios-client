@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class HttpUniqueKeyRecorderTests: XCTestCase {
-
     var restClient: RestClientStub!
     var recorder: DefaultHttpUniqueKeysRecorder!
     let uniqueKeys = TestingHelper.createUniqueKeys(keyCount: 5, featureCount: 15)
@@ -21,8 +20,9 @@ class HttpUniqueKeyRecorderTests: XCTestCase {
     override func setUp() {
         restClient = RestClientStub()
         telemetryProducer = TelemetryStorageStub()
-        recorder = DefaultHttpUniqueKeysRecorder(restClient: restClient,
-                                                       syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
+        recorder = DefaultHttpUniqueKeysRecorder(
+            restClient: restClient,
+            syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
     }
 
     func testServerNoReachable() {
@@ -47,7 +47,5 @@ class HttpUniqueKeyRecorderTests: XCTestCase {
         XCTAssertEqual(0, telemetryProducer.recordHttpErrorCallCount)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

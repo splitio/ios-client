@@ -20,8 +20,9 @@ class MainEventsStorage: EventsStorage {
     private let events = SynchronizedList<EventDTO>()
     private let isPersistenceEnabled: Atomic<Bool>
 
-    init(persistentStorage: PersistentEventsStorage,
-         persistenceEnabled: Bool = true) {
+    init(
+        persistentStorage: PersistentEventsStorage,
+        persistenceEnabled: Bool = true) {
         self.persistentStorage = persistentStorage
         self.isPersistenceEnabled = Atomic(persistenceEnabled)
     }

@@ -8,6 +8,5 @@
 import Foundation
 
 class Spec {
-
     static var flagsSpec = "1.3"
 }

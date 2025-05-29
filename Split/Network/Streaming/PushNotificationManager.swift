@@ -20,7 +20,6 @@ protocol PushNotificationManager {
 }
 
 class DefaultPushNotificationManager: PushNotificationManager {
-
     private let kSseKeepAliveTimeInSeconds = 70
     private let kReconnectTimeBeforeTokenExpInASeconds: Int64 = 600
     private let kDisconnectOnBgTimeInSeconds = 60
@@ -33,8 +32,9 @@ class DefaultPushNotificationManager: PushNotificationManager {
 
     private let lastConnId = Atomic<Int64>(-1)
 
-    private let connectionQueue = DispatchQueue(label: "Sse connnection",
-                                                attributes: .concurrent)
+    private let connectionQueue = DispatchQueue(
+        label: "Sse connnection",
+        attributes: .concurrent)
 
     private var isStopped: Atomic<Bool> = Atomic(false)
     private var isPaused: Atomic<Bool> = Atomic(false)
@@ -45,13 +45,13 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let sseConnectionHandler: SseConnectionHandler
 
-    init(userKeyRegistry: ByKeyRegistry,
-         sseAuthenticator: SseAuthenticator,
-         broadcasterChannel: SyncEventBroadcaster,
-         timersManager: TimersManager,
-         telemetryProducer: TelemetryRuntimeProducer?,
-         sseConnectionHandler: SseConnectionHandler
-    ) {
+    init(
+        userKeyRegistry: ByKeyRegistry,
+        sseAuthenticator: SseAuthenticator,
+        broadcasterChannel: SyncEventBroadcaster,
+        timersManager: TimersManager,
+        telemetryProducer: TelemetryRuntimeProducer?,
+        sseConnectionHandler: SseConnectionHandler) {
         self.userKeyRegistry = userKeyRegistry
         self.sseAuthenticator = sseAuthenticator
         self.broadcasterChannel = broadcasterChannel
@@ -61,6 +61,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     // MARK: Public
+
     func start() {
         connect()
     }
@@ -135,16 +136,16 @@ class DefaultPushNotificationManager: PushNotificationManager {
         Logger.d("Streaming authentication success")
 
         let connectionDelay = result.sseConnectionDelay
-        self.broadcasterChannel.push(event: .pushDelayReceived(delaySeconds: connectionDelay))
+        broadcasterChannel.push(event: .pushDelayReceived(delaySeconds: connectionDelay))
         let lastId = lastConnId.value
         if connectionDelay > 0 {
-            self.timersManager.cancel(timer: .streamingDelay)
-            let delayTimer =  DefaultTask(delay: connectionDelay) { [weak self] in
+            timersManager.cancel(timer: .streamingDelay)
+            let delayTimer = DefaultTask(delay: connectionDelay) { [weak self] in
                 guard let self = self else { return }
                 if lastId != self.lastConnId.value { return }
                 self.connectSse(jwt: jwt)
             }
-            self.timersManager.add(timer: .streamingDelay, task: delayTimer)
+            timersManager.add(timer: .streamingDelay, task: delayTimer)
 
         } else {
             connectSse(jwt: jwt)
@@ -176,7 +177,6 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     private func isErrorRecoverable(result: SseAuthenticationResult) -> Bool {
-
         if !result.success && result.errorIsRecoverable {
             notifyRecoverableError(message: "Streaming auth error. Retrying")
             return true
@@ -210,8 +210,9 @@ class DefaultPushNotificationManager: PushNotificationManager {
             if success {
                 self.handleSubsystemUp()
             }
-            self.telemetryProducer?.recordStreamingEvent(type: .connectionStablished,
-                                                         data: nil)
+            self.telemetryProducer?.recordStreamingEvent(
+                type: .connectionStablished,
+                data: nil)
             self.isConnecting.set(false)
         }
     }
@@ -223,7 +224,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
     }
 
     private func handleSubsystemUp() {
-        timersManager.add(timer: .refreshAuthToken, task: self.createRefreshTokenTask())
+        timersManager.add(timer: .refreshAuthToken, task: createRefreshTokenTask())
         broadcasterChannel.push(event: .pushSubsystemUp)
         telemetryProducer?.recordTokenRefreshes()
     }
@@ -231,8 +232,9 @@ class DefaultPushNotificationManager: PushNotificationManager {
     private func createRefreshTokenTask() -> CancellableTask {
         return DefaultTask(delay: kReconnectTimeBeforeTokenExpInASeconds) { [weak self] in
             guard let self = self else { return }
-            self.telemetryProducer?.recordStreamingEvent(type: .connectionError,
-                                                         data: TelemetryStreamingEventValue.sseConnErrorRequested)
+            self.telemetryProducer?.recordStreamingEvent(
+                type: .connectionError,
+                data: TelemetryStreamingEventValue.sseConnErrorRequested)
             self.reset()
         }
     }

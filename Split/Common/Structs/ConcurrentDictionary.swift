@@ -9,7 +9,6 @@
 import Foundation
 
 class ConcurrentDictionary<K: Hashable, T> {
-
     private var queue: DispatchQueue
     private var items: [K: T]
 
@@ -22,17 +21,18 @@ class ConcurrentDictionary<K: Hashable, T> {
     }
 
     var count: Int {
-        var count: Int = 0
+        var count = 0
         queue.sync {
-            count  = self.items.count
+            count = self.items.count
         }
         return count
     }
 
     init() {
-        queue = DispatchQueue(label: "split-concurrent-dictionary",
-                              attributes: .concurrent)
-        items = [K: T]()
+        self.queue = DispatchQueue(
+            label: "split-concurrent-dictionary",
+            attributes: .concurrent)
+        self.items = [K: T]()
     }
 
     func value(forKey key: K) -> T? {
@@ -88,7 +88,7 @@ class ConcurrentDictionary<K: Hashable, T> {
     }
 
     func setValues(_ values: [K: T]) {
-        queue.async(flags: .barrier) {  [weak self] in
+        queue.async(flags: .barrier) { [weak self] in
             guard let self = self else { return }
             self.items.removeAll()
             for (key, value) in values {
@@ -112,7 +112,7 @@ class ConcurrentDictionary<K: Hashable, T> {
         queue.sync {
             value = self.items[key]
             if value != nil {
-                queue.async(flags: .barrier) {  [weak self] in
+                queue.async(flags: .barrier) { [weak self] in
                     guard let self = self else { return }
                     self.items.removeValue(forKey: key)
                 }
@@ -125,7 +125,7 @@ class ConcurrentDictionary<K: Hashable, T> {
         var allItems: [K: T]!
         queue.sync {
             allItems = items
-            queue.async(flags: .barrier) {  [weak self] in
+            queue.async(flags: .barrier) { [weak self] in
                 guard let self = self else { return }
                 self.items.removeAll()
             }

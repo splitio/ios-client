@@ -8,30 +8,32 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SplitDaoTest: XCTestCase {
-    
     var splitDao: SplitDao!
     var splitDaoAes128Cbc: SplitDao!
-    
+
     // TODO: Research delete test in inMemoryDb
-    
+
     override func setUp() {
         let cipherKey = IntegrationHelper.dummyCipherKey
         let queue = DispatchQueue(label: "split dao test")
-        splitDao = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue))
+        splitDao = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: queue))
 
-        splitDaoAes128Cbc = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue),
-                                             cipher: DefaultCipher(cipherKey: cipherKey))
+        splitDaoAes128Cbc = CoreDataSplitDao(
+            coreDataHelper: IntegrationCoreDataHelper.get(
+                databaseName: "test",
+                dispatchQueue: queue),
+            cipher: DefaultCipher(cipherKey: cipherKey))
         let splits = createSplits()
         splitDao.insertOrUpdate(splits: splits)
         splitDaoAes128Cbc.insertOrUpdate(splits: splits)
     }
-    
+
     func testGetUpdateSeveralPlainText() {
         getUpdateSeveral(dao: splitDao)
     }
@@ -42,10 +44,10 @@ class SplitDaoTest: XCTestCase {
 
     func getUpdateSeveral(dao: SplitDao) {
         let splits = dao.getAll()
-        
+
         dao.insertOrUpdate(splits: [newSplit(name: "feat_0", trafficType: "ttype")])
         let splitsUpd = dao.getAll()
-        
+
         XCTAssertEqual(10, splits.count)
         XCTAssertEqual(10, splitsUpd.count)
         XCTAssertEqual(1, splits.filter { $0.trafficTypeName == "tt_0" }.count)
@@ -62,10 +64,10 @@ class SplitDaoTest: XCTestCase {
 
     func getUpdate(dao: SplitDao) {
         let splits = dao.getAll()
-        
+
         dao.insertOrUpdate(split: newSplit(name: "feat_0", trafficType: "ttype"))
         let splitsUpd = dao.getAll()
-        
+
         XCTAssertEqual(10, splits.count)
         XCTAssertEqual(10, splitsUpd.count)
         XCTAssertEqual(1, splits.filter { $0.trafficTypeName == "tt_0" }.count)
@@ -112,11 +114,13 @@ class SplitDaoTest: XCTestCase {
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
-        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
-                                               dispatchQueue: DispatchQueue(label: "split dao test"))
+        let helper = IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: DispatchQueue(label: "split dao test"))
         splitDao = CoreDataSplitDao(coreDataHelper: helper)
-        splitDaoAes128Cbc = CoreDataSplitDao(coreDataHelper: helper,
-                                                       cipher: cipher)
+        splitDaoAes128Cbc = CoreDataSplitDao(
+            coreDataHelper: helper,
+            cipher: cipher)
 
         // create impressions and get one encrypted feature name
         let splits = createSplits()
@@ -136,28 +140,29 @@ class SplitDaoTest: XCTestCase {
         XCTAssertFalse(loadSplit.name?.contains("feat_") ?? true)
         XCTAssertFalse(loadSplit.body?.contains("tt_") ?? true)
         XCTAssertNil(split)
-}
+    }
 
     func getBy(testName: String, coreDataHelper: CoreDataHelper) -> (name: String?, body: String?) {
         var name: String? = nil
         var body: String? = nil
         coreDataHelper.performAndWait {
             let predicate = NSPredicate(format: "name == %@", testName)
-            let entities = coreDataHelper.fetch(entity: .split,
-                                                where: predicate,
-                                                rowLimit: 1).compactMap { return $0 as? SplitEntity }
-            if entities.count > 0 {
+            let entities = coreDataHelper.fetch(
+                entity: .split,
+                where: predicate,
+                rowLimit: 1).compactMap { $0 as? SplitEntity }
+            if !entities.isEmpty {
                 name = entities[0].name
                 body = entities[0].body
             }
         }
         return (name: name, body: body)
     }
-    
+
     private func createSplits() -> [Split] {
         return SplitTestHelper.createSplits(namePrefix: "feat_", count: 10)
     }
-    
+
     private func newSplit(name: String, trafficType: String) -> Split {
         return SplitTestHelper.newSplit(name: name, trafficType: trafficType)
     }

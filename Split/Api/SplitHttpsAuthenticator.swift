@@ -9,7 +9,8 @@
 import Foundation
 @objc public protocol SplitHttpsAuthenticator {
     @objc(authenticateSession:challenge:completionHandler:)
-    func authenticate(session: URLSession,
-                      challenge: URLAuthenticationChallenge,
-                      completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
+    func authenticate(
+        session: URLSession,
+        challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void)
 }

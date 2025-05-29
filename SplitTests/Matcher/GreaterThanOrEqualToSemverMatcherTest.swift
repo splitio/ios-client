@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class GreaterThanOrEqualToSemverMatcherTest: XCTestCase {
     func testMatchShouldReturnTrueWhenKeyIsGreater() {
@@ -60,6 +60,8 @@ class GreaterThanOrEqualToSemverMatcherTest: XCTestCase {
     }
 
     private func match(this: String?, to: String?) -> Bool {
-        return GreaterThanOrEqualToSemverMatcher(data: this).evaluate(values: EvalValues(matchValue: to, matchingKey: "test"), context: nil)
+        return GreaterThanOrEqualToSemverMatcher(data: this).evaluate(
+            values: EvalValues(matchValue: to, matchingKey: "test"),
+            context: nil)
     }
 }

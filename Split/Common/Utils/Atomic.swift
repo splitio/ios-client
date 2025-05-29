@@ -21,32 +21,32 @@ final class Atomic<T> {
     var value: T {
         lock.lock()
         defer { lock.unlock() }
-        return self.currentValue
+        return currentValue
     }
 
     func mutate(_ transformation: (inout T) -> Void) {
         lock.lock()
-        transformation(&self.currentValue)
+        transformation(&currentValue)
         lock.unlock()
     }
 
     func mutate(_ transformation: (T, inout T) -> Void) {
         lock.lock()
-        transformation(currentValue, &self.currentValue)
+        transformation(currentValue, &currentValue)
         lock.unlock()
     }
 
     func getAndSet(_ newValue: T) -> T {
         lock.lock()
         defer { lock.unlock() }
-        let oldValue = self.currentValue
-        self.currentValue = newValue
+        let oldValue = currentValue
+        currentValue = newValue
         return oldValue
     }
 
     func set(_ newValue: T) {
         lock.lock()
-        self.currentValue = newValue
+        currentValue = newValue
         lock.unlock()
     }
 }
@@ -68,16 +68,16 @@ final class AtomicInt {
     func getAndAdd(_ addValue: Int) -> Int {
         lock.lock()
         defer { lock.unlock() }
-        let oldValue = self.curValue
-        curValue+=addValue
+        let oldValue = curValue
+        curValue += addValue
         return oldValue
     }
 
     func addAndGet(_ addValue: Int) -> Int {
         lock.lock()
         defer { lock.unlock() }
-        curValue+=addValue
-        let newValue = self.curValue
+        curValue += addValue
+        let newValue = curValue
         return newValue
     }
 
@@ -97,7 +97,7 @@ final class AtomicInt {
 
     func mutate(_ transformation: (inout Int) -> Void) {
         lock.lock()
-        transformation(&self.curValue)
+        transformation(&curValue)
         lock.unlock()
     }
 }

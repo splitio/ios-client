@@ -10,8 +10,6 @@ import Foundation
 @testable import Split
 
 class PersistentImpressionsCountStorageStub: PersistentImpressionsCountStorage {
-
-
     var storedImpressions = [String: ImpressionsCountPerFeature]()
     var impressionsStatus = [String: Int32]()
 
@@ -43,9 +41,10 @@ class PersistentImpressionsCountStorageStub: PersistentImpressionsCountStorage {
     func pushMany(counts: [ImpressionsCountPerFeature]) {
         pushManyCalled = true
         for count in counts {
-            var row = ImpressionsCountPerFeature(feature: count.feature,
-                                                 timeframe: count.timeframe,
-                                                 count: count.count)
+            var row = ImpressionsCountPerFeature(
+                feature: count.feature,
+                timeframe: count.timeframe,
+                count: count.count)
             row.storageId = count.storageId ?? UUID().uuidString
             if let eId = row.storageId {
                 storedImpressions[eId] = row

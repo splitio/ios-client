@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class MultiClientEvaluationTest: XCTestCase {
-
     let splitName = "workm"
     var streamingBinding: TestStreamResponseBinding?
     let defaultKey = "key_default"
@@ -26,7 +25,7 @@ class MultiClientEvaluationTest: XCTestCase {
 
     let dbqueue = DispatchQueue(label: "testqueue", target: DispatchQueue.test)
 
-    struct Attr {
+    enum Attr {
         static let numValue = "num_value"
         static let strValue = "str_value"
         static let numValueA = "num_value_a"
@@ -37,14 +36,13 @@ class MultiClientEvaluationTest: XCTestCase {
         Attr.numValue: 10,
         Attr.strValue: "yes",
         Attr.numValueA: 20,
-        Attr.strValueA: "no"
+        Attr.strValueA: "no",
     ]
 
     var cachedSplit: Split!
     var clients = [String: SplitClient]()
     var readyExps = [String: XCTestExpectation]()
     var factory: SplitFactory!
-
 
     override func setUp() {
         IntegrationCoreDataHelper.observeChanges()
@@ -84,8 +82,13 @@ class MultiClientEvaluationTest: XCTestCase {
         // defaultKey is whitelisted.
         // key1 to key3 has its own whitelist
         // key4 evaluates to default treatment
-        let expectedResults = [defaultKey: "on_key_default", key1: "on_key_1",
-                                     key2: "on_key_2", key3: "on_key_3", key4: "default_t"]
+        let expectedResults = [
+            defaultKey: "on_key_default",
+            key1: "on_key_1",
+            key2: "on_key_2",
+            key3: "on_key_3",
+            key4: "default_t",
+        ]
         doInAllClients { key, _ in
             XCTAssertEqual(expectedResults[key] ?? "", results[key] ?? "")
         }
@@ -96,22 +99,23 @@ class MultiClientEvaluationTest: XCTestCase {
     }
 
     func testEvaluationFromCache() {
-
-        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 1, entity: .generalInfo,
-                                                       operation: CrudKey.insert)
+        let dbExp = IntegrationCoreDataHelper.getDbExp(
+            count: 1,
+            entity: .generalInfo,
+            operation: CrudKey.insert)
         var cache = [String: Bool]()
         let changes = try! Json.decodeFrom(json: getChanges().stringRepresentation, to: TargetingRulesChange.self)
         let db = TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
         db.splitDao.syncInsertOrUpdate(split: changes.featureFlags.splits[0])
         db.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
- 
+
         setupFactory(database: db)
 
         wait(for: [dbExp], timeout: 10.0)
 
         clients[defaultKey] = factory.client
 
-        for i in 1..<4 {
+        for i in 1 ..< 4 {
             clients["key_\(i)"] = factory.client(key: Key(matchingKey: "key_\(i)"))
         }
 
@@ -133,8 +137,13 @@ class MultiClientEvaluationTest: XCTestCase {
         // defaultKey is whitelisted.
         // key1 to key3 has its own whitelist
         // key4 evaluates to default treatment
-        let expectedResults = [defaultKey: "on_key_default", key1: "on_key_1",
-                                     key2: "on_key_2", key3: "on_key_3", key4: "default_t"]
+        let expectedResults = [
+            defaultKey: "on_key_default",
+            key1: "on_key_1",
+            key2: "on_key_2",
+            key3: "on_key_3",
+            key4: "default_t",
+        ]
         doInAllClients { key, _ in
             XCTAssertEqual(expectedResults[key] ?? "", results[key] ?? "")
             XCTAssertTrue(cache[key] ?? false)
@@ -148,7 +157,7 @@ class MultiClientEvaluationTest: XCTestCase {
     func testEvaluationWithAttributes() {
         clients[defaultKey] = factory.client
 
-        for i in 4..<6 {
+        for i in 4 ..< 6 {
             let key = "key_\(i)"
             readyExps[key] = XCTestExpectation(description: "Ready \(key)")
             let client = factory.client(key: Key(matchingKey: key))
@@ -172,8 +181,12 @@ class MultiClientEvaluationTest: XCTestCase {
         // key4 evaluates to default treatment
         // key5 evaluates using attributes on get treatment
         // key6 has stored attributes
-        let expectedResults = [defaultKey: "on_key_default", key4: "default_t",
-                                     key5: "str_yes", key6: "str_yes"]
+        let expectedResults = [
+            defaultKey: "on_key_default",
+            key4: "default_t",
+            key5: "str_yes",
+            key6: "str_yes",
+        ]
         doInAllClients { key, _ in
             XCTAssertEqual(expectedResults[key] ?? "", results[key] ?? "")
         }
@@ -186,10 +199,9 @@ class MultiClientEvaluationTest: XCTestCase {
     var eventsSent = [String: EventDTO]()
     var eventsExp = XCTestExpectation(description: "events exp")
     func testTrack() {
-
         clients[defaultKey] = factory.client
 
-        for i in 1..<4 {
+        for i in 1 ..< 4 {
             clients["key_\(i)"] = factory.client(key: Key(matchingKey: "key_\(i)"))
         }
 
@@ -226,10 +238,9 @@ class MultiClientEvaluationTest: XCTestCase {
     var impressionsSent = [String: KeyImpression]()
     var impressionsExp = XCTestExpectation(description: "impressions exp")
     func testImpressions() {
-
         clients[defaultKey] = factory.client
 
-        for i in 1..<4 {
+        for i in 1 ..< 4 {
             clients["key_\(i)"] = factory.client(key: Key(matchingKey: "key_\(i)"))
         }
 
@@ -263,14 +274,16 @@ class MultiClientEvaluationTest: XCTestCase {
 
     private func getChanges() -> Data {
         let changeNumber = 5000
-        var content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: "multi_client_test", type: "json")!
+        var content = FileHelper.readDataFromFile(
+            sourceClass: IntegrationHelper(),
+            name: "multi_client_test",
+            type: "json")!
         content = content.replacingOccurrences(of: "<FIELD_SINCE>", with: "\(changeNumber)")
         content = content.replacingOccurrences(of: "<FIELD_TILL>", with: "\(changeNumber)")
         return Data(content.utf8)
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
-
         return { request in
             if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: self.getChanges())
@@ -310,17 +323,17 @@ class MultiClientEvaluationTest: XCTestCase {
             action(key, client)
         }
     }
+
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.test.asyncAfter(deadline: .now() + 1) {
-            }
+            DispatchQueue.test.asyncAfter(deadline: .now() + 1) {}
             return self.streamingBinding!
         }
     }
 
     private func basicSplitConfig() -> SplitClientConfig {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
         splitConfig.impressionRefreshRate = 999999
@@ -335,13 +348,14 @@ class MultiClientEvaluationTest: XCTestCase {
         let splitDatabase = database ?? TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
         splitConfig.trafficType = trafficType
 
-        let key: Key = Key(matchingKey: defaultKey)
+        let key = Key(matchingKey: defaultKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -364,7 +378,7 @@ class MultiClientEvaluationTest: XCTestCase {
     private func impressions(from data: Data?) -> [KeyImpression]? {
         guard let data = data else { return nil }
         do {
-            let tests =  try Json.decodeFrom(json: data.stringRepresentation, to: [ImpressionsTest].self)
+            let tests = try Json.decodeFrom(json: data.stringRepresentation, to: [ImpressionsTest].self)
             return tests.flatMap { $0.keyImpressions }
         } catch {
             print(error)
@@ -372,5 +386,3 @@ class MultiClientEvaluationTest: XCTestCase {
         return nil
     }
 }
-
-

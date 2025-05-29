@@ -24,7 +24,7 @@ class HttpStreamRequestMock: HttpStreamRequest {
 
     var identifier: Int = 0
 
-    var url: URL = URL(string: "www.split.com")!
+    var url: URL = .init(string: "www.split.com")!
 
     var method: HttpMethod = .get
 
@@ -36,8 +36,7 @@ class HttpStreamRequestMock: HttpStreamRequest {
 
     var responseCode: Int = 0
 
-    func send() {
-    }
+    func send() {}
 
     func close() {
         closeCalled = true
@@ -56,7 +55,6 @@ class HttpStreamRequestMock: HttpStreamRequest {
         if let handler = incomingDataHandler {
             handler(data)
         }
-
     }
 
     func complete(error: HttpError?) {
@@ -70,7 +68,11 @@ class HttpStreamRequestMock: HttpStreamRequest {
         }
     }
 
-    func getResponse(responseHandler: @escaping ResponseHandler, incomingDataHandler: @escaping IncomingDataHandler, closeHandler: @escaping CloseHandler, errorHandler: @escaping ErrorHandler) -> Self {
+    func getResponse(
+        responseHandler: @escaping ResponseHandler,
+        incomingDataHandler: @escaping IncomingDataHandler,
+        closeHandler: @escaping CloseHandler,
+        errorHandler: @escaping ErrorHandler) -> Self {
         self.responseHandler = responseHandler
         self.incomingDataHandler = incomingDataHandler
         self.closeHandler = closeHandler
@@ -78,6 +80,5 @@ class HttpStreamRequestMock: HttpStreamRequest {
         return self
     }
 
-    func notifyPinnedCredentialFail() {
-    }
+    func notifyPinnedCredentialFail() {}
 }

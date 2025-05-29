@@ -14,13 +14,13 @@ protocol HttpTelemetryStatsRecorder {
 }
 
 class DefaultHttpTelemetryStatsRecorder: HttpTelemetryStatsRecorder {
-
     private let restClient: RestClientTelemetryStats
     private let syncHelper: SyncHelper
     private let resource = Resource.telemetry
 
-    init(restClient: RestClientTelemetryStats,
-         syncHelper: SyncHelper) {
+    init(
+        restClient: RestClientTelemetryStats,
+        syncHelper: SyncHelper) {
         self.restClient = restClient
         self.syncHelper = syncHelper
     }
@@ -33,7 +33,6 @@ class DefaultHttpTelemetryStatsRecorder: HttpTelemetryStatsRecorder {
     }
 
     func execute(_ stats: TelemetryStats) throws {
-
         let semaphore = DispatchSemaphore(value: 0)
         var httpError: HttpError?
         let startTime = syncHelper.time()

@@ -8,13 +8,14 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ConfigTest: XCTestCase {
     var config = SplitClientConfig()
 
     // MARK: ImpressionsMode
+
     func testImpressionsModeEmpty() {
         config.impressionsMode = ""
 
@@ -50,4 +51,3 @@ class ConfigTest: XCTestCase {
         XCTAssertEqual(ImpressionsMode.none, config.$impressionsMode)
     }
 }
-

@@ -14,7 +14,6 @@ import Foundation
 /// Also all methods where replaced by read only variables following Uniform Access Principle
 ///
 @objc public protocol SplitFactory {
-
     ///
     /// Default Split client instance. This would be the first client created on factory init
     /// - Returns: An instance of a class implementing SplitClient protocol

@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class HttpTelemetryStatsRecorderStub: HttpTelemetryStatsRecorder {
-
     var queue: DispatchQueue?
     var endpointAvailable = true
 
@@ -23,8 +22,7 @@ class HttpTelemetryStatsRecorderStub: HttpTelemetryStatsRecorder {
     var executeCallCount = 0
 
     func execute(_ stats: TelemetryStats) throws {
-
-        if let queue = self.queue {
+        if let queue = queue {
             try queue.sync {
                 try exec(stats)
             }
@@ -35,7 +33,7 @@ class HttpTelemetryStatsRecorderStub: HttpTelemetryStatsRecorder {
 
     private func exec(_ stats: TelemetryStats) throws {
         statsSent = stats
-        executeCallCount+=1
+        executeCallCount += 1
         if errorOccurredCallCount >= executeCallCount {
             throw HttpError.unknown(code: -1, message: "something happend")
         }

@@ -8,32 +8,32 @@
 import Foundation
 
 class BaseMatcher: NSObject {
-
     var negate: Bool?
     var attribute: String?
     var type: MatcherType?
 
-    init(negate: Bool? = nil,
-         attribute: String? = nil, type: MatcherType? = nil) {
-
+    init(
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         self.negate = negate
         self.attribute = attribute
         self.type = type
     }
 
     func isNegate() -> Bool {
-        return self.negate ?? false
+        return negate ?? false
     }
 
     func getAttribute() -> String? {
-        return self.attribute
+        return attribute
     }
 
     func getMatcherType() -> MatcherType {
-        return self.type!
+        return type!
     }
 
     func matcherHasAttribute() -> Bool {
-        return self.attribute != nil
+        return attribute != nil
     }
 }

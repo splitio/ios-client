@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class StreamingControlTest: XCTestCase {
     var httpClient: HttpClient!
@@ -39,7 +39,6 @@ class StreamingControlTest: XCTestCase {
     }
 
     func testControl() throws {
-
         let splitName = "workm"
 
         try testFactory.buildSdk()
@@ -64,48 +63,58 @@ class StreamingControlTest: XCTestCase {
 
         // Should disable streaming and enable polling
         syncSpy.startPeriodicFetchingExp = XCTestExpectation()
-        timestamp+=1000
-        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
-                                                                                  controlType: "STREAMING_PAUSED"))
-
+        timestamp += 1000
+        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(
+            timestamp: timestamp,
+            controlType: "STREAMING_PAUSED"))
 
         wait(for: [syncSpy.startPeriodicFetchingExp!], timeout: 5)
 
-        timestamp+=1000
-        var msg = TestingData.membershipsNotificationSegmentRemovalMessage(type: .mySegmentsUpdate, segment: "new_segment", timestamp: timestamp)
+        timestamp += 1000
+        var msg = TestingData.membershipsNotificationSegmentRemovalMessage(
+            type: .mySegmentsUpdate,
+            segment: "new_segment",
+            timestamp: timestamp)
         streamingBinding?.push(message: msg)
         // allow to my segments be updated
         startHitsCheck()
-        wait(for: [mySegExp,  splitsChangesExp], timeout: 5)
+        wait(for: [mySegExp, splitsChangesExp], timeout: 5)
         let treatmentPaused = client.getTreatment(splitName)
 
-
         syncSpy.stopPeriodicFetchingExp = XCTestExpectation()
-        timestamp+=1000
-        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
-                                                                                  controlType: "STREAMING_RESUMED"))
+        timestamp += 1000
+        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(
+            timestamp: timestamp,
+            controlType: "STREAMING_RESUMED"))
 
         wait(for: [syncSpy.stopPeriodicFetchingExp!], timeout: 5) // Polling stopped once streaming enabled
-        timestamp+=1000
+        timestamp += 1000
 
-        msg = TestingData.membershipsNotificationSegmentRemovalMessage(type: .mySegmentsUpdate, segment: "new_segment", timestamp: timestamp)
+        msg = TestingData.membershipsNotificationSegmentRemovalMessage(
+            type: .mySegmentsUpdate,
+            segment: "new_segment",
+            timestamp: timestamp)
         streamingBinding?.push(message: msg)
         wait() // allow to my segments be updated
         let treatmentEnabled = client.getTreatment(splitName)
 
         // Should disable streaming and enable polling
         syncSpy.startPeriodicFetchingExp = XCTestExpectation()
-        timestamp+=1000
-        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: timestamp,
-                                                                                  controlType: "STREAMING_DISABLED"))
+        timestamp += 1000
+        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(
+            timestamp: timestamp,
+            controlType: "STREAMING_DISABLED"))
 
         wait(for: [syncSpy.startPeriodicFetchingExp!], timeout: 5)
-        timestamp+=1000
+        timestamp += 1000
 
-        msg = TestingData.membershipsNotificationSegmentRemovalMessage(type: .mySegmentsUpdate, segment: "new_segment", timestamp: timestamp)
+        msg = TestingData.membershipsNotificationSegmentRemovalMessage(
+            type: .mySegmentsUpdate,
+            segment: "new_segment",
+            timestamp: timestamp)
         streamingBinding?.push(message: msg)
         startHitsCheck()
-        wait(for: [mySegExp,  splitsChangesExp], timeout: 5)
+        wait(for: [mySegExp, splitsChangesExp], timeout: 5)
 
         let treatmentDisabled = client.getTreatment(splitName)
 
@@ -128,14 +137,16 @@ class StreamingControlTest: XCTestCase {
         return { request in
             if request.isSplitEndpoint() {
                 let hit = self.splitsHitCount
-                self.splitsHitCount+=1
+                self.splitsHitCount += 1
                 if hit == 0 {
                     return TestDispatcherResponse(code: 200, data: Data(self.splitChanges().utf8))
                 }
                 if self.checkSplitChangesHit {
                     self.splitsChangesExp.fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 if self.checkMySegmentsHit {
@@ -168,14 +179,16 @@ class StreamingControlTest: XCTestCase {
     }
 
     private func wait() {
-        ThreadUtils.delay(seconds: Double(self.kRefreshRate) * 2.0)
+        ThreadUtils.delay(seconds: Double(kRefreshRate) * 2.0)
     }
 
     private func splitChanges() -> String {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.since = 500
         change?.till = 1000
-        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        let targetingRulesChange = TargetingRulesChange(
+            featureFlags: change!,
+            ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
         return (try? Json.encodeToJson(targetingRulesChange)) ?? IntegrationHelper.emptySplitChanges
     }
 }

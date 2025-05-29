@@ -6,24 +6,22 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ApiKeyValidatorTests: XCTestCase {
-    
     var validator: ApiKeyValidator!
-    
+
     override func setUp() {
         validator = DefaultApiKeyValidator()
     }
-    
-    override func tearDown() {
-    }
-    
+
+    override func tearDown() {}
+
     func testValid() {
         XCTAssertNil(validator.validate(apiKey: "key1"))
     }
-    
+
     func testNull() {
         let errorInfo = validator.validate(apiKey: nil)
         XCTAssertNotNil(errorInfo)
@@ -31,7 +29,7 @@ class ApiKeyValidatorTests: XCTestCase {
         XCTAssertEqual("you passed a null api_key, the api_key must be a non-empty string", errorInfo?.errorMessage)
         XCTAssertEqual(errorInfo?.warnings.count, 0)
     }
-    
+
     func testEmptyKey() {
         let errorInfo = validator.validate(apiKey: "")
         XCTAssertNotNil(errorInfo)

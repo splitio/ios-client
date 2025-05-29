@@ -13,22 +13,28 @@ enum Algorithm: Int {
 }
 
 protocol SplitterProtocol {
-    func getTreatment(key: Key, seed: Int, attributes: [String: Any]?,
-                      partions: [Partition]?, algo: Algorithm) -> String
+    func getTreatment(
+        key: Key,
+        seed: Int,
+        attributes: [String: Any]?,
+        partions: [Partition]?,
+        algo: Algorithm) -> String
     func getBucket(seed: Int, key: String, algo: Algorithm) -> Int64
 }
 
 class Splitter: SplitterProtocol {
-
     static let shared: Splitter = {
         let instance = Splitter()
         return instance
     }()
 
-    func getTreatment(key: Key, seed: Int, attributes: [String: Any]?,
-                      partions: [Partition]?, algo: Algorithm) -> String {
-
-        var accumulatedSize: Int = 0
+    func getTreatment(
+        key: Key,
+        seed: Int,
+        attributes: [String: Any]?,
+        partions: [Partition]?,
+        algo: Algorithm) -> String {
+        var accumulatedSize = 0
 
         let bucket: Int64 = getBucket(seed: seed, key: key.bucketingKey ?? key.matchingKey, algo: algo)
         if let splitPartitions = partions {
@@ -44,14 +50,14 @@ class Splitter: SplitterProtocol {
 
     func getBucket(seed: Int, key: String, algo: Algorithm) -> Int64 {
         let hashCode: Int64 = self.hashCode(seed: seed, key: key, algo: algo)
-        var reminder = hashCode  % 100
+        var reminder = hashCode % 100
         if algo == Algorithm.legacy {
             reminder = abs(reminder)
         }
         return Int64(reminder) + Int64(1)
     }
 
-     func hashCode(seed: Int, key: String, algo: Algorithm) -> Int64 {
+    func hashCode(seed: Int, key: String, algo: Algorithm) -> Int64 {
         switch algo {
         case .murmur3:
             return Int64(truncatingIfNeeded: Murmur3Hash.hashString(key, UInt32(truncatingIfNeeded: seed)))

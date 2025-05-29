@@ -41,7 +41,7 @@ struct ValidationErrorInfo {
     }
 
     init(warning: ValidationWarning, message: String) {
-        self.warnings[warning] = message
+        warnings[warning] = message
     }
 
     var isError: Bool {
@@ -49,7 +49,7 @@ struct ValidationErrorInfo {
     }
 
     mutating func addWarning(_ warning: ValidationWarning, message: String) {
-        self.warnings[warning] = message
+        warnings[warning] = message
     }
 
     func hasWarning(_ warning: ValidationWarning) -> Bool {

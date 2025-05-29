@@ -12,7 +12,6 @@ import Foundation
 /// Default implementation of SplitManager protocol
 ///
 @objc public class DefaultSplitManager: NSObject, SplitManager {
-
     private let splitsStorage: SplitsStorage
     private let splitValidator: SplitValidator
     private let validationLogger: ValidationMessageLogger
@@ -26,7 +25,6 @@ import Foundation
     }
 
     public var splits: [SplitView] {
-
         if checkAndLogIfDestroyed(logTag: "splits") {
             return [SplitView]()
         }
@@ -50,18 +48,18 @@ import Foundation
                     conditions.forEach { condition in
                         if let partitions = condition.partitions {
                             partitions.forEach { partition in
-                                if let treatment  = partition.treatment {
+                                if let treatment = partition.treatment {
                                     treatments.insert(treatment)
                                 }
                             }
                         }
                     }
-                    if treatments.count > 0 {
+                    if !treatments.isEmpty {
                         splitView.treatments = Array(treatments)
                     }
                 }
                 return splitView
-        }
+            }
     }
 
     public var splitNames: [String] {
@@ -69,11 +67,10 @@ import Foundation
             return [String]()
         }
 
-        return splits.compactMap { return $0.name }
+        return splits.compactMap { $0.name }
     }
 
     public func split(featureName: String) -> SplitView? {
-
         let logTag = "split"
 
         if checkAndLogIfDestroyed(logTag: logTag) {
@@ -95,13 +92,12 @@ import Foundation
         }
 
         let splitName = featureName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        let filtered = splits.filter { return ( splitName == $0.name?.lowercased() ) }
-        return filtered.count > 0 ? filtered[0] : nil
+        let filtered = splits.filter { (splitName == $0.name?.lowercased()) }
+        return !filtered.isEmpty ? filtered[0] : nil
     }
 }
 
 extension DefaultSplitManager: Destroyable {
-
     func checkAndLogIfDestroyed(logTag: String) -> Bool {
         if isManagerDestroyed.value {
             validationLogger.e(message: "Manager has already been destroyed - no calls possible", tag: logTag)

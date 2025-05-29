@@ -20,7 +20,6 @@ import Foundation
 @testable import Split
 
 class ByKeyAttributesStorageStub: ByKeyAttributesStorage {
-
     let attributesStorage: AttributesStorageStub
     private let userKey: String
 
@@ -35,7 +34,7 @@ class ByKeyAttributesStorageStub: ByKeyAttributesStorage {
         attributesStorage.loadLocal(forKey: userKey)
     }
 
-    func set(_ attributes: [String : Any]) {
+    func set(_ attributes: [String: Any]) {
         attributesStorage.set(attributes, forKey: userKey)
     }
 
@@ -43,7 +42,7 @@ class ByKeyAttributesStorageStub: ByKeyAttributesStorage {
         attributesStorage.set(value: value, name: name, forKey: userKey)
     }
 
-    func getAll() -> [String : Any] {
+    func getAll() -> [String: Any] {
         return attributesStorage.getAll(forKey: userKey)
     }
 
@@ -64,5 +63,4 @@ class ByKeyAttributesStorageStub: ByKeyAttributesStorage {
         destroyCalled = true
         attributesStorage.destroy(forKey: userKey)
     }
-
 }

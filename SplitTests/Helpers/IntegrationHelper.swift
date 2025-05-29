@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class IntegrationHelper {
-
     static var mockServiceEndpoint: ServiceEndpoints {
         return ServiceEndpoints.builder().set(sdkEndpoint: mockEndPoint).set(eventsEndpoint: mockEndPoint).build()
     }
@@ -33,15 +32,15 @@ class IntegrationHelper {
 
     static var emptyMySegments: String {
         return """
-          {
-          \"ms\": {
-                      \"k\": []
-          },
-                    \"ls\": {
-                      \"k\": []
-          },
-          }
-          """
+        {
+        \"ms\": {
+                    \"k\": []
+        },
+                  \"ls\": {
+                    \"k\": []
+        },
+        }
+        """
     }
 
     static var emptySplitChanges: String {
@@ -52,20 +51,19 @@ class IntegrationHelper {
         return "{\"ff\": {\"d\":[], \"s\": \(since), \"t\": \(till) }, \"rbs\": {\"d\":[], \"s\": \(since), \"t\": \(till) }}"
     }
 
-
     static func buildSegments(regular: [String] = [], large: [String] = [], cn: Int64 = -1) -> String {
         let reg = toSegments(regular)
         let lar = toSegments(large)
-        let res =  """
-          {
-          \"ms\": {
-                      \"k\": [\(reg)]
-          },
-                    \"ls\": {
-                      \"k\": [\(lar)]
-          }
-          }
-          """
+        let res = """
+        {
+        \"ms\": {
+                    \"k\": [\(reg)]
+        },
+                  \"ls\": {
+                    \"k\": [\(lar)]
+        }
+        }
+        """
         print(res)
         return res
     }
@@ -109,11 +107,17 @@ class IntegrationHelper {
     }
 
     static func buildImpressionKey(impression: Impression) -> String {
-        return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
+        return buildImpressionKey(
+            key: impression.keyName!,
+            splitName: impression.feature!,
+            treatment: impression.treatment!)
     }
 
     static func buildImpressionKey(impression: KeyImpression) -> String {
-        return buildImpressionKey(key: impression.keyName, splitName: impression.featureName!, treatment: impression.treatment)
+        return buildImpressionKey(
+            key: impression.keyName,
+            splitName: impression.featureName!,
+            treatment: impression.treatment)
     }
 
     static func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {
@@ -138,13 +142,12 @@ class IntegrationHelper {
                 print("error: \(error)")
             }
             let events = lastEventHitEvents.filter { $0.value == value }
-            if events.count > 0 {
+            if !events.isEmpty {
                 return events[0]
             }
         }
         return nil
     }
-
 
     static func dummySseResponse(delay: Int = 0) -> String {
         return """
@@ -186,7 +189,7 @@ class IntegrationHelper {
 
     static func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+           let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
             return change.featureFlags
         }
         return nil
@@ -201,10 +204,10 @@ class IntegrationHelper {
 
     static func ably40012Error() -> String {
         return """
-            id:cf74eb42-f687-48e4-ad18-af2125110aac
-            event:error
-            data:{ "code": 40012,  "statusCode":400,  "message": "Invalid client id"}
-            """
+        id:cf74eb42-f687-48e4-ad18-af2125110aac
+        event:error
+        data:{ "code": 40012,  "statusCode":400,  "message": "Invalid client id"}
+        """
     }
 
     static func describeEvent(_ event: SplitInternalEvent) -> String {

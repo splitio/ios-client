@@ -8,45 +8,44 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ReconnectBackoffCounterTest: XCTestCase {
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testBase1() {
         let results: [Double] = [1, 2, 4, 8, 30, 1]
-        testWithBase(base: 1, results: results);
+        testWithBase(base: 1, results: results)
     }
 
     func testBase2() {
         let results: [Double] = [1, 4, 16, 64, 256, 1]
-        testWithBase(base: 2, results: results);
+        testWithBase(base: 2, results: results)
     }
 
     func testBase3() {
         let results: [Double] = [1, 6, 36, 216, 1]
-        testWithBase(base: 3, results: results);
+        testWithBase(base: 3, results: results)
     }
 
     func testBase8() {
         let results: [Double] = [1, 16, 256, 1800, 1]
-        testWithBase(base: 8, results: results);
+        testWithBase(base: 8, results: results)
     }
 
     private func testWithBase(base: Int, results: [Double]) {
-        let counter = DefaultReconnectBackoffCounter(backoffBase: base);
+        let counter = DefaultReconnectBackoffCounter(backoffBase: base)
         let v1 = counter.getNextRetryTime()
         let v2 = counter.getNextRetryTime()
         let v3 = counter.getNextRetryTime()
         let v4 = counter.getNextRetryTime()
 
-        for _ in 0..<2000 {
+        for _ in 0 ..< 2000 {
             _ = counter.getNextRetryTime()
         }
         let vMax = counter.getNextRetryTime()
-        counter.resetCounter();
+        counter.resetCounter()
         let vReset = counter.getNextRetryTime()
 
         XCTAssertEqual(results[0], v1)
@@ -57,7 +56,5 @@ class ReconnectBackoffCounterTest: XCTestCase {
         XCTAssertEqual(1, vReset)
     }
 
-    override func tearDown() {
-
-    }
+    override func tearDown() {}
 }

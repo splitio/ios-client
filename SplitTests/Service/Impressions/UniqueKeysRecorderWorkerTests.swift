@@ -7,23 +7,22 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class UniqueKeysRecorderCountWorkerTests: XCTestCase {
-
     var worker: UniqueKeysRecorderWorker!
     var keysStorage: PersistentUniqueKeyStorageStub!
     var keysRecorder: HttpUniqueKeysRecorderStub!
     var dummyKeys = [UniqueKey]()
 
-
     override func setUp() {
         dummyKeys = TestingHelper.createUniqueKeys(keyCount: 60, featureCount: 30).keys
         keysStorage = PersistentUniqueKeyStorageStub()
         keysRecorder = HttpUniqueKeysRecorderStub()
-        worker = UniqueKeysRecorderWorker(uniqueKeyStorage: keysStorage,
-                                          uniqueKeysRecorder: keysRecorder)
+        worker = UniqueKeysRecorderWorker(
+            uniqueKeyStorage: keysStorage,
+            uniqueKeysRecorder: keysRecorder)
     }
 
     func testSendSuccess() {
@@ -59,7 +58,6 @@ class UniqueKeysRecorderCountWorkerTests: XCTestCase {
         XCTAssertEqual(1, keysRecorder.keysSent.count)
     }
 
-
     func testSendNoImpressions() {
         // When no impressions available recorder should not be called
         worker.flush()
@@ -69,7 +67,5 @@ class UniqueKeysRecorderCountWorkerTests: XCTestCase {
         XCTAssertEqual(0, keysRecorder.keysSent.count)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

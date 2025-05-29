@@ -20,15 +20,12 @@ import XCTest
 @testable import Split
 
 class RegexTest: XCTestCase {
-    
-    override func setUp() {
-    }
-    
-    override func tearDown() {
-    }
-    
+    override func setUp() {}
+
+    override func tearDown() {}
+
     func testsRegex() {
-        let files: [String] = ["regex"]
+        let files = ["regex"]
         for file in files {
             var data = readDataFromCSV(fileName: file)
             data = cleanRows(file: data!)
@@ -43,15 +40,18 @@ class RegexTest: XCTestCase {
                 let result: Bool = resultString.toBool()!
                 let matcher = MatchesStringMatcher(data: regex, negate: false)
 
-                let resultEvaluation = matcher.evaluate(values: EvalValues(matchValue: key, matchingKey: key, bucketingKey: key, attributes: nil),
-                                                        context: nil)
-                XCTAssertEqual(resultEvaluation, result, "Evaluation result: \(resultEvaluation), expected -> \(result)")
+                let resultEvaluation = matcher.evaluate(
+                    values: EvalValues(matchValue: key, matchingKey: key, bucketingKey: key, attributes: nil),
+                    context: nil)
+                XCTAssertEqual(
+                    resultEvaluation,
+                    result,
+                    "Evaluation result: \(resultEvaluation), expected -> \(result)")
             }
         }
     }
-    
-    func readDataFromCSV(fileName:String)-> String! {
-        
+
+    func readDataFromCSV(fileName: String) -> String! {
         guard let filepath = Bundle(for: type(of: self)).path(forResource: fileName, ofType: "csv") else {
             return nil
         }
@@ -64,14 +64,14 @@ class RegexTest: XCTestCase {
             return nil
         }
     }
-    
-    func cleanRows(file:String)->String{
+
+    func cleanRows(file: String) -> String {
         var cleanFile = file
         cleanFile = cleanFile.replacingOccurrences(of: "\r", with: "\n")
         cleanFile = cleanFile.replacingOccurrences(of: "\n\n", with: "\n")
         return cleanFile
     }
-    
+
     func csv(data: String) -> [[String]] {
         var result: [[String]] = []
         let rows = data.components(separatedBy: "\n")
@@ -86,9 +86,9 @@ class RegexTest: XCTestCase {
 extension String {
     func toBool() -> Bool? {
         switch self {
-        case "True", "true", "yes", "1":
+        case "1", "true", "True", "yes":
             return true
-        case "False", "false", "no", "0":
+        case "0", "false", "False", "no":
             return false
         default:
             return nil

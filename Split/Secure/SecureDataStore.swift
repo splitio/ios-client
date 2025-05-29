@@ -8,7 +8,6 @@
 import Foundation
 
 class SecureDataStore {
-
     enum Asset: String {
         case accessToken = "user_auth_token"
     }
@@ -24,7 +23,6 @@ class SecureDataStore {
     // MARK: - save access token
 
     func setToken(token: String) {
-
         if let token = getToken() {
             Logger.d(token)
             removeToken()
@@ -41,33 +39,29 @@ class SecureDataStore {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrAccount as String: Asset.accessToken.rawValue,
             kSecValueData as String: valueData,
-            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
         ]
 
         let resultCode = SecItemAdd(queryAdd as CFDictionary, nil)
 
         if resultCode != noErr {
-
             Logger.e("Error saving to Keychain: \(resultCode).")
 
         } else {
-
             Logger.d("Saved to keychain successfully.")
-
         }
     }
 
     // MARK: - retrieve access token
 
     func getToken() -> String? {
-
-        if let token = self.token {
+        if let token = token {
             return token
         }
 
         var query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: Asset.accessToken.rawValue
+            kSecAttrAccount as String: Asset.accessToken.rawValue,
         ]
 
         query[kSecMatchLimit as String] = kSecMatchLimitOne
@@ -83,8 +77,7 @@ class SecureDataStore {
         }
 
         if lastResultCode == noErr, let dic = result as? [String: Any],
-            let data = dic[kSecValueData as String] as? Data {
-
+           let data = dic[kSecValueData as String] as? Data {
             if let token = String(data: data, encoding: .utf8) {
                 return token
             }
@@ -96,24 +89,18 @@ class SecureDataStore {
     // MARK: - delete access token
 
     func removeToken() {
-
         let queryDelete: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
-            kSecAttrAccount as String: Asset.accessToken.rawValue
+            kSecAttrAccount as String: Asset.accessToken.rawValue,
         ]
 
         let resultCodeDelete = SecItemDelete(queryDelete as CFDictionary)
 
         if resultCodeDelete != noErr {
-
             Logger.e("Error deleting from Keychain: \(resultCodeDelete)")
 
         } else {
-
             Logger.d("Removed successfully from the keychain")
-
         }
-
     }
-
 }

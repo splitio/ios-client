@@ -10,8 +10,6 @@ import Foundation
 @testable import Split
 
 class SseNotificationParserStub: SseNotificationParser {
-
-
     var incomingNotification: IncomingNotification?
     var splitsUpdateNotification: TargetingRuleUpdateNotification?
     var ruleBasedSegmentUpdateNotification: TargetingRuleUpdateNotification?
@@ -26,7 +24,9 @@ class SseNotificationParserStub: SseNotificationParser {
         return incomingNotification
     }
 
-    func parseTargetingRuleNotification(jsonString: String, type: NotificationType) throws -> TargetingRuleUpdateNotification {
+    func parseTargetingRuleNotification(
+        jsonString: String,
+        type: NotificationType) throws -> TargetingRuleUpdateNotification {
         if type == .splitUpdate {
             return splitsUpdateNotification!
         } else {
@@ -54,7 +54,7 @@ class SseNotificationParserStub: SseNotificationParser {
         return sseErrorNotification!
     }
 
-    func isError(event: [String : String]) -> Bool {
+    func isError(event: [String: String]) -> Bool {
         return isError
     }
 

@@ -9,7 +9,7 @@ import Foundation
 
 struct Segment: Codable {
     var name: String
-   
+
     enum CodingKeys: String, CodingKey {
         case name = "n"
     }

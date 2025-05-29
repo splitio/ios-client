@@ -20,7 +20,6 @@ protocol MySegmentsSynchronizer {
 }
 
 class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
-
     private let mySegmentsStorage: ByKeyMySegmentsStorage
     private let myLargeSegmentsStorage: ByKeyMySegmentsStorage
     private let syncWorkerFactory: MySegmentsSyncWorkerFactory
@@ -36,14 +35,14 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     private var timerManager: TimersManager?
     private var syncChangeNumbers: Atomic<SegmentsChangeNumber>?
 
-    init(userKey: String,
-         splitConfig: SplitClientConfig,
-         mySegmentsStorage: ByKeyMySegmentsStorage,
-         myLargeSegmentsStorage: ByKeyMySegmentsStorage,
-         syncWorkerFactory: MySegmentsSyncWorkerFactory,
-         eventsManager: SplitEventsManager,
-         timerManager: TimersManager?) {
-
+    init(
+        userKey: String,
+        splitConfig: SplitClientConfig,
+        mySegmentsStorage: ByKeyMySegmentsStorage,
+        myLargeSegmentsStorage: ByKeyMySegmentsStorage,
+        syncWorkerFactory: MySegmentsSyncWorkerFactory,
+        eventsManager: SplitEventsManager,
+        timerManager: TimersManager?) {
         self.userKey = userKey
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
@@ -68,8 +67,9 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
                 changeNumbers: nil)
             self.syncTaskByCnCatalog = ConcurrentDictionary<String, RetryableSyncWorker>()
             self.timerManager = timerManager
-            self.syncChangeNumbers = Atomic(SegmentsChangeNumber(msChangeNumber: ServiceConstants.defaultSegmentsChangeNumber,
-                                                                 mlsChangeNumber: ServiceConstants.defaultSegmentsChangeNumber))
+            self.syncChangeNumbers = Atomic(SegmentsChangeNumber(
+                msChangeNumber: ServiceConstants.defaultSegmentsChangeNumber,
+                mlsChangeNumber: ServiceConstants.defaultSegmentsChangeNumber))
         }
     }
 
@@ -86,8 +86,9 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
             TimeChecker.logInterval("Time until my segments loaded from cache")
             let msChangeNumber = self.mySegmentsStorage.changeNumber
             let mlsChangeNumber = self.myLargeSegmentsStorage.changeNumber
-            self.syncChangeNumbers?.set(SegmentsChangeNumber(msChangeNumber: msChangeNumber,
-                                                            mlsChangeNumber: mlsChangeNumber))
+            self.syncChangeNumbers?.set(SegmentsChangeNumber(
+                msChangeNumber: msChangeNumber,
+                mlsChangeNumber: mlsChangeNumber))
         }
     }
 
@@ -151,8 +152,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
 
         syncChangeNumbers?.mutate {
             if $0.msChangeNumber <= changeNumbers.msChangeNumber,
-               changeNumbers.mlsChangeNumber <= changeNumbers.mlsChangeNumber {
-            }
+               changeNumbers.mlsChangeNumber <= changeNumbers.mlsChangeNumber {}
         }
 
         if timerManager?.isScheduled(timer: .syncSegments) ?? false {
@@ -178,18 +178,19 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     private func executeSync() {
-        guard let taskCatalog = self.syncTaskByCnCatalog else {
+        guard let taskCatalog = syncTaskByCnCatalog else {
             return
         }
-        guard let changeNumbers = self.syncChangeNumbers?.value else {
+        guard let changeNumbers = syncChangeNumbers?.value else {
             return
         }
         let cnKey = changeNumbers.asString()
         if taskCatalog.value(forKey: cnKey) == nil {
-            var worker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(forKey: userKey,
-                                                                               avoidCache: true,
-                                                                               eventsManager: eventsManager,
-                                                                               changeNumbers: changeNumbers)
+            var worker = syncWorkerFactory.createRetryableMySegmentsSyncWorker(
+                forKey: userKey,
+                avoidCache: true,
+                eventsManager: eventsManager,
+                changeNumbers: changeNumbers)
             taskCatalog.setValue(worker, forKey: cnKey)
             worker.start()
             worker.completion = { success in

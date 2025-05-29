@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 protocol EventDao {
     func insert(_ event: EventDTO)
@@ -18,7 +18,6 @@ protocol EventDao {
 }
 
 class CoreDataEventDao: BaseCoreDataDao, EventDao {
-
     private let cipher: Cipher?
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
         self.cipher = cipher
@@ -50,11 +49,12 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
                 return
             }
             let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
-            let entities = self.coreDataHelper.fetch(entity: .event,
-                                                     where: predicate,
-                                                     rowLimit: maxRows).compactMap { return $0 as? EventEntity }
+            let entities = self.coreDataHelper.fetch(
+                entity: .event,
+                where: predicate,
+                rowLimit: maxRows).compactMap { $0 as? EventEntity }
 
-            events = entities.compactMap { return try? self.mapEntityToModel($0) }
+            events = entities.compactMap { try? self.mapEntityToModel($0) }
         }
         return events ?? []
     }
@@ -65,8 +65,9 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
             guard let self = self else {
                 return
             }
-            let entities = self.coreDataHelper.fetch(entity: .event,
-                                                where: predicate).compactMap { return $0 as? EventEntity }
+            let entities = self.coreDataHelper.fetch(
+                entity: .event,
+                where: predicate).compactMap { $0 as? EventEntity }
             for entity in entities {
                 entity.status = newStatus
             }
@@ -75,7 +76,7 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
     }
 
     func delete(_ events: [EventDTO]) {
-        if events.count == 0 {
+        if events.isEmpty {
             return
         }
         execute { [weak self] in
@@ -88,7 +89,6 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
     }
 
     private func mapEntityToModel(_ entity: EventEntity) throws -> EventDTO {
-
         let body = cipher?.decrypt(entity.body) ?? entity.body
         let model = try Json.dynamicDecodeFrom(json: body, to: EventDTO.self)
         model.storageId = entity.storageId
@@ -98,14 +98,14 @@ class CoreDataEventDao: BaseCoreDataDao, EventDao {
 
     // Call this function within an "execute" or "executeAsync"
     private func insert(event: EventDTO) {
-        if let obj = self.coreDataHelper.create(entity: .event) as? EventEntity {
+        if let obj = coreDataHelper.create(entity: .event) as? EventEntity {
             do {
-                obj.storageId = self.coreDataHelper.generateId()
+                obj.storageId = coreDataHelper.generateId()
                 let body = try Json.dynamicEncodeToJson(event)
                 obj.body = cipher?.encrypt(body) ?? body
                 obj.createdAt = Date().unixTimestamp()
                 obj.status = StorageRecordStatus.active
-                self.coreDataHelper.save()
+                coreDataHelper.save()
             } catch {
                 Logger.e("An error occurred while inserting events in storage: \(error.localizedDescription)")
             }

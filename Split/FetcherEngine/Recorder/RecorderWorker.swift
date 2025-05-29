@@ -26,7 +26,6 @@ protocol AccumulatorHelper {
 }
 
 class DefaultAccumulatorHelper: AccumulatorHelper {
-
     let accumulator: RecorderFlushChecker
 
     init(accumulator: RecorderFlushChecker) {
@@ -43,33 +42,33 @@ class DefaultAccumulatorHelper: AccumulatorHelper {
 }
 
 class EventsRecorderSyncHelper: DefaultAccumulatorHelper, RecorderSyncHelper {
-
     private let eventsStorage: EventsStorage
 
-    init(eventsStorage: EventsStorage,
-         accumulator: RecorderFlushChecker) {
+    init(
+        eventsStorage: EventsStorage,
+        accumulator: RecorderFlushChecker) {
         self.eventsStorage = eventsStorage
         super.init(accumulator: accumulator)
     }
 
     func pushAndCheckFlush(_ item: EventDTO) -> Bool {
-        self.eventsStorage.push(item)
+        eventsStorage.push(item)
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: item.sizeInBytes)
     }
 }
 
 class ImpressionsRecorderSyncHelper: DefaultAccumulatorHelper, RecorderSyncHelper {
-
     private let impressionsStorage: ImpressionsStorage
 
-    init(impressionsStorage: ImpressionsStorage,
-         accumulator: RecorderFlushChecker) {
+    init(
+        impressionsStorage: ImpressionsStorage,
+        accumulator: RecorderFlushChecker) {
         self.impressionsStorage = impressionsStorage
         super.init(accumulator: accumulator)
     }
 
     func pushAndCheckFlush(_ item: KeyImpression) -> Bool {
-        self.impressionsStorage.push(item)
+        impressionsStorage.push(item)
         return accumulator.checkIfFlushIsNeeded(sizeInBytes: ServiceConstants.estimatedImpressionSizeInBytes)
     }
 }
@@ -80,15 +79,15 @@ protocol RecorderFlushChecker {
 }
 
 class DefaultRecorderFlushChecker: RecorderFlushChecker {
-
     private let maxQueueSize: Int
     private let maxQueueSizeInBytes: Int
     private var pushedCount = 0
     private var totalPushedSizeInBytes = 0
     private var queue = DispatchQueue(label: "split-recorder-worker", target: DispatchQueue.general)
 
-    init(maxQueueSize: Int,
-         maxQueueSizeInBytes: Int) {
+    init(
+        maxQueueSize: Int,
+        maxQueueSizeInBytes: Int) {
         self.maxQueueSize = maxQueueSize
         self.maxQueueSizeInBytes = maxQueueSizeInBytes
     }
@@ -96,8 +95,8 @@ class DefaultRecorderFlushChecker: RecorderFlushChecker {
     func checkIfFlushIsNeeded(sizeInBytes: Int) -> Bool {
         var flush = false
         queue.sync {
-            pushedCount+=1
-            totalPushedSizeInBytes+=sizeInBytes
+            pushedCount += 1
+            totalPushedSizeInBytes += sizeInBytes
             if self.pushedCount >= maxQueueSize || self.totalPushedSizeInBytes >= maxQueueSizeInBytes {
                 flush = true
             }

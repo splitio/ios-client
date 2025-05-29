@@ -20,15 +20,15 @@ protocol LocalhostSplitsParser {
     func parseContent(_ content: String) -> LocalhostSplits?
 }
 
-struct LocalhostParserProvider {
+enum LocalhostParserProvider {
     static func parser(for type: String) -> LocalhostSplitsParser {
         if type == "yaml" || type == "yml" {
             return YamlLocalhostSplitsParser()
         }
         Logger.w("""
-            Localhost mode: .split mocks will be deprecated soon in favor of YAML files,
-            which provide more targeting power. Take a look in our documentation.
-            """)
+        Localhost mode: .split mocks will be deprecated soon in favor of YAML files,
+        which provide more targeting power. Take a look in our documentation.
+        """)
         return SpaceDelimitedLocalhostSplitsParser()
     }
 

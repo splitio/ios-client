@@ -8,48 +8,47 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ImpressionsModeTypeWrapperTest: XCTestCase {
-
     func testEmptyInvalidValue() {
-        @ImpressionsModeProperty var value: String = ""
+        @ImpressionsModeProperty var value = ""
         // Initial value is "", should be mapped as "optimized"
         XCTAssertEqual(ImpressionsMode.optimized.rawValue, value)
         XCTAssertEqual(ImpressionsMode.optimized, $value) // Projected value
     }
 
     func testInvalidValue() {
-        @ImpressionsModeProperty var value: String = "invalid"
+        @ImpressionsModeProperty var value = "invalid"
 
         XCTAssertEqual(ImpressionsMode.optimized.rawValue, value)
         XCTAssertEqual(ImpressionsMode.optimized, $value) // Projected value
     }
 
     func testInitoptimizedValue() {
-        @ImpressionsModeProperty var value: String = "optimized"
+        @ImpressionsModeProperty var value = "optimized"
 
         XCTAssertEqual(ImpressionsMode.optimized.rawValue, value)
         XCTAssertEqual(ImpressionsMode.optimized, $value) // Projected value
     }
 
     func testInitdebugValue() {
-        @ImpressionsModeProperty var value: String = "debug"
+        @ImpressionsModeProperty var value = "debug"
 
         XCTAssertEqual(ImpressionsMode.debug.rawValue, value)
         XCTAssertEqual(ImpressionsMode.debug, $value) // Projected value
     }
 
     func testInitnoneValue() {
-        @ImpressionsModeProperty var value: String = "none"
+        @ImpressionsModeProperty var value = "none"
 
         XCTAssertEqual(ImpressionsMode.none.rawValue, value)
         XCTAssertEqual(ImpressionsMode.none, $value) // Projected value
     }
 
     func testoptimizedValue() {
-        @ImpressionsModeProperty var value: String = ""
+        @ImpressionsModeProperty var value = ""
         value = "optimized"
 
         XCTAssertEqual(ImpressionsMode.optimized.rawValue, value)
@@ -57,7 +56,7 @@ class ImpressionsModeTypeWrapperTest: XCTestCase {
     }
 
     func testdebugValue() {
-        @ImpressionsModeProperty var value: String = ""
+        @ImpressionsModeProperty var value = ""
         value = "debug"
 
         XCTAssertEqual(ImpressionsMode.debug.rawValue, value)
@@ -65,14 +64,12 @@ class ImpressionsModeTypeWrapperTest: XCTestCase {
     }
 
     func testnoneValue() {
-        @ImpressionsModeProperty var value: String = ""
+        @ImpressionsModeProperty var value = ""
         value = "none"
 
         XCTAssertEqual(ImpressionsMode.none.rawValue, value)
         XCTAssertEqual(ImpressionsMode.none, $value) // Projected value
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

@@ -39,8 +39,8 @@ struct DefaultMySegmentsChangesChecker: MySegmentsChangesChecker {
     }
 
     func mySegmentsHaveChanged(oldSegments: [String], newSegments: [String]) -> Bool {
-        return !(oldSegments.count == newSegments.count &&
-                 oldSegments.sorted() == newSegments.sorted())
+        return !(
+            oldSegments.count == newSegments.count &&
+                oldSegments.sorted() == newSegments.sorted())
     }
-
 }

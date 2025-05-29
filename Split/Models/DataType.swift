@@ -9,7 +9,6 @@
 import Foundation
 
 enum DataType: Int, Codable {
-
     case number
     case dateTime
 

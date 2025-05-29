@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 protocol ImpressionDao {
     func insert(_ impression: KeyImpression)
@@ -18,7 +18,6 @@ protocol ImpressionDao {
 }
 
 class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
-
     private let cipher: Cipher?
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
         self.cipher = cipher
@@ -26,7 +25,6 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
     }
 
     func insert(_ impression: KeyImpression) {
-
         executeAsync { [weak self] in
             guard let self = self else {
                 return
@@ -52,9 +50,10 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
             }
 
             let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
-            let entities = self.coreDataHelper.fetch(entity: .impression,
-                                                where: predicate,
-                                                rowLimit: maxRows).compactMap { return $0 as? ImpressionEntity }
+            let entities = self.coreDataHelper.fetch(
+                entity: .impression,
+                where: predicate,
+                rowLimit: maxRows).compactMap { $0 as? ImpressionEntity }
 
             entities.forEach { entity in
                 if let model = try? self.mapEntityToModel(entity) {
@@ -66,7 +65,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
     }
 
     func update(ids: [String], newStatus: Int32) {
-        if ids.count == 0 {
+        if ids.isEmpty {
             return
         }
 
@@ -76,8 +75,9 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
             guard let self = self else {
                 return
             }
-            let entities = self.coreDataHelper.fetch(entity: .impression,
-                                                     where: predicate).compactMap { return $0 as? ImpressionEntity }
+            let entities = self.coreDataHelper.fetch(
+                entity: .impression,
+                where: predicate).compactMap { $0 as? ImpressionEntity }
             for entity in entities {
                 entity.status = newStatus
             }
@@ -86,15 +86,17 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
     }
 
     func delete(_ impressions: [KeyImpression]) {
-        if impressions.count == 0 {
+        if impressions.isEmpty {
             return
         }
         executeAsync { [weak self] in
             guard let self = self else {
                 return
             }
-            self.coreDataHelper.delete(entity: .impression, by: "storageId",
-                                       values: impressions.map { $0.storageId ?? "" })
+            self.coreDataHelper.delete(
+                entity: .impression,
+                by: "storageId",
+                values: impressions.map { $0.storageId ?? "" })
             self.coreDataHelper.save()
         }
     }
@@ -120,9 +122,9 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
                 coreDataHelper.save()
             } catch {
                 Logger.e("""
-                         An error occurred while inserting impressions in storage:
-                         \(error.localizedDescription)
-                         """)
+                An error occurred while inserting impressions in storage:
+                \(error.localizedDescription)
+                """)
             }
         }
     }

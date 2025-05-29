@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class TimersManagerMock: TimersManager {
-
     private var timersAdded = Set<TimerName>()
     private var timersCancelled = Set<TimerName>()
     private var expectations = [TimerName: XCTestExpectation]()
@@ -64,6 +63,7 @@ class TimersManagerMock: TimersManager {
     func isScheduled(timer: TimerName) -> Bool {
         return timerIsAdded(timer: timer)
     }
+
     func addExpectationFor(timer: TimerName, expectation: XCTestExpectation) {
         expectations[timer] = expectation
     }
@@ -80,7 +80,5 @@ class TimersManagerMock: TimersManager {
         }
     }
 
-    func destroy() {
-    }
+    func destroy() {}
 }
-

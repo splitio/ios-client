@@ -13,13 +13,13 @@ protocol HttpImpressionsRecorder {
 }
 
 class DefaultHttpImpressionsRecorder: HttpImpressionsRecorder {
-
     private let restClient: RestClientImpressions
     private let syncHelper: SyncHelper
     private let resource = Resource.impressions
 
-    init(restClient: RestClientImpressions,
-         syncHelper: SyncHelper) {
+    init(
+        restClient: RestClientImpressions,
+        syncHelper: SyncHelper) {
         self.restClient = restClient
         self.syncHelper = syncHelper
     }

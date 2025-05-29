@@ -23,12 +23,12 @@ class DefaultUserConsentManager: UserConsentManager {
     private var currentStatus: UserConsent
     private let queue = DispatchQueue(label: "split-user-consent", target: .global())
 
-    init(splitConfig: SplitClientConfig,
-         storageContainer: SplitStorageContainer,
-         syncManager: SyncManager,
-         eventsTracker: EventsTracker,
-         impressionsTracker: ImpressionsTracker) {  // Testing purposes
-
+    init(
+        splitConfig: SplitClientConfig,
+        storageContainer: SplitStorageContainer,
+        syncManager: SyncManager,
+        eventsTracker: EventsTracker,
+        impressionsTracker: ImpressionsTracker) { // Testing purposes
         self.splitConfig = splitConfig
         self.currentStatus = splitConfig.userConsent
         self.impressionsStorage = storageContainer.impressionsStorage
@@ -36,8 +36,8 @@ class DefaultUserConsentManager: UserConsentManager {
         self.syncManager = syncManager
         self.eventsTracker = eventsTracker
         self.impressionsTracker = impressionsTracker
-        enableTracking(for: self.currentStatus)
-        enablePersistence(for: self.currentStatus)
+        enableTracking(for: currentStatus)
+        enablePersistence(for: currentStatus)
     }
 
     func set(_ status: UserConsent) {
@@ -49,7 +49,7 @@ class DefaultUserConsentManager: UserConsentManager {
 
     func getStatus() -> UserConsent {
         queue.sync {
-            return currentStatus
+            currentStatus
         }
     }
 

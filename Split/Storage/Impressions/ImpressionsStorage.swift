@@ -20,8 +20,9 @@ class MainImpressionsStorage: ImpressionsStorage {
     private let impressions = SynchronizedList<KeyImpression>()
     private let isPersistenceEnabled: Atomic<Bool>
 
-    init(persistentStorage: PersistentImpressionsStorage,
-         persistenceEnabled: Bool = true) {
+    init(
+        persistentStorage: PersistentImpressionsStorage,
+        persistenceEnabled: Bool = true) {
         self.persistentStorage = persistentStorage
         self.isPersistenceEnabled = Atomic(persistenceEnabled)
     }

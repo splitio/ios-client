@@ -25,9 +25,9 @@ class SegmentsSyncHelperMock: SegmentsSyncHelper {
         lastMlsTillParam = mlsTill
         lastHeadersParam = headers
         if syncCallIndex < results.count - 1 {
-            syncCallIndex+=1
+            syncCallIndex += 1
         }
-        syncCallCount+=1
+        syncCallCount += 1
         if syncCallCount >= expSyncLimit {
             exp?.fulfill()
         }

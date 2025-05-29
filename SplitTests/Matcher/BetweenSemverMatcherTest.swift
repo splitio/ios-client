@@ -6,11 +6,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 final class BetweenSemverMatcherTest: XCTestCase {
-
     func testMatchShouldReturnTrueWhenBetween() {
         let matcher = buildMatcher("1.2.3", "1.2.5")
 

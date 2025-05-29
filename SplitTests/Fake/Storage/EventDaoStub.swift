@@ -6,11 +6,10 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-@testable import Split
 import Foundation
+@testable import Split
 
 class EventDaoStub: EventDao {
-
     var insertedEvents = [EventDTO]()
     var getByEvents = [EventDTO]()
     var updatedEvents = [String: Int32]()

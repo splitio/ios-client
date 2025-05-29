@@ -7,12 +7,11 @@
 //
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(UniqueKeyEntity)
 class UniqueKeyEntity: NSManagedObject {
-
     @NSManaged public var storageId: String
     @NSManaged public var userKey: String
     @NSManaged public var featureList: String

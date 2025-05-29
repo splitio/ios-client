@@ -7,20 +7,18 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class CredentialPinParserTests: XCTestCase {
-
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testPinsForHost() {
-
         // [CredentialPin]
-        let pins = [ CredentialPin(host: "*.example.com", hash: Data(), algo: .sha256),
-                     CredentialPin(host: "**.example.com", hash: Data(), algo: .sha256),
-                     CredentialPin(host: "www.sub.example.com", hash: Data(), algo: .sha256)
+        let pins = [
+            CredentialPin(host: "*.example.com", hash: Data(), algo: .sha256),
+            CredentialPin(host: "**.example.com", hash: Data(), algo: .sha256),
+            CredentialPin(host: "www.sub.example.com", hash: Data(), algo: .sha256),
         ]
 
         // Same as android tests
@@ -31,14 +29,13 @@ class CredentialPinParserTests: XCTestCase {
 
         XCTAssertEqual(2, res1.count)
         XCTAssertEqual(1, res1.filter { $0.host == "*.example.com" }.count)
-        XCTAssertEqual(1, res1.filter { $0.host == "**.example.com"}.count)
+        XCTAssertEqual(1, res1.filter { $0.host == "**.example.com" }.count)
 
         XCTAssertEqual(2, res2.count)
         XCTAssertEqual(1, res2.filter { $0.host == "**.example.com" }.count)
-        XCTAssertEqual(1, res2.filter { $0.host == "www.sub.example.com"}.count)
+        XCTAssertEqual(1, res2.filter { $0.host == "www.sub.example.com" }.count)
 
         XCTAssertEqual(0, res3.count)
         XCTAssertEqual(0, res4.count)
     }
 }
-

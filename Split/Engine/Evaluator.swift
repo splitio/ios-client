@@ -14,8 +14,12 @@ struct EvaluationResult {
     var configuration: String?
     var impressionsDisabled: Bool
 
-    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil,
-         impressionsDisabled: Bool = false) {
+    init(
+        treatment: String,
+        label: String,
+        changeNumber: Int64? = nil,
+        configuration: String? = nil,
+        impressionsDisabled: Bool = false) {
         self.treatment = treatment
         self.label = label
         self.changeNumber = changeNumber
@@ -47,8 +51,11 @@ struct EvalContext {
 }
 
 protocol Evaluator {
-    func evalTreatment(matchingKey: String, bucketingKey: String?,
-                       splitName: String, attributes: [String: Any]?) throws -> EvaluationResult
+    func evalTreatment(
+        matchingKey: String,
+        bucketingKey: String?,
+        splitName: String,
+        attributes: [String: Any]?) throws -> EvaluationResult
 }
 
 class DefaultEvaluator: Evaluator {
@@ -59,99 +66,119 @@ class DefaultEvaluator: Evaluator {
     private let myLargeSegmentsStorage: MySegmentsStorage?
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
 
-    init(splitsStorage: SplitsStorage,
-         mySegmentsStorage: MySegmentsStorage,
-         myLargeSegmentsStorage: MySegmentsStorage? = nil,
-         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil) {
+    init(
+        splitsStorage: SplitsStorage,
+        mySegmentsStorage: MySegmentsStorage,
+        myLargeSegmentsStorage: MySegmentsStorage? = nil,
+        ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
     }
 
-    func evalTreatment(matchingKey: String, bucketingKey: String?,
-                       splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
-
+    func evalTreatment(
+        matchingKey: String,
+        bucketingKey: String?,
+        splitName: String,
+        attributes: [String: Any]?) throws -> EvaluationResult {
         guard let split = splitsStorage.get(name: splitName),
-            split.status != .archived else {
-                Logger.w("The feature flag definition for '\(splitName)' has not been found")
-                return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
+              split.status != .archived else {
+            Logger.w("The feature flag definition for '\(splitName)' has not been found")
+            return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
         }
 
         let changeNumber = split.changeNumber ?? -1
-        let defaultTreatment  = split.defaultTreatment ?? SplitConstants.control
+        let defaultTreatment = split.defaultTreatment ?? SplitConstants.control
         if let killed = split.killed, killed {
-            return EvaluationResult(treatment: defaultTreatment,
-                                    label: ImpressionsConstants.killed,
-                                    changeNumber: changeNumber,
-                                    configuration: split.configurations?[defaultTreatment],
-                                    impressionsDisabled: split.isImpressionsDisabled())
+            return EvaluationResult(
+                treatment: defaultTreatment,
+                label: ImpressionsConstants.killed,
+                changeNumber: changeNumber,
+                configuration: split.configurations?[defaultTreatment],
+                impressionsDisabled: split.isImpressionsDisabled())
         }
 
-        var inRollOut: Bool = false
-        var splitAlgo: Algorithm = Algorithm.legacy
+        var inRollOut = false
+        var splitAlgo = Algorithm.legacy
 
-        if let rawAlgo = split.algo, let algo = Algorithm.init(rawValue: rawAlgo) {
+        if let rawAlgo = split.algo, let algo = Algorithm(rawValue: rawAlgo) {
             splitAlgo = algo
         }
 
         let bucketKey = selectBucketKey(matchingKey: matchingKey, bucketingKey: bucketingKey)
 
         guard let conditions: [Condition] = split.conditions,
-            let trafficAllocationSeed = split.trafficAllocationSeed,
-            let seed = split.seed else {
-                return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.exception)
+              let trafficAllocationSeed = split.trafficAllocationSeed,
+              let seed = split.seed else {
+            return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.exception)
         }
 
         do {
             for condition in conditions {
                 if !inRollOut && condition.conditionType == ConditionType.rollout {
                     if let trafficAllocation = split.trafficAllocation, trafficAllocation < 100 {
-                        let bucket: Int64 = splitter.getBucket(seed: trafficAllocationSeed,
-                                                               key: bucketKey,
-                                                               algo: splitAlgo)
+                        let bucket: Int64 = splitter.getBucket(
+                            seed: trafficAllocationSeed,
+                            key: bucketKey,
+                            algo: splitAlgo)
                         if bucket > trafficAllocation {
-                            return EvaluationResult(treatment: defaultTreatment,
-                                                    label: ImpressionsConstants.notInSplit,
-                                                    changeNumber: changeNumber,
-                                                    configuration: split.configurations?[defaultTreatment],
-                                                    impressionsDisabled: split.isImpressionsDisabled())
+                            return EvaluationResult(
+                                treatment: defaultTreatment,
+                                label: ImpressionsConstants.notInSplit,
+                                changeNumber: changeNumber,
+                                configuration: split.configurations?[defaultTreatment],
+                                impressionsDisabled: split.isImpressionsDisabled())
                         }
                         inRollOut = true
                     }
                 }
 
                 // Returns the first condition that match.
-                let values = EvalValues(matchValue: matchingKey, matchingKey: matchingKey,
-                                        bucketingKey: bucketKey, attributes: attributes)
+                let values = EvalValues(
+                    matchValue: matchingKey,
+                    matchingKey: matchingKey,
+                    bucketingKey: bucketKey,
+                    attributes: attributes)
                 if try condition.match(values: values, context: getContext()) {
-                    let key: Key = Key(matchingKey: matchingKey, bucketingKey: bucketKey)
-                    let treatment = splitter.getTreatment(key: key, seed: seed, attributes: attributes,
-                                                          partions: condition.partitions, algo: splitAlgo)
-                    return EvaluationResult(treatment: treatment, label: condition.label!,
-                                            changeNumber: changeNumber,
-                                            configuration: split.configurations?[treatment],
-                                            impressionsDisabled: split.isImpressionsDisabled())
+                    let key = Key(matchingKey: matchingKey, bucketingKey: bucketKey)
+                    let treatment = splitter.getTreatment(
+                        key: key,
+                        seed: seed,
+                        attributes: attributes,
+                        partions: condition.partitions,
+                        algo: splitAlgo)
+                    return EvaluationResult(
+                        treatment: treatment,
+                        label: condition.label!,
+                        changeNumber: changeNumber,
+                        configuration: split.configurations?[treatment],
+                        impressionsDisabled: split.isImpressionsDisabled())
                 }
             }
-            let result = EvaluationResult(treatment: defaultTreatment,
-                                          label: ImpressionsConstants.noConditionMatched,
-                                          changeNumber: changeNumber,
-                                          configuration: split.configurations?[defaultTreatment],
-                                          impressionsDisabled: split.isImpressionsDisabled())
+            let result = EvaluationResult(
+                treatment: defaultTreatment,
+                label: ImpressionsConstants.noConditionMatched,
+                changeNumber: changeNumber,
+                configuration: split.configurations?[defaultTreatment],
+                impressionsDisabled: split.isImpressionsDisabled())
             return result
         } catch EvaluatorError.matcherNotFound {
             Logger.e("The matcher has not been found")
-            return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.matcherNotFound,
-                                    changeNumber: changeNumber, impressionsDisabled: split.isImpressionsDisabled())
+            return EvaluationResult(
+                treatment: SplitConstants.control,
+                label: ImpressionsConstants.matcherNotFound,
+                changeNumber: changeNumber,
+                impressionsDisabled: split.isImpressionsDisabled())
         }
     }
 
     private func getContext() -> EvalContext {
-        return EvalContext(evaluator: self,
-                           mySegmentsStorage: mySegmentsStorage,
-                           myLargeSegmentsStorage: myLargeSegmentsStorage,
-                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage)
+        return EvalContext(
+            evaluator: self,
+            mySegmentsStorage: mySegmentsStorage,
+            myLargeSegmentsStorage: myLargeSegmentsStorage,
+            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage)
     }
 
     private func selectBucketKey(matchingKey: String, bucketingKey: String?) -> String {
@@ -162,8 +189,8 @@ class DefaultEvaluator: Evaluator {
     }
 }
 
-private extension Split {
-    func isImpressionsDisabled() -> Bool {
-        return self.impressionsDisabled ?? false
+extension Split {
+    fileprivate func isImpressionsDisabled() -> Bool {
+        return impressionsDisabled ?? false
     }
 }

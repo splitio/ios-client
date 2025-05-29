@@ -68,7 +68,7 @@ class SseConnectionHandler {
     }
 
     private func getSseClient(id: String) -> SseClient? {
-        return  clients.value(forKey: id)
+        return clients.value(forKey: id)
     }
 
     private func removeSseClient(id: String) {

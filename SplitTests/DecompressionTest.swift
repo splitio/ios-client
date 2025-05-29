@@ -7,18 +7,16 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 @testable import Split
 
 class DecompressionTest: XCTestCase {
-
     let zlib = Zlib()
     let gzip = Gzip()
 
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testLoremIpsumZlib() {
         let lines = loadLoremIpsumZlib()
@@ -47,7 +45,6 @@ class DecompressionTest: XCTestCase {
     }
 
     func testZlibCompressionMethodHeader() {
-
         // Byte 2 => compression method should be 8, else error.
         let data1 = Data([31, 139, 9, 0, 1, 1, 0])
 
@@ -57,7 +54,6 @@ class DecompressionTest: XCTestCase {
     }
 
     func testGzipIncorrectHeader() {
-
         // Byte 0, 1
         // Header should start with 31, 139, gzip IDs (0x1f, 0x8b)
         let data1 = Data([20, 139, 8, 0, 1, 1, 0])
@@ -71,7 +67,6 @@ class DecompressionTest: XCTestCase {
     }
 
     func testGzipCompressionMethodHeader() {
-
         // Byte 2 => compression method should be 8, else error.
         let data1 = Data([31, 139, 9, 0, 1, 1, 0])
 
@@ -110,34 +105,33 @@ class DecompressionTest: XCTestCase {
         XCTAssertEqual(31, size)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 
     private func loadLoremIpsumZlib() -> [String] {
         guard let data = FileHelper.readDataFromFile(sourceClass: self, name: "lorem_ipsum_zlib", type: "txt") else {
-                print("Error loading compression test Data.")
-                XCTAssertTrue(false)
-                return []
+            print("Error loading compression test Data.")
+            XCTAssertTrue(false)
+            return []
         }
-        return data.split(separator: "\n").map { String($0)}
+        return data.split(separator: "\n").map { String($0) }
     }
 
     private func loadLoremIpsumGzip() -> [String] {
         guard let data = FileHelper.readDataFromFile(sourceClass: self, name: "lorem_ipsum_gzip", type: "txt") else {
-                print("Error loading compression test Data.")
-                XCTAssertTrue(false)
-                return []
+            print("Error loading compression test Data.")
+            XCTAssertTrue(false)
+            return []
         }
-        return data.split(separator: "\n").map { String($0)}
+        return data.split(separator: "\n").map { String($0) }
     }
 
     private func loadLoremIpsumExpected() -> [String] {
         guard let data = FileHelper.readDataFromFile(sourceClass: self, name: "lorem_ipsum_result", type: "txt") else {
-                print("Error loading compression test Data.")
-                XCTAssertTrue(false)
-                return []
+            print("Error loading compression test Data.")
+            XCTAssertTrue(false)
+            return []
         }
-        return data.split(separator: "\n").map { String($0)}
+        return data.split(separator: "\n").map { String($0) }
     }
 
     func testHeaderFlag0() {
@@ -181,11 +175,10 @@ class DecompressionTest: XCTestCase {
         h1.append(contentsOf: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0])
 
         return Data(h1)
-
     }
 
     func descompressGzip(_ base64: String) -> String {
-        guard let dec =  Base64Utils.decodeBase64(base64) else { return "" }
+        guard let dec = Base64Utils.decodeBase64(base64) else { return "" }
 
         guard let descomp = try? gzip.decompress(data: dec) else {
             return ""
@@ -194,12 +187,11 @@ class DecompressionTest: XCTestCase {
     }
 
     func descompressZlib(_ base64: String) -> String {
-        guard let dec =  Base64Utils.decodeBase64(base64) else { return "" }
+        guard let dec = Base64Utils.decodeBase64(base64) else { return "" }
 
         guard let descomp = try? zlib.decompress(data: dec) else {
             return ""
         }
         return descomp.stringRepresentation
     }
-
 }

@@ -33,8 +33,9 @@ protocol SyncEventBroadcaster {
 /// to other components
 ///
 class DefaultSyncEventBroadcaster: SyncEventBroadcaster {
-    let messageQueue = DispatchQueue(label: "split-sync-event-broadcaster",
-                                     attributes: .concurrent)
+    let messageQueue = DispatchQueue(
+        label: "split-sync-event-broadcaster",
+        attributes: .concurrent)
     var handlers = [IncomingMessageHandler]()
     var id = UUID().uuidString
 

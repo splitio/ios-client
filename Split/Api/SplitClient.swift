@@ -11,33 +11,40 @@ import Foundation
 public typealias SplitAction = () -> Void
 
 @objc public protocol SplitClient {
-
     // MARK: Evaluation feature
+
     func getTreatment(_ split: String, attributes: [String: Any]?) -> String
     func getTreatment(_ split: String) -> String
-    @objc(getTreatmentsForSplits:attributes:) func getTreatments(splits: [String],
-                                                                 attributes: [String: Any]?) -> [String: String]
+    @objc(getTreatmentsForSplits:attributes:) func getTreatments(
+        splits: [String],
+        attributes: [String: Any]?) -> [String: String]
 
     func getTreatmentWithConfig(_ split: String) -> SplitResult
     func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?) -> SplitResult
 
     @objc(getTreatmentsWithConfigForSplits:attributes:)
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult]
-    
+
     // MARK: Evaluation with Properties
+
     func getTreatment(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> String
-    @objc(getTreatmentsForSplits:attributes:evaluationOptions:) func getTreatments(splits: [String],
-                                                                 attributes: [String: Any]?,
-                                                                 evaluationOptions: EvaluationOptions?) -> [String: String]
-    func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult
+    @objc(getTreatmentsForSplits:attributes:evaluationOptions:) func getTreatments(
+        splits: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?)
+        -> [String: String]
+    func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?)
+        -> SplitResult
     @objc(getTreatmentsWithConfigForSplits:attributes:evaluationOptions:)
-    func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
+    func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?)
+        -> [String: SplitResult]
 
     func on(event: SplitEvent, execute action: @escaping SplitAction)
     func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
 
     // MARK: Track feature
+
     func track(trafficType: String, eventType: String) -> Bool
     func track(trafficType: String, eventType: String, value: Double) -> Bool
     func track(eventType: String) -> Bool
@@ -64,35 +71,52 @@ public typealias SplitAction = () -> Void
     func clearAttributes() -> Bool
 
     // MARK: Client lifecycle
+
     func flush()
     func destroy()
     func destroy(completion: (() -> Void)?)
 
-    @objc(trackWithTrafficType:eventType:properties:) func track(trafficType: String,
-                                                                 eventType: String,
-                                                                 properties: [String: Any]?) -> Bool
+    @objc(trackWithTrafficType:eventType:properties:) func track(
+        trafficType: String,
+        eventType: String,
+        properties: [String: Any]?) -> Bool
 
-    @objc(trackWithTrafficType:eventType:value:properties:) func track(trafficType: String,
-                                                                       eventType: String,
-                                                                       value: Double,
-                                                                       properties: [String: Any]?) -> Bool
+    @objc(trackWithTrafficType:eventType:value:properties:) func track(
+        trafficType: String,
+        eventType: String,
+        value: Double,
+        properties: [String: Any]?) -> Bool
 
-    @objc(trackWithEventType:properties:) func track(eventType: String,
-                                                     properties: [String: Any]?) -> Bool
+    @objc(trackWithEventType:properties:) func track(
+        eventType: String,
+        properties: [String: Any]?) -> Bool
 
-    @objc(trackWithEventType:value:properties:) func track(eventType: String,
-                                                           value: Double,
-                                                           properties: [String: Any]?) -> Bool
+    @objc(trackWithEventType:value:properties:) func track(
+        eventType: String,
+        value: Double,
+        properties: [String: Any]?) -> Bool
 
     // MARK: Evaluation with flagsets
+
     func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String]
     func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String]
     func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult]
     func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult]
-    
+
     // MARK: Evaluation with flagsets and properties
-    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String]
-    func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String]
-    func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
-    func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
+
+    func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?)
+        -> [String: String]
+    func getTreatmentsByFlagSets(
+        _ flagSets: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: String]
+    func getTreatmentsWithConfigByFlagSet(
+        _ flagSet: String,
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
+    func getTreatmentsWithConfigByFlagSets(
+        _ flagSets: [String],
+        attributes: [String: Any]?,
+        evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
 }

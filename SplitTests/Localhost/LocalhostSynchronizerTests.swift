@@ -6,11 +6,10 @@
 //  Copyright © 2024 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class LocalhostSynchronizerTests: XCTestCase {
-
     var synchronizer: LocalhostSynchronizer!
 
     let storage = SplitsStorageStub()
@@ -20,19 +19,18 @@ class LocalhostSynchronizerTests: XCTestCase {
     var yamlContent: String!
     var splitsContent: String!
 
-
     override func setUp() {
-
-        yamlContent = FileHelper.readDataFromFile(sourceClass: self, name:"localhost", type: "yaml")
-        splitsContent = FileHelper.readDataFromFile(sourceClass: self, name:"localhost", type: "splits")
+        yamlContent = FileHelper.readDataFromFile(sourceClass: self, name: "localhost", type: "yaml")
+        splitsContent = FileHelper.readDataFromFile(sourceClass: self, name: "localhost", type: "splits")
 
         synchronizer = createSynchronizer()
     }
 
     func createSynchronizer() -> LocalhostSynchronizer {
-        return LocalhostSynchronizer(featureFlagsStorage: storage,
-                                     featureFlagsDataSource: datasource,
-                                     eventsManager: eventsManager)
+        return LocalhostSynchronizer(
+            featureFlagsStorage: storage,
+            featureFlagsDataSource: datasource,
+            eventsManager: eventsManager)
     }
 
     func testLoadAndSdkReady() {
@@ -41,9 +39,10 @@ class LocalhostSynchronizerTests: XCTestCase {
         let eventsManager = SplitEventsManagerMock()
         let datasource = LocalhostApiDataSource()
 
-        let sync =  LocalhostSynchronizer(featureFlagsStorage: storage,
-                                          featureFlagsDataSource: datasource,
-                                          eventsManager: eventsManager)
+        let sync = LocalhostSynchronizer(
+            featureFlagsStorage: storage,
+            featureFlagsDataSource: datasource,
+            eventsManager: eventsManager)
 
         let prevSdkReady = eventsManager.isSplitsReadyFired
         datasource.update(yaml: yamlContent)
@@ -62,7 +61,6 @@ class LocalhostSynchronizerTests: XCTestCase {
         XCTAssertEqual(0, splitsEmpty.count)
         XCTAssertEqual(9, splits.count)
         XCTAssertTrue(eventsManager.isSplitUpdatedTriggered)
-
     }
 
     func testUpdateSplits() {

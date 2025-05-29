@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 import XCTest
 class SplitEventsManagerStub: SplitEventsManager {
-
     var splitsLoadedEventFiredCount = 0
     var splitsKilledEventFiredCount = 0
     var splitsUpdatedEventFiredCount = 0
@@ -22,18 +21,18 @@ class SplitEventsManagerStub: SplitEventsManager {
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         switch event {
         case .mySegmentsLoadedFromCache:
-            mySegmentsLoadedEventFiredCount+=1
+            mySegmentsLoadedEventFiredCount += 1
             if let exp = mySegmentsLoadedEventExp {
                 exp.fulfill()
             }
         case .splitsLoadedFromCache:
-            splitsLoadedEventFiredCount+=1
+            splitsLoadedEventFiredCount += 1
 
         case .splitKilledNotification:
-            splitsKilledEventFiredCount+=1
+            splitsKilledEventFiredCount += 1
 
         case .splitsUpdated:
-            splitsUpdatedEventFiredCount+=1
+            splitsUpdatedEventFiredCount += 1
         default:
             print("internal event fired: \(event)")
         }

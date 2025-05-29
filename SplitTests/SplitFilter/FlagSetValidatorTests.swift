@@ -6,11 +6,10 @@
 //  Copyright © 2023 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class FlagSetValidatorTests: XCTestCase {
-
     var validator: DefaultFlagSetsValidator!
     var telemetryProducer: TelemetryStorageStub!
 
@@ -30,10 +29,27 @@ class FlagSetValidatorTests: XCTestCase {
     }
 
     func testCleanAndValidateValues() {
-        let values = ["Test1", "TEST2 ", " test2 ", "test_value@", "TEST3",
-                      "test4_", "_test1", "test-1", "1test", "-test1",
-                      "HoLA", "hola", "@@@@",
-        "*test", "test*test", "test()", "(test)", "1|test", "test\\"]
+        let values = [
+            "Test1",
+            "TEST2 ",
+            " test2 ",
+            "test_value@",
+            "TEST3",
+            "test4_",
+            "_test1",
+            "test-1",
+            "1test",
+            "-test1",
+            "HoLA",
+            "hola",
+            "@@@@",
+            "*test",
+            "test*test",
+            "test()",
+            "(test)",
+            "1|test",
+            "test\\",
+        ]
 
         let result = validator.cleanAndValidateValues(values, calledFrom: "TestMethod")
         XCTAssertEqual(result.sorted(), ["1test", "hola", "test1", "test2", "test3", "test4_"])
@@ -41,4 +57,3 @@ class FlagSetValidatorTests: XCTestCase {
         XCTAssertEqual(13, telemetryProducer.getInvalidFlagSets())
     }
 }
-

@@ -8,8 +8,8 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class DbForDifferentApiKeysTest: XCTestCase {
     var timestamp = 100
@@ -20,7 +20,6 @@ class DbForDifferentApiKeysTest: XCTestCase {
     var client1: SplitClient!
     let apiKey1 = UUID().uuidString
 
-
     var httpClient2: HttpClient!
     var factory2: SplitFactory!
     var client2: SplitClient!
@@ -29,7 +28,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
     let userKey = IntegrationHelper.dummyUserKey
 
     var splitHitCounters = [0, 0]
-    static let changeNumberBase: Int64 = 1000;
+    static let changeNumberBase: Int64 = 1000
     let changeNumberF1: Int64 = changeNumberBase + 1
     let changeNumberF2: Int64 = changeNumberBase + 2
 
@@ -49,17 +48,18 @@ class DbForDifferentApiKeysTest: XCTestCase {
         sseExpIndex = 0
         sseExp = [XCTestExpectation(), XCTestExpectation()]
         // Factory 1
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.cdnBackoffTimeBaseInSecs = 1
 
         let session = HttpSessionMock()
-        let reqManager1 = HttpRequestManagerTestDispatcher(dispatcher: buildBasicDispatcher(factoryNumber: 1),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager1 = HttpRequestManagerTestDispatcher(
+            dispatcher: buildBasicDispatcher(factoryNumber: 1),
+            streamingHandler: buildStreamingHandler())
         httpClient1 = DefaultHttpClient(session: session, requestManager: reqManager1)
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient1)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -88,10 +88,10 @@ class DbForDifferentApiKeysTest: XCTestCase {
         client1.destroy()
 
         // Factory 2
-        let reqManager2 = HttpRequestManagerTestDispatcher(dispatcher: buildBasicDispatcher(factoryNumber: 2),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager2 = HttpRequestManagerTestDispatcher(
+            dispatcher: buildBasicDispatcher(factoryNumber: 2),
+            streamingHandler: buildStreamingHandler())
         httpClient2 = DefaultHttpClient(session: session, requestManager: reqManager2)
-
 
         let builder2 = DefaultSplitFactoryBuilder()
         _ = builder2.setHttpClient(httpClient2)
@@ -135,7 +135,9 @@ class DbForDifferentApiKeysTest: XCTestCase {
 
     private func testSplitsUpdate(changeNumber: Int64) {
         splitsChangesExp = XCTestExpectation()
-        streamingBinding?.push(message: StreamingIntegrationHelper.splitUpdateMessage(timestamp: nextTimestamp(), changeNumber: Int(changeNumber)))
+        streamingBinding?.push(message: StreamingIntegrationHelper.splitUpdateMessage(
+            timestamp: nextTimestamp(),
+            changeNumber: Int(changeNumber)))
         wait(for: [splitsChangesExp!], timeout: 4)
         ThreadUtils.delay(seconds: 0.2)
     }
@@ -144,19 +146,25 @@ class DbForDifferentApiKeysTest: XCTestCase {
         return { request in
             if request.isSplitEndpoint() {
                 let hitNumber = self.splitHitCounters[factoryNumber - 1]
-                self.splitHitCounters[factoryNumber - 1]+=1
+                self.splitHitCounters[factoryNumber - 1] += 1
                 let respChangeNumber = Self.changeNumberBase + Int64(factoryNumber)
                 self.lastChangeNumbers[factoryNumber] = request.parameters?["since"] as? Int64 ?? 0
                 if self.lastChangeNumbers[factoryNumber] == -1 {
                     self.firstChangeNumbers[factoryNumber] = -1
-                    return TestDispatcherResponse(code: 200,
-                                                  data: Data(self.splitChanges(factoryNumber: factoryNumber,
-                                                                               hitNumber: hitNumber).utf8))
+                    return TestDispatcherResponse(
+                        code: 200,
+                        data: Data(self.splitChanges(
+                            factoryNumber: factoryNumber,
+                            hitNumber: hitNumber).utf8))
                 }
                 if let exp = self.splitsChangesExp {
                     exp.fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: Int(respChangeNumber), till: Int(respChangeNumber)).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(
+                        since: Int(respChangeNumber),
+                        till: Int(respChangeNumber)).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
@@ -173,7 +181,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             if self.sseExpIndex < self.sseExp.count {
                 let exp = self.sseExp[self.sseExpIndex]
-                self.sseExpIndex+=1
+                self.sseExpIndex += 1
                 exp.fulfill()
             }
             return self.streamingBinding!
@@ -184,19 +192,19 @@ class DbForDifferentApiKeysTest: XCTestCase {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.splits[0].name = "split\(factoryNumber)"
         if hitNumber == 0 {
-        change?.since = -1
+            change?.since = -1
         } else {
             change?.since = Self.changeNumberBase + Int64(factoryNumber)
         }
         change?.till = Self.changeNumberBase + Int64(factoryNumber)
-        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        let targetingRulesChange = TargetingRulesChange(
+            featureFlags: change!,
+            ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
         return (try? Json.encodeToJson(targetingRulesChange)) ?? IntegrationHelper.emptySplitChanges
     }
 
     private func nextTimestamp() -> Int {
-        timestamp+=1
+        timestamp += 1
         return timestamp
     }
 }
-
-

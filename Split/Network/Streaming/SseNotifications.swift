@@ -114,6 +114,7 @@ struct ControlNotification: NotificationTypeField {
             }
         }
     }
+
     let controlType: ControlType
 }
 
@@ -163,6 +164,7 @@ struct MembershipsUpdateNotification: NotificationTypeField {
         }
         return notificationType
     }
+
     let changeNumber: Int64?
     let compressionType: CompressionType?
     let updateStrategy: MySegmentUpdateStrategy
@@ -234,6 +236,7 @@ struct SplitKillNotification: NotificationTypeField {
     var type: NotificationType {
         return .splitKill
     }
+
     let changeNumber: Int64
     let splitName: String
     let defaultTreatment: String
@@ -248,15 +251,17 @@ struct TargetingRuleUpdateNotification: NotificationTypeField {
         }
         return notificationType
     }
+
     let changeNumber: Int64
     let previousChangeNumber: Int64?
     let definition: String?
     let compressionType: CompressionType?
 
-    init(changeNumber: Int64,
-         previousChangeNumber: Int64? = nil,
-         definition: String? = nil,
-         compressionType: CompressionType? = nil) {
+    init(
+        changeNumber: Int64,
+        previousChangeNumber: Int64? = nil,
+        definition: String? = nil,
+        compressionType: CompressionType? = nil) {
         self.changeNumber = changeNumber
         self.previousChangeNumber = previousChangeNumber
         self.definition = definition
@@ -271,7 +276,8 @@ struct TargetingRuleUpdateNotification: NotificationTypeField {
     }
 }
 
-typealias SplitsUpdateNotification = TargetingRuleUpdateNotification // TODO: Temporary alias to be removed in follow-up PR
+typealias SplitsUpdateNotification =
+    TargetingRuleUpdateNotification // TODO: Temporary alias to be removed in follow-up PR
 
 /// Indicates a notification related to occupancy
 struct OccupancyNotification: NotificationTypeField {
@@ -283,9 +289,11 @@ struct OccupancyNotification: NotificationTypeField {
     var type: NotificationType {
         return .occupancy
     }
+
     struct Metrics: Decodable {
         let publishers: Int
     }
+
     let metrics: Metrics
 
     enum CodingKeys: String, CodingKey {
@@ -312,10 +320,10 @@ struct StreamingError: NotificationTypeField {
     let statusCode: Int
 
     var isRetryable: Bool {
-        return  code >= 40140 &&  code <= 40149
+        return code >= 40140 && code <= 40149
     }
 
     var shouldIgnore: Bool {
-        return  !(code >= 40000 && code <= 49999)
+        return !(code >= 40000 && code <= 49999)
     }
 }

@@ -20,12 +20,12 @@ protocol ByKeyAttributesStorage {
 }
 
 class DefaultByKeyAttributesStorage: ByKeyAttributesStorage {
-
     private let attributesStorage: AttributesStorage
     private let userKey: String
 
-    init(attributesStorage: AttributesStorage,
-         userKey: String) {
+    init(
+        attributesStorage: AttributesStorage,
+        userKey: String) {
         self.attributesStorage = attributesStorage
         self.userKey = userKey
     }

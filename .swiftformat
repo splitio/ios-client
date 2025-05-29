@@ -66,27 +66,21 @@ strongifiedSelf
 # Options for basic rules
 
 --extensionacl on-declarations
---funcattributes prev-line
+--funcattributes preserve
 --indent 4
 --maxwidth 120
---typeattributes prev-line
---funcattributes prev-line
---storedvarattrs prev-line
---computedvarattrs prev-line
---complexattrs prev-line
+--typeattributes preserve
+--storedvarattrs preserve
+--computedvarattrs preserve
+--complexattrs preserve
 --voidtype void
 --wraparguments before-first
 --wrapparameters before-first
 --wrapcollections before-first
---wrapreturntype if-multiline
 --wrapconditions after-first 
+--closingparen same-line
+
 
 # Option for additional rules
 
 --self init-only
-
-# Excluded folders
-
---exclude Pods,**/UNTESTED_TODO,vendor,fastlane
-
-# https://github.com/NoemiRozpara/Google-SwiftFormat-Config

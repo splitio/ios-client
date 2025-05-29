@@ -17,7 +17,7 @@ class AttributesStorageStub: AttributesStorage {
         attributes[key] = persistedAttributes[key]
     }
 
-    func set(_ attributes: [String : Any], forKey key: String) {
+    func set(_ attributes: [String: Any], forKey key: String) {
         var newAttributes = self.attributes[key] ?? [:]
         for (ikey, att) in attributes {
             newAttributes[ikey] = att
@@ -26,12 +26,12 @@ class AttributesStorageStub: AttributesStorage {
     }
 
     func set(value: Any, name: String, forKey key: String) {
-        var newAttributes = self.attributes[key] ?? [:]
+        var newAttributes = attributes[key] ?? [:]
         newAttributes[name] = value
-        self.attributes[key] = newAttributes
+        attributes[key] = newAttributes
     }
 
-    func getAll(forKey key: String) -> [String : Any] {
+    func getAll(forKey key: String) -> [String: Any] {
         return attributes[key] ?? [:]
     }
 
@@ -52,6 +52,4 @@ class AttributesStorageStub: AttributesStorage {
         destroyCalled = true
         attributes.removeValue(forKey: key)
     }
-
-
 }

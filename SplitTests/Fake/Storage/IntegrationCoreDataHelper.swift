@@ -6,25 +6,24 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 @testable import Split
 import XCTest
 
-struct CrudKey {
+enum CrudKey {
     static let insert = NSInsertedObjectsKey
     static let delete = NSDeletedObjectsKey
     static let update = NSUpdatedObjectsKey
 }
 
-class IntegrationCoreDataHelper  {
-
+class IntegrationCoreDataHelper {
     static func get(databaseName: String, dispatchQueue: DispatchQueue) -> CoreDataHelper {
         let sempaphore = DispatchSemaphore(value: 0)
-        guard let modelUrl = Bundle(for: CoreDataHelper.self).url(forResource: "split_cache",
-                                                                  withExtension: "momd") else {
+        guard let modelUrl = Bundle(for: CoreDataHelper.self).url(
+            forResource: "split_cache",
+            withExtension: "momd") else {
             fatalError("Error loading model from bundle")
-
         }
 
         guard let modelFile = NSManagedObjectModel(contentsOf: modelUrl) else {
@@ -42,9 +41,11 @@ class IntegrationCoreDataHelper  {
         managedObjContext.persistentStoreCoordinator = persistenceCoordinator
 
         do {
-            try persistenceCoordinator.addPersistentStore(ofType: NSInMemoryStoreType,
-                                                          configurationName: nil,
-                                                          at: nil, options: nil)
+            try persistenceCoordinator.addPersistentStore(
+                ofType: NSInMemoryStoreType,
+                configurationName: nil,
+                at: nil,
+                options: nil)
             sempaphore.signal()
         } catch {
             print("Error creating test database")
@@ -56,15 +57,17 @@ class IntegrationCoreDataHelper  {
 
     static func observeChanges() {
         obsCrud.removeAll()
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(contextObjectsDidChange(_:)),
-                                               name: Notification.Name.NSManagedObjectContextObjectsDidChange,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(contextObjectsDidChange(_:)),
+            name: Notification.Name.NSManagedObjectContextObjectsDidChange,
+            object: nil)
 
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(contextDidSave(_:)),
-                                               name: Notification.Name.NSManagedObjectContextDidSave,
-                                               object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(contextDidSave(_:)),
+            name: Notification.Name.NSManagedObjectContextDidSave,
+            object: nil)
     }
 
     static func stopObservingChanges() {
@@ -72,9 +75,7 @@ class IntegrationCoreDataHelper  {
         obsCrud.removeAll()
     }
 
-    @objc static func contextObjectsDidChange(_ notification: Notification) {
-
-    }
+    @objc static func contextObjectsDidChange(_ notification: Notification) {}
 
     @objc static func contextDidSave(_ notification: Notification) {
         checkUpdatesAndFireExp(info: notification.userInfo)
@@ -132,7 +133,7 @@ class IntegrationCoreDataHelper  {
         var currentCount: Int = 0
 
         mutating func increaseCount() {
-            currentCount+=1
+            currentCount += 1
         }
 
         func shouldTrigger() -> Bool {
@@ -141,9 +142,11 @@ class IntegrationCoreDataHelper  {
     }
 
     private static var obsCrud = [String: DbRowNotification]()
-    
+
     static func getDbExp(count: Int, entity: CoreDataEntity, operation: String) -> XCTestExpectation {
-        let row = DbRowNotification(expectation: XCTestExpectation(description: "\(operation)_count: \(count)"), triggerCount: count)
+        let row = DbRowNotification(
+            expectation: XCTestExpectation(description: "\(operation)_count: \(count)"),
+            triggerCount: count)
         obsCrud[buildObsRowKey(entity: entity, operation: operation)] = row
         return row.expectation
     }

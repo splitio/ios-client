@@ -11,11 +11,10 @@ protocol PeriodicTimer {
     func trigger()
     func stop()
     func destroy()
-    func handler( _ handler: @escaping () -> Void)
+    func handler(_ handler: @escaping () -> Void)
 }
 
 class DefaultPeriodicTimer: PeriodicTimer {
-
     private let deadLineInSecs: Int
     private let intervalInSecs: Int
     private var fetchTimer: DispatchSourceTimer
@@ -25,8 +24,8 @@ class DefaultPeriodicTimer: PeriodicTimer {
         self.deadLineInSecs = deadlineInSecs
         self.intervalInSecs = intervalInSecs
         self.isRunning = Atomic(false)
-        fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.general)
-        self.fetchTimer.resume()
+        self.fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.general)
+        fetchTimer.resume()
     }
 
     convenience init(interval intervalInSecs: Int) {
@@ -35,8 +34,9 @@ class DefaultPeriodicTimer: PeriodicTimer {
 
     func trigger() {
         if !isRunning.getAndSet(true) {
-            fetchTimer.schedule(deadline: .now() + .seconds(deadLineInSecs),
-                                repeating: .seconds(intervalInSecs))
+            fetchTimer.schedule(
+                deadline: .now() + .seconds(deadLineInSecs),
+                repeating: .seconds(intervalInSecs))
 //            fetchTimer.resume()
         }
     }
@@ -50,7 +50,7 @@ class DefaultPeriodicTimer: PeriodicTimer {
         fetchTimer.cancel()
     }
 
-    func handler( _ handler: @escaping () -> Void) {
+    func handler(_ handler: @escaping () -> Void) {
         let action = { [weak self] in
             if let self = self, self.isRunning.value {
                 handler()
@@ -71,17 +71,17 @@ protocol PeriodicSyncWorker {
 }
 
 class BasePeriodicSyncWorker: PeriodicSyncWorker {
-
     private var fetchTimer: PeriodicTimer
     private let fetchQueue = DispatchQueue.general
     private let eventsManager: SplitEventsManager
     private var isPaused: Atomic<Bool> = Atomic(false)
 
-    init(timer: PeriodicTimer,
-         eventsManager: SplitEventsManager) {
+    init(
+        timer: PeriodicTimer,
+        eventsManager: SplitEventsManager) {
         self.eventsManager = eventsManager
         self.fetchTimer = timer
-        self.fetchTimer.handler { [weak self] in
+        fetchTimer.handler { [weak self] in
             guard let self = self else {
                 return
             }
@@ -138,7 +138,6 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
 }
 
 class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
-
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
@@ -146,30 +145,32 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
     private let ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor
     private let syncHelper: SplitsSyncHelper
 
-    init(splitFetcher: HttpSplitFetcher,
-         splitsStorage: SplitsStorage,
-         generalInfoStorage: GeneralInfoStorage,
-         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
-         splitChangeProcessor: SplitChangeProcessor,
-         ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
-         timer: PeriodicTimer,
-         eventsManager: SplitEventsManager,
-         splitConfig: SplitClientConfig) {
-
+    init(
+        splitFetcher: HttpSplitFetcher,
+        splitsStorage: SplitsStorage,
+        generalInfoStorage: GeneralInfoStorage,
+        ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
+        splitChangeProcessor: SplitChangeProcessor,
+        ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
+        timer: PeriodicTimer,
+        eventsManager: SplitEventsManager,
+        splitConfig: SplitClientConfig) {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.ruleBasedSegmentsChangeProcessor = ruleBasedSegmentsChangeProcessor
-        self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
-                                           splitsStorage: splitsStorage,
-                                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
-                                           splitChangeProcessor: splitChangeProcessor,
-                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor,
-                                           generalInfoStorage: generalInfoStorage,
-                                           splitConfig: splitConfig)
-        super.init(timer: timer,
-                   eventsManager: eventsManager)
+        self.syncHelper = SplitsSyncHelper(
+            splitFetcher: splitFetcher,
+            splitsStorage: splitsStorage,
+            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+            splitChangeProcessor: splitChangeProcessor,
+            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor,
+            generalInfoStorage: generalInfoStorage,
+            splitConfig: splitConfig)
+        super.init(
+            timer: timer,
+            eventsManager: eventsManager)
     }
 
     override func fetchFromRemote() {
@@ -190,26 +191,26 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 }
 
 class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
-
     private let mySegmentsStorage: ByKeyMySegmentsStorage
     private let myLargeSegmentsStorage: ByKeyMySegmentsStorage
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let syncHelper: SegmentsSyncHelper
 
-    init(mySegmentsStorage: ByKeyMySegmentsStorage,
-         myLargeSegmentsStorage: ByKeyMySegmentsStorage,
-         telemetryProducer: TelemetryRuntimeProducer?,
-         timer: PeriodicTimer,
-         eventsManager: SplitEventsManager,
-         syncHelper: SegmentsSyncHelper) {
-
+    init(
+        mySegmentsStorage: ByKeyMySegmentsStorage,
+        myLargeSegmentsStorage: ByKeyMySegmentsStorage,
+        telemetryProducer: TelemetryRuntimeProducer?,
+        timer: PeriodicTimer,
+        eventsManager: SplitEventsManager,
+        syncHelper: SegmentsSyncHelper) {
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.telemetryProducer = telemetryProducer
         self.syncHelper = syncHelper
 
-        super.init(timer: timer,
-                   eventsManager: eventsManager)
+        super.init(
+            timer: timer,
+            eventsManager: eventsManager)
     }
 
     override func fetchFromRemote() {
@@ -219,11 +220,12 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         }
 
         do {
-            let result = try syncHelper.sync(msTill: mySegmentsStorage.changeNumber,
-                                             mlsTill: myLargeSegmentsStorage.changeNumber,
-                                             headers: nil)
+            let result = try syncHelper.sync(
+                msTill: mySegmentsStorage.changeNumber,
+                mlsTill: myLargeSegmentsStorage.changeNumber,
+                headers: nil)
             if result.success {
-                if  result.msUpdated || result.mlsUpdated {
+                if result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
                     notifyUpdate([.mySegmentsUpdated])
                 }

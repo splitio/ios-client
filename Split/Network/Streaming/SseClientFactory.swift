@@ -17,17 +17,19 @@ class DefaultSseClientFactory: SseClientFactory {
     private let httpClient: HttpClient
     private let sseHandler: SseHandler
 
-    init(endpoint: Endpoint,
-         httpClient: HttpClient,
-         sseHandler: SseHandler) {
+    init(
+        endpoint: Endpoint,
+        httpClient: HttpClient,
+        sseHandler: SseHandler) {
         self.endpoint = endpoint
         self.httpClient = httpClient
         self.sseHandler = sseHandler
     }
 
     func create() -> SseClient {
-        return DefaultSseClient(endpoint: endpoint,
-                                httpClient: httpClient,
-                                sseHandler: sseHandler)
+        return DefaultSseClient(
+            endpoint: endpoint,
+            httpClient: httpClient,
+            sseHandler: sseHandler)
     }
 }

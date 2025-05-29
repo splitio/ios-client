@@ -8,14 +8,13 @@
 import Foundation
 
 class ContainsStringMatcher: BaseMatcher, MatcherProtocol {
-
     var data: [String]?
 
-    init(data: [String]?,
-         negate: Bool? = nil,
-         attribute: String? = nil,
-         type: MatcherType? = nil) {
-
+    init(
+        data: [String]?,
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
         self.data = data
     }

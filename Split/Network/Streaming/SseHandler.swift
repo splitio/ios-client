@@ -23,12 +23,12 @@ class DefaultSseHandler: SseHandler {
 
     private var lastControlTimestamp: Int64 = 0
 
-    init(notificationProcessor: SseNotificationProcessor,
-         notificationParser: SseNotificationParser,
-         notificationManagerKeeper: NotificationManagerKeeper,
-         broadcasterChannel: SyncEventBroadcaster,
-         telemetryProducer: TelemetryRuntimeProducer?) {
-
+    init(
+        notificationProcessor: SseNotificationProcessor,
+        notificationParser: SseNotificationParser,
+        notificationManagerKeeper: NotificationManagerKeeper,
+        broadcasterChannel: SyncEventBroadcaster,
+        telemetryProducer: TelemetryRuntimeProducer?) {
         self.notificationProcessor = notificationProcessor
         self.notificationParser = notificationParser
         self.notificationManagerKeeper = notificationManagerKeeper
@@ -38,7 +38,7 @@ class DefaultSseHandler: SseHandler {
 
     func isConnectionConfirmed(message: [String: String]) -> Bool {
         if message[EventStreamParser.kIdField] != nil && message[EventStreamParser.kDataField] == nil &&
-                message[EventStreamParser.kEventField] == nil {
+            message[EventStreamParser.kEventField] == nil {
             return true
         }
         return message[EventStreamParser.kDataField] != nil && !notificationParser.isError(event: message)
@@ -63,7 +63,7 @@ class DefaultSseHandler: SseHandler {
             handleControl(incomingNotification)
         case .occupancy:
             handleOccupancy(incomingNotification)
-        case .mySegmentsUpdate, .splitKill, .splitUpdate, .myLargeSegmentsUpdate, .ruleBasedSegmentUpdate:
+        case .myLargeSegmentsUpdate, .mySegmentsUpdate, .ruleBasedSegmentUpdate, .splitKill, .splitUpdate:
             if notificationManagerKeeper.isStreamingActive {
                 notificationProcessor.process(incomingNotification)
             }
@@ -79,9 +79,10 @@ class DefaultSseHandler: SseHandler {
     private func handleOccupancy(_ notification: IncomingNotification) {
         if let jsonData = notification.jsonData {
             do {
-                let notification = try notificationParser.parseOccupancy(jsonString: jsonData,
-                                                                         timestamp: notification.timestamp,
-                                                                         channel: notification.channel ?? "")
+                let notification = try notificationParser.parseOccupancy(
+                    jsonString: jsonData,
+                    timestamp: notification.timestamp,
+                    channel: notification.channel ?? "")
                 notificationManagerKeeper.handleIncomingPresenceEvent(notification: notification)
             } catch {
                 Logger.w("Error while handling occupancy notification")

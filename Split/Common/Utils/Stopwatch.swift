@@ -19,6 +19,7 @@ class Stopwatch {
         case milliseconds
         case microseconds
     }
+
     private var startTime: Int64 = 0
     private var startTimeUnit: TimeUnit = .microseconds
 

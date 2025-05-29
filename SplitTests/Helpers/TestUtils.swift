@@ -16,7 +16,7 @@ class TestUtils {
 
     static func impressionsFromHit(request: HttpDataRequest) throws -> [ImpressionsTest] {
         do {
-        return try buildImpressionsFromJson(content: request.body?.stringRepresentation ?? "")
+            return try buildImpressionsFromJson(content: request.body?.stringRepresentation ?? "")
         } catch {
             print("error impressionsFromHit: \(error)")
         }

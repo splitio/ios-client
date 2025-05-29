@@ -15,7 +15,6 @@ protocol NotificationManagerKeeper {
 }
 
 class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
-
     struct PublishersInfo {
         var count: Int
         var lastTimestamp: Int64
@@ -27,7 +26,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
     /// By default we consider one publisher en primary channel available
     private var publishersInfo = [
         PublishersInfo(count: 1, lastTimestamp: 0),
-        PublishersInfo(count: 0, lastTimestamp: 0)
+        PublishersInfo(count: 0, lastTimestamp: 0),
     ]
 
     private var publishersCount: Int {
@@ -48,8 +47,9 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
         return streamingActive.value
     }
 
-    init(broadcasterChannel: SyncEventBroadcaster,
-         telemetryProducer: TelemetryRuntimeProducer?) {
+    init(
+        broadcasterChannel: SyncEventBroadcaster,
+        telemetryProducer: TelemetryRuntimeProducer?) {
         self.broadcasterChannel = broadcasterChannel
         self.telemetryProducer = telemetryProducer
     }
@@ -59,21 +59,24 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
         case .streamingPaused:
             streamingActive.set(false)
             broadcasterChannel.push(event: .pushSubsystemDown)
-            self.telemetryProducer?.recordStreamingEvent(type: .streamingStatus,
-                                                         data: TelemetryStreamingEventValue.streamingPaused)
+            telemetryProducer?.recordStreamingEvent(
+                type: .streamingStatus,
+                data: TelemetryStreamingEventValue.streamingPaused)
 
         case .streamingDisabled:
             streamingActive.set(false)
             broadcasterChannel.push(event: .pushSubsystemDisabled)
-            self.telemetryProducer?.recordStreamingEvent(type: .streamingStatus,
-                                                         data: TelemetryStreamingEventValue.streamingDisabled)
+            telemetryProducer?.recordStreamingEvent(
+                type: .streamingStatus,
+                data: TelemetryStreamingEventValue.streamingDisabled)
 
         case .streamingResumed:
             streamingActive.set(true)
             if publishersCount > 0 {
                 broadcasterChannel.push(event: .pushSubsystemUp)
-                self.telemetryProducer?.recordStreamingEvent(type: .streamingStatus,
-                                                             data: TelemetryStreamingEventValue.streamingEnabled)
+                telemetryProducer?.recordStreamingEvent(
+                    type: .streamingStatus,
+                    data: TelemetryStreamingEventValue.streamingEnabled)
             }
 
         case .streamingReset:
@@ -115,7 +118,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
     private func isOldTimestamp(notification: OccupancyNotification, for channelIndex: Int) -> Bool {
         var timestamp: Int64 = 0
         queue.sync {
-            timestamp =  publishersInfo[channelIndex].lastTimestamp
+            timestamp = publishersInfo[channelIndex].lastTimestamp
         }
         return timestamp >= notification.timestamp
     }
@@ -135,7 +138,7 @@ class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
     private func publishers(in channelIndex: Int) -> Int {
         var count = 0
         queue.sync {
-            count =  publishersInfo[channelIndex].count
+            count = publishersInfo[channelIndex].count
         }
         return count
     }

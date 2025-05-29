@@ -6,6 +6,4 @@
 //  Copyright © 2021 Split. All rights reserved.
 //
 
-class Splitlib {
-
-}
+class Splitlib {}

@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SegmentsUpdateWorkerTests: XCTestCase {
-
     var synchronizer: SynchronizerStub!
     var mySegmentsStorage: MySegmentsStorageStub!
     var mySegmentsChangesChecker: MySegmentsChangesCheckerMock!
@@ -55,20 +54,22 @@ class SegmentsUpdateWorkerTests: XCTestCase {
 
     func testMySegmentsRemoval() {
         mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
-        let notification = newNotification(type: .mySegmentsUpdate,
-                                           compressionType: .none,
-                                           strategy: .segmentRemoval,
-                                           segments: ["s3"])
+        let notification = newNotification(
+            type: .mySegmentsUpdate,
+            compressionType: .none,
+            strategy: .segmentRemoval,
+            segments: ["s3"])
         segmentsRemovalTest(info: notification, resource: .mySegments)
     }
 
     func testMyLargeSegmentsRemoval() {
         mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
-        let notification = newNotification(type: .mySegmentsUpdate,
-                                           compressionType: .none,
-                                           strategy: .segmentRemoval,
-                                           segments: ["s3"],
-                                           timeMillis: 500)
+        let notification = newNotification(
+            type: .mySegmentsUpdate,
+            compressionType: .none,
+            strategy: .segmentRemoval,
+            segments: ["s3"],
+            timeMillis: 500)
 
         segmentsRemovalTest(info: notification, resource: .myLargeSegments)
     }
@@ -87,24 +88,25 @@ class SegmentsUpdateWorkerTests: XCTestCase {
 
     func testMySegmentsNonRemoval() {
         mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
-        let notification = newNotification(type: .mySegmentsUpdate,
-                                           compressionType: .none,
-                                           strategy: .segmentRemoval,
-                                           segments: ["not_in_segments"])
+        let notification = newNotification(
+            type: .mySegmentsUpdate,
+            compressionType: .none,
+            strategy: .segmentRemoval,
+            segments: ["not_in_segments"])
         segmentsNonRemovalTest(info: notification, resource: .mySegments)
     }
 
     func testMyLargeSegmentsNonRemoval() {
         mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
-        let notification = newNotification(type: .myLargeSegmentsUpdate,
-                                           compressionType: .none,
-                                           strategy: .segmentRemoval,
-                                           segments: ["not_in_segments"])
+        let notification = newNotification(
+            type: .myLargeSegmentsUpdate,
+            compressionType: .none,
+            strategy: .segmentRemoval,
+            segments: ["not_in_segments"])
         segmentsNonRemovalTest(info: notification, resource: .myLargeSegments)
     }
 
     func segmentsNonRemovalTest(info: MembershipsUpdateNotification, resource: TelemetryUpdatesFromSseType) {
-
         helperFor(resource: resource).process(info)
         ThreadUtils.delay(seconds: 2)
 
@@ -117,26 +119,29 @@ class SegmentsUpdateWorkerTests: XCTestCase {
     func testSegmentsKeyListRemove() {
         mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
 
-        let notification = newNotification(type: .mySegmentsUpdate,
-                                           compressionType: .gzip,
-                                           strategy: .keyList,
-                                           segments: ["s3"], data: "some data")
+        let notification = newNotification(
+            type: .mySegmentsUpdate,
+            compressionType: .gzip,
+            strategy: .keyList,
+            segments: ["s3"],
+            data: "some data")
         segmentsKeyListRemoveTest(info: notification, resource: .mySegments)
     }
 
     func testLargeSegmentsKeyListRemoval() {
         mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
-        let notification = newNotification(type: .myLargeSegmentsUpdate,
-                                           compressionType: .gzip,
-                                           strategy: .keyList,
-                                           segments: ["s3"], data: "some data",
-                                           timeMillis: 0)
+        let notification = newNotification(
+            type: .myLargeSegmentsUpdate,
+            compressionType: .gzip,
+            strategy: .keyList,
+            segments: ["s3"],
+            data: "some data",
+            timeMillis: 0)
 
         segmentsKeyListRemoveTest(info: notification, resource: .myLargeSegments)
     }
 
     func segmentsKeyListRemoveTest(info: MembershipsUpdateNotification, resource: TelemetryUpdatesFromSseType) {
-
         let bytes = Array(userKey.utf8)
         let keyHash = Murmur64x128.hash(data: bytes, offset: 0, length: UInt32(bytes.count), seed: 0)[0]
         mySegmentsPayloadDecoder.hashedKey = keyHash
@@ -158,24 +163,27 @@ class SegmentsUpdateWorkerTests: XCTestCase {
     func testSegmentsKeyListAdd() {
         mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
 
-        let notification = newNotification(type: .mySegmentsUpdate,
-                                           compressionType: .gzip,
-                                           strategy: .keyList,
-                                           segments: ["s5"], data: "some data")
+        let notification = newNotification(
+            type: .mySegmentsUpdate,
+            compressionType: .gzip,
+            strategy: .keyList,
+            segments: ["s5"],
+            data: "some data")
         segmentsUpdateKeyListAddTest(info: notification, resource: .mySegments)
     }
 
     func testLargeSegmentsKeyListAdd() {
         mySegmentsStorage.segments[userKey] = ["s1", "s2", "s3"]
-        let notification = newNotification(type: .mySegmentsUpdate,
-                                           compressionType: .gzip,
-                                           strategy: .keyList,
-                                           segments: ["s5"], data: "some data")
+        let notification = newNotification(
+            type: .mySegmentsUpdate,
+            compressionType: .gzip,
+            strategy: .keyList,
+            segments: ["s5"],
+            data: "some data")
         segmentsUpdateKeyListAddTest(info: notification, resource: .myLargeSegments)
     }
 
     func segmentsUpdateKeyListAddTest(info: MembershipsUpdateNotification, resource: TelemetryUpdatesFromSseType) {
-
         let bytes = Array(userKey.utf8)
         let keyHash = Murmur64x128.hash(data: bytes, offset: 0, length: UInt32(bytes.count), seed: 0)[0]
         mySegmentsPayloadDecoder.hashedKey = keyHash
@@ -193,19 +201,23 @@ class SegmentsUpdateWorkerTests: XCTestCase {
     }
 
     func testSegmentsKeyListNoAction() {
-        let notification = newNotification(type: .mySegmentsUpdate,
-                                           compressionType: .gzip,
-                                           strategy: .keyList,
-                                           segments: ["s5"], data: "some data")
+        let notification = newNotification(
+            type: .mySegmentsUpdate,
+            compressionType: .gzip,
+            strategy: .keyList,
+            segments: ["s5"],
+            data: "some data")
 
         segmentsUpdateKeyListNoActionTest(info: notification, resource: .mySegments)
     }
 
     func testLargeSegmentsKeyListNoAction() {
-        let notification = newNotification(type: .myLargeSegmentsUpdate,
-                                           compressionType: .gzip,
-                                           strategy: .keyList,
-                                           segments: ["s5"], data: "some data")
+        let notification = newNotification(
+            type: .myLargeSegmentsUpdate,
+            compressionType: .gzip,
+            strategy: .keyList,
+            segments: ["s5"],
+            data: "some data")
         segmentsUpdateKeyListNoActionTest(info: notification, resource: .myLargeSegments)
     }
 
@@ -225,14 +237,15 @@ class SegmentsUpdateWorkerTests: XCTestCase {
 
     private func helperFor(resource: TelemetryUpdatesFromSseType) -> SegmentsUpdateWorker {
         let syncWrapper: SegmentsSynchronizerWrapper =
-        (resource == .mySegments ? MySegmentsSynchronizerWrapper(synchronizer: synchronizer)
-         : MyLargeSegmentsSynchronizerWrapper(synchronizer: synchronizer))
-        return SegmentsUpdateWorker(synchronizer: syncWrapper,
-                                    mySegmentsStorage: mySegmentsStorage,
-                                    payloadDecoder: mySegmentsPayloadDecoder,
-                                    telemetryProducer: telemetryProducer,
-                                    resource: resource)
-
+            (
+                resource == .mySegments ? MySegmentsSynchronizerWrapper(synchronizer: synchronizer)
+                    : MyLargeSegmentsSynchronizerWrapper(synchronizer: synchronizer))
+        return SegmentsUpdateWorker(
+            synchronizer: syncWrapper,
+            mySegmentsStorage: mySegmentsStorage,
+            payloadDecoder: mySegmentsPayloadDecoder,
+            telemetryProducer: telemetryProducer,
+            resource: resource)
     }
 
     private func expForResource(_ resource: TelemetryUpdatesFromSseType) -> XCTestExpectation {
@@ -258,20 +271,25 @@ class SegmentsUpdateWorkerTests: XCTestCase {
         return synchronizer.notifyLargeSegmentsUpdatedForKeyCalled[userKey] ?? false
     }
 
-    private func newNotification(type: NotificationType,
-                                 cn: Int64? = nil,
-                                 compressionType: CompressionType = .gzip,
-                                 strategy: MySegmentUpdateStrategy,
-                                 segments: [String] = [],
-                                 data: String? = nil,
-                                 hash: FetchDelayAlgo? = nil,
-                                 seed: Int? = nil,
-                                 timeMillis: Int64? = nil)-> MembershipsUpdateNotification {
-
-        var notification = MembershipsUpdateNotification(changeNumber: cn, compressionType: compressionType,
-                                                         updateStrategy: strategy, segments: segments,
-                                                         data: data, hash: hash,
-                                                         seed: seed, timeMillis: timeMillis)
+    private func newNotification(
+        type: NotificationType,
+        cn: Int64? = nil,
+        compressionType: CompressionType = .gzip,
+        strategy: MySegmentUpdateStrategy,
+        segments: [String] = [],
+        data: String? = nil,
+        hash: FetchDelayAlgo? = nil,
+        seed: Int? = nil,
+        timeMillis: Int64? = nil) -> MembershipsUpdateNotification {
+        var notification = MembershipsUpdateNotification(
+            changeNumber: cn,
+            compressionType: compressionType,
+            updateStrategy: strategy,
+            segments: segments,
+            data: data,
+            hash: hash,
+            seed: seed,
+            timeMillis: timeMillis)
         notification.segmentType = type
         return notification
     }

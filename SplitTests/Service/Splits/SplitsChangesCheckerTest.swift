@@ -8,15 +8,13 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SplitsChangesCheckerTest: XCTestCase {
-
     let splitsChangesChecker = DefaultSplitsChangesChecker()
 
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testSplitsChangesArrived() {
         let result = splitsChangesChecker.splitsHaveChanged(oldChangeNumber: 100, newChangeNumber: 101)
@@ -36,7 +34,5 @@ class SplitsChangesCheckerTest: XCTestCase {
         XCTAssertFalse(result)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

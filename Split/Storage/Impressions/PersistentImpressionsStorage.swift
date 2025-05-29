@@ -18,7 +18,6 @@ protocol PersistentImpressionsStorage {
 }
 
 class DefaultImpressionsStorage: PersistentImpressionsStorage {
-
     private let impressionDao: ImpressionDao
     private let expirationPeriod: Int64
 
@@ -28,7 +27,7 @@ class DefaultImpressionsStorage: PersistentImpressionsStorage {
     }
 
     func pop(count: Int) -> [KeyImpression] {
-        let createdAt = Date().unixTimestamp() - self.expirationPeriod
+        let createdAt = Date().unixTimestamp() - expirationPeriod
         let impressions = impressionDao.getBy(createdAt: createdAt, status: StorageRecordStatus.active, maxRows: count)
         impressionDao.update(ids: impressions.compactMap { $0.storageId }, newStatus: StorageRecordStatus.deleted)
         return impressions
@@ -51,7 +50,7 @@ class DefaultImpressionsStorage: PersistentImpressionsStorage {
         if impressions.count < 1 {
             return
         }
-        impressionDao.update(ids: impressions.compactMap { return $0.storageId }, newStatus: StorageRecordStatus.active)
+        impressionDao.update(ids: impressions.compactMap { $0.storageId }, newStatus: StorageRecordStatus.active)
     }
 
     func delete(_ impressions: [KeyImpression]) {

@@ -11,16 +11,17 @@ import Foundation
 import XCTest
 
 class SplitEventsManagerMock: SplitEventsManager {
-
     var timeoutExp: XCTestExpectation?
     var readyExp: XCTestExpectation?
 
     var isSdkReadyFired: Bool {
         return isSegmentsReadyFired && isSplitsReadyFired
     }
+
     var isSdkReadyFromCacheFired: Bool {
         return isSegmentsReadyFromCacheFired && isSplitsReadyFromCacheFired
     }
+
     var isSegmentsReadyFired = false
     var isSplitsReadyFired = false
     var isSegmentsReadyFromCacheFired = false
@@ -32,7 +33,7 @@ class SplitEventsManagerMock: SplitEventsManager {
 
     var isSdkReadyChecked = false
 
-    func notifyInternalEvent(_ event:SplitInternalEvent) {
+    func notifyInternalEvent(_ event: SplitInternalEvent) {
         switch event {
         case .mySegmentsUpdated:
             isSegmentsReadyFired = true
@@ -56,19 +57,17 @@ class SplitEventsManagerMock: SplitEventsManager {
     func register(event: SplitEvent, task: SplitEventTask) {
         registeredEvents[event] = task
     }
-    
-    func start() {
-    }
 
-    func stop() {
-    }
-    
+    func start() {}
+
+    func stop() {}
+
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
         switch event {
-        case.sdkReady:
+        case .sdkReady:
             isSdkReadyChecked = true
             return isSdkReadyFired
-        case.sdkReadyFromCache:
+        case .sdkReadyFromCache:
             return isSdkReadyFromCacheFired
         case .sdkReadyTimedOut:
             return isSdkTimeoutFired

@@ -9,14 +9,14 @@
 import Foundation
 
 enum GeneralInfo: String {
-    case splitsUpdateTimestamp = "splitsUpdateTimestamp"
+    case splitsUpdateTimestamp
     case splitsChangeNumber = "splitChangeNumber"
-    case splitsFilterQueryString = "splitsFilterQueryString"
-    case databaseMigrationStatus = "databaseMigrationStatus"
-    case bySetsFilter = "bySetsFilter"
-    case flagsSpec = "flagsSpec"
-    case rolloutCacheLastClearTimestamp = "rolloutCacheLastClearTimestamp"
-    case ruleBasedSegmentsChangeNumber = "ruleBasedSegmentsChangeNumber"
+    case splitsFilterQueryString
+    case databaseMigrationStatus
+    case bySetsFilter
+    case flagsSpec
+    case rolloutCacheLastClearTimestamp
+    case ruleBasedSegmentsChangeNumber
     case lastProxyUpdateTimestamp = "lastProxyCheckTimestamp"
 }
 
@@ -29,7 +29,6 @@ protocol GeneralInfoDao {
 }
 
 class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
-
     func update(info: GeneralInfo, stringValue: String) {
         executeAsync { [weak self] in
             guard let self = self else {
@@ -96,8 +95,9 @@ class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
 
     private func get(for info: GeneralInfo) -> GeneralInfoEntity? {
         let predicate = NSPredicate(format: "name == %@", info.rawValue)
-        let entities = coreDataHelper.fetch(entity: .generalInfo,
-                                            where: predicate).compactMap { return $0 as? GeneralInfoEntity }
-        return entities.count > 0 ? entities[0] : nil
+        let entities = coreDataHelper.fetch(
+            entity: .generalInfo,
+            where: predicate).compactMap { $0 as? GeneralInfoEntity }
+        return !entities.isEmpty ? entities[0] : nil
     }
 }

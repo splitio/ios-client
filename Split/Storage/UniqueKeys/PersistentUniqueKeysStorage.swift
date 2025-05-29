@@ -16,7 +16,6 @@ protocol PersistentUniqueKeysStorage {
 }
 
 class DefaultPersistentUniqueKeysStorage: PersistentUniqueKeysStorage {
-
     private let uniqueKeyDao: UniqueKeyDao
     private let expirationPeriod: Int64
 
@@ -26,13 +25,15 @@ class DefaultPersistentUniqueKeysStorage: PersistentUniqueKeysStorage {
     }
 
     func pop(count: Int) -> [UniqueKey] {
-        let createdAt = Date().unixTimestamp() - self.expirationPeriod
-        let keys = uniqueKeyDao.getBy(createdAt: createdAt,
-                                      status: StorageRecordStatus.active,
-                                      maxRows: count)
-        uniqueKeyDao.update(ids: keys.compactMap { $0.storageId ?? "nil"}.filter { $0 != "nil" },
-                            newStatus: StorageRecordStatus.deleted,
-                            incrementSentCount: false)
+        let createdAt = Date().unixTimestamp() - expirationPeriod
+        let keys = uniqueKeyDao.getBy(
+            createdAt: createdAt,
+            status: StorageRecordStatus.active,
+            maxRows: count)
+        uniqueKeyDao.update(
+            ids: keys.compactMap { $0.storageId ?? "nil" }.filter { $0 != "nil" },
+            newStatus: StorageRecordStatus.deleted,
+            incrementSentCount: false)
         return keys
     }
 

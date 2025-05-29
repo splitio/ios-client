@@ -38,7 +38,6 @@ struct CoreDataDaoProviderMock: DaoProvider {
 }
 
 class SplitDatabaseStub: SplitDatabase {
-
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
     var myLargeSegmentsDao: MySegmentsDao
@@ -50,7 +49,7 @@ class SplitDatabaseStub: SplitDatabase {
     var attributesDao: AttributesDao
     var uniqueKeyDao: UniqueKeyDao
     var ruleBasedSegmentDao: RuleBasedSegmentDao
-    
+
     init(daoProvider: DaoProvider) {
         self.eventDao = daoProvider.eventDao
         self.impressionDao = daoProvider.impressionDao

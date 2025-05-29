@@ -8,14 +8,13 @@
 import Foundation
 
 class EqualToSetMatcher: BaseMatcher, MatcherProtocol {
-
     var data: Set<String>?
 
-    init(data: [String]?,
-         negate: Bool? = nil,
-         attribute: String? = nil,
-         type: MatcherType? = nil) {
-
+    init(
+        data: [String]?,
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
 
         if let dataElements = data {
@@ -25,7 +24,6 @@ class EqualToSetMatcher: BaseMatcher, MatcherProtocol {
     }
 
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
-
         var setToCompare: Set<String>?
 
         if let dataElements = values.matchValue as? [String] {

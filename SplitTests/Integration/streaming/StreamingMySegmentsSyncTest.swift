@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class StreamingMySegmentsSyncTest: XCTestCase {
     var httpClient: HttpClient!
@@ -38,8 +38,9 @@ class StreamingMySegmentsSyncTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
@@ -52,7 +53,6 @@ class StreamingMySegmentsSyncTest: XCTestCase {
     }
 
     func initTest(type: NotificationType) {
-
         loadMySegments(type: type)
         loadChanges(type: type)
         var inResult = "free"
@@ -63,8 +63,8 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         exp1 = XCTestExpectation(description: "Exp1")
         exp2 = XCTestExpectation(description: "Exp2")
         exp3 = XCTestExpectation(description: "Exp3")
-        
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
         splitConfig.impressionRefreshRate = 999999
@@ -72,7 +72,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         splitConfig.eventsPushRate = 999999
         splitConfig.logLevel = .verbose
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -81,7 +81,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let  expTimeout:  TimeInterval = 5
+        let expTimeout: TimeInterval = 5
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
@@ -95,20 +95,23 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         }
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: expTimeout)
-        
+
         // Sending first push to enable streaming
         streamingBinding?.push(message: ":keepalive")
         wait(for: [exp1], timeout: expTimeout)
         waitForUpdate(secs: 1)
-        
+
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
 
-        var msg: String = TestingData.fullMembershipsNotificationUnboundedMessage(type: type, cn: numbers[0].asInt64(), delay: 0)
+        var msg: String = TestingData.fullMembershipsNotificationUnboundedMessage(
+            type: type,
+            cn: numbers[0].asInt64(),
+            delay: 0)
         streamingBinding?.push(message: msg)
         wait(for: [exp2], timeout: expTimeout)
         waitForUpdate(secs: 1)
-        
+
         let treatmentFirst = client.getTreatment(splitName)
 
         msg = TestingData.fullMembershipsNotificationUnboundedMessage(type: type, cn: numbers[1].asInt64(), delay: 0)
@@ -139,7 +142,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         return { request in
             if request.isSplitEndpoint() {
                 let hitNumber = self.splitsChangesHits
-                self.splitsChangesHits+=1
+                self.splitsChangesHits += 1
                 var change: String!
                 if hitNumber == 0 {
                     change = self.changes
@@ -150,7 +153,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
             }
             if request.isMySegmentsEndpoint() {
                 let hitNumber = self.mySegmentsHits
-                self.mySegmentsHits+=1
+                self.mySegmentsHits += 1
 
                 let respData = self.mySegments[hitNumber]
                 switch hitNumber {
@@ -169,7 +172,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
                 return TestDispatcherResponse(code: 200, data: Data(respData.utf8))
             }
             if request.isAuthEndpoint() {
-                self.sseAuthHits+=1
+                self.sseAuthHits += 1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             }
             return TestDispatcherResponse(code: 500)
@@ -178,11 +181,11 @@ class StreamingMySegmentsSyncTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            self.sseConnHits+=1
+            self.sseConnHits += 1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            //DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                self.sseExp.fulfill()
-            //}
+            // DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
+            self.sseExp.fulfill()
+            // }
             return self.streamingBinding!
         }
     }
@@ -191,21 +194,24 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.since = 500
         change?.till = 500
-    changes = (try? Json.encodeToJson(TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)))) ?? IntegrationHelper.emptySplitChanges
+        changes = (try? Json.encodeToJson(TargetingRulesChange(
+            featureFlags: change!,
+            ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)))) ?? IntegrationHelper
+            .emptySplitChanges
     }
 
     private func loadMySegments(type: NotificationType) {
         if type == .mySegmentsUpdate {
-            for _ in 1..<10 {
+            for _ in 1 ..< 10 {
                 mySegments.append(IntegrationHelper.emptyMySegments)
             }
             mySegments.insert(IntegrationHelper.mySegments(names: ["new_segment"]), at: 2)
         } else {
-            for _ in 1..<3 {
+            for _ in 1 ..< 3 {
                 mySegments.append(IntegrationHelper.emptyMySegments)
             }
             mySegments.append(TestingHelper.newAllSegmentsChangeJson(mls: ["new_large_segment"], mlsCn: 100))
-            for _ in 1..<7 {
+            for _ in 1 ..< 7 {
                 mySegments.append(TestingHelper.newAllSegmentsChangeJson(mls: [], mlsCn: 200))
             }
         }
@@ -215,7 +221,3 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         sleep(secs)
     }
 }
-
-
-
-

@@ -6,11 +6,10 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SplitIntegrationTests: XCTestCase {
-
     let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
     let dataFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
     let matchingKey = "CUSTOMER_ID"
@@ -23,11 +22,11 @@ class SplitIntegrationTests: XCTestCase {
     var impHit = [[ImpressionsTest]]()
 
     let segmentsJson = """
-{
-\"ls\": { \"cn\": 100, \"k\": [{ \"n\":\"segment1\"}, { \"n\":\"segment2\"}]}, 
-\"ms\": { \"k\": [{\"n\": \"segment1\"}, {\"n\": \"segment2\"}]}
-}
-"""
+    {
+    \"ls\": { \"cn\": 100, \"k\": [{ \"n\":\"segment1\"}, { \"n\":\"segment2\"}]}, 
+    \"ms\": { \"k\": [{\"n\": \"segment1\"}, {\"n\": \"segment2\"}]}
+    }
+    """
 
     var trExp = [XCTestExpectation]()
 
@@ -46,8 +45,9 @@ class SplitIntegrationTests: XCTestCase {
         }
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
@@ -55,8 +55,12 @@ class SplitIntegrationTests: XCTestCase {
         return { request in
             if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(
-                    TargetingRulesChange(featureFlags: self.splitChange!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1
-                ))))
+                    TargetingRulesChange(
+                        featureFlags: self.splitChange!,
+                        ruleBasedSegments: RuleBasedSegmentChange(
+                            segments: [],
+                            since: -1,
+                            till: -1))))
             }
 
             if request.isMySegmentsEndpoint() {
@@ -95,9 +99,9 @@ class SplitIntegrationTests: XCTestCase {
     }
 
     func testControlTreatment() throws {
-        var impressions = [String:Impression]()
+        var impressions = [String: Impression]()
 
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
         splitConfig.segmentsRefreshRate = 30
         splitConfig.impressionRefreshRate = 30
@@ -110,13 +114,13 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.impressionsMode = "DEBUG"
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+            .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
 
         splitConfig.impressionListener = { impression in
             impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
         }
 
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "GralIntegrationTest"))
         _ = builder.setHttpClient(httpClient)
@@ -145,16 +149,27 @@ class SplitIntegrationTests: XCTestCase {
         let t2 = client?.getTreatment("NO_EXISTING_FEATURE")
         let treatmentConfigEmojis = client?.getTreatmentWithConfig("Welcome_Page_UI")
 
-        let ts1 = client?.getTreatments(splits: ["testing222", "NO_EXISTING_FEATURE1", "NO_EXISTING_FEATURE2"], attributes: nil)
+        let ts1 = client?.getTreatments(
+            splits: ["testing222", "NO_EXISTING_FEATURE1", "NO_EXISTING_FEATURE2"],
+            attributes: nil)
         let s1 = manager?.split(featureName: "FACUNDO_TEST")
         let s2 = manager?.split(featureName: "NO_EXISTING_FEATURE")
         let splits = manager?.splits
 
-        let i1 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "FACUNDO_TEST", treatment: "off")]
-        let i2 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "NO_EXISTING_FEATURE", treatment: SplitConstants.control)]
-        let i3 = impressions[IntegrationHelper.buildImpressionKey(key: "CUSTOMER_ID", splitName: "testing222", treatment: "off")]
+        let i1 = impressions[IntegrationHelper.buildImpressionKey(
+            key: "CUSTOMER_ID",
+            splitName: "FACUNDO_TEST",
+            treatment: "off")]
+        let i2 = impressions[IntegrationHelper.buildImpressionKey(
+            key: "CUSTOMER_ID",
+            splitName: "NO_EXISTING_FEATURE",
+            treatment: SplitConstants.control)]
+        let i3 = impressions[IntegrationHelper.buildImpressionKey(
+            key: "CUSTOMER_ID",
+            splitName: "testing222",
+            treatment: "off")]
 
-        for i in 0..<101 {
+        for i in 0 ..< 101 {
             _ = client?.track(eventType: "account", value: Double(i))
         }
 
@@ -180,7 +195,9 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertNil(i2)
         XCTAssertNotNil(i3)
         XCTAssertEqual(1505162627437, i3?.changeNumber)
-        XCTAssertEqual("not in split", i1?.label) // TODO: Uncomment when impressions split name is added to impression listener
+        XCTAssertEqual(
+            "not in split",
+            i1?.label) // TODO: Uncomment when impressions split name is added to impression listener
         XCTAssertEqual(10, trackRequestsData.count)
         XCTAssertNotNil(event1)
         XCTAssertNil(event100)
@@ -195,8 +212,7 @@ class SplitIntegrationTests: XCTestCase {
     }
 
     func testImpressionsCount() throws {
-
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 999999
         splitConfig.segmentsRefreshRate = 999999
         splitConfig.impressionRefreshRate = 2
@@ -207,9 +223,9 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.eventsPushRate = 999999
         splitConfig.impressionsMode = "DEBUG"
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+            .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
 
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "IntegrationTest"))
         _ = builder.setHttpClient(httpClient)
@@ -225,15 +241,17 @@ class SplitIntegrationTests: XCTestCase {
 
         wait(for: [sdkReadyExpectation], timeout: 40)
 
-        for _ in 0..<2 {
+        for _ in 0 ..< 2 {
             _ = client?.getTreatment("FACUNDO_TEST")
             _ = client?.getTreatmentWithConfig("Welcome_Page_UI")
-            _ = client?.getTreatments(splits: ["testing222", "NO_EXISTING_FEATURE1", "NO_EXISTING_FEATURE2"], attributes: nil)
+            _ = client?.getTreatments(
+                splits: ["testing222", "NO_EXISTING_FEATURE1", "NO_EXISTING_FEATURE2"],
+                attributes: nil)
             sleep(2)
         }
 
         sleep(8)
-        let impCount = impHit.reduce(0, {  $0 + $1.count })
+        let impCount = impHit.reduce(0) { $0 + $1.count }
         XCTAssertEqual(6, impCount)
 
         let semaphore = DispatchSemaphore(value: 0)
@@ -245,14 +263,13 @@ class SplitIntegrationTests: XCTestCase {
     }
 
     func testReadyNoRef() throws {
-
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
 
         splitConfig.impressionRefreshRate = 2
         splitConfig.sdkReadyTimeOut = 5000
         splitConfig.trafficType = trafficType
 
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "IntegrationTest"))
         _ = builder.setHttpClient(httpClient)
@@ -291,15 +308,14 @@ class SplitIntegrationTests: XCTestCase {
     }
 
     func readyMySegmentsEnabledTest(endpointError: Bool = false, waitMls: Bool = true) {
-
         largeSegmentsError = endpointError
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
 
         splitConfig.impressionRefreshRate = 2
         splitConfig.sdkReadyTimeOut = 2000
         splitConfig.trafficType = trafficType
 
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "IntegrationTest"))
         _ = builder.setHttpClient(httpClient)
@@ -328,7 +344,6 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertTrue(timeOutFired == endpointError)
     }
 
-
     private func loadSplitsChangeFile() -> SplitChange? {
         let change = loadSplitChangeFile(name: "splitchanges_1")
         change?.since = change?.till ?? -1
@@ -347,7 +362,7 @@ class SplitIntegrationTests: XCTestCase {
         var i = 0
         DispatchQueue.test.sync {
             i = trackReqIndex
-            trackReqIndex+=1
+            trackReqIndex += 1
         }
         return i
     }

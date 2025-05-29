@@ -7,17 +7,15 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class EventDTOJsonTest: XCTestCase {
-
     func testBasic() {
-
         let event = try? basicEvent(value: 12.0)
 
         let jsonEvent = try? Json.dynamicEncodeToJson(event!)
-        let testEvent  = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
+        let testEvent = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
 
         XCTAssertEqual(event?.key, testEvent?.key)
         XCTAssertEqual(event?.eventTypeId, testEvent?.eventTypeId)
@@ -26,7 +24,6 @@ class EventDTOJsonTest: XCTestCase {
     }
 
     func testPropertiesDecodeEncode() {
-
         let event = try? basicEvent(value: 12.00001)
         let props: [String: Any] = [
             "valueString": "string",
@@ -45,7 +42,7 @@ class EventDTOJsonTest: XCTestCase {
         event?.properties = props
 
         let jsonEvent = try? Json.dynamicEncodeToJson(event!)
-        let testEvent  = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
+        let testEvent = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
 
         let testProps = testEvent?.properties
 
@@ -65,7 +62,6 @@ class EventDTOJsonTest: XCTestCase {
     }
 
     func testProperties() {
-
         let event = try? basicEvent(value: 12.00001)
         let props: [String: Any] = [
             "valueString": "string",
@@ -77,12 +73,12 @@ class EventDTOJsonTest: XCTestCase {
             "value3": 1205.06,
             "value4": 22.10001,
             "value5": 2267.1000109,
-            "value6": 9900.0000001
+            "value6": 9900.0000001,
         ]
         event?.properties = props
 
         let jsonEvent = try? Json.dynamicEncodeToJson(event!)
-        let testEvent  = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
+        let testEvent = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
 
         let testProps = testEvent?.properties
 
@@ -97,17 +93,16 @@ class EventDTOJsonTest: XCTestCase {
     }
 
     func testNonNumber() {
-
         let event = try? basicEvent(value: 12.00001)
         let props: [String: Any] = [
             "valueString": "string",
             "valueTrue": true,
-            "valueFalse": false
+            "valueFalse": false,
         ]
         event?.properties = props
 
         let jsonEvent = try? Json.dynamicEncodeToJson(event!)
-        let testEvent  = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
+        let testEvent = try? Json.dynamicDecodeFrom(json: jsonEvent!, to: EventDTO.self)
 
         let testProps = testEvent?.properties
 
@@ -116,14 +111,12 @@ class EventDTOJsonTest: XCTestCase {
         XCTAssertTrue(testProps?["valueFalse"] is Bool)
     }
 
-
     func testEncode() {
-
         let jsonEvent = """
         {\"key\":\"thekey\",\"eventTypeId\":\"event1\",\"properties\":{\"value2\":22.1,\"valueString\":\"string\",\"valueFalse\":false,\"value5\":2267.1000109,\"value3\":1205.06,\"value4\":22.10001,\"value1\":12,\"valueTrue\":true,\"value6\":9900.0000001,\"value0\":0.1},\"trafficTypeName\":\"custom\",\"value\":217.00001}
         """
 
-        let testEvent  = try? Json.dynamicDecodeFrom(json: jsonEvent, to: EventDTO.self)
+        let testEvent = try? Json.dynamicDecodeFrom(json: jsonEvent, to: EventDTO.self)
 
         let testProps = testEvent?.properties
 
@@ -147,10 +140,9 @@ class EventDTOJsonTest: XCTestCase {
             "eventTypeId": "event1",
             "trafficTypeName": "custom",
             "value": value,
-            "timestamp": 11111111]
+            "timestamp": 11111111,
+        ]
 
         return try EventDTO(jsonObject: jsonObject)
-
     }
 }
-

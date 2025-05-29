@@ -38,7 +38,6 @@ import Foundation
  * (23) 7,481.83
  */
 class LatencyCounter {
-
     // Removed first bucket (1000) for practical
     // reasons
     // Array is in microseconds
@@ -47,7 +46,7 @@ class LatencyCounter {
         7594, 11391, 17086, 25629, 38443,
         57665, 86498, 129746, 194620, 291929,
         437894, 656841, 985261, 1477892, 2216838,
-        3325257, 4987885, 7481828
+        3325257, 4987885, 7481828,
     ]
     private static let kMaxBucketIndex = 22
     private let kMaxLatency: Int64 = 7481828
@@ -58,7 +57,7 @@ class LatencyCounter {
     }
 
     init() {
-        counters = LatencyCounter.emptyCounters()
+        self.counters = LatencyCounter.emptyCounters()
     }
 
     func resetCounters() {
@@ -75,7 +74,6 @@ class LatencyCounter {
     }
 
     private func findBucketIndex(for latency: Int64) -> Int {
-
         // Although Binary Search is O(log n) and Linear Search is O(n)
         // we're using Linear Search because is faster in small arrays
         if let index = kLatencyBuckets.firstIndex(where: { latency < $0 }) {

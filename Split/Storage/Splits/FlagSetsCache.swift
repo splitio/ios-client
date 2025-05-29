@@ -27,7 +27,7 @@ class DefaultFlagSetsCache: FlagSetsCache {
     func getFeatureFlagNamesBySet(byFlagSets sets: [String]) -> [String: Set<String>] {
         let values = sets.asSet()
         return flagSets.all.filter { setValue, _ in
-            return values.contains(setValue)
+            values.contains(setValue)
         }
     }
 
@@ -58,7 +58,7 @@ class DefaultFlagSetsCache: FlagSetsCache {
 
     func removeFromFlagSets(featureFlagName: String, sets: Set<String>) {
         let allSets = flagSets.all.keys
-        if sets.count > 0 {
+        if !sets.isEmpty {
             sets.forEach { flagSet in
                 flagSets.removeValue(featureFlagName, forKey: flagSet)
             }

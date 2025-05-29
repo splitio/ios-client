@@ -6,8 +6,8 @@
 //  Copyright © 2023 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 private typealias SyncItem = SplitBgSynchronizer.SyncItem
 private typealias BgSyncSchedule = SplitBgSynchronizer.BgSyncSchedule
@@ -54,7 +54,6 @@ class SplitBgSynchronizerTest: XCTestCase {
         XCTAssertEqual(d1?.userKeys.keys.sorted(), ["key2"])
 
         XCTAssertNil(d2)
-
     }
 
     func testRemoveAll() {
@@ -64,25 +63,28 @@ class SplitBgSynchronizerTest: XCTestCase {
         let data = getSyncTaskMap()
 
         XCTAssertEqual(data.count, 0)
-
     }
 
     private func register() {
-        bgSync.register(dbKey: "dbKey1",
-                        prefix: nil,
-                        userKey: "key1",
-                        encryptionLevel: SplitEncryptionLevel.none)
+        bgSync.register(
+            dbKey: "dbKey1",
+            prefix: nil,
+            userKey: "key1",
+            encryptionLevel: SplitEncryptionLevel.none)
 
-        bgSync.register(dbKey: "dbKey1",
-                        prefix: nil,
-                        userKey: "key2",
-                        encryptionLevel: SplitEncryptionLevel.none)
+        bgSync.register(
+            dbKey: "dbKey1",
+            prefix: nil,
+            userKey: "key2",
+            encryptionLevel: SplitEncryptionLevel.none)
 
-        bgSync.register(dbKey: "dbKey2",
-                        prefix: "pref",
-                        userKey: "key2",
-                        encryptionLevel: SplitEncryptionLevel.aes128Cbc)
+        bgSync.register(
+            dbKey: "dbKey2",
+            prefix: "pref",
+            userKey: "key2",
+            encryptionLevel: SplitEncryptionLevel.aes128Cbc)
     }
+
     private func getSyncTaskMap() -> [String: SplitBgSynchronizer.SyncItem] {
         return storage.get(item: .backgroundSyncSchedule, type: BgSyncSchedule.self) ?? [String: SyncItem]()
     }

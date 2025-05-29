@@ -22,7 +22,7 @@ class SynchronizedList<T> {
     }
 
     var count: Int {
-        var count: Int = 0
+        var count = 0
         queue.sync {
             count = items.count
         }
@@ -30,8 +30,9 @@ class SynchronizedList<T> {
     }
 
     init(capacity: Int) {
-        self.queue = DispatchQueue(label: "split-synchronized-list",
-                                   target: .global())
+        self.queue = DispatchQueue(
+            label: "split-synchronized-list",
+            target: .global())
         self.items = [T]()
         self.capacity = capacity
     }
@@ -66,7 +67,7 @@ class SynchronizedList<T> {
                 if appendCount < 1 {
                     return
                 }
-                self.items.append(contentsOf: items[0..<appendCount])
+                self.items.append(contentsOf: items[0 ..< appendCount])
             } else {
                 self.items.append(contentsOf: items)
             }
@@ -75,8 +76,8 @@ class SynchronizedList<T> {
 
     func fill(with newItems: [T]) {
         queue.sync {
-                items.removeAll()
-                items.append(contentsOf: newItems)
+            items.removeAll()
+            items.append(contentsOf: newItems)
         }
     }
 
@@ -92,7 +93,7 @@ class SynchronizedList<T> {
     func takeFirst() -> T? {
         var item: T?
         queue.sync {
-            if items.count > 0 {
+            if !items.isEmpty {
                 item = self.items.first
                 self.items.removeFirst()
             }

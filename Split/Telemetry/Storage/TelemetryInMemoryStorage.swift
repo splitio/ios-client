@@ -9,7 +9,6 @@
 import Foundation
 
 class InMemoryTelemetryStorage: TelemetryStorage {
-
     private static let kQueuePrefix = "split-telemetry"
     private let queue = DispatchQueue(label: "split-telemetry")
 
@@ -21,13 +20,13 @@ class InMemoryTelemetryStorage: TelemetryStorage {
 
     // Counters
     private var methodExceptionCounters: [TelemetryMethod: Int] = [:]
-    private let nonReadyCounter: AtomicInt = AtomicInt(0)
-    private let authRejections: AtomicInt = AtomicInt(0)
-    private let tokenRefreshes: AtomicInt = AtomicInt(0)
+    private let nonReadyCounter: AtomicInt = .init(0)
+    private let authRejections: AtomicInt = .init(0)
+    private let tokenRefreshes: AtomicInt = .init(0)
     private let sessionLength: Atomic<Int64> = Atomic(0)
 
-    private let activeFactoriesCounter: AtomicInt = AtomicInt(0)
-    private let redundantFactoriesCounter: AtomicInt = AtomicInt(0)
+    private let activeFactoriesCounter: AtomicInt = .init(0)
+    private let redundantFactoriesCounter: AtomicInt = .init(0)
     private let timeUntilReady: Atomic<Int64> = Atomic(0)
     private let timeUntilReadyFromCache: Atomic<Int64> = Atomic(0)
 
@@ -37,8 +36,8 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     private let lastSyncStats: ConcurrentDictionary<Resource, Int64> = ConcurrentDictionary()
     private var updatesFromSse: [TelemetryUpdatesFromSseType: Int] = [:]
 
-    private let totalFlagSets: AtomicInt = AtomicInt(0)
-    private let invalidFlagSets: AtomicInt = AtomicInt(0)
+    private let totalFlagSets: AtomicInt = .init(0)
+    private let invalidFlagSets: AtomicInt = .init(0)
 
     // Streaming events
     static let kMaxStreamingEventsCount: Int = 20 // Visible for testing
@@ -74,7 +73,7 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     func recordException(method: TelemetryMethod) {
         queue.async { [weak self] in
             guard let self = self else { return }
-            self.methodExceptionCounters[method]?+=1
+            self.methodExceptionCounters[method]? += 1
         }
     }
 
@@ -128,9 +127,10 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     func recordStreamingEvent(type: TelemetryStreamingEventType, data: Int64?) {
-        streamingEvents.append(TelemetryStreamingEvent(type: type.rawValue,
-                                                       data: data,
-                                                       timestamp: Date().unixTimestampInMiliseconds()))
+        streamingEvents.append(TelemetryStreamingEvent(
+            type: type.rawValue,
+            data: data,
+            timestamp: Date().unixTimestampInMiliseconds()))
     }
 
     func recordSessionLength(sessionLength: Int64) {
@@ -158,74 +158,79 @@ class InMemoryTelemetryStorage: TelemetryStorage {
 
     func popMethodExceptions() -> TelemetryMethodExceptions {
         queue.sync {
-            return TelemetryMethodExceptions(treatment: popException(method: .treatment),
-                                             treatments: popException(method: .treatments),
-                                             treatmentWithConfig: popException(method: .treatmentWithConfig),
-                                             treatmentsWithConfig: popException(method: .treatmentsWithConfig),
-                                             track: popException(method: .track))
+            TelemetryMethodExceptions(
+                treatment: popException(method: .treatment),
+                treatments: popException(method: .treatments),
+                treatmentWithConfig: popException(method: .treatmentWithConfig),
+                treatmentsWithConfig: popException(method: .treatmentsWithConfig),
+                track: popException(method: .track))
         }
     }
 
     func popMethodLatencies() -> TelemetryMethodLatencies {
         queue.sync {
-            return TelemetryMethodLatencies(treatment: popLatencies(method: .treatment),
-                                            treatments: popLatencies(method: .treatments),
-                                            treatmentWithConfig: popLatencies(method: .treatmentWithConfig),
-                                            treatmentsWithConfig: popLatencies(method: .treatmentsWithConfig),
-                                            treatmentsByFlagSet: popLatencies(method: .treatmentsByFlagSet),
-                                            treatmentsByFlagSets: popLatencies(method: .treatmentsByFlagSets),
-                                            treatmentsWithConfigByFlagSet:
-                                                popLatencies(method: .treatmentsWithConfigByFlagSet),
-                                            treatmentsWithConfigByFlagSets:
-                                                popLatencies(method: .treatmentsWithConfigByFlagSets),
-                                            track: popLatencies(method: .track))
+            TelemetryMethodLatencies(
+                treatment: popLatencies(method: .treatment),
+                treatments: popLatencies(method: .treatments),
+                treatmentWithConfig: popLatencies(method: .treatmentWithConfig),
+                treatmentsWithConfig: popLatencies(method: .treatmentsWithConfig),
+                treatmentsByFlagSet: popLatencies(method: .treatmentsByFlagSet),
+                treatmentsByFlagSets: popLatencies(method: .treatmentsByFlagSets),
+                treatmentsWithConfigByFlagSet:
+                popLatencies(method: .treatmentsWithConfigByFlagSet),
+                treatmentsWithConfigByFlagSets:
+                popLatencies(method: .treatmentsWithConfigByFlagSets),
+                track: popLatencies(method: .track))
         }
     }
 
     func getImpressionStats(type: TelemetryImpressionsDataType) -> Int {
         queue.sync {
-            return impressionsStats[type] ?? 0
+            impressionsStats[type] ?? 0
         }
     }
 
     func getEventStats(type: TelemetryEventsDataType) -> Int {
         queue.sync {
-            return eventsStats[type] ?? 0
+            eventsStats[type] ?? 0
         }
     }
 
     func getLastSync() -> TelemetryLastSync {
         let syncValues = lastSyncStats.all
-        return TelemetryLastSync(splits: syncValues[.splits],
-                                 impressions: syncValues[.impressions],
-                                 impressionsCount: syncValues[.impressionsCount],
-                                 events: syncValues[.events],
-                                 token: syncValues[.token],
-                                 telemetry: syncValues[.telemetry],
-                                 mySegments: syncValues[.mySegments])
+        return TelemetryLastSync(
+            splits: syncValues[.splits],
+            impressions: syncValues[.impressions],
+            impressionsCount: syncValues[.impressionsCount],
+            events: syncValues[.events],
+            token: syncValues[.token],
+            telemetry: syncValues[.telemetry],
+            mySegments: syncValues[.mySegments])
     }
 
     func popHttpErrors() -> TelemetryHttpErrors {
         queue.sync {
-            return TelemetryHttpErrors(splits: popErrors(resource: .splits),
-                                       mySegments: popErrors(resource: .mySegments),
-                                       impressions: popErrors(resource: .impressions),
-                                       impressionsCount: popErrors(resource: .impressionsCount),
-                                       events: popErrors(resource: .events),
-                                       token: popErrors(resource: .token),
-                                       telemetry: popErrors(resource: .telemetry))
+            TelemetryHttpErrors(
+                splits: popErrors(resource: .splits),
+                mySegments: popErrors(resource: .mySegments),
+                impressions: popErrors(resource: .impressions),
+                impressionsCount: popErrors(resource: .impressionsCount),
+                events: popErrors(resource: .events),
+                token: popErrors(resource: .token),
+                telemetry: popErrors(resource: .telemetry))
         }
     }
 
     func popHttpLatencies() -> TelemetryHttpLatencies {
         queue.sync {
-            return TelemetryHttpLatencies(splits: popLatencies(resource: .splits),
-                                          mySegments: popLatencies(resource: .mySegments),
-                                          impressions: popLatencies(resource: .impressions),
-                                          impressionsCount: popLatencies(resource: .impressionsCount),
-                                          events: popLatencies(resource: .events),
-                                          token: popLatencies(resource: .token),
-                                          telemetry: popLatencies(resource: .telemetry))
+            TelemetryHttpLatencies(
+                splits: popLatencies(resource: .splits),
+                mySegments: popLatencies(resource: .mySegments),
+                impressions: popLatencies(resource: .impressions),
+                impressionsCount: popLatencies(resource: .impressionsCount),
+                events: popLatencies(resource: .events),
+                token: popLatencies(resource: .token),
+                telemetry: popLatencies(resource: .telemetry))
         }
     }
 
@@ -296,24 +301,25 @@ class InMemoryTelemetryStorage: TelemetryStorage {
     }
 
     // MARK: Private methods
+
     //
     // IMPORTANT!!
     // Use this method within a serial queue to avoid concurrency issues
     //
     private func popLatencies(method: TelemetryMethod) -> [Int]? {
-        let counters =  methodLatencies[method]?.allCounters
+        let counters = methodLatencies[method]?.allCounters
         methodLatencies[method]?.resetCounters()
         return counters
     }
 
     private func popLatencies(resource: Resource) -> [Int]? {
-        let counters =  httpLatencies[resource]?.allCounters
+        let counters = httpLatencies[resource]?.allCounters
         httpLatencies[resource]?.resetCounters()
         return counters
     }
 
     private func popException(method: TelemetryMethod) -> Int? {
-        return  methodExceptionCounters.removeValue(forKey: method)
+        return methodExceptionCounters.removeValue(forKey: method)
     }
 
     private func popErrors(resource: Resource) -> [Int: Int]? {

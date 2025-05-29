@@ -18,10 +18,12 @@ public typealias SplitImpression = Impression
     @objc public var timestamp: NSNumber? {
         return time as NSNumber?
     }
+
     public var changeNumber: Int64?
     @objc public var changeNum: NSNumber? {
         return changeNumber as NSNumber?
     }
+
     @objc public var label: String?
     @objc public var bucketingKey: String?
     @objc public var attributes: [String: Any]?

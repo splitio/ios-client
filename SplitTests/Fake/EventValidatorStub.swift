@@ -8,14 +8,17 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class EventValidatorStub: EventValidator {
-    func validate(key: String?, trafficTypeName: String?,
-                  eventTypeId: String?, value: Double?,
-                  properties: [String: Any]?,
-                  isSdkReady: Bool) -> ValidationErrorInfo? {
+    func validate(
+        key: String?,
+        trafficTypeName: String?,
+        eventTypeId: String?,
+        value: Double?,
+        properties: [String: Any]?,
+        isSdkReady: Bool) -> ValidationErrorInfo? {
         return nil
     }
 }

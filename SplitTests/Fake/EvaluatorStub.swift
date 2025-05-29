@@ -12,8 +12,11 @@ import Foundation
 class EvaluatorStub: Evaluator {
     var lastAttributes = [Any]()
 
-    func evalTreatment(matchingKey: String, bucketingKey: String?,
-                       splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
+    func evalTreatment(
+        matchingKey: String,
+        bucketingKey: String?,
+        splitName: String,
+        attributes: [String: Any]?) throws -> EvaluationResult {
         lastAttributes.append(attributes ?? "nil")
         return EvaluationResult(treatment: "on", label: "some")
     }
@@ -29,5 +32,4 @@ class EvaluatorStub: Evaluator {
         }
         return value
     }
-
 }

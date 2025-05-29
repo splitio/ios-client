@@ -17,15 +17,14 @@ protocol HashedImpressionsStorage {
 }
 
 class DefaultHashedImpressionsStorage: HashedImpressionsStorage {
-
     private let cache: LRUCache<UInt32, Int64>
     private let persistentStorage: PersistentHashedImpressionsStorage
     private let counter = AtomicInt(0)
     private let queueSize = ServiceConstants.maxHashedImpressionsQueueSize
 
-    init(cache: LRUCache<UInt32, Int64>,
-         persistentStorage: PersistentHashedImpressionsStorage) {
-
+    init(
+        cache: LRUCache<UInt32, Int64>,
+        persistentStorage: PersistentHashedImpressionsStorage) {
         self.cache = cache
         self.persistentStorage = persistentStorage
     }
@@ -60,13 +59,14 @@ class DefaultHashedImpressionsStorage: HashedImpressionsStorage {
     }
 
     func save() {
-        persistentStorage.update(cache.all().map { HashedImpression(impressionHash: $0.key,
-                                                                    time: $0.value,
-                                                                    createdAt: $0.value)})
+        persistentStorage.update(cache.all().map { HashedImpression(
+            impressionHash: $0.key,
+            time: $0.value,
+            createdAt: $0.value) })
         Logger.v("Hashed impressions persisted")
     }
 
     private func isExpired(_ impression: HashedImpression) -> Bool {
-        return ((Date.nowMillis() - ServiceConstants.hashedImpressionsExpirationMs) > impression.createdAt)
+        return (Date.nowMillis() - ServiceConstants.hashedImpressionsExpirationMs) > impression.createdAt
     }
 }

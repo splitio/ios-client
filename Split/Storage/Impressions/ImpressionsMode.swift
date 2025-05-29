@@ -46,16 +46,16 @@ public struct ImpressionsModeProperty {
     private mutating func setValue(_ newValue: String) {
         let uppercased = newValue.uppercased()
         guard let projectedValue = ImpressionsMode(rawValue: uppercased) else {
-                Logger.w("You passed an invalid impressionsMode (\(uppercased)), " +
+            Logger.w(
+                "You passed an invalid impressionsMode (\(uppercased)), " +
                     " impressionsMode should be one of the following values: " +
-                            "'DEBUG', 'OPTIMIZED' or 'NONE'. Defaulting to 'OPTIMIZED' mode.")
+                    "'DEBUG', 'OPTIMIZED' or 'NONE'. Defaulting to 'OPTIMIZED' mode.")
 
             value = ImpressionsMode.optimized.rawValue
             projectedValue = ImpressionsMode.optimized
             return
         }
-        self.value = uppercased
+        value = uppercased
         self.projectedValue = projectedValue
     }
-
 }

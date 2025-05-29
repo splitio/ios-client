@@ -31,16 +31,18 @@ class SplitComponentFactory {
         self.userKey = userKey
     }
 
-    func buildStorageContainer(databaseName: String,
-                               telemetryStorage: TelemetryStorage?,
-                               testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
+    func buildStorageContainer(
+        databaseName: String,
+        telemetryStorage: TelemetryStorage?,
+        testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
         let component: SplitStorageContainer =
-        try SplitDatabaseHelper.buildStorageContainer(splitClientConfig: splitClientConfig,
-                                                      apiKey: apiKey,
-                                                      userKey: userKey,
-                                                      databaseName: databaseName,
-                                                      telemetryStorage: telemetryStorage,
-                                                      testDatabase: testDatabase)
+            try SplitDatabaseHelper.buildStorageContainer(
+                splitClientConfig: splitClientConfig,
+                apiKey: apiKey,
+                userKey: userKey,
+                databaseName: databaseName,
+                telemetryStorage: telemetryStorage,
+                testDatabase: testDatabase)
         catalog.add(component: component)
         return component
     }
@@ -73,15 +75,15 @@ class SplitComponentFactory {
             telemetryProducer: try getSplitStorageContainer().telemetryStorage)
         let filterBuilder = FilterBuilder(flagSetsValidator: flagSetsValidator)
         splitsFilterQueryString = try filterBuilder.add(filters: splitClientConfig.sync.filters).build()
-        let component: EndpointFactory = EndpointFactory(serviceEndpoints: splitClientConfig.serviceEndpoints,
-                                                         apiKey: apiKey,
-                                                         splitsQueryString: splitsFilterQueryString)
+        let component = EndpointFactory(
+            serviceEndpoints: splitClientConfig.serviceEndpoints,
+            apiKey: apiKey,
+            splitsQueryString: splitsFilterQueryString)
         catalog.add(component: component)
         return component
     }
 
     func buildFeatureFlagsSynchronizer() throws -> FeatureFlagsSynchronizer {
-
         let syncWorkerFactory = try buildSyncWorkerFactory()
         let storageContainer = try getSplitStorageContainer()
 
@@ -98,7 +100,6 @@ class SplitComponentFactory {
     }
 
     func buildSynchronizer(notificationHelper: NotificationHelper?) throws -> Synchronizer {
-
         let syncWorkerFactory = try buildSyncWorkerFactory()
         let storageContainer = try getSplitStorageContainer()
 
@@ -109,32 +110,35 @@ class SplitComponentFactory {
            let statsRecorderWorker = syncWorkerFactory.createTelemetryStatsRecorderWorker(),
            let periodicStatsRecorderWorker = syncWorkerFactory.createPeriodicTelemetryStatsRecorderWorker() {
             telemetrySynchronizer =
-            DefaultTelemetrySynchronizer(configRecorderWorker: configRecorderWorker,
-                                         statsRecorderWorker: statsRecorderWorker,
-                                         periodicStatsRecorderWorker: periodicStatsRecorderWorker)
+                DefaultTelemetrySynchronizer(
+                    configRecorderWorker: configRecorderWorker,
+                    statsRecorderWorker: statsRecorderWorker,
+                    periodicStatsRecorderWorker: periodicStatsRecorderWorker)
         }
 
         var macosNotificationHelper: NotificationHelper?
 
-#if os(macOS)
-        macosNotificationHelper = notificationHelper ?? DefaultNotificationHelper.instance
-#endif
+        #if os(macOS)
+            macosNotificationHelper = notificationHelper ?? DefaultNotificationHelper.instance
+        #endif
 
         let impressionsTracker = try buildImpressionsTracker(notificationHelper: macosNotificationHelper)
 
-        let eventsSynchronizer = DefaultEventsSynchronizer(syncWorkerFactory: syncWorkerFactory,
-                                                           eventsSyncHelper: try buildEventsSyncHelper(),
-                                                           telemetryProducer: storageContainer.telemetryStorage)
+        let eventsSynchronizer = DefaultEventsSynchronizer(
+            syncWorkerFactory: syncWorkerFactory,
+            eventsSyncHelper: try buildEventsSyncHelper(),
+            telemetryProducer: storageContainer.telemetryStorage)
 
-        let component: Synchronizer = DefaultSynchronizer(splitConfig: splitClientConfig,
-                                                          defaultUserKey: userKey,
-                                                          featureFlagsSynchronizer: try buildFeatureFlagsSynchronizer(),
-                                                          telemetrySynchronizer: telemetrySynchronizer,
-                                                          byKeyFacade: getByKeyFacade(),
-                                                          splitStorageContainer: storageContainer,
-                                                          impressionsTracker: impressionsTracker,
-                                                          eventsSynchronizer: eventsSynchronizer,
-                                                          splitEventsManager: getSplitEventsManagerCoordinator())
+        let component: Synchronizer = DefaultSynchronizer(
+            splitConfig: splitClientConfig,
+            defaultUserKey: userKey,
+            featureFlagsSynchronizer: try buildFeatureFlagsSynchronizer(),
+            telemetrySynchronizer: telemetrySynchronizer,
+            byKeyFacade: getByKeyFacade(),
+            splitStorageContainer: storageContainer,
+            impressionsTracker: impressionsTracker,
+            eventsSynchronizer: eventsSynchronizer,
+            splitEventsManager: getSplitEventsManagerCoordinator())
         catalog.add(component: component)
         return component
     }
@@ -150,16 +154,16 @@ class SplitComponentFactory {
         let storageContainer = try getSplitStorageContainer()
         let uniqueKeyTracker = DefaultUniqueKeyTracker(persistentUniqueKeyStorage: storageContainer.uniqueKeyStorage)
 
-        let  component: ImpressionsTracker
-        =  DefaultImpressionsTracker(
-            splitConfig: splitClientConfig,
-            splitApiFacade: try getSplitApiFacade(),
-            storageContainer: storageContainer,
-            syncWorkerFactory: try buildSyncWorkerFactory(),
-            impressionsSyncHelper: try buildImpressionsSyncHelper(),
-            uniqueKeyTracker: uniqueKeyTracker,
-            notificationHelper: notificationHelper,
-            impressionsObserver: DefaultImpressionsObserver(storage: storageContainer.hashedImpressionsStorage))
+        let component: ImpressionsTracker
+            = DefaultImpressionsTracker(
+                splitConfig: splitClientConfig,
+                splitApiFacade: try getSplitApiFacade(),
+                storageContainer: storageContainer,
+                syncWorkerFactory: try buildSyncWorkerFactory(),
+                impressionsSyncHelper: try buildImpressionsSyncHelper(),
+                uniqueKeyTracker: uniqueKeyTracker,
+                notificationHelper: notificationHelper,
+                impressionsObserver: DefaultImpressionsObserver(storage: storageContainer.hashedImpressionsStorage))
         catalog.add(component: component)
         return component
     }
@@ -196,12 +200,12 @@ class SplitComponentFactory {
     }
 
     func buildUserConsentManager() throws -> UserConsentManager {
-
-        let component = DefaultUserConsentManager(splitConfig: splitClientConfig,
-                                                  storageContainer: try getSplitStorageContainer(),
-                                                  syncManager: try getSyncManager(),
-                                                  eventsTracker: try getEventsTracker(),
-                                                  impressionsTracker: try getImpressionsTracker())
+        let component = DefaultUserConsentManager(
+            splitConfig: splitClientConfig,
+            storageContainer: try getSplitStorageContainer(),
+            syncManager: try getSyncManager(),
+            eventsTracker: try getEventsTracker(),
+            impressionsTracker: try getImpressionsTracker())
         catalog.add(component: component)
         return component
     }
@@ -231,12 +235,14 @@ class SplitComponentFactory {
 }
 
 extension SplitComponentFactory {
-    func buildRestClient(httpClient: HttpClient,
-                         reachabilityChecker: HostReachabilityChecker) throws -> SplitApiRestClient {
+    func buildRestClient(
+        httpClient: HttpClient,
+        reachabilityChecker: HostReachabilityChecker) throws -> SplitApiRestClient {
         let endpointFactory = try getEndpointFactory()
-        let component: SplitApiRestClient = DefaultRestClient(httpClient: httpClient,
-                                                              endpointFactory: endpointFactory,
-                                                              reachabilityChecker: reachabilityChecker)
+        let component: SplitApiRestClient = DefaultRestClient(
+            httpClient: httpClient,
+            endpointFactory: endpointFactory,
+            reachabilityChecker: reachabilityChecker)
         catalog.add(component: component)
         return component
     }
@@ -245,8 +251,9 @@ extension SplitComponentFactory {
         if let obj = catalog.get(byName: kImpressionsFlushCheckerName) as? RecorderFlushChecker {
             return obj
         }
-        let component = DefaultRecorderFlushChecker(maxQueueSize: splitClientConfig.impressionsQueueSize,
-                                                    maxQueueSizeInBytes: splitClientConfig.impressionsQueueSize)
+        let component = DefaultRecorderFlushChecker(
+            maxQueueSize: splitClientConfig.impressionsQueueSize,
+            maxQueueSizeInBytes: splitClientConfig.impressionsQueueSize)
         catalog.add(name: kImpressionsFlushCheckerName, component: component)
         return component
     }
@@ -316,19 +323,22 @@ extension SplitComponentFactory {
     }
 
     func buildEventsSyncHelper() throws -> EventsRecorderSyncHelper {
-        let component = EventsRecorderSyncHelper(eventsStorage: try getSplitStorageContainer().eventsStorage,
-                                                 accumulator: getEventsRecorderFlushChecker())
+        let component = EventsRecorderSyncHelper(
+            eventsStorage: try getSplitStorageContainer().eventsStorage,
+            accumulator: getEventsRecorderFlushChecker())
         catalog.add(component: component)
         return component
     }
 
     func buildMySegmentsSyncWorkerFactory() throws -> MySegmentsSyncWorkerFactory {
         let storageContainer = try getSplitStorageContainer()
-        let component = DefaultMySegmentsSyncWorkerFactory(splitConfig: splitClientConfig,
-                                                           mySegmentsStorage: storageContainer.mySegmentsStorage,
-                                                           myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
-                                                           mySegmentsFetcher: try getSplitApiFacade().mySegmentsFetcher,
-                                                           telemetryProducer: storageContainer.telemetryStorage)
+        let component = DefaultMySegmentsSyncWorkerFactory(
+            splitConfig: splitClientConfig,
+            mySegmentsStorage: storageContainer.mySegmentsStorage,
+            myLargeSegmentsStorage: storageContainer
+                .myLargeSegmentsStorage,
+            mySegmentsFetcher: try getSplitApiFacade().mySegmentsFetcher,
+            telemetryProducer: storageContainer.telemetryStorage)
         catalog.add(component: component)
         return component
     }
@@ -354,12 +364,13 @@ extension SplitComponentFactory {
         let storageContainer = try getSplitStorageContainer()
         let eventsValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
         let propertyValidator = getPropertyValidator()
-        let component: EventsTracker = DefaultEventsTracker(config: splitClientConfig,
-                                                            synchronizer: try getSynchronizer(),
-                                                            eventValidator: eventsValidator,
-                                                            propertyValidator: propertyValidator,
-                                                            validationLogger: validationLogger,
-                                                            telemetryProducer: storageContainer.telemetryStorage)
+        let component: EventsTracker = DefaultEventsTracker(
+            config: splitClientConfig,
+            synchronizer: try getSynchronizer(),
+            eventValidator: eventsValidator,
+            propertyValidator: propertyValidator,
+            validationLogger: validationLogger,
+            telemetryProducer: storageContainer.telemetryStorage)
         catalog.add(component: component)
         return component
     }
@@ -375,8 +386,7 @@ extension SplitComponentFactory {
         let anyValueValidator = DefaultAnyValueValidator()
         let component: PropertyValidator = DefaultPropertyValidator(
             anyValueValidator: anyValueValidator,
-            validationLogger: validationLogger
-        )
+            validationLogger: validationLogger)
         catalog.add(component: component)
         return component
     }

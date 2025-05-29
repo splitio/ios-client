@@ -8,11 +8,13 @@
 
 import Foundation
 
-struct HostDomainFilter {
+enum HostDomainFilter {
     static let endString = "$"
     static let mainRegex = "^(?:[a-zA-Z0-9_-]+\\.)"
-    static let wildCards = [(prefix: "**.", pattern: "\(mainRegex)*"),
-                         (prefix: "*.", pattern: "\(mainRegex)?")]
+    static let wildCards = [
+        (prefix: "**.", pattern: "\(mainRegex)*"),
+        (prefix: "*.", pattern: "\(mainRegex)?"),
+    ]
 
     static func pinsFor(host: String, pins: [CredentialPin]) -> [CredentialPin] {
         var foundPins = [CredentialPin]()

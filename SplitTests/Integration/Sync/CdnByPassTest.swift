@@ -6,11 +6,10 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class CdnByPassTest: XCTestCase {
-
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = IntegrationHelper.dummyUserKey
@@ -39,26 +38,29 @@ class CdnByPassTest: XCTestCase {
 
     override func setUp() {
         requestUrl = nil
-        for i in 1..<20 {
+        for i in 1 ..< 20 {
             numbers.append(Int64(100 * i))
         }
         cdnReceived = false
         splitsChangesHits = 0
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         loadChanges()
     }
 
     func testInit() {
         Spec.flagsSpec = "1.1"
-        performTest(expectedRequestUrl: "https://sdk.split.io/api/splitChanges?s=1.1&since=1200&rbSince=-1&sets=c,nset1,nset2&till=1200")
+        performTest(
+            expectedRequestUrl: "https://sdk.split.io/api/splitChanges?s=1.1&since=1200&rbSince=-1&sets=c,nset1,nset2&till=1200")
     }
 
     func testInitWithoutSpec() {
         Spec.flagsSpec = ""
-        performTest(expectedRequestUrl: "https://sdk.split.io/api/splitChanges?since=1200&rbSince=-1&sets=c,nset1,nset2&till=1200")
+        performTest(
+            expectedRequestUrl: "https://sdk.split.io/api/splitChanges?since=1200&rbSince=-1&sets=c,nset1,nset2&till=1200")
     }
 
     private func performTest(expectedRequestUrl: String) {
@@ -85,11 +87,12 @@ class CdnByPassTest: XCTestCase {
 
         let changeNumber = Int(numbers[12])
 
-        streamingBinding?.push(message:
-                                StreamingIntegrationHelper.splitUpdateMessage(timestamp: changeNumber,
-                                                                              changeNumber: changeNumber))
+        streamingBinding?.push(
+            message:
+            StreamingIntegrationHelper.splitUpdateMessage(
+                timestamp: changeNumber,
+                changeNumber: changeNumber))
         wait(for: [cdnByPassExp], timeout: expTimeout)
-
 
         XCTAssertTrue(cdnReceived)
         XCTAssertEqual(expectedRequestUrl, requestUrl)
@@ -142,7 +145,7 @@ class CdnByPassTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            self.sseConnHits+=1
+            self.sseConnHits += 1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             DispatchQueue.test.asyncAfter(deadline: .now() + 1) {
                 self.sseExp.fulfill()
@@ -156,18 +159,21 @@ class CdnByPassTest: XCTestCase {
         change?.since = Int64(since)
         change?.till = Int64(till)
 //        let split = change?.splits[0]
-        var targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        var targetingRulesChange = TargetingRulesChange(
+            featureFlags: change!,
+            ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
 
         return (try? Json.encodeToJson(targetingRulesChange)) ?? ""
     }
 
     private func loadChanges() {
-        for i in 0..<numbers.count {
-            let num =  numbers[i]
-            let till =  num
-            let change = getChanges(withTreatment: "workm",
-                                    since: num,
-                                    till: till)
+        for i in 0 ..< numbers.count {
+            let num = numbers[i]
+            let till = num
+            let change = getChanges(
+                withTreatment: "workm",
+                since: num,
+                till: till)
             changes.insert(change, at: i)
         }
     }
@@ -180,20 +186,20 @@ class CdnByPassTest: XCTestCase {
         var hitNumber = 0
         DispatchQueue.test.sync {
             hitNumber = self.splitsChangesHits
-            self.splitsChangesHits+=1
+            self.splitsChangesHits += 1
         }
         return hitNumber
     }
 
     private func createFactory() -> SplitFactory {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
-        //splitConfig.isDebugModeEnabled = true
+        let splitConfig = SplitClientConfig()
+        // splitConfig.isDebugModeEnabled = true
         splitConfig.cdnBackoffTimeBaseInSecs = 0
         splitConfig.sync = SyncConfig.builder()
             .addSplitFilter(SplitFilter.bySet(["nset1", "nset2", "c"]))
             .build()
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())

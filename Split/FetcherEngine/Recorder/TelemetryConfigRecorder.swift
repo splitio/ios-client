@@ -13,19 +13,18 @@ protocol HttpTelemetryConfigRecorder {
 }
 
 class DefaultHttpTelemetryConfigRecorder: HttpTelemetryConfigRecorder {
-
     private let restClient: RestClientTelemetryConfig
     private let syncHelper: SyncHelper
     private let resource = Resource.telemetry
 
-    init(restClient: RestClientTelemetryConfig,
-         syncHelper: SyncHelper) {
+    init(
+        restClient: RestClientTelemetryConfig,
+        syncHelper: SyncHelper) {
         self.restClient = restClient
         self.syncHelper = syncHelper
     }
 
     func execute(_ config: TelemetryConfig) throws {
-
         try syncHelper.checkEndpointReachability(restClient: restClient, resource: resource)
 
         let semaphore = DispatchSemaphore(value: 0)

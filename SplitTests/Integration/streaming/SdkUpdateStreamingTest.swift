@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SdkUpdateStreamingTest: XCTestCase {
     var httpClient: HttpClient!
@@ -35,33 +35,34 @@ class SdkUpdateStreamingTest: XCTestCase {
     var database: SplitDatabase!
 
     override func setUp() {
-
         database = TestingHelper.createTestDatabase(name: "GralIntegrationTest")
         splitsChangesHits = 0
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         loadChanges()
     }
 
     func testReady() {
         database.generalInfoDao.update(info: .splitsChangeNumber, longValue: 99999)
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcherNoChanges(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcherNoChanges(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: HttpSessionMock(), requestManager: reqManager)
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999999
         splitConfig.segmentsRefreshRate = 9999999
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
         splitConfig.impressionsMode = "DEBUG"
-        //splitConfig.isDebugModeEnabled = true
-        
+        // splitConfig.isDebugModeEnabled = true
+
         sseExp = XCTestExpectation()
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -72,7 +73,6 @@ class SdkUpdateStreamingTest: XCTestCase {
         let client = factory.client
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
-
 
         var sdkReadyTriggered = false
         var sdkUpdatedTriggered = false
@@ -92,7 +92,8 @@ class SdkUpdateStreamingTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: 10)
 
-        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
+        streamingBinding?
+            .push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
 
         let sdkUpdateExp = XCTestExpectation()
         DispatchQueue.test.asyncAfter(deadline: .now() + 2) {
@@ -112,15 +113,15 @@ class SdkUpdateStreamingTest: XCTestCase {
 
     func testSdkUpdateSplitsWhenNotificationArrives() {
         database.generalInfoDao.update(info: .splitsChangeNumber, longValue: 500)
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999999
         splitConfig.segmentsRefreshRate = 9999999
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        //splitConfig.isDebugModeEnabled = true
+        // splitConfig.isDebugModeEnabled = true
         sseExp = XCTestExpectation()
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -152,11 +153,14 @@ class SdkUpdateStreamingTest: XCTestCase {
         }
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: 5)
-        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
+        streamingBinding?
+            .push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: 1999999,
-                                                          changeNumber: 99999))
+        streamingBinding?.push(
+            message:
+            StreamingIntegrationHelper.splitUpdateMessage(
+                timestamp: 1999999,
+                changeNumber: 99999))
         wait(for: [sdkUpdateExpectation], timeout: expTimeout)
 
         XCTAssertTrue(sdkReadyTriggered)
@@ -171,19 +175,20 @@ class SdkUpdateStreamingTest: XCTestCase {
 
     func testSdkUpdateMySegmentsWhenNotificationArrives() {
         database.generalInfoDao.update(info: .splitsChangeNumber, longValue: 500)
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcherNoSplitChanges(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcherNoSplitChanges(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: HttpSessionMock(), requestManager: reqManager)
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999999
         splitConfig.segmentsRefreshRate = 9999999
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
         splitConfig.logLevel = .verbose
-        //splitConfig.isDebugModeEnabled = true
+        // splitConfig.isDebugModeEnabled = true
         sseExp = XCTestExpectation()
-        let key: Key = Key(matchingKey: "user_key")
+        let key = Key(matchingKey: "user_key")
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -215,7 +220,8 @@ class SdkUpdateStreamingTest: XCTestCase {
         }
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: 5)
-        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
+        streamingBinding?
+            .push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
 
 //        streamingBinding?.push(message:
 //            StreamingIntegrationHelper.mySegmentNoPayloadMessage(timestamp: 99999))
@@ -236,21 +242,25 @@ class SdkUpdateStreamingTest: XCTestCase {
 
     private func getChanges(for hitNumber: Int) -> SplitChange {
         if hitNumber < numbers.count {
-            let jsonData = Data(self.changes[hitNumber].utf8)
+            let jsonData = Data(changes[hitNumber].utf8)
             return try! Json.decodeFrom(json: jsonData, to: TargetingRulesChange.self).featureFlags
         }
         let jsonData = Data(IntegrationHelper.emptySplitChanges(since: 500, till: 500).utf8)
         return try! Json.decodeFrom(json: jsonData, to: TargetingRulesChange.self).featureFlags
     }
-    
+
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
                 let hitNumber = self.getAndUpdateHit()
-                return TestDispatcherResponse(code: 200, data: try! Json.encodeToJsonData(TargetingRulesChange(featureFlags: self.getChanges(for: hitNumber), ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: try! Json.encodeToJsonData(TargetingRulesChange(
+                        featureFlags: self.getChanges(for: hitNumber),
+                        ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))))
             }
             if request.isMySegmentsEndpoint() {
-                self.mySegmentsHits+=1
+                self.mySegmentsHits += 1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
             if request.isAuthEndpoint() {
@@ -263,16 +273,18 @@ class SdkUpdateStreamingTest: XCTestCase {
     private func buildTestDispatcherNoSplitChanges() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: self.numbers[0], till: self.numbers[0]).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: self.numbers[0], till: self.numbers[0]).utf8))
             }
 
             if request.isMySegmentsEndpoint() {
-                self.mySegmentsHits+=1
+                self.mySegmentsHits += 1
                 let hit = self.mySegmentsHits
                 var json = IntegrationHelper.emptyMySegments
                 if hit > 2 {
                     var mySegments = [String]()
-                    for i in 1...hit {
+                    for i in 1 ... hit {
                         mySegments.append("segment\(i)")
                     }
                     json = IntegrationHelper.buildSegments(regular: mySegments)
@@ -290,7 +302,9 @@ class SdkUpdateStreamingTest: XCTestCase {
     private func buildTestDispatcherNoChanges() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
@@ -304,7 +318,7 @@ class SdkUpdateStreamingTest: XCTestCase {
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            self.sseConnHits+=1
+            self.sseConnHits += 1
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
             DispatchQueue.test.asyncAfter(deadline: .now() + 1) {
                 self.sseExp.fulfill()
@@ -326,15 +340,18 @@ class SdkUpdateStreamingTest: XCTestCase {
                 partition.size = 0
             }
         }
-        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        let targetingRulesChange = TargetingRulesChange(
+            featureFlags: change!,
+            ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
         return (try? Json.encodeToJson(targetingRulesChange)) ?? ""
     }
 
     private func loadChanges() {
-        for i in 0..<5 {
-            let change = getChanges(withTreatment: self.treatments[i],
-                                    since: self.numbers[i],
-                                    till: self.numbers[i])
+        for i in 0 ..< 5 {
+            let change = getChanges(
+                withTreatment: treatments[i],
+                since: numbers[i],
+                till: numbers[i])
             changes.insert(change, at: i)
         }
     }
@@ -342,14 +359,13 @@ class SdkUpdateStreamingTest: XCTestCase {
     private func waitForUpdate(secs: UInt32 = 2) {
         sleep(secs)
     }
-    
+
     private func getAndUpdateHit() -> Int {
         var hitNumber = 0
         DispatchQueue.test.sync {
             hitNumber = self.splitsChangesHits
-            self.splitsChangesHits+=1
+            self.splitsChangesHits += 1
         }
         return hitNumber
     }
-
 }

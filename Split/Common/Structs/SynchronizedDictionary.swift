@@ -9,16 +9,16 @@
 import Foundation
 
 class SynchronizedDictionary<K: Hashable, T> {
-
-    private var queue: DispatchQueue = DispatchQueue(label: "split-synchronized-dictionary", target: .global())
+    private var queue: DispatchQueue = .init(label: "split-synchronized-dictionary", target: .global())
     private var items = [K: T]()
 
     var keys: Set<K> {
         queue.sync {
             let keys = items.keys
-            return Set(keys.map { $0 as K})
+            return Set(keys.map { $0 as K })
         }
     }
+
     var all: [K: T] {
         var allItems: [K: T]?
         queue.sync {
@@ -28,9 +28,9 @@ class SynchronizedDictionary<K: Hashable, T> {
     }
 
     var count: Int {
-        var count: Int = 0
+        var count = 0
         queue.sync {
-            count  = items.count
+            count = items.count
         }
         return count
     }

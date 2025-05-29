@@ -8,17 +8,24 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ImpressionsObserverTest: XCTestCase {
-
     var storage = HashedImpressionsStorageMock()
 
     func testBasicFunctionality() {
         let observer = DefaultImpressionsObserver(storage: storage)
-        let impression = KeyImpression(featureName: "someKey", keyName: "someFeature", bucketingKey: nil, treatment: "on", label: "in segment all", time: Date().unixTimestamp(), changeNumber: 1234, previousTime: nil, storageId: nil)
-
+        let impression = KeyImpression(
+            featureName: "someKey",
+            keyName: "someFeature",
+            bucketingKey: nil,
+            treatment: "on",
+            label: "in segment all",
+            time: Date().unixTimestamp(),
+            changeNumber: 1234,
+            previousTime: nil,
+            storageId: nil)
 
         // Add 5 new impressions so that the old one is evicted and re-try the test.
         for imp in generateImpressions(count: 5) {
@@ -33,7 +40,7 @@ class ImpressionsObserverTest: XCTestCase {
         let impressions = SynchronizedList<KeyImpression>()
 
         let operationQueue = OperationQueue()
-        for _ in 0..<5 {
+        for _ in 0 ..< 5 {
             operationQueue.addOperation {
                 self.caller(observer: observer, count: 1000, impressions: impressions)
             }
@@ -63,8 +70,7 @@ class ImpressionsObserverTest: XCTestCase {
             treatment: "on",
             label: "test_label",
             time: Date().unixTimestamp(),
-            changeNumber: 12345
-        )
+            changeNumber: 12345)
 
         // First call should return nil (no previous impression)
         let firstResult = observer.testAndSet(impression: impression)
@@ -87,8 +93,7 @@ class ImpressionsObserverTest: XCTestCase {
             label: "test_label",
             time: impressionTime,
             changeNumber: 12345,
-            properties: "{\"test\":\"value1\"}"
-        )
+            properties: "{\"test\":\"value1\"}")
 
         let impression2 = KeyImpression(
             featureName: "testFeature",
@@ -97,8 +102,7 @@ class ImpressionsObserverTest: XCTestCase {
             label: "test_label",
             time: impressionTime,
             changeNumber: 12345,
-            properties: "{\"test\":\"value2\"}"
-        )
+            properties: "{\"test\":\"value2\"}")
 
         // First call should return nil (no previous impression)
         let firstResult = observer.testAndSet(impression: impression1)
@@ -109,15 +113,18 @@ class ImpressionsObserverTest: XCTestCase {
         XCTAssertNil(secondResult)
     }
 
-    private func caller(observer: DefaultImpressionsObserver, count: Int, impressions: SynchronizedList<KeyImpression> ) {
-
-        for _ in 0..<count {
-            var impression = KeyImpression(featureName: "feature_\(Int.random(in: 1..<10))",
-                                           keyName: "key_\(Int.random(in: 1..<100))",
-                                           treatment: Bool.random() ? "on" : "off",
-                                           label: "label_\(Int.random(in: 1..<5))",
-                                           time: Date().unixTimestamp(),
-                                           changeNumber: 1234567)
+    private func caller(
+        observer: DefaultImpressionsObserver,
+        count: Int,
+        impressions: SynchronizedList<KeyImpression>) {
+        for _ in 0 ..< count {
+            var impression = KeyImpression(
+                featureName: "feature_\(Int.random(in: 1 ..< 10))",
+                keyName: "key_\(Int.random(in: 1 ..< 100))",
+                treatment: Bool.random() ? "on" : "off",
+                label: "label_\(Int.random(in: 1 ..< 5))",
+                time: Date().unixTimestamp(),
+                changeNumber: 1234567)
 
             impression.previousTime = observer.testAndSet(impression: impression)
             impressions.append(impression)
@@ -126,13 +133,14 @@ class ImpressionsObserverTest: XCTestCase {
 
     private func generateImpressions(count: Int) -> [KeyImpression] {
         var impressions = [KeyImpression]()
-        for i in 0..<count {
-            let impression = KeyImpression(featureName: "feature_\(i)",
-                                           keyName: "key_\(i)",
-                                           treatment: (i % 2 == 0 ? "on" : "off"),
-                                           label:  (i % 2 == 0 ? "in segment all" : "whitelisted"),
-                                           time:  Date().unixTimestamp(),
-                                           changeNumber: Int64(i * i))
+        for i in 0 ..< count {
+            let impression = KeyImpression(
+                featureName: "feature_\(i)",
+                keyName: "key_\(i)",
+                treatment: i % 2 == 0 ? "on" : "off",
+                label: i % 2 == 0 ? "in segment all" : "whitelisted",
+                time: Date().unixTimestamp(),
+                changeNumber: Int64(i * i))
             impressions.append(impression)
         }
         return impressions

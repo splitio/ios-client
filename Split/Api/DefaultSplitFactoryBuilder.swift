@@ -16,16 +16,15 @@ import Foundation
 /// For now it's just the defaul factory.
 ///
 @objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder {
-
     private var matchingKey: String?
     private var bucketingKey: String?
-    private var bundle: Bundle = Bundle.main
+    private var bundle: Bundle = .main
     private let kApiKeyLocalhost = "LOCALHOST"
     private let keyValidator: KeyValidator
     private let apiKeyValidator: ApiKeyValidator
     var validationLogger: ValidationMessageLogger
     private let validationTag = "factory instantiation"
-    private var params: SplitFactoryParams = SplitFactoryParams()
+    private var params: SplitFactoryParams = .init()
 
     private let moreThanOneFactoryMessage = """
     You already have an instance of the Split factory. Make sure you definitely want this
@@ -33,14 +32,14 @@ import Foundation
         (Singleton pattern) and reusing it throughout your application.
     """
 
-    private static let  factoryMonitor: FactoryMonitor = {
-        return DefaultFactoryMonitor()
+    private static let factoryMonitor: FactoryMonitor = {
+        DefaultFactoryMonitor()
     }()
 
     public override init() {
-        keyValidator = DefaultKeyValidator()
-        apiKeyValidator = DefaultApiKeyValidator()
-        validationLogger = DefaultValidationMessageLogger()
+        self.keyValidator = DefaultKeyValidator()
+        self.apiKeyValidator = DefaultApiKeyValidator()
+        self.validationLogger = DefaultValidationMessageLogger()
         super.init()
     }
 
@@ -131,13 +130,15 @@ import Foundation
 
         var factoryCount = DefaultSplitFactoryBuilder.factoryMonitor.instanceCount(for: params.apiKey)
         if factoryCount > 0 {
-            let errorInfo = ValidationErrorInfo(error: ValidationError.some,
-                                                message: apiKeyFactoryCountMessage(factoryCount))
+            let errorInfo = ValidationErrorInfo(
+                error: ValidationError.some,
+                message: apiKeyFactoryCountMessage(factoryCount))
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
 
         } else if DefaultSplitFactoryBuilder.factoryMonitor.allCount > 0 {
-            let errorInfo = ValidationErrorInfo(error: ValidationError.some,
-                                                message: moreThanOneFactoryMessage)
+            let errorInfo = ValidationErrorInfo(
+                error: ValidationError.some,
+                message: moreThanOneFactoryMessage)
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
         }
 
@@ -145,13 +146,14 @@ import Foundation
 
         var factory: SplitFactory?
         if params.apiKey.uppercased() == kApiKeyLocalhost {
-            factory = LocalhostSplitFactory(key: params.key,
-                                            config: params.config,
-                                            bundle: bundle)
+            factory = LocalhostSplitFactory(
+                key: params.key,
+                config: params.config,
+                bundle: bundle)
         } else {
             do {
                 factory = try DefaultSplitFactory(params)
-            } catch ComponentError.notFound(let name) {
+            } catch let ComponentError.notFound(name) {
                 Logger.e("Component was not created properly: \(name)")
             } catch {
                 Logger.e("Error: \(error)")
@@ -179,8 +181,8 @@ struct SplitFactoryParams {
     var reachabilityChecker: HostReachabilityChecker?
     var httpClient: HttpClient?
     var apiKey: String = ""
-    var key: Key = Key(matchingKey: "")
-    var config: SplitClientConfig = SplitClientConfig()
+    var key: Key = .init(matchingKey: "")
+    var config: SplitClientConfig = .init()
     var telemetryStorage: TelemetryStorage?
-    var initStopwatch: Stopwatch = Stopwatch()
+    var initStopwatch: Stopwatch = .init()
 }

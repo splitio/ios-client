@@ -18,7 +18,7 @@ class SseAuthenticatorStub: SseAuthenticator {
         self.userKeys.append(contentsOf: userKeys)
         let result = results![resultIndex]
         if resultIndex < results!.count - 1 {
-            resultIndex+=1
+            resultIndex += 1
         }
         return result
     }

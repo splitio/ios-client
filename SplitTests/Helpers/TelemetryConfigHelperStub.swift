@@ -5,8 +5,8 @@
 //  Created by Javier Avrudsky on 11-Jan-2022.
 //  Copyright © 2022 Split. All rights reserved.
 //
-@testable import Split
 import Foundation
+@testable import Split
 
 struct TelemetryConfigHelperStub: TelemetryConfigHelper {
     var value = false
@@ -15,6 +15,6 @@ struct TelemetryConfigHelperStub: TelemetryConfigHelper {
     }
 
     init(enabled: Bool) {
-        value = enabled
+        self.value = enabled
     }
 }

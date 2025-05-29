@@ -8,13 +8,12 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
-
+import XCTest
 
 class InitialCacheTest: XCTestCase {
     var globalCacheReadyFired: Atomic<Bool>!
-    var globalReadyFired : Atomic<Bool>!
+    var globalReadyFired: Atomic<Bool>!
     var jsonChanges: [String]!
     var changes: [SplitChange]!
     let splitName = "workm"
@@ -36,10 +35,11 @@ class InitialCacheTest: XCTestCase {
     }
 
     func testExpiredCache() {
-
         IntegrationCoreDataHelper.observeChanges()
-        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .generalInfo,
-                                                       operation: CrudKey.insert)
+        let dbExp = IntegrationCoreDataHelper.getDbExp(
+            count: 3,
+            entity: .generalInfo,
+            operation: CrudKey.insert)
 
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
@@ -52,15 +52,16 @@ class InitialCacheTest: XCTestCase {
         print("Setup completed, starting test")
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
 
         let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()
 
-        let key: Key = Key(matchingKey: IntegrationHelper.dummyUserKey)
+        let key = Key(matchingKey: IntegrationHelper.dummyUserKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -97,10 +98,11 @@ class InitialCacheTest: XCTestCase {
     }
 
     func testClearExpiredCache() {
-
         IntegrationCoreDataHelper.observeChanges()
-        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .generalInfo,
-                                                       operation: CrudKey.insert)
+        let dbExp = IntegrationCoreDataHelper.getDbExp(
+            count: 3,
+            entity: .generalInfo,
+            operation: CrudKey.insert)
 
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
@@ -109,19 +111,20 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         wait(for: [dbExp], timeout: 10.0)
-        
+
         print("Setup completed, starting test")
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildNoChangesTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildNoChangesTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
 
         let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()
 
-        let key: Key = Key(matchingKey: IntegrationHelper.dummyUserKey)
+        let key = Key(matchingKey: IntegrationHelper.dummyUserKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -166,10 +169,11 @@ class InitialCacheTest: XCTestCase {
     }
 
     func testNoClearNoExpiredCache() {
-
         IntegrationCoreDataHelper.observeChanges()
-        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .generalInfo,
-                                                       operation: CrudKey.insert)
+        let dbExp = IntegrationCoreDataHelper.getDbExp(
+            count: 3,
+            entity: .generalInfo,
+            operation: CrudKey.insert)
 
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
@@ -182,15 +186,16 @@ class InitialCacheTest: XCTestCase {
         print("Setup completed, starting test")
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildNoChangesTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildNoChangesTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
 
         let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()
 
-        let key: Key = Key(matchingKey: IntegrationHelper.dummyUserKey)
+        let key = Key(matchingKey: IntegrationHelper.dummyUserKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -230,12 +235,12 @@ class InitialCacheTest: XCTestCase {
         semaphore.wait()
     }
 
-
     func testClearChangedSplitFilter() throws {
-
         IntegrationCoreDataHelper.observeChanges()
-        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 4, entity: .generalInfo,
-                                                       operation: CrudKey.insert)
+        let dbExp = IntegrationCoreDataHelper.getDbExp(
+            count: 4,
+            entity: .generalInfo,
+            operation: CrudKey.insert)
 
         let splitInFilter = "sample1"
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
@@ -253,23 +258,25 @@ class InitialCacheTest: XCTestCase {
         let split = TestingHelper.buildSplit(name: splitInFilter, treatment: "t2")
         let change = SplitChange(splits: [split], since: 9000, till: 9000)
         jsonChanges.removeAll()
-        jsonChanges.append(try Json.encodeToJson(TargetingRulesChange(featureFlags: change, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))))
-
+        jsonChanges.append(try Json.encodeToJson(TargetingRulesChange(
+            featureFlags: change,
+            ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))))
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
         let syncConfig = SyncConfig.builder()
-                   .addSplitFilter(SplitFilter.byName([splitInFilter]))
-                   .build()
+            .addSplitFilter(SplitFilter.byName([splitInFilter]))
+            .build()
 
         splitConfig.sync = syncConfig
         let readyExp = XCTestExpectation()
         let cacheReadyExp = XCTestExpectation()
 
-        let key: Key = Key(matchingKey: IntegrationHelper.dummyUserKey)
+        let key = Key(matchingKey: IntegrationHelper.dummyUserKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -317,10 +324,11 @@ class InitialCacheTest: XCTestCase {
     }
 
     func testFlagsSpecChanged() {
-
         IntegrationCoreDataHelper.observeChanges()
-        let dbExp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .generalInfo,
-                                                       operation: CrudKey.insert)
+        let dbExp = IntegrationCoreDataHelper.getDbExp(
+            count: 3,
+            entity: .generalInfo,
+            operation: CrudKey.insert)
 
         let splitDatabase = TestingHelper.createTestDatabase(name: "expired_cache")
         splitDatabase.splitDao.insertOrUpdate(split: cachedSplit!)
@@ -333,14 +341,15 @@ class InitialCacheTest: XCTestCase {
         print("Setup completed, starting test")
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         let splitConfig = basicSplitConfig()
 
         let readyExp = XCTestExpectation()
 
-        let key: Key = Key(matchingKey: IntegrationHelper.dummyUserKey)
+        let key = Key(matchingKey: IntegrationHelper.dummyUserKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -379,7 +388,7 @@ class InitialCacheTest: XCTestCase {
 
     private func getChanges(for hitNumber: Int) -> Data {
         if hitNumber < jsonChanges.count {
-            return Data(self.jsonChanges[hitNumber].utf8)
+            return Data(jsonChanges[hitNumber].utf8)
         }
         return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
     }
@@ -394,7 +403,9 @@ class InitialCacheTest: XCTestCase {
                     self.splitsQueryString = request.url.absoluteString
                     return TestDispatcherResponse(code: 200, data: self.getChanges(for: changesIndex))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 10000, till: 10000).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 10000, till: 10000).utf8))
             }
 
             if request.isMySegmentsEndpoint() {
@@ -414,8 +425,11 @@ class InitialCacheTest: XCTestCase {
 
             if request.isSplitEndpoint() {
                 ThreadUtils.delay(seconds: 0.3) // Simulate network
-                self.receivedChangeNumber[self.changeHitIndex.getAndAdd(1)] = request.parameters?["since"] as? Int64 ?? 0
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 10000, till: 10000).utf8))
+                self.receivedChangeNumber[self.changeHitIndex.getAndAdd(1)] = request
+                    .parameters?["since"] as? Int64 ?? 0
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 10000, till: 10000).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
@@ -431,8 +445,7 @@ class InitialCacheTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-            }
+            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {}
             return self.streamingBinding!
         }
     }
@@ -457,32 +470,36 @@ class InitialCacheTest: XCTestCase {
 
     private func loadChangesExpired() {
         cachedSplit = TestingHelper.buildSplit(name: splitName, treatment: "boom")
-        for i in 0..<5 {
-            let change = getChanges(withIndex: 0,
-                                    since: numbers[i],
-                                    till: numbers[i])
+        for i in 0 ..< 5 {
+            let change = getChanges(
+                withIndex: 0,
+                since: numbers[i],
+                till: numbers[i])
 
             changes.append(change)
 
-            let json =  (try? Json.encodeToJson(TargetingRulesChange(featureFlags: change, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)))) ?? ""
+            let json = (try? Json.encodeToJson(TargetingRulesChange(
+                featureFlags: change,
+                ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1)))) ?? ""
             jsonChanges.insert(json, at: i)
         }
     }
 
     private func loadChanges() {
-        for i in 0..<5 {
-            let change = getChanges(withIndex: i,
-                                    since: numbers[i],
-                                    till: numbers[i])
+        for i in 0 ..< 5 {
+            let change = getChanges(
+                withIndex: i,
+                since: numbers[i],
+                till: numbers[i])
 
             changes.append(change)
-            let json =  (try? Json.encodeToJson(change)) ?? ""
+            let json = (try? Json.encodeToJson(change)) ?? ""
             jsonChanges.insert(json, at: i)
         }
     }
 
     private func basicSplitConfig() -> SplitClientConfig {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
         splitConfig.impressionRefreshRate = 999999
@@ -491,9 +508,8 @@ class InitialCacheTest: XCTestCase {
         splitConfig.logLevel = .verbose
         return splitConfig
     }
-    
+
     override func tearDown() {
         IntegrationCoreDataHelper.stopObservingChanges()
     }
 }
-

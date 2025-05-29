@@ -8,8 +8,7 @@
 
 import Foundation
 
-struct ServiceConstants {
-
+enum ServiceConstants {
     // Created for testing purposes only
     static var values: Values?
 
@@ -48,6 +47,7 @@ struct ServiceConstants {
     struct Values {
         var maxSyncPeriodInMillis: Int64
     }
+
     static let defaultMlsTimeMillis: Int64 = 60000
     static let proxyCheckIntervalMillis: Int64 = 3600000 // 1 hour in milliseconds
     static let defaultMlsHash = 1

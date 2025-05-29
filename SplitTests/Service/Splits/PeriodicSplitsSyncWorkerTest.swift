@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class PeriodicSplitsSyncWorkerTest: XCTestCase {
-
     var splitFetcher: HttpSplitFetcherStub!
     var splitsStorage: SplitsStorageStub!
     var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
@@ -39,19 +38,20 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         eventsManager.isSplitsReadyFired = true
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
-        splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                    splitsStorage: splitsStorage,
-                                                    generalInfoStorage: generalInfoStorage,
-                                                    ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
-                                                    splitChangeProcessor: splitChangeProcessor,
-                                                    ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
-                                                    timer: timer,
-                                                    eventsManager: eventsManager,
-                                                    splitConfig: SplitClientConfig())
+        splitsSyncWorker = PeriodicSplitsSyncWorker(
+            splitFetcher: splitFetcher,
+            splitsStorage: splitsStorage,
+            generalInfoStorage: generalInfoStorage,
+            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+            splitChangeProcessor: splitChangeProcessor,
+            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
+            timer: timer,
+            eventsManager: eventsManager,
+            splitConfig: SplitClientConfig())
 
         splitsSyncWorker.start()
 
-        for _ in 0..<5 {
+        for _ in 0 ..< 5 {
             timer.timerHandler?()
         }
 
@@ -63,19 +63,20 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         eventsManager.isSplitsReadyFired = false
         eventsManager.isSegmentsReadyFired = true
         let timer = PeriodicTimerStub()
-        splitsSyncWorker = PeriodicSplitsSyncWorker(splitFetcher: splitFetcher,
-                                                    splitsStorage: splitsStorage,
-                                                    generalInfoStorage: generalInfoStorage,
-                                                    ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
-                                                    splitChangeProcessor: splitChangeProcessor,
-                                                    ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
-                                                    timer: timer,
-                                                    eventsManager: eventsManager,
-                                                    splitConfig: SplitClientConfig())
+        splitsSyncWorker = PeriodicSplitsSyncWorker(
+            splitFetcher: splitFetcher,
+            splitsStorage: splitsStorage,
+            generalInfoStorage: generalInfoStorage,
+            ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+            splitChangeProcessor: splitChangeProcessor,
+            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
+            timer: timer,
+            eventsManager: eventsManager,
+            splitConfig: SplitClientConfig())
 
         splitsSyncWorker.start()
 
-        for _ in 0..<5 {
+        for _ in 0 ..< 5 {
             timer.timerHandler?()
         }
 
@@ -87,5 +88,4 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         split.isParsed = true
         return split
     }
-
 }

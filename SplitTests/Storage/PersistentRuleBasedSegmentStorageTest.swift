@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class PersistentRuleBasedSegmentStorageTest: XCTestCase {
-
     var persistentStorage: PersistentRuleBasedSegmentsStorage!
     var ruleBasedSegmentDao: RuleBasedSegmentDaoStub!
     var generalInfoDao: GeneralInfoDaoStub!
@@ -28,19 +27,18 @@ class PersistentRuleBasedSegmentStorageTest: XCTestCase {
 
         persistentStorage = DefaultPersistentRuleBasedSegmentsStorage(
             database: SplitDatabaseStub(daoProvider: daoProvider),
-            generalInfoStorage: generalInfoStorage
-        )
+            generalInfoStorage: generalInfoStorage)
     }
 
     func testUpdateAddsAndRemovesSegments() {
         let segmentsToAdd = Set([
             createSegment(name: "segment_1", trafficType: "tt_1"),
-            createSegment(name: "segment_2", trafficType: "tt_2")
+            createSegment(name: "segment_2", trafficType: "tt_2"),
         ])
 
         let segmentsToRemove = Set([
             createSegment(name: "segment_3", trafficType: "tt_3"),
-            createSegment(name: "segment_4", trafficType: "tt_4")
+            createSegment(name: "segment_4", trafficType: "tt_4"),
         ])
 
         persistentStorage.update(toAdd: segmentsToAdd, toRemove: segmentsToRemove, changeNumber: 123)

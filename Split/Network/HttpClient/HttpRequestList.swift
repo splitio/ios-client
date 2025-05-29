@@ -9,14 +9,15 @@
 import Foundation
 
 // MARK: Request list
+
 class HttpRequestList {
     private let queueName = "split.http-request-queue"
     private var queue: DispatchQueue
     private var requests: [Int: HttpRequest]
 
     init() {
-        queue = DispatchQueue(label: queueName, attributes: .concurrent)
-        requests = [Int: HttpRequest]()
+        self.queue = DispatchQueue(label: queueName, attributes: .concurrent)
+        self.requests = [Int: HttpRequest]()
     }
 
     func set(_ request: HttpRequest) {

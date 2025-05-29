@@ -9,7 +9,6 @@
 import Foundation
 
 class SyncManagerBuilder {
-
     private var userKey: String?
     private var splitConfig: SplitClientConfig?
     private var splitApiFacade: SplitApiFacade?
@@ -36,7 +35,7 @@ class SyncManagerBuilder {
     }
 
     func setSplitApiFacade(_ apiFacade: SplitApiFacade) -> SyncManagerBuilder {
-        self.splitApiFacade = apiFacade
+        splitApiFacade = apiFacade
         return self
     }
 
@@ -66,16 +65,16 @@ class SyncManagerBuilder {
     }
 
     func build() throws -> SyncManager {
-
-        guard let config = self.splitConfig,
-              let synchronizer = self.synchronizer,
-              let broadcasterChannel = self.broadcasterChannel
+        guard let config = splitConfig,
+              let synchronizer = synchronizer,
+              let broadcasterChannel = broadcasterChannel
         else {
             throw ComponentError.buildFailed(name: "SyncManager")
         }
 
-        let syncGuardian = DefaultSyncGuardian(maxSyncPeriod: ServiceConstants.maxSyncPeriodInMillis,
-                                               splitConfig: config)
+        let syncGuardian = DefaultSyncGuardian(
+            maxSyncPeriod: ServiceConstants.maxSyncPeriodInMillis,
+            splitConfig: config)
         var pushNotificationManager: PushNotificationManager?
         var sseBackoffTimer: BackoffCounterTimer?
         if config.syncEnabled, config.streamingEnabled {
@@ -84,13 +83,14 @@ class SyncManagerBuilder {
             sseBackoffTimer = buildSseBackoffTimer(config: config)
         }
 
-        return DefaultSyncManager(splitConfig: config,
-                                  pushNotificationManager: pushNotificationManager,
-                                  reconnectStreamingTimer: sseBackoffTimer,
-                                  notificationHelper: notificationHelper,
-                                  synchronizer: synchronizer,
-                                  syncGuardian: syncGuardian,
-                                  broadcasterChannel: broadcasterChannel)
+        return DefaultSyncManager(
+            splitConfig: config,
+            pushNotificationManager: pushNotificationManager,
+            reconnectStreamingTimer: sseBackoffTimer,
+            notificationHelper: notificationHelper,
+            synchronizer: synchronizer,
+            syncGuardian: syncGuardian,
+            broadcasterChannel: broadcasterChannel)
     }
 
     private func buildSseBackoffTimer(config: SplitClientConfig) -> BackoffCounterTimer {
@@ -98,8 +98,9 @@ class SyncManagerBuilder {
         return DefaultBackoffCounterTimer(reconnectBackoffCounter: sseBackoffCounter)
     }
 
-    private func buildSseHttpClient(config: SplitClientConfig,
-                                    apiFacade: SplitApiFacade) -> HttpClient {
+    private func buildSseHttpClient(
+        config: SplitClientConfig,
+        apiFacade: SplitApiFacade) -> HttpClient {
         let sseHttpConfig = HttpSessionConfig()
         sseHttpConfig.httpsAuthenticator = config.httpsAuthenticator
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
@@ -110,10 +111,10 @@ class SyncManagerBuilder {
         return apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
     }
 
-    private func buildNotificationProcessor(userKey: String,
-                                            storageContainer: SplitStorageContainer,
-                                            synchronizer: Synchronizer) -> SseNotificationProcessor {
-
+    private func buildNotificationProcessor(
+        userKey: String,
+        storageContainer: SplitStorageContainer,
+        synchronizer: Synchronizer) -> SseNotificationProcessor {
         let segmentsUpdateWorker = SegmentsUpdateWorker(
             synchronizer: MySegmentsSynchronizerWrapper(synchronizer: synchronizer),
             mySegmentsStorage: storageContainer.mySegmentsStorage,
@@ -139,44 +140,48 @@ class SyncManagerBuilder {
                 featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder(type: Split.self),
                 ruleBasedSegmentsPayloadDecoder: DefaultRuleBasedSegmentsPayloadDecoder(type: RuleBasedSegment.self),
                 telemetryProducer: storageContainer.telemetryStorage),
-            splitKillWorker: SplitKillWorker(synchronizer: synchronizer,
-                                             splitsStorage: storageContainer.splitsStorage),
+            splitKillWorker: SplitKillWorker(
+                synchronizer: synchronizer,
+                splitsStorage: storageContainer.splitsStorage),
             mySegmentsUpdateWorker: segmentsUpdateWorker,
             myLargeSegmentsUpdateWorker: largeSegmentsUpdateWorker)
     }
 
     private func buildPushManager(broadcasterChannel: SyncEventBroadcaster)
-    throws -> PushNotificationManager {
-
-        guard let userKey = self.userKey,
-              let byKeyFacade = self.byKeyFacade,
-              let config = self.splitConfig,
-              let apiFacade = self.splitApiFacade,
-              let endpointFactory = self.endpointFactory,
-              let synchronizer = self.synchronizer,
-              let storageContainer = self.storageContainer
+        throws -> PushNotificationManager {
+        guard let userKey = userKey,
+              let byKeyFacade = byKeyFacade,
+              let config = splitConfig,
+              let apiFacade = splitApiFacade,
+              let endpointFactory = endpointFactory,
+              let synchronizer = synchronizer,
+              let storageContainer = storageContainer
         else {
             throw ComponentError.buildFailed(name: "SyncManager")
         }
 
         let sseHttpClient = buildSseHttpClient(config: config, apiFacade: apiFacade)
         let notificationManagerKeeper
-        = DefaultNotificationManagerKeeper(broadcasterChannel: broadcasterChannel,
-                                           telemetryProducer: storageContainer.telemetryStorage)
+            = DefaultNotificationManagerKeeper(
+                broadcasterChannel: broadcasterChannel,
+                telemetryProducer: storageContainer.telemetryStorage)
 
-        let notificationProcessor = buildNotificationProcessor(userKey: userKey,
-                                                               storageContainer: storageContainer,
-                                                               synchronizer: synchronizer)
+        let notificationProcessor = buildNotificationProcessor(
+            userKey: userKey,
+            storageContainer: storageContainer,
+            synchronizer: synchronizer)
 
-        let sseHandler = DefaultSseHandler(notificationProcessor: notificationProcessor,
-                                           notificationParser: DefaultSseNotificationParser(),
-                                           notificationManagerKeeper: notificationManagerKeeper,
-                                           broadcasterChannel: broadcasterChannel,
-                                           telemetryProducer: storageContainer.telemetryStorage)
+        let sseHandler = DefaultSseHandler(
+            notificationProcessor: notificationProcessor,
+            notificationParser: DefaultSseNotificationParser(),
+            notificationManagerKeeper: notificationManagerKeeper,
+            broadcasterChannel: broadcasterChannel,
+            telemetryProducer: storageContainer.telemetryStorage)
 
-        let sseClientFactory  = DefaultSseClientFactory(endpoint: endpointFactory.streamingEndpoint,
-                                                        httpClient: sseHttpClient,
-                                                        sseHandler: sseHandler)
+        let sseClientFactory = DefaultSseClientFactory(
+            endpoint: endpointFactory.streamingEndpoint,
+            httpClient: sseHttpClient,
+            sseHandler: sseHandler)
 
         let sseConnectionHandler = SseConnectionHandler(sseClientFactory: sseClientFactory)
 
@@ -187,6 +192,5 @@ class SyncManagerBuilder {
             timersManager: DefaultTimersManager(),
             telemetryProducer: storageContainer.telemetryStorage,
             sseConnectionHandler: sseConnectionHandler)
-
     }
 }

@@ -6,8 +6,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class TelemetryIntegrationTest: XCTestCase {
     var httpClient: HttpClient!
@@ -36,20 +36,21 @@ class TelemetryIntegrationTest: XCTestCase {
         stats = [TelemetryStats]()
 
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
     func testConfigTelemetry() {
         expConfig = XCTestExpectation()
-        
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+
+        let splitConfig = SplitClientConfig()
         splitConfig.telemetryConfigHelper = IntegrationHelper.enabledTelemetry()
         splitConfig.telemetryRefreshRate = 99999
-        //splitConfig.isDebugModeEnabled = true
+        // splitConfig.isDebugModeEnabled = true
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -77,7 +78,7 @@ class TelemetryIntegrationTest: XCTestCase {
         wait(for: [expConfig!], timeout: expTimeout)
 
         var config: TelemetryConfig?
-        if configs.count > 0 {
+        if !configs.isEmpty {
             config = configs[0]
         }
 
@@ -107,14 +108,14 @@ class TelemetryIntegrationTest: XCTestCase {
         expImp = XCTestExpectation()
         expEve = XCTestExpectation()
 
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.telemetryConfigHelper = IntegrationHelper.enabledTelemetry()
         splitConfig.telemetryRefreshRate = 99999
         splitConfig.impressionRefreshRate = 99999
         splitConfig.eventsPushRate = 99999
-        //splitConfig.isDebugModeEnabled = true
+        // splitConfig.isDebugModeEnabled = true
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -151,7 +152,7 @@ class TelemetryIntegrationTest: XCTestCase {
 
         var statsItem: TelemetryStats?
 
-        if stats.count > 0 {
+        if !stats.isEmpty {
             statsItem = stats[0]
         }
 
@@ -190,14 +191,14 @@ class TelemetryIntegrationTest: XCTestCase {
         expImp = XCTestExpectation()
         expEve = XCTestExpectation()
 
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.telemetryConfigHelper = IntegrationHelper.enabledTelemetry()
         splitConfig.telemetryRefreshRate = 99999
         splitConfig.impressionRefreshRate = 99999
         splitConfig.eventsPushRate = 99999
-        //splitConfig.isDebugModeEnabled = true
+        // splitConfig.isDebugModeEnabled = true
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -222,25 +223,29 @@ class TelemetryIntegrationTest: XCTestCase {
 
         streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
 
+        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(
+            timestamp: nextTimestap(),
+            publishers: 5,
+            channel: kPrimaryChannel))
 
-        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: nextTimestap(),
-                                                                                    publishers: 5,
-                                                                                    channel: kPrimaryChannel))
+        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(
+            timestamp: nextTimestap(),
+            publishers: 10,
+            channel: kSecondaryChannel))
 
-        streamingBinding?.push(message: StreamingIntegrationHelper.occupancyMessage(timestamp: nextTimestap(),
-                                                                                    publishers: 10,
-                                                                                    channel: kSecondaryChannel))
-
-        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: nextTimestap(),
-                                                                                  controlType: "STREAMING_PAUSED"))
+        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(
+            timestamp: nextTimestap(),
+            controlType: "STREAMING_PAUSED"))
 
         sseConnExp = XCTestExpectation()
-        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: nextTimestap(),
-                                                                                  controlType: "STREAMING_RESUMED"))
+        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(
+            timestamp: nextTimestap(),
+            controlType: "STREAMING_RESUMED"))
 
         streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
-        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(timestamp: nextTimestap(),
-                                                                                  controlType: "STREAMING_DISABLED"))
+        streamingBinding?.push(message: StreamingIntegrationHelper.controlMessage(
+            timestamp: nextTimestap(),
+            controlType: "STREAMING_DISABLED"))
 
         ThreadUtils.delay(seconds: 1)
 
@@ -250,16 +255,16 @@ class TelemetryIntegrationTest: XCTestCase {
 
         var statsItem: TelemetryStats?
 
-        if stats.count > 0 {
+        if !stats.isEmpty {
             statsItem = stats[0]
         }
 
         XCTAssertEqual(1, statsItem?.streamingEvents?.filter { $0.type == 0 }.count) // Connection stablished
         XCTAssertEqual(5, statsItem?.streamingEvents?.filter { $0.type == 10 }[0].data) // Occupancy pri
         XCTAssertEqual(10, statsItem?.streamingEvents?.filter { $0.type == 20 }[0].data) // Occupancy sec
-        XCTAssertEqual(1, statsItem?.streamingEvents?.filter { $0.type == 30  && $0.data == 0 }.count) // status enabled
-        XCTAssertEqual(1, statsItem?.streamingEvents?.filter { $0.type == 30  && $0.data == 1 }.count) // status disabled
-        XCTAssertEqual(1, statsItem?.streamingEvents?.filter { $0.type == 30  && $0.data == 2 }.count) // status paused
+        XCTAssertEqual(1, statsItem?.streamingEvents?.filter { $0.type == 30 && $0.data == 0 }.count) // status enabled
+        XCTAssertEqual(1, statsItem?.streamingEvents?.filter { $0.type == 30 && $0.data == 1 }.count) // status disabled
+        XCTAssertEqual(1, statsItem?.streamingEvents?.filter { $0.type == 30 && $0.data == 2 }.count) // status paused
         XCTAssertTrue(statsItem?.streamingEvents?.filter { $0.type == 50 }[0].data ?? 0 > 0) // status enabled
 //        XCTAssertEqual(40012, statsItem?.streamingEvents?.filter { $0.type == 60 }[0].data) // Ably error
         XCTAssertEqual(2, statsItem?.streamingEvents?.filter { $0.type == 70 && $0.data == 0 }.count) // mode streaming
@@ -277,14 +282,14 @@ class TelemetryIntegrationTest: XCTestCase {
         expImp = XCTestExpectation()
         expEve = XCTestExpectation()
 
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.telemetryConfigHelper = IntegrationHelper.enabledTelemetry()
         splitConfig.telemetryRefreshRate = 99999
         splitConfig.impressionRefreshRate = 99999
         splitConfig.eventsPushRate = 99999
-        //splitConfig.isDebugModeEnabled = true
+        // splitConfig.isDebugModeEnabled = true
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -321,7 +326,7 @@ class TelemetryIntegrationTest: XCTestCase {
 
         var statsItem: TelemetryStats?
 
-        if stats.count > 0 {
+        if !stats.isEmpty {
             statsItem = stats[0]
         }
 
@@ -334,17 +339,18 @@ class TelemetryIntegrationTest: XCTestCase {
         expImp = XCTestExpectation(description: "Impressions")
         expEve = XCTestExpectation(description: "Events")
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildErrorTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildErrorTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.telemetryConfigHelper = IntegrationHelper.enabledTelemetry()
         splitConfig.telemetryRefreshRate = 99999
         splitConfig.impressionRefreshRate = 99999
         splitConfig.eventsPushRate = 99999
-        //splitConfig.isDebugModeEnabled = true
+        // splitConfig.isDebugModeEnabled = true
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -379,7 +385,7 @@ class TelemetryIntegrationTest: XCTestCase {
 
         var statsItem: TelemetryStats?
 
-        if stats.count > 0 {
+        if !stats.isEmpty {
             statsItem = stats[0]
         }
 
@@ -398,7 +404,7 @@ class TelemetryIntegrationTest: XCTestCase {
 
     func testConfig() {
         var res = [Bool]()
-        for _ in 0..<10000 {
+        for _ in 0 ..< 10000 {
             let config = SplitClientConfig()
             res.append(config.isTelemetryEnabled)
         }
@@ -445,7 +451,6 @@ class TelemetryIntegrationTest: XCTestCase {
             if request.isEventsEndpoint() {
                 self.expEve?.fulfill()
                 return TestDispatcherResponse(code: 200)
-
             }
             if request.isImpressionsEndpoint() {
                 self.expImp?.fulfill()
@@ -535,19 +540,17 @@ class TelemetryIntegrationTest: XCTestCase {
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
-                self.sseConnExp.fulfill()
+            self.sseConnExp.fulfill()
             return self.streamingBinding!
         }
     }
 
     private func splitChanges() -> String {
-        return IntegrationHelper.loadSplitChangeFileJson(name: "splitchanges_1", sourceClass: self) ?? IntegrationHelper.emptySplitChanges
+        return IntegrationHelper.loadSplitChangeFileJson(name: "splitchanges_1", sourceClass: self) ?? IntegrationHelper
+            .emptySplitChanges
     }
 
     private func nextTimestap() -> Int {
         return timestamp.addAndGet(1000)
     }
 }
-
-
-

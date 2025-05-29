@@ -47,6 +47,7 @@ class TestStreamResponseBinding {
         request.close()
     }
 }
+
 typealias TestStreamResponseBindingHandler = (HttpStreamRequest) -> TestStreamResponseBinding
 
 class HttpRequestManagerTestDispatcher: HttpRequestManager {
@@ -55,8 +56,9 @@ class HttpRequestManagerTestDispatcher: HttpRequestManager {
     private var streamingHandler: TestStreamResponseBindingHandler
     private var queue = DispatchQueue.reqManager
 
-    init(dispatcher: @escaping HttpClientTestDispatcher,
-         streamingHandler: @escaping TestStreamResponseBindingHandler) {
+    init(
+        dispatcher: @escaping HttpClientTestDispatcher,
+        streamingHandler: @escaping TestStreamResponseBindingHandler) {
         self.dispatcher = dispatcher
         self.streamingHandler = streamingHandler
     }
@@ -65,10 +67,10 @@ class HttpRequestManagerTestDispatcher: HttpRequestManager {
         if let dataRequest = request as? HttpDataRequest {
             let response = dispatcher(dataRequest)
             queue.asyncAfter(deadline: DispatchTime.now() + 0.1) { [weak self] in
-                guard let self = self else  { return }
+                guard let self = self else { return }
                 dataRequest.setResponse(code: response.code)
                 self.queue.asyncAfter(deadline: DispatchTime.now() + 0.1) { [weak self] in
-                    guard let self = self else  { return }
+                    guard let self = self else { return }
                     if let data = response.data {
                         dataRequest.notifyIncomingData(data)
                     }
@@ -80,66 +82,62 @@ class HttpRequestManagerTestDispatcher: HttpRequestManager {
 
         } else if let streamRequest = request as? HttpStreamRequest {
             queue.asyncAfter(deadline: DispatchTime.now() + 0.2) { [weak self] in
-                guard let self = self else  { return }
+                guard let self = self else { return }
                 self.queue.async(flags: .barrier) { [weak self] in
-                    guard let self = self else  { return }
+                    guard let self = self else { return }
                     let binding = self.streamingHandler(streamRequest)
                     request.setResponse(code: binding.code)
                     self.streamingBinding.append(binding)
                 }
-
             }
         }
     }
 
-    func append(data: Data, to taskIdentifier: Int) {
-    }
+    func append(data: Data, to taskIdentifier: Int) {}
 
-    func complete(taskIdentifier: Int, error: HttpError?) {
-    }
+    func complete(taskIdentifier: Int, error: HttpError?) {}
 
     func set(responseCode: Int, to taskIdentifier: Int) -> Bool {
         return true
     }
 
-    func destroy() {
-    }
+    func destroy() {}
 }
 
 extension HttpDataRequest {
     func isSplitEndpoint() -> Bool {
-        return self.url.absoluteString.contains("splitChanges")
+        return url.absoluteString.contains("splitChanges")
     }
 
     func isMySegmentsEndpoint() -> Bool {
-        return self.url.absoluteString.contains("memberships")
+        return url.absoluteString.contains("memberships")
     }
 
     func isAuthEndpoint() -> Bool {
-        return self.url.absoluteString.contains("auth")
+        return url.absoluteString.contains("auth")
     }
 
     func isImpressionsEndpoint() -> Bool {
-        return self.url.absoluteString.contains("testImpressions/bulk")
+        return url.absoluteString.contains("testImpressions/bulk")
     }
-    
+
     func isImpressionsCountEndpoint() -> Bool {
-        return self.url.absoluteString.contains("testImpressions/count")
+        return url.absoluteString.contains("testImpressions/count")
     }
-    
+
     func isUniqueKeysEndpoint() -> Bool {
-        return self.url.absoluteString.contains("keys/cs")
+        return url.absoluteString.contains("keys/cs")
     }
 
     func isEventsEndpoint() -> Bool {
-        return self.url.absoluteString.contains("events/bulk")
+        return url.absoluteString.contains("events/bulk")
     }
 
     func isTelemetryConfigEndpoint() -> Bool {
-        return self.url.absoluteString.contains("metrics/config")
+        return url.absoluteString.contains("metrics/config")
     }
 
     func isTelemetryUsageEndpoint() -> Bool {
-        return self.url.absoluteString.contains("metrics/usage")
+        return url.absoluteString.contains("metrics/usage")
     }
 }

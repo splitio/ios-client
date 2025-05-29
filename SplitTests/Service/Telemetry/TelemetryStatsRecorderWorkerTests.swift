@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class TelemetryStatsRecorderWorkerTests: XCTestCase {
-
     var worker: TelemetryStatsRecorderWorker!
     var statsRecorder: HttpTelemetryStatsRecorderStub!
     var splitsStorage: SplitsStorageStub!
@@ -26,15 +25,15 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
         myLargeSegmentsStorage = MySegmentsStorageStub()
         splitsStorage = SplitsStorageStub()
 
-        worker = TelemetryStatsRecorderWorker(telemetryStatsRecorder: statsRecorder,
-                                              telemetryConsumer: telemetryStorage,
-                                              splitsStorage: splitsStorage,
-                                              mySegmentsStorage: mySegmentsStorage,
-                                              myLargeSegmentsStorage: myLargeSegmentsStorage)
+        worker = TelemetryStatsRecorderWorker(
+            telemetryStatsRecorder: statsRecorder,
+            telemetryConsumer: telemetryStorage,
+            splitsStorage: splitsStorage,
+            mySegmentsStorage: mySegmentsStorage,
+            myLargeSegmentsStorage: myLargeSegmentsStorage)
     }
 
     func testSendSuccess() {
-
         worker.flush()
 
         XCTAssertEqual(1, statsRecorder.executeCallCount)
@@ -43,7 +42,6 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
         XCTAssertEqual(1, mySegmentsStorage.getCountCalledCount)
         XCTAssertEqual(1, myLargeSegmentsStorage.getCountCalledCount)
         XCTAssertEqual(1, telemetryStorage.popTagsCallCount)
-
     }
 
     func testFailedAttemptLimit() {
@@ -56,7 +54,6 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
         XCTAssertEqual(1, mySegmentsStorage.getCountCalledCount)
         XCTAssertEqual(1, myLargeSegmentsStorage.getCountCalledCount)
         XCTAssertEqual(1, telemetryStorage.popTagsCallCount)
-
     }
 
     func testFailedAttemptLimitExceded() {
@@ -69,7 +66,6 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
         XCTAssertEqual(1, mySegmentsStorage.getCountCalledCount)
         XCTAssertEqual(1, myLargeSegmentsStorage.getCountCalledCount)
         XCTAssertEqual(1, telemetryStorage.popTagsCallCount)
-
     }
 
     func testEndpointNotReachable() {
@@ -95,7 +91,7 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
         let queue = DispatchQueue(label: "concurrent-test", attributes: .concurrent)
         let group = DispatchGroup()
 
-        for _ in 0..<6 {
+        for _ in 0 ..< 6 {
             group.enter()
             queue.async {
                 self.worker.flush()

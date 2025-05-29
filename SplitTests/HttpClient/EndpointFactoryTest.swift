@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class EndpointFactoryTest: XCTestCase {
-
     private let kAuthorizationHeader = "Authorization"
     private let kSplitVersionHeader = "SplitSDKVersion"
     private let kContentTypeHeader = "Content-Type"
@@ -27,9 +26,10 @@ class EndpointFactoryTest: XCTestCase {
 
     override func setUp() {
         serviceEndpoints = ServiceEndpoints.builder().build()
-        factory = EndpointFactory(serviceEndpoints: serviceEndpoints,
-                                      apiKey: CommonValues.apiKey,
-                                      splitsQueryString: "")
+        factory = EndpointFactory(
+            serviceEndpoints: serviceEndpoints,
+            apiKey: CommonValues.apiKey,
+            splitsQueryString: "")
     }
 
     func testMySegmentsEndpoint() {
@@ -142,6 +142,5 @@ class EndpointFactoryTest: XCTestCase {
         XCTAssertEqual(endpointUrl, endpoint.url.absoluteString)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }

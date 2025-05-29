@@ -22,16 +22,17 @@ protocol ApiKeyValidator {
 }
 
 class DefaultApiKeyValidator: ApiKeyValidator {
-
     func validate(apiKey: String?) -> ValidationErrorInfo? {
         if let key = apiKey {
             if key.isEmpty() {
-                return ValidationErrorInfo(error: .some,
-                                           message: "you passed an empty api_key, api_key must be a non-empty string")
+                return ValidationErrorInfo(
+                    error: .some,
+                    message: "you passed an empty api_key, api_key must be a non-empty string")
             }
         } else {
-            return ValidationErrorInfo(error: .some,
-                                       message: "you passed a null api_key, the api_key must be a non-empty string")
+            return ValidationErrorInfo(
+                error: .some,
+                message: "you passed a null api_key, the api_key must be a non-empty string")
         }
         return nil
     }

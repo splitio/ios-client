@@ -14,7 +14,6 @@ enum NotificationPayloadParsingException: Error {
 }
 
 protocol SegmentsPayloadDecoder {
-
     func decodeAsString(payload: String, compressionUtil: CompressionUtil) throws -> String
 
     func decodeAsBytes(payload: String, compressionUtil: CompressionUtil) throws -> Data
@@ -26,11 +25,9 @@ protocol SegmentsPayloadDecoder {
     func isKeyInBitmap(keyMap: Data, hashedKey: UInt64) -> Bool
 
     func computeKeyIndex(hashedKey: UInt64, keyMapLength: Int) -> Int
-
 }
 
 struct DefaultSegmentsPayloadDecoder: SegmentsPayloadDecoder {
-
     private let kFieldSize = 8
 
     func decodeAsString(payload: String, compressionUtil: CompressionUtil) throws -> String {
@@ -38,7 +35,7 @@ struct DefaultSegmentsPayloadDecoder: SegmentsPayloadDecoder {
     }
 
     func decodeAsBytes(payload: String, compressionUtil: CompressionUtil) throws -> Data {
-        guard let dec =  Base64Utils.decodeBase64(payload) else {
+        guard let dec = Base64Utils.decodeBase64(payload) else {
             throw NotificationPayloadParsingException.errorDecodingBase64
         }
         let descomp = try compressionUtil.decompress(data: dec)
@@ -56,7 +53,7 @@ struct DefaultSegmentsPayloadDecoder: SegmentsPayloadDecoder {
     func isKeyInBitmap(keyMap: Data, hashedKey: UInt64) -> Bool {
         let index = computeKeyIndex(hashedKey: hashedKey, keyMapLength: keyMap.count)
         let bit = index / kFieldSize
-        let offset: UInt8 = UInt8(index % kFieldSize)
+        let offset = UInt8(index % kFieldSize)
         if bit > keyMap.count - 1 {
             return false
         }

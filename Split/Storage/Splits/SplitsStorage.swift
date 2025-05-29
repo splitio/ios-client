@@ -29,7 +29,6 @@ protocol SplitsStorage: SyncSplitsStorage {
 }
 
 class DefaultSplitsStorage: SplitsStorage {
-
     private var persistentStorage: PersistentSplitsStorage
     private var inMemorySplits: ConcurrentDictionary<String, Split>
     private var trafficTypes: ConcurrentDictionary<String, Int>
@@ -38,8 +37,9 @@ class DefaultSplitsStorage: SplitsStorage {
     private(set) var changeNumber: Int64 = -1
     private(set) var updateTimestamp: Int64 = -1
 
-    init(persistentSplitsStorage: PersistentSplitsStorage,
-         flagSetsCache: FlagSetsCache) {
+    init(
+        persistentSplitsStorage: PersistentSplitsStorage,
+        flagSetsCache: FlagSetsCache) {
         self.persistentStorage = persistentSplitsStorage
         self.inMemorySplits = ConcurrentDictionary()
         self.trafficTypes = ConcurrentDictionary()
@@ -78,7 +78,7 @@ class DefaultSplitsStorage: SplitsStorage {
 
     func getMany(splits: [String]) -> [String: Split] {
         let filter = Set(splits.compactMap { $0.lowercased() })
-        return inMemorySplits.all.filter { splitName, _ in return filter.contains(splitName) }
+        return inMemorySplits.all.filter { splitName, _ in filter.contains(splitName) }
     }
 
     func getAll() -> [String: Split] {
@@ -96,7 +96,7 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func update(bySetsFilter filter: SplitFilter?) {
-        self.persistentStorage.update(bySetsFilter: filter)
+        persistentStorage.update(bySetsFilter: filter)
     }
 
     func updateWithoutChecks(split: Split) {
@@ -127,7 +127,7 @@ class DefaultSplitsStorage: SplitsStorage {
         var splitsRemoved = false
 
         for split in splits {
-            guard let splitName = split.name?.lowercased()  else {
+            guard let splitName = split.name?.lowercased() else {
                 Logger.e("Invalid feature flag name received while updating feature flags")
                 continue
             }
@@ -205,7 +205,6 @@ class DefaultSplitsStorage: SplitsStorage {
 }
 
 class BackgroundSyncSplitsStorage: SyncSplitsStorage {
-
     private var persistentStorage: PersistentSplitsStorage
 
     init(persistentSplitsStorage: PersistentSplitsStorage) {

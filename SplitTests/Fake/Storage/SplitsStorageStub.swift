@@ -7,17 +7,16 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class SplitsStorageStub: SplitsStorage {
-
     var updatedSplitChange: ProcessedSplitChange? = nil
-    
+
     var changeNumber: Int64 = 0
-    
+
     var updateTimestamp: Int64 = 0
-    
+
     var splitsFilterQueryString: String = ""
 
     var flagsSpec: String = ""
@@ -25,9 +24,7 @@ class SplitsStorageStub: SplitsStorage {
     var loadLocalCalled = false
     var clearCalledTimes = 0
     var clearCalled: Bool {
-        get {
-            return clearCalledTimes > 0
-        }
+        return clearCalledTimes > 0
     }
 
     var updatedWithoutChecksSplit: Split?
@@ -36,21 +33,21 @@ class SplitsStorageStub: SplitsStorage {
     var getCountCalledCount = 0
 
     private let inMemorySplits = ConcurrentDictionary<String, Split>()
-    
+
     func loadLocal() {
         loadLocalCalled = true
     }
-    
+
     func get(name: String) -> Split? {
         return inMemorySplits.value(forKey: name.lowercased())
     }
-    
-    func getMany(splits: [String]) -> [String : Split] {
+
+    func getMany(splits: [String]) -> [String: Split] {
         let names = Set(splits.compactMap { $0.lowercased() })
-        return inMemorySplits.all.filter { return names.contains($0.key) }
+        return inMemorySplits.all.filter { names.contains($0.key) }
     }
-    
-    func getAll() -> [String : Split] {
+
+    func getAll() -> [String: Split] {
         return inMemorySplits.all
     }
 
@@ -79,7 +76,7 @@ class SplitsStorageStub: SplitsStorage {
     }
 
     func update(filterQueryString: String) {
-        self.splitsFilterQueryString = filterQueryString
+        splitsFilterQueryString = filterQueryString
     }
 
     func updateWithoutChecks(split: Split) {
@@ -89,15 +86,15 @@ class SplitsStorageStub: SplitsStorage {
             exp.fulfill()
         }
     }
-    
+
     func isValidTrafficType(name: String) -> Bool {
-        let splits = inMemorySplits.all.compactMap { return $0.value }
-        let count =  splits.filter { return $0.trafficTypeName == name && $0.status == .active }.count
+        let splits = inMemorySplits.all.compactMap { $0.value }
+        let count = splits.filter { $0.trafficTypeName == name && $0.status == .active }.count
         return count > 0
     }
-    
+
     func clear() {
-        clearCalledTimes+=1
+        clearCalledTimes += 1
         inMemorySplits.removeAll()
     }
 
@@ -106,12 +103,12 @@ class SplitsStorageStub: SplitsStorage {
     }
 
     func getCount() -> Int {
-        getCountCalledCount+=1
+        getCountCalledCount += 1
         return inMemorySplits.count
     }
 
     var updateBySetsFilterCount = 0
     func update(bySetsFilter: SplitFilter?) {
-        updateBySetsFilterCount+=1
+        updateBySetsFilterCount += 1
     }
 }

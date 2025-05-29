@@ -9,12 +9,13 @@
 import Foundation
 
 class InRuleBasedSegmentMatcher: BaseMatcher, MatcherProtocol {
-
     private var data: UserDefinedBaseSegmentMatcherData?
 
-    init(data: UserDefinedBaseSegmentMatcherData?,
-         negate: Bool? = nil, attribute: String? = nil, type: MatcherType? = nil) {
-
+    init(
+        data: UserDefinedBaseSegmentMatcherData?,
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
         self.data = data
     }
@@ -26,8 +27,11 @@ class InRuleBasedSegmentMatcher: BaseMatcher, MatcherProtocol {
             return false
         }
 
-        if isExcluded(segment: segment, matchingKey: values.matchingKey,
-                      values: values, context: context) {
+        if isExcluded(
+            segment: segment,
+            matchingKey: values.matchingKey,
+            values: values,
+            context: context) {
             return false
         }
 
@@ -35,8 +39,11 @@ class InRuleBasedSegmentMatcher: BaseMatcher, MatcherProtocol {
     }
 
     /// returns true if the matchingKey or any of the segments is excluded
-    private func isExcluded(segment: RuleBasedSegment, matchingKey: String,
-                            values: EvalValues, context: EvalContext?) -> Bool {
+    private func isExcluded(
+        segment: RuleBasedSegment,
+        matchingKey: String,
+        values: EvalValues,
+        context: EvalContext?) -> Bool {
         // no excluded property
         guard let excluded = segment.excluded else {
             return false

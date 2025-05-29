@@ -1,8 +1,7 @@
-import XCTest
 @testable import Split
+import XCTest
 
 final class RolloutCacheManagerTest: XCTestCase {
-
     private var rolloutCacheManager: RolloutCacheManager!
     private var splitsStorage: SplitsStorageStub!
     private var segmentsStorage: MySegmentsStorageStub!
@@ -49,7 +48,7 @@ final class RolloutCacheManagerTest: XCTestCase {
         generalInfoStorage.setUpdateTimestamp(timestamp: getTimestamp(plusDays: -1))
 
         let result = validateCache()
-    
+
         XCTAssertTrue(result)
         XCTAssertTrue(splitsStorage.clearCalled)
         XCTAssertTrue(segmentsStorage.clearCalled)
@@ -58,7 +57,7 @@ final class RolloutCacheManagerTest: XCTestCase {
     func testValidateCacheCallsClearOnStorageOnlyOnceWhenExecutedConsecutively() throws {
         rolloutCacheManager = getCacheManager(expiration: 10, clearOnInit: true)
         generalInfoStorage.setUpdateTimestamp(timestamp: getTimestamp(plusDays: -1))
-        
+
         let clearCalledTimes = segmentsStorage.clearCalledTimes
         let result = validateCache()
         let result2 = validateCache()

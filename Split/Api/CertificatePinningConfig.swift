@@ -34,8 +34,9 @@ public class CertificatePinningError: NSObject, LocalizedError {
 
     /// Initializes a new instance of CertificatePinningConfig with an array of pins.
     /// - Parameter pins: Array of CredentialPin objects.
-    init(pins: [CredentialPin],
-         failureHandler: CertificatePinningFailureHandler?) {
+    init(
+        pins: [CredentialPin],
+        failureHandler: CertificatePinningFailureHandler?) {
         self.pins = pins
         self.failureHandler = failureHandler
     }
@@ -49,7 +50,6 @@ public class CertificatePinningError: NSObject, LocalizedError {
     /// Builder class for constructing a CertificatePinningConfig.
     @objc(CertificatePinningConfigBuilder)
     public class Builder: NSObject {
-
         private enum PinType {
             case key
             case certificate
@@ -66,7 +66,7 @@ public class CertificatePinningError: NSObject, LocalizedError {
         private var failHandler: CertificatePinningFailureHandler?
 
         // Visible for testing variable
-        var bundle: Bundle = Bundle.main
+        var bundle: Bundle = .main
 
         /// Builds and returns a CertificatePinningConfig with the added pins.
         /// - Throws: CertificatePinningError if any pin cannot be parsed.
@@ -149,9 +149,10 @@ public class CertificatePinningError: NSObject, LocalizedError {
                 throw errLog("Couldn't get SPKI from \(pin.data).der")
             }
 
-            return CredentialPin(host: pin.host,
-                                 hash: AlgoHelper.computeHash(spki.data, algo: .sha256),
-                                 algo: .sha256)
+            return CredentialPin(
+                host: pin.host,
+                hash: AlgoHelper.computeHash(spki.data, algo: .sha256),
+                algo: .sha256)
         }
 
         /// Parses a key hash pin into a CredentialPin.
@@ -164,12 +165,12 @@ public class CertificatePinningError: NSObject, LocalizedError {
                 throw errLog("Unable to add pin for host \(pin.host), invalid key hash")
             }
 
-            let algoName = String(hash[hash.startIndex..<separatorIndex])
+            let algoName = String(hash[hash.startIndex ..< separatorIndex])
             guard let algo = KeyHashAlgo(rawValue: algoName) else {
                 throw errLog("Key hash algorithm not supported for pin: \(algoName)")
             }
 
-            let keyHash = String(hash[hash.index(after: separatorIndex)..<hash.endIndex])
+            let keyHash = String(hash[hash.index(after: separatorIndex) ..< hash.endIndex])
             guard let dataHash = Data(base64Encoded: keyHash) else {
                 throw errLog("Key hash not valid for host \(pin.host) and algorithm: \(algoName)")
             }

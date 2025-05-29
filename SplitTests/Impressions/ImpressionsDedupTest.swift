@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ImpressionsDedupTest: XCTestCase {
-
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = IntegrationHelper.dummyUserKey
@@ -30,8 +29,9 @@ class ImpressionsDedupTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         impressions = [String: [KeyImpression]]()
         counts = [String: Int]()
@@ -48,12 +48,11 @@ class ImpressionsDedupTest: XCTestCase {
     }
 
     func dedupTest(mode: String, impValues: [Int], countValues: [Int]) {
-
         let notificationHelper = NotificationHelperStub()
 
         db = TestingHelper.createTestDatabase(name: "test")
 
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 30
         splitConfig.segmentsRefreshRate = 30
 //        splitConfig.impressionRefreshRate =
@@ -66,7 +65,7 @@ class ImpressionsDedupTest: XCTestCase {
         splitConfig.impressionsChunkSize = 500
         splitConfig.impressionsMode = mode
 
-        let key: Key = Key(matchingKey: userKey)
+        let key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
@@ -89,24 +88,27 @@ class ImpressionsDedupTest: XCTestCase {
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
 
-        for _ in 0..<100 {
+        for _ in 0 ..< 100 {
             _ = client.getTreatment("FACUNDO_TEST")
             _ = client.getTreatment("Test_Save_1")
             _ = client.getTreatment("TEST")
         }
 
-        for _ in 0..<50 {
+        for _ in 0 ..< 50 {
             _ = client.getTreatment("Test_Save_1")
             _ = client.getTreatment("TEST")
         }
 
-        for _ in 0..<10 {
+        for _ in 0 ..< 10 {
             _ = client.getTreatment("TEST")
         }
         sleep(1)
 
         IntegrationCoreDataHelper.observeChanges()
-        let dbHashedImp = IntegrationCoreDataHelper.getDbExp(count: 3, entity: .hashedImpression, operation: CrudKey.update)
+        let dbHashedImp = IntegrationCoreDataHelper.getDbExp(
+            count: 3,
+            entity: .hashedImpression,
+            operation: CrudKey.update)
 
         // Impressions count are saved on app bg
         // Here that situation is simulated
@@ -130,7 +132,7 @@ class ImpressionsDedupTest: XCTestCase {
         if let exp = countExp {
             expFor.append(exp)
         }
-        wait(for: expFor , timeout: 10)
+        wait(for: expFor, timeout: 10)
 
         sleep(1)
 
@@ -152,7 +154,6 @@ class ImpressionsDedupTest: XCTestCase {
             _ = semaphore.signal()
         })
         semaphore.wait()
-
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
@@ -162,7 +163,9 @@ class ImpressionsDedupTest: XCTestCase {
                     self.firstSplitHit = false
                     return TestDispatcherResponse(code: 200, data: Data(self.loadSplitsChangeFile().utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
@@ -172,7 +175,7 @@ class ImpressionsDedupTest: XCTestCase {
                 self.isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             }
-            
+
             if request.isImpressionsEndpoint() {
                 self.queue.sync {
                     if let exp = self.impExp {
@@ -214,11 +217,11 @@ class ImpressionsDedupTest: XCTestCase {
     }
 
     private func loadSplitsChangeFile() -> String {
-        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json") else {
+        guard let splitJson = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json")
+        else {
             return IntegrationHelper.emptySplitChanges(since: 99999, till: 99999)
         }
         return splitJson
-
     }
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
@@ -230,4 +233,3 @@ class ImpressionsDedupTest: XCTestCase {
         }
     }
 }
-

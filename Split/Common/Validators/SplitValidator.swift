@@ -32,7 +32,6 @@ protocol SplitValidator {
 
 struct SplitNameValidator {
     func validate(name: String?) -> ValidationErrorInfo? {
-
         if name == nil {
             return ValidationErrorInfo(
                 error: .some,
@@ -46,8 +45,9 @@ struct SplitNameValidator {
         }
 
         if name!.trimmingCharacters(in: .whitespacesAndNewlines) != name! {
-            return ValidationErrorInfo(warning: .splitNameShouldBeTrimmed,
-                                       message: "feature flag name '\(name!)' has extra whitespace, trimming")
+            return ValidationErrorInfo(
+                warning: .splitNameShouldBeTrimmed,
+                message: "feature flag name '\(name!)' has extra whitespace, trimming")
         }
 
         return nil
@@ -55,7 +55,6 @@ struct SplitNameValidator {
 }
 
 class DefaultSplitValidator: SplitValidator {
-
     let splitsStorage: SplitsStorage
     let splitNameValidator = SplitNameValidator()
 
@@ -69,9 +68,10 @@ class DefaultSplitValidator: SplitValidator {
 
     func validateSplit(name: String) -> ValidationErrorInfo? {
         if splitsStorage.get(name: name) == nil {
-            return ValidationErrorInfo(warning: .nonExistingSplit,
-                                       message: "you passed '\(name)' that does not exist in this environment, " +
-                "please double check what feature flags exist in the Split user interface.")
+            return ValidationErrorInfo(
+                warning: .nonExistingSplit,
+                message: "you passed '\(name)' that does not exist in this environment, " +
+                    "please double check what feature flags exist in the Split user interface.")
         }
         return nil
     }

@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SyncManagerTest: XCTestCase {
-
     var pushManager: PushNotificationManagerStub!
     var broadcasterChannel: SyncEventBroadcasterStub!
     var synchronizer: SynchronizerStub!
@@ -30,7 +29,6 @@ class SyncManagerTest: XCTestCase {
     }
 
     func testStartStreamingEnabled() {
-
         splitConfig.streamingEnabled = true
         syncManager = createSyncManager()
         syncManager.start()
@@ -46,7 +44,6 @@ class SyncManagerTest: XCTestCase {
     }
 
     func testStartStreamingDisabled() {
-
         splitConfig.streamingEnabled = false
         syncManager = createSyncManager()
         syncManager.start()
@@ -70,7 +67,6 @@ class SyncManagerTest: XCTestCase {
     }
 
     func singleModeStartTest(streamingEnabled: Bool) {
-
         splitConfig.streamingEnabled = streamingEnabled
         splitConfig.syncEnabled = false
         syncManager = createSyncManager()
@@ -87,7 +83,6 @@ class SyncManagerTest: XCTestCase {
     }
 
     func testPushSubsystemUpReceived() {
-
         splitConfig.streamingEnabled = true
         syncManager = createSyncManager()
         syncManager.start()
@@ -97,7 +92,6 @@ class SyncManagerTest: XCTestCase {
     }
 
     func testPushSubsystemDownReceived() {
-
         splitConfig.streamingEnabled = true
         syncManager = createSyncManager()
         syncManager.start()
@@ -107,7 +101,6 @@ class SyncManagerTest: XCTestCase {
     }
 
     func testPushRetryableError() {
-
         splitConfig.streamingEnabled = true
         syncManager = createSyncManager()
         syncManager.start()
@@ -120,7 +113,6 @@ class SyncManagerTest: XCTestCase {
     }
 
     func testPushNonRetryableError() {
-
         splitConfig.streamingEnabled = true
         syncManager = createSyncManager()
         syncManager.start()
@@ -135,7 +127,6 @@ class SyncManagerTest: XCTestCase {
     }
 
     func testPushReset() {
-
         splitConfig.streamingEnabled = true
         syncManager = createSyncManager()
         syncManager.start()
@@ -149,7 +140,6 @@ class SyncManagerTest: XCTestCase {
     }
 
     func testStop() {
-
         splitConfig.streamingEnabled = true
         syncManager = createSyncManager()
         syncManager.start()
@@ -169,22 +159,20 @@ class SyncManagerTest: XCTestCase {
 
         // macOS doesn't have to pause sdk process
         // when is no active
-#if !os(macOS)
-        XCTAssertTrue(pushManager.pauseCalled)
-        XCTAssertTrue(pushManager.resumeCalled)
-        XCTAssertTrue(synchronizer.pauseCalled)
-        XCTAssertTrue(synchronizer.resumeCalled)
-#else
-        XCTAssertFalse(pushManager.pauseCalled)
-        XCTAssertFalse(pushManager.resumeCalled)
-        XCTAssertFalse(synchronizer.pauseCalled)
-        XCTAssertFalse(synchronizer.resumeCalled)
-#endif
-
+        #if !os(macOS)
+            XCTAssertTrue(pushManager.pauseCalled)
+            XCTAssertTrue(pushManager.resumeCalled)
+            XCTAssertTrue(synchronizer.pauseCalled)
+            XCTAssertTrue(synchronizer.resumeCalled)
+        #else
+            XCTAssertFalse(pushManager.pauseCalled)
+            XCTAssertFalse(pushManager.resumeCalled)
+            XCTAssertFalse(synchronizer.pauseCalled)
+            XCTAssertFalse(synchronizer.resumeCalled)
+        #endif
     }
 
     func testPushDelayReceived() {
-
         splitConfig.streamingEnabled = true
         syncGuardian.maxSyncPeriod = -1
         syncManager = createSyncManager()
@@ -195,7 +183,6 @@ class SyncManagerTest: XCTestCase {
     }
 
     func testSyncExecutedReceived() {
-
         splitConfig.streamingEnabled = true
         syncGuardian.updateLastSyncTimestampCalled = false
         syncManager = createSyncManager()
@@ -205,9 +192,8 @@ class SyncManagerTest: XCTestCase {
         XCTAssertTrue(syncGuardian.updateLastSyncTimestampCalled)
     }
 
-
     func testCredentialPinnedFailNotification() {
-        let endpoints = [ "auth.com", "stream.com", "sdk.com", "tele.com", "event.com"]
+        let endpoints = ["auth.com", "stream.com", "sdk.com", "tele.com", "event.com"]
 
         let epConfig = ServiceEndpoints.builder()
             .set(authServiceEndpoint: endpoints[0])
@@ -216,7 +202,7 @@ class SyncManagerTest: XCTestCase {
             .set(telemetryServiceEndpoint: endpoints[3])
             .set(eventsEndpoint: endpoints[4])
             .build()
-       splitConfig.serviceEndpoints = epConfig
+        splitConfig.serviceEndpoints = epConfig
         splitConfig.streamingEnabled = true
         var exp: XCTestExpectation?
         let nHelper = DefaultNotificationHelper.instance
@@ -246,7 +232,7 @@ class SyncManagerTest: XCTestCase {
                 XCTAssertTrue(synchronizer.disableSdkCalled)
                 XCTAssertFalse(synchronizer.disableEventsCalled)
                 XCTAssertFalse(synchronizer.disableTelemetryCalled)
-             case 3:
+            case 3:
                 XCTAssertFalse(pushManager.stopCalled)
                 XCTAssertFalse(synchronizer.startPeriodicFetchingCalled)
                 XCTAssertFalse(synchronizer.disableSdkCalled)
@@ -265,11 +251,13 @@ class SyncManagerTest: XCTestCase {
     }
 
     private func createSyncManager() -> SyncManager {
-        return DefaultSyncManager(splitConfig: splitConfig, pushNotificationManager: pushManager,
-                                  reconnectStreamingTimer: retryTimer,
-                                  notificationHelper: DefaultNotificationHelper.instance,
-                                  synchronizer: synchronizer,
-                                  syncGuardian: syncGuardian,
-                                  broadcasterChannel: broadcasterChannel)
+        return DefaultSyncManager(
+            splitConfig: splitConfig,
+            pushNotificationManager: pushManager,
+            reconnectStreamingTimer: retryTimer,
+            notificationHelper: DefaultNotificationHelper.instance,
+            synchronizer: synchronizer,
+            syncGuardian: syncGuardian,
+            broadcasterChannel: broadcasterChannel)
     }
 }

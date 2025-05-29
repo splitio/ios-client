@@ -9,22 +9,20 @@
 import Foundation
 
 class ImpressionsRecorderWorker: RecorderWorker {
-
     private let persistentImpressionsStorage: PersistentImpressionsStorage
     private let impressionsRecorder: HttpImpressionsRecorder
     private let impressionsPerPush: Int
     private let impressionsSyncHelper: ImpressionsRecorderSyncHelper?
 
-    init(persistentImpressionsStorage: PersistentImpressionsStorage,
-         impressionsRecorder: HttpImpressionsRecorder,
-         impressionsPerPush: Int,
-         impressionsSyncHelper: ImpressionsRecorderSyncHelper? = nil) {
-
+    init(
+        persistentImpressionsStorage: PersistentImpressionsStorage,
+        impressionsRecorder: HttpImpressionsRecorder,
+        impressionsPerPush: Int,
+        impressionsSyncHelper: ImpressionsRecorderSyncHelper? = nil) {
         self.persistentImpressionsStorage = persistentImpressionsStorage
         self.impressionsRecorder = impressionsRecorder
         self.impressionsPerPush = impressionsPerPush
         self.impressionsSyncHelper = impressionsSyncHelper
-
     }
 
     func flush() {
@@ -40,7 +38,7 @@ class ImpressionsRecorderWorker: RecorderWorker {
                     // Removing sent impressions
                     persistentImpressionsStorage.delete(impressions)
                     Logger.i("Impressions posted successfully")
-                } catch let error {
+                } catch {
                     Logger.e("Impression error: \(String(describing: error))")
                     failedImpressions.append(contentsOf: impressions)
                 }
@@ -49,15 +47,15 @@ class ImpressionsRecorderWorker: RecorderWorker {
         // Activate non sent impressions to retry in next iteration
         persistentImpressionsStorage.setActive(failedImpressions)
         if let syncHelper = impressionsSyncHelper {
-            syncHelper.updateAccumulator(count: failedImpressions.count,
-                                         bytes: failedImpressions.count *
-                                            ServiceConstants.estimatedImpressionSizeInBytes)
+            syncHelper.updateAccumulator(
+                count: failedImpressions.count,
+                bytes: failedImpressions.count *
+                    ServiceConstants.estimatedImpressionSizeInBytes)
         }
-
     }
 
     private func group(impressions: [KeyImpression]) -> [ImpressionsTest] {
         return Dictionary(grouping: impressions, by: { $0.featureName ?? "" })
-            .compactMap { return ImpressionsTest(testName: $0.key, keyImpressions: $0.value) }
+            .compactMap { ImpressionsTest(testName: $0.key, keyImpressions: $0.value) }
     }
 }

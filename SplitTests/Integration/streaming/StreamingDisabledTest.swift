@@ -8,8 +8,8 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class StreamingDisabledTest: XCTestCase {
     var httpClient: HttpClient!
@@ -29,13 +29,11 @@ class StreamingDisabledTest: XCTestCase {
     var testFactory: TestSplitFactory!
 
     override func setUp() {
-
         testFactory = TestSplitFactory(userKey: IntegrationHelper.dummyUserKey)
         testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
     }
 
     func testOccupancy() throws {
-
         try testFactory.buildSdk()
         let syncSpy = testFactory.synchronizerSpy
         let client = testFactory.client
@@ -54,7 +52,6 @@ class StreamingDisabledTest: XCTestCase {
             timeOutFired = true
             sdkReadyExpectation.fulfill()
         }
-
 
         wait(for: [sdkReadyExpectation, pollingExp], timeout: 20)
 
@@ -82,7 +79,9 @@ class StreamingDisabledTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
@@ -102,5 +101,4 @@ class StreamingDisabledTest: XCTestCase {
             return self.streamingBinding!
         }
     }
-
 }

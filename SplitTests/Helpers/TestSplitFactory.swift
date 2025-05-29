@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class TestSplitFactory: SplitFactory {
-
     // Not using default implementation in protocol
     // extension due to Objc interoperability
     static var sdkVersion: String {
@@ -46,6 +45,7 @@ class TestSplitFactory: SplitFactory {
     var synchronizerSpy: SynchronizerSpy {
         return synchronizer as! SynchronizerSpy
     }
+
     var syncManager: SyncManager?
 
     var version: String {
@@ -54,22 +54,23 @@ class TestSplitFactory: SplitFactory {
 
     init(userKey: String) {
         self.userKey = userKey
-        splitDatabase = TestingHelper.createTestDatabase(name: UUID().uuidString)
-        reachabilityChecker = ReachabilityMock()
+        self.splitDatabase = TestingHelper.createTestDatabase(name: UUID().uuidString)
+        self.reachabilityChecker = ReachabilityMock()
     }
 
-    func createHttpClient(dispatcher: @escaping HttpClientTestDispatcher,
-                      streamingHandler: @escaping TestStreamResponseBindingHandler) {
+    func createHttpClient(
+        dispatcher: @escaping HttpClientTestDispatcher,
+        streamingHandler: @escaping TestStreamResponseBindingHandler) {
         key = Key(matchingKey: userKey)
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher,
-                                                          streamingHandler: streamingHandler)
-        self.httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: dispatcher,
+            streamingHandler: streamingHandler)
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
     func buildSdk() throws {
-
-        guard let httpClient = self.httpClient else {
+        guard let httpClient = httpClient else {
             print("HTTP client is null. Fix!!")
             return
         }
@@ -87,13 +88,15 @@ class TestSplitFactory: SplitFactory {
         eventsManager.start()
 
         let splitsFilterQueryString = try filterBuilder.add(filters: splitConfig.sync.filters).build()
-        let  endpointFactory = EndpointFactory(serviceEndpoints: splitConfig.serviceEndpoints,
-                                               apiKey: apiKey,
-                                               splitsQueryString: splitsFilterQueryString)
+        let endpointFactory = EndpointFactory(
+            serviceEndpoints: splitConfig.serviceEndpoints,
+            apiKey: apiKey,
+            splitsQueryString: splitsFilterQueryString)
 
-        let restClient = DefaultRestClient(httpClient: httpClient,
-                                           endpointFactory: endpointFactory,
-                                           reachabilityChecker: reachabilityChecker)
+        let restClient = DefaultRestClient(
+            httpClient: httpClient,
+            endpointFactory: endpointFactory,
+            reachabilityChecker: reachabilityChecker)
 
         let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey)
             .setSplitConfig(splitConfig).setRestClient(restClient).setEventsManager(eventsManager)
@@ -103,63 +106,73 @@ class TestSplitFactory: SplitFactory {
 
         let apiFacade = try! apiFacadeBuilder.build()
 
-        let impressionsFlushChecker = DefaultRecorderFlushChecker(maxQueueSize: splitConfig.impressionsQueueSize,
-                                                                  maxQueueSizeInBytes: splitConfig.impressionsQueueSize)
+        let impressionsFlushChecker = DefaultRecorderFlushChecker(
+            maxQueueSize: splitConfig.impressionsQueueSize,
+            maxQueueSizeInBytes: splitConfig.impressionsQueueSize)
 
         let impressionsSyncHelper = ImpressionsRecorderSyncHelper(
             impressionsStorage: storageContainer.impressionsStorage, accumulator: impressionsFlushChecker)
 
         let eventsFlushChecker
-            = DefaultRecorderFlushChecker(maxQueueSize: Int(splitConfig.eventsQueueSize),
-                                          maxQueueSizeInBytes: splitConfig.maxEventsQueueMemorySizeInBytes)
-        let eventsSyncHelper = EventsRecorderSyncHelper(eventsStorage: storageContainer.eventsStorage,
-                                                        accumulator: eventsFlushChecker)
+            = DefaultRecorderFlushChecker(
+                maxQueueSize: Int(splitConfig.eventsQueueSize),
+                maxQueueSizeInBytes: splitConfig.maxEventsQueueMemorySizeInBytes)
+        let eventsSyncHelper = EventsRecorderSyncHelper(
+            eventsStorage: storageContainer.eventsStorage,
+            accumulator: eventsFlushChecker)
 
-        let syncWorkerFactory = DefaultSyncWorkerFactory(userKey: key.matchingKey,
-                                                         splitConfig: splitConfig,
-                                                         splitsFilterQueryString: splitsFilterQueryString,
-                                                         flagsSpec: "1.1",
-                                                         apiFacade: apiFacade,
-                                                         storageContainer: storageContainer,
-                                                         splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
-                                                         ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
-                                                         eventsManager: eventsManager)
+        let syncWorkerFactory = DefaultSyncWorkerFactory(
+            userKey: key.matchingKey,
+            splitConfig: splitConfig,
+            splitsFilterQueryString: splitsFilterQueryString,
+            flagsSpec: "1.1",
+            apiFacade: apiFacade,
+            storageContainer: storageContainer,
+            splitChangeProcessor: DefaultSplitChangeProcessor(filterBySet: nil),
+            ruleBasedSegmentChangeProcessor: DefaultRuleBasedSegmentChangeProcessor(),
+            eventsManager: eventsManager)
 
-        let impressionsTracker = DefaultImpressionsTracker(splitConfig: splitConfig,
-                                                           splitApiFacade: apiFacade,
-                                                           storageContainer: storageContainer,
-                                                           syncWorkerFactory: syncWorkerFactory,
-                                                           impressionsSyncHelper: impressionsSyncHelper,
-                                                           uniqueKeyTracker: nil,
-                                                           notificationHelper: nil,
-                                                           impressionsObserver: DefaultImpressionsObserver(storage: storageContainer.hashedImpressionsStorage))
+        let impressionsTracker = DefaultImpressionsTracker(
+            splitConfig: splitConfig,
+            splitApiFacade: apiFacade,
+            storageContainer: storageContainer,
+            syncWorkerFactory: syncWorkerFactory,
+            impressionsSyncHelper: impressionsSyncHelper,
+            uniqueKeyTracker: nil,
+            notificationHelper: nil,
+            impressionsObserver: DefaultImpressionsObserver(
+                storage: storageContainer
+                    .hashedImpressionsStorage))
 
-        let eventsSynchronizer = DefaultEventsSynchronizer(syncWorkerFactory: syncWorkerFactory,
-                                                           eventsSyncHelper: eventsSyncHelper,
-                                                           telemetryProducer: storageContainer.telemetryStorage)
+        let eventsSynchronizer = DefaultEventsSynchronizer(
+            syncWorkerFactory: syncWorkerFactory,
+            eventsSyncHelper: eventsSyncHelper,
+            telemetryProducer: storageContainer.telemetryStorage)
 
         let byKeyFacade = DefaultByKeyFacade()
         let broadcasterChannel = DefaultSyncEventBroadcaster()
 
-        let fFlagsSynchronizer = DefaultFeatureFlagsSynchronizer(splitConfig: splitConfig,
-                                                                 storageContainer: storageContainer,
-                                                                 syncWorkerFactory: syncWorkerFactory,
-                                                                 broadcasterChannel: broadcasterChannel,
-                                                                 splitsFilterQueryString: splitsFilterQueryString,
-                                                                 flagsSpec: "1.1",
-                                                                 splitEventsManager: eventsManager)
+        let fFlagsSynchronizer = DefaultFeatureFlagsSynchronizer(
+            splitConfig: splitConfig,
+            storageContainer: storageContainer,
+            syncWorkerFactory: syncWorkerFactory,
+            broadcasterChannel: broadcasterChannel,
+            splitsFilterQueryString: splitsFilterQueryString,
+            flagsSpec: "1.1",
+            splitEventsManager: eventsManager)
 
-        self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,
-                                            defaultUserKey: key.matchingKey,
-                                            featureFlagsSynchronizer: fFlagsSynchronizer,
-                                            telemetrySynchronizer: nil,
-                                            byKeyFacade: byKeyFacade,
-                                            splitStorageContainer: storageContainer,
-                                            impressionsTracker: impressionsTracker,
-                                            eventsSynchronizer: eventsSynchronizer,
-                                            splitEventsManager: eventsManager)
+        self.synchronizer = SynchronizerSpy(
+            splitConfig: splitConfig,
+            defaultUserKey: key.matchingKey,
+            featureFlagsSynchronizer: fFlagsSynchronizer,
+            telemetrySynchronizer: nil,
+            byKeyFacade: byKeyFacade,
+            splitStorageContainer: storageContainer,
+            impressionsTracker: impressionsTracker,
+            eventsSynchronizer: eventsSynchronizer,
+            splitEventsManager: eventsManager)
 
-        guard let synchronizer = self.synchronizer else {
+        guard let synchronizer = synchronizer else {
             return
         }
 
@@ -173,7 +186,7 @@ class TestSplitFactory: SplitFactory {
 
         // Sec api not available for testing
         // Should build a mock here
-        //setupBgSync(config: config, apiKey: apiKey, userKey: userKey)
+        // setupBgSync(config: config, apiKey: apiKey, userKey: userKey)
 
         let mySegmentsSyncWorkerFactory = DefaultMySegmentsSyncWorkerFactory(
             splitConfig: splitConfig,
@@ -183,38 +196,50 @@ class TestSplitFactory: SplitFactory {
             telemetryProducer: storageContainer.telemetryStorage)
 
         let logger = DefaultValidationMessageLogger()
-        let propertyValidator = DefaultPropertyValidator(anyValueValidator: DefaultAnyValueValidator(), validationLogger: logger)
-        let eventsTracker = DefaultEventsTracker(config: splitConfig,
-                                                 synchronizer: synchronizer,
-                                                 eventValidator: DefaultEventValidator(splitsStorage: storageContainer.splitsStorage),
-                                                 propertyValidator: propertyValidator,
-                                                 validationLogger: logger,
-                                                 telemetryProducer: storageContainer.telemetryStorage)
+        let propertyValidator = DefaultPropertyValidator(
+            anyValueValidator: DefaultAnyValueValidator(),
+            validationLogger: logger)
+        let eventsTracker = DefaultEventsTracker(
+            config: splitConfig,
+            synchronizer: synchronizer,
+            eventValidator: DefaultEventValidator(
+                splitsStorage: storageContainer
+                    .splitsStorage),
+            propertyValidator: propertyValidator,
+            validationLogger: logger,
+            telemetryProducer: storageContainer.telemetryStorage)
 
-        userConsentManager = DefaultUserConsentManager(splitConfig: splitConfig,
-                                                       storageContainer: storageContainer,
-                                                       syncManager: syncManager,
-                                                       eventsTracker: eventsTracker,
-                                                       impressionsTracker: impressionsTracker)
-        let rolloutCacheManager = DefaultRolloutCacheManager(generalInfoStorage: storageContainer.generalInfoStorage,
-                                                             rolloutCacheConfiguration: splitConfig.rolloutCacheConfiguration ?? RolloutCacheConfiguration.builder().build(),
-                                                             storages: storageContainer.splitsStorage, storageContainer.mySegmentsStorage, storageContainer.myLargeSegmentsStorage)
+        userConsentManager = DefaultUserConsentManager(
+            splitConfig: splitConfig,
+            storageContainer: storageContainer,
+            syncManager: syncManager,
+            eventsTracker: eventsTracker,
+            impressionsTracker: impressionsTracker)
+        let rolloutCacheManager = DefaultRolloutCacheManager(
+            generalInfoStorage: storageContainer.generalInfoStorage,
+            rolloutCacheConfiguration: splitConfig
+                .rolloutCacheConfiguration ?? RolloutCacheConfiguration
+                .builder().build(),
+            storages: storageContainer.splitsStorage,
+            storageContainer.mySegmentsStorage,
+            storageContainer.myLargeSegmentsStorage)
 
-        clientManager = DefaultClientManager(config: splitConfig,
-                                             key: key,
-                                             splitManager: manager,
-                                             apiFacade: apiFacade,
-                                             byKeyFacade: byKeyFacade,
-                                             storageContainer: storageContainer,
-                                             rolloutCacheManager: rolloutCacheManager,
-                                             syncManager: syncManager,
-                                             synchronizer: synchronizer,
-                                             eventsTracker: eventsTracker,
-                                             eventsManagerCoordinator: eventsManager,
-                                             mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
-                                             telemetryStopwatch: nil,
-                                             propertyValidator: propertyValidator,
-                                             factory: self)
+        clientManager = DefaultClientManager(
+            config: splitConfig,
+            key: key,
+            splitManager: manager,
+            apiFacade: apiFacade,
+            byKeyFacade: byKeyFacade,
+            storageContainer: storageContainer,
+            rolloutCacheManager: rolloutCacheManager,
+            syncManager: syncManager,
+            synchronizer: synchronizer,
+            eventsTracker: eventsTracker,
+            eventsManagerCoordinator: eventsManager,
+            mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
+            telemetryStopwatch: nil,
+            propertyValidator: propertyValidator,
+            factory: self)
     }
 
     func client(matchingKey: String) -> SplitClient {
@@ -226,7 +251,7 @@ class TestSplitFactory: SplitFactory {
     }
 
     func client(key: Key) -> SplitClient {
-        return clientManager!.get(forKey:key)
+        return clientManager!.get(forKey: key)
     }
 
     func setUserConsent(enabled: Bool) {
@@ -235,12 +260,12 @@ class TestSplitFactory: SplitFactory {
 
     private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String) {
         let dbKey = SplitDatabaseHelper.buildDbKey(prefix: config.prefix, sdkKey: apiKey)
-#if os(iOS) || os(tvOS)
-        if config.synchronizeInBackground {
-            SplitBgSynchronizer.shared.register(dbKey: dbKey, prefix: config.prefix, userKey: userKey)
-        } else {
-            SplitBgSynchronizer.shared.unregister(dbKey: dbKey, userKey: userKey)
-        }
-#endif
+        #if os(iOS) || os(tvOS)
+            if config.synchronizeInBackground {
+                SplitBgSynchronizer.shared.register(dbKey: dbKey, prefix: config.prefix, userKey: userKey)
+            } else {
+                SplitBgSynchronizer.shared.unregister(dbKey: dbKey, userKey: userKey)
+            }
+        #endif
     }
 }

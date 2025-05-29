@@ -9,9 +9,9 @@
 import Foundation
 
 class SynchronizedDictionaryComposed<K: Hashable, IK: Hashable> {
-
-    private var queue: DispatchQueue = DispatchQueue(label: "split-synchronized-dictionary-composed",
-                                                     target: .global())
+    private var queue: DispatchQueue = .init(
+        label: "split-synchronized-dictionary-composed",
+        target: .global())
     private var items = [K: [IK: Any]]()
 
     func count(forKey key: K) -> Int {

@@ -12,12 +12,12 @@ import Foundation
 class SplitManagerStub: SplitManager, Destroyable {
     var splits: [SplitView]
     var splitNames: [String]
-    
+
     init() {
-        splits = []
-        splitNames = []
+        self.splits = []
+        self.splitNames = []
     }
-    
+
     func split(featureName: String) -> SplitView? {
         return nil
     }

@@ -18,7 +18,7 @@ class PinCheckerMock: TlsPinChecker {
     }
 
     func check(credential: AnyObject) -> CredentialValidationResult {
-        respIndex+=1
+        respIndex += 1
         return pinResults[respIndex]
     }
 }

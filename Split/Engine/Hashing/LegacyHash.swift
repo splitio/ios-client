@@ -9,7 +9,6 @@ import Foundation
 
 // swiftlint:disable identifier_name
 class LegacyHash {
-
     static func getHash(_ key: String, _ seed: Int32) -> Int64 {
         var h: Int32 = 0
         for character: Character in key {
@@ -23,6 +22,6 @@ class LegacyHash {
 
 extension Character {
     var asciiValue: UInt32? {
-        return String(self).unicodeScalars.filter {$0.isASCII}.first?.value
+        return String(self).unicodeScalars.filter { $0.isASCII }.first?.value
     }
 }

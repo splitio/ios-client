@@ -15,7 +15,6 @@ protocol PersistentMySegmentsStorage {
 }
 
 class PersistentSegmentsStorage: PersistentMySegmentsStorage {
-
     private let dao: MySegmentsDao
 
     init(dao: MySegmentsDao) {

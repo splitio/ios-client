@@ -17,7 +17,6 @@ struct SyncResult {
 }
 
 class SplitsSyncHelper {
-
     struct FetchResult {
         let till: Int64
         let rbTill: Int64?
@@ -45,14 +44,14 @@ class SplitsSyncHelper {
         return splitConfig.cdnBackoffTimeMaxInSecs
     }
 
-    init(splitFetcher: HttpSplitFetcher,
-         splitsStorage: SyncSplitsStorage,
-         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
-         splitChangeProcessor: SplitChangeProcessor,
-         ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
-         generalInfoStorage: GeneralInfoStorage?,
-         splitConfig: SplitClientConfig) {
-
+    init(
+        splitFetcher: HttpSplitFetcher,
+        splitsStorage: SyncSplitsStorage,
+        ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
+        splitChangeProcessor: SplitChangeProcessor,
+        ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
+        generalInfoStorage: GeneralInfoStorage?,
+        splitConfig: SplitClientConfig) {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
@@ -67,19 +66,19 @@ class SplitsSyncHelper {
             self.outdatedSplitProxyHandler = OutdatedSplitProxyHandler(
                 flagSpec: Spec.flagsSpec,
                 generalInfoStorage: storage,
-                proxyCheckIntervalMillis: ServiceConstants.proxyCheckIntervalMillis
-            )
+                proxyCheckIntervalMillis: ServiceConstants.proxyCheckIntervalMillis)
         } else {
             // No proxy handling for background sync
             self.outdatedSplitProxyHandler = nil
         }
     }
 
-    func sync(since: Int64,
-              rbSince: Int64,
-              till: Int64? = nil,
-              clearBeforeUpdate: Bool = false,
-              headers: HttpHeaders? = nil) throws -> SyncResult {
+    func sync(
+        since: Int64,
+        rbSince: Int64,
+        till: Int64? = nil,
+        clearBeforeUpdate: Bool = false,
+        headers: HttpHeaders? = nil) throws -> SyncResult {
         do {
             // Perform proxy check before syncing if handler exists
             var shouldClearBeforeUpdate = clearBeforeUpdate
@@ -92,11 +91,12 @@ class SplitsSyncHelper {
                 }
             }
 
-            let res = try tryToSync(since: since,
-                                    rbSince: rbSince,
-                                    till: till,
-                                    clearBeforeUpdate: shouldClearBeforeUpdate,
-                                    headers: headers)
+            let res = try tryToSync(
+                since: since,
+                rbSince: rbSince,
+                till: till,
+                clearBeforeUpdate: shouldClearBeforeUpdate,
+                headers: headers)
 
             if res.success {
                 // If we were in recovery mode and sync was successful, reset the proxy check timestamp
@@ -107,17 +107,19 @@ class SplitsSyncHelper {
                 return res
             }
 
-            return try tryToSync(since: res.changeNumber,
-                                   rbSince: res.rbChangeNumber,
-                                   till: res.changeNumber,
-                                   clearBeforeUpdate: shouldClearBeforeUpdate && res.changeNumber == since,
-                                   headers: headers,
-                                   useTillParam: true)
-        } catch let error {
+            return try tryToSync(
+                since: res.changeNumber,
+                rbSince: res.rbChangeNumber,
+                till: res.changeNumber,
+                clearBeforeUpdate: shouldClearBeforeUpdate && res.changeNumber == since,
+                headers: headers,
+                useTillParam: true)
+        } catch {
             Logger.e("Problem fetching feature flags: %@", error.localizedDescription)
 
             // Check if this is a proxy error and track it if necessary
-            if let httpError = error as? HttpError, httpError.isProxyOutdatedError(), let proxyHandler = outdatedSplitProxyHandler {
+            if let httpError = error as? HttpError, httpError.isProxyOutdatedError(),
+               let proxyHandler = outdatedSplitProxyHandler {
                 proxyHandler.trackProxyError()
             }
 
@@ -125,54 +127,58 @@ class SplitsSyncHelper {
         }
     }
 
-    func tryToSync(since: Int64,
-                   rbSince: Int64? = nil,
-                   till: Int64? = nil,
-                   rbTill: Int64? = nil,
-                   clearBeforeUpdate: Bool = false,
-                   headers: HttpHeaders? = nil,
-                   useTillParam: Bool = false) throws -> SyncResult {
-
-        let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffTimeBaseInSecs,
-                                                            maxTimeLimit: backoffTimeMaxInSecs)
+    func tryToSync(
+        since: Int64,
+        rbSince: Int64? = nil,
+        till: Int64? = nil,
+        rbTill: Int64? = nil,
+        clearBeforeUpdate: Bool = false,
+        headers: HttpHeaders? = nil,
+        useTillParam: Bool = false) throws -> SyncResult {
+        let backoffCounter = DefaultReconnectBackoffCounter(
+            backoffBase: backoffTimeBaseInSecs,
+            maxTimeLimit: backoffTimeMaxInSecs)
         var nextSince = since
         var nextRbSince: Int64? = rbSince
         var attemptCount = 0
         let goalTill = till ?? -10
         let goalRbTill = rbTill ?? -10
         while attemptCount < maxAttempts {
-            let result = try fetchUntil(since: nextSince,
-                                        rbSince: nextRbSince,
-                                       till: useTillParam ? till : nil,
-                                       clearBeforeUpdate: clearBeforeUpdate,
-                                       headers: headers)
+            let result = try fetchUntil(
+                since: nextSince,
+                rbSince: nextRbSince,
+                till: useTillParam ? till : nil,
+                clearBeforeUpdate: clearBeforeUpdate,
+                headers: headers)
             nextSince = result.till
             nextRbSince = result.rbTill ?? -1
 
             if nextSince >= goalTill, nextRbSince ?? -1 >= goalRbTill {
-                return SyncResult(success: true,
-                                  changeNumber: nextSince,
-                                  rbChangeNumber: nextRbSince,
-                                  featureFlagsUpdated: result.featureFlagsUpdated,
-                                  rbsUpdated: result.rbsUpdated)
+                return SyncResult(
+                    success: true,
+                    changeNumber: nextSince,
+                    rbChangeNumber: nextRbSince,
+                    featureFlagsUpdated: result.featureFlagsUpdated,
+                    rbsUpdated: result.rbsUpdated)
             }
 
             Thread.sleep(forTimeInterval: backoffCounter.getNextRetryTime())
-            attemptCount+=1
+            attemptCount += 1
         }
-        return SyncResult(success: false,
-                          changeNumber: nextSince,
-                          rbChangeNumber: nextRbSince,
-                          featureFlagsUpdated: false,
-                          rbsUpdated: false)
+        return SyncResult(
+            success: false,
+            changeNumber: nextSince,
+            rbChangeNumber: nextRbSince,
+            featureFlagsUpdated: false,
+            rbsUpdated: false)
     }
 
-    func fetchUntil(since: Int64,
-                    rbSince: Int64?,
-                    till: Int64? = nil,
-                    clearBeforeUpdate: Bool = false,
-                    headers: HttpHeaders? = nil) throws -> FetchResult {
-
+    func fetchUntil(
+        since: Int64,
+        rbSince: Int64?,
+        till: Int64? = nil,
+        clearBeforeUpdate: Bool = false,
+        headers: HttpHeaders? = nil) throws -> FetchResult {
         var clearCache = clearBeforeUpdate
         var firstFetch = true
         var nextSince = since
@@ -185,11 +191,12 @@ class SplitsSyncHelper {
             let spec = outdatedSplitProxyHandler?.getCurrentSpec() ?? Spec.flagsSpec
             let effectiveRbSince = outdatedSplitProxyHandler?.isFallbackMode() == true ? nil : nextRbSince
 
-            let targetingRulesChange = try self.splitFetcher.execute(since: nextSince,
-                                                            rbSince: effectiveRbSince,
-                                                            till: till,
-                                                            headers: headers,
-                                                            spec: spec)
+            let targetingRulesChange = try splitFetcher.execute(
+                since: nextSince,
+                rbSince: effectiveRbSince,
+                till: till,
+                headers: headers,
+                spec: spec)
             let flagsChange = targetingRulesChange.featureFlags
             let newSince = flagsChange.since
             let newTill = flagsChange.till
@@ -205,9 +212,12 @@ class SplitsSyncHelper {
             if splitsStorage.update(splitChange: splitChangeProcessor.process(targetingRulesChange.featureFlags)) {
                 featureFlagsUpdated = true
             }
-            
+
             let processedChange = ruleBasedSegmentsChangeProcessor.process(targetingRulesChange.ruleBasedSegments)
-            if ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd, toRemove: processedChange.toRemove, changeNumber: processedChange.changeNumber) {
+            if ruleBasedSegmentsStorage.update(
+                toAdd: processedChange.toAdd,
+                toRemove: processedChange.toRemove,
+                changeNumber: processedChange.changeNumber) {
                 rbsUpdated = true
             }
 
@@ -216,7 +226,11 @@ class SplitsSyncHelper {
             // Logger.v(splitChange.description)
             let rbSince = rbSince ?? -1
             if newSince == newTill, newTill >= since, newRbSince == newRbTill, newRbTill >= rbSince {
-                return FetchResult(till: newTill, rbTill: newRbTill, featureFlagsUpdated: featureFlagsUpdated, rbsUpdated: rbsUpdated)
+                return FetchResult(
+                    till: newTill,
+                    rbTill: newRbTill,
+                    featureFlagsUpdated: featureFlagsUpdated,
+                    rbsUpdated: rbsUpdated)
             }
             nextSince = newTill
             nextRbSince = newRbTill

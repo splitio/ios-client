@@ -12,47 +12,49 @@ import XCTest
 @testable import Split
 
 class SplitEventsManagerTest: XCTestCase {
-    
     let expectationTimeOut = 10.0
     let intervalExecutionTime = 1
     var queue = DispatchQueue(label: "test", attributes: .concurrent)
-    
+
     func testSdkReady() {
         var shouldStop = false
-        let config: SplitClientConfig = SplitClientConfig()
+        let config = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         let updatedTask = TestTask(exp: nil)
         eventManager.register(event: .sdkUpdated, task: updatedTask)
         eventManager.start()
-        
+
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         ThreadUtils.delay(seconds: 0.2)
-        
+
         let expectation = XCTestExpectation(description: "SDK Readky triggered")
         queue.async {
             while !shouldStop {
                 sleep(UInt32(self.intervalExecutionTime))
                 if eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
-                    shouldStop = true;
+                    shouldStop = true
                     expectation.fulfill()
                 }
             }
         }
         wait(for: [expectation], timeout: expectationTimeOut)
-        
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkUpdated), "SDK Update shouldn't be triggered");
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+
+        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered")
+        XCTAssertFalse(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkUpdated),
+            "SDK Update shouldn't be triggered")
+        XCTAssertFalse(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut),
+            "SDK Time out shouldn't be triggered")
 
         eventManager.stop()
     }
 
     func testSdkReadyFromCacheAndReady() {
-
-        let config: SplitClientConfig = SplitClientConfig()
+        let config = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
 
@@ -70,23 +72,26 @@ class SplitEventsManagerTest: XCTestCase {
             while !shouldStop {
                 sleep(UInt32(self.intervalExecutionTime))
                 if eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
-                    shouldStop = true;
+                    shouldStop = true
                     expectation.fulfill()
                 }
             }
         }
         wait(for: [expectation], timeout: expectationTimeOut)
 
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache), "SDK Ready should from cache be triggered");
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+        XCTAssertTrue(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache),
+            "SDK Ready should from cache be triggered")
+        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered")
+        XCTAssertFalse(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut),
+            "SDK Time out shouldn't be triggered")
 
         eventManager.stop()
     }
 
     func testSdkReadyFromCacheAndReadyTimeout() {
-
-        let config: SplitClientConfig = SplitClientConfig()
+        let config = SplitClientConfig()
         config.sdkReadyTimeOut = 1000
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
@@ -104,16 +109,21 @@ class SplitEventsManagerTest: XCTestCase {
 
         wait(for: [cacheExp, timeoutExp], timeout: expectationTimeOut)
 
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache), "SDK Ready should from cache be triggered");
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should not be triggered");
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out should be triggered");
+        XCTAssertTrue(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache),
+            "SDK Ready should from cache be triggered")
+        XCTAssertFalse(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady),
+            "SDK Ready should not be triggered")
+        XCTAssertTrue(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut),
+            "SDK Time out should be triggered")
 
         eventManager.stop()
     }
-    
+
     func testSdkReadyTimeOut() {
-        
-        let config: SplitClientConfig = SplitClientConfig()
+        let config = SplitClientConfig()
         config.sdkReadyTimeOut = 1000
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
@@ -121,16 +131,19 @@ class SplitEventsManagerTest: XCTestCase {
         let timeoutExp = XCTestExpectation()
         eventManager.register(event: .sdkReadyTimedOut, task: TestTask(exp: timeoutExp))
         wait(for: [timeoutExp], timeout: expectationTimeOut)
-        
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out should be triggered")
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready shouldn't be triggered")
+
+        XCTAssertTrue(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut),
+            "SDK Time out should be triggered")
+        XCTAssertFalse(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady),
+            "SDK Ready shouldn't be triggered")
 
         eventManager.stop()
     }
-    
+
     func testSdkReadyAndReadyTimeOut() {
-        
-        let config: SplitClientConfig = SplitClientConfig()
+        let config = SplitClientConfig()
         config.sdkReadyTimeOut = 1000
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
@@ -139,9 +152,9 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.register(event: .sdkReadyTimedOut, task: TestTask(exp: expectationTimeout))
 
         wait(for: [expectationTimeout], timeout: expectationTimeOut)
-        
-        //At this line timeout has been reached
-        let timeoutTriggered  = eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut)
+
+        // At this line timeout has been reached
+        let timeoutTriggered = eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut)
 
         let readyExp = XCTestExpectation(description: "SDK Readky triggered")
         eventManager.register(event: .sdkReady, task: TestTask(exp: readyExp))
@@ -151,8 +164,8 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
 
         wait(for: [readyExp], timeout: expectationTimeOut)
-        
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
+
+        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered")
         XCTAssertTrue(timeoutTriggered)
 
         eventManager.stop()
@@ -161,7 +174,7 @@ class SplitEventsManagerTest: XCTestCase {
     func testSdkUpdateSplits() {
         let sdkUpdatedExp = XCTestExpectation()
 
-        let config: SplitClientConfig = SplitClientConfig()
+        let config = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
 
@@ -178,9 +191,11 @@ class SplitEventsManagerTest: XCTestCase {
 
         wait(for: [readyExp, sdkUpdatedExp], timeout: expectationTimeOut)
 
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
-        XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered");
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered")
+        XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered")
+        XCTAssertFalse(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut),
+            "SDK Time out shouldn't be triggered")
 
         eventManager.stop()
     }
@@ -188,14 +203,13 @@ class SplitEventsManagerTest: XCTestCase {
     func testSdkUpdateMySegments() {
         let sdkUpdatedExp = XCTestExpectation()
 
-        let config: SplitClientConfig = SplitClientConfig()
+        let config = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
         let readyExp = XCTestExpectation()
         let updatedTask = sdkTask(exp: sdkUpdatedExp)
         eventManager.register(event: .sdkReady, task: TestTask(exp: readyExp))
         eventManager.register(event: .sdkUpdated, task: updatedTask)
-
 
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
@@ -205,16 +219,17 @@ class SplitEventsManagerTest: XCTestCase {
 
         wait(for: [readyExp, sdkUpdatedExp], timeout: expectationTimeOut)
 
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
-        XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered");
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered")
+        XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered")
+        XCTAssertFalse(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut),
+            "SDK Time out shouldn't be triggered")
 
         eventManager.stop()
     }
 
     func testSplitKilledWhenReady() {
-
-        let config: SplitClientConfig = SplitClientConfig()
+        let config = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
         let readyExp = XCTestExpectation()
@@ -231,9 +246,11 @@ class SplitEventsManagerTest: XCTestCase {
 
         wait(for: [readyExp, sdkUpdatedExp], timeout: expectationTimeOut)
 
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
-        XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered");
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered")
+        XCTAssertTrue(updatedTask.taskTriggered, "SDK Update should be triggered")
+        XCTAssertFalse(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut),
+            "SDK Time out shouldn't be triggered")
 
         eventManager.stop()
     }
@@ -241,7 +258,7 @@ class SplitEventsManagerTest: XCTestCase {
     func testSplitKilledNoSdkReady() {
         let sdkTiemoutExp = XCTestExpectation()
         let timeout = 3.0
-        let config: SplitClientConfig = SplitClientConfig()
+        let config = SplitClientConfig()
         config.sdkReadyTimeOut = Int(timeout) - 1
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         let timeOutTask = sdkTask(exp: sdkTiemoutExp)
@@ -255,17 +272,16 @@ class SplitEventsManagerTest: XCTestCase {
 
         wait(for: [sdkTiemoutExp], timeout: timeout)
 
-        XCTAssertFalse(updatedTask.taskTriggered);
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady));
-        XCTAssertTrue(timeOutTask.taskTriggered);
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut));
+        XCTAssertFalse(updatedTask.taskTriggered)
+        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady))
+        XCTAssertTrue(timeOutTask.taskTriggered)
+        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut))
 
         eventManager.stop()
     }
 
     func testSdkReadyFromCacheWithoutFlagCachedValues() {
-
-        let config: SplitClientConfig = SplitClientConfig()
+        let config = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         eventManager.start()
 
@@ -282,21 +298,26 @@ class SplitEventsManagerTest: XCTestCase {
             while !shouldStop {
                 sleep(UInt32(self.intervalExecutionTime))
                 if eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
-                    shouldStop = true;
+                    shouldStop = true
                     expectation.fulfill()
                 }
             }
         }
         wait(for: [expectation], timeout: expectationTimeOut)
 
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache), "SDK Ready should from cache be triggered");
-        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered");
-        XCTAssertFalse(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut), "SDK Time out shouldn't be triggered");
+        XCTAssertTrue(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache),
+            "SDK Ready should from cache be triggered")
+        XCTAssertTrue(eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady), "SDK Ready should be triggered")
+        XCTAssertFalse(
+            eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyTimedOut),
+            "SDK Time out shouldn't be triggered")
 
         eventManager.stop()
     }
-    
+
     // MARK: Helpers
+
     func currentTimestamp() -> Int {
         return Int(Date().unixTimestamp())
     }
@@ -307,13 +328,12 @@ class SplitEventsManagerTest: XCTestCase {
 }
 
 class TestTask: SplitEventTask {
-
     var event: SplitEvent = .sdkReady
 
     var runInBackground: Bool = false
 
     var queue: DispatchQueue?
-    
+
     var taskTriggered = false
     let label: String
     var exp: XCTestExpectation?
@@ -327,9 +347,9 @@ class TestTask: SplitEventTask {
     }
 
     func run() {
-        print("run: \(self.label)")
+        print("run: \(label)")
         taskTriggered = true
-        if let exp = self.exp {
+        if let exp = exp {
             exp.fulfill()
         }
     }

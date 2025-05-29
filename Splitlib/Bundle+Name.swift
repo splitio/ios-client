@@ -13,4 +13,3 @@ extension Foundation.Bundle {
         return "SplitBundle"
     }
 }
-

@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class ImpressionsStorageStub: ImpressionsStorage {
-
     var enablePersistenceCalled = false
     var enablePersistenceValue: Bool?
     var impressions = [KeyImpression]()

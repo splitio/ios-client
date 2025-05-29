@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class MySegmentsSyncWorkerTest: XCTestCase {
-
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
     var myLargeSegmentsStorage: ByKeyMySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
@@ -32,12 +31,12 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         syncHelper = SegmentsSyncHelperMock()
 
         mySegmentsSyncWorker = RetryableMySegmentsSyncWorker(
-                                                             telemetryProducer: TelemetryStorageStub(),
-                                                             eventsManager: eventsManager,
-                                                             reconnectBackoffCounter: backoffCounter,
-                                                             avoidCache: false,
-                                                             changeNumbers: changeNumbers,
-                                                             syncHelper: syncHelper)
+            telemetryProducer: TelemetryStorageStub(),
+            eventsManager: eventsManager,
+            reconnectBackoffCounter: backoffCounter,
+            avoidCache: false,
+            changeNumbers: changeNumbers,
+            syncHelper: syncHelper)
     }
 
     func testOneTimeFetchSuccess() {
@@ -60,10 +59,12 @@ class MySegmentsSyncWorkerTest: XCTestCase {
     }
 
     func testRetryAndSuccess() {
-        syncHelper.results = [TestingHelper.segmentsSyncResult(false),
-                              TestingHelper.segmentsSyncResult(false),
-                              TestingHelper.segmentsSyncResult(false),
-                              TestingHelper.segmentsSyncResult(true)]
+        syncHelper.results = [
+            TestingHelper.segmentsSyncResult(false),
+            TestingHelper.segmentsSyncResult(false),
+            TestingHelper.segmentsSyncResult(false),
+            TestingHelper.segmentsSyncResult(true),
+        ]
 
         var resultIsSuccess = false
         let exp = XCTestExpectation(description: "exp")
@@ -81,7 +82,6 @@ class MySegmentsSyncWorkerTest: XCTestCase {
     }
 
     func testStopNoSuccess() {
-
         var resultIsSuccess = false
         syncHelper.results = [TestingHelper.segmentsSyncResult(false)]
         let exp = XCTestExpectation(description: "exp")
@@ -124,7 +124,9 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         XCTAssertTrue(resultIsSuccess)
         XCTAssertEqual(0, backoffCounter.retryCallCount)
         XCTAssertTrue(eventsManager.isSegmentsReadyFired)
-        XCTAssertEqual(ServiceConstants.cacheControlNoCache, syncHelper.lastHeadersParam?[ServiceConstants.cacheControlHeader])
+        XCTAssertEqual(
+            ServiceConstants.cacheControlNoCache,
+            syncHelper.lastHeadersParam?[ServiceConstants.cacheControlHeader])
     }
 
     func changeNumbers(_ msChangeNumber: Int64 = -1, mlsChangeNumber: Int64) -> SegmentsChangeNumber {

@@ -7,16 +7,17 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class UserConsentModeDebugTest: XCTestCase {
-
     var impExp: XCTestExpectation!
     var eveExp: XCTestExpectation!
     var impDao: ImpressionDao!
     var eveDao: EventDao!
-    var splitChange = IntegrationHelper.loadSplitChangeFileJson(name: "splitchanges_1", sourceClass: IntegrationHelper())
+    var splitChange = IntegrationHelper.loadSplitChangeFileJson(
+        name: "splitchanges_1",
+        sourceClass: IntegrationHelper())
     let trafficType = "account"
     var httpClient: HttpClient!
 
@@ -25,8 +26,9 @@ class UserConsentModeDebugTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         evePosted = false
         impPosted = false
@@ -45,7 +47,7 @@ class UserConsentModeDebugTest: XCTestCase {
 
         wait(for: [readyExp], timeout: 5.0)
 
-        for i in 1..<20 {
+        for i in 1 ..< 20 {
             let _ = client.getTreatment("FACUNDO_TEST")
             let _ = client.track(eventType: "ev", value: Double(i))
         }
@@ -75,7 +77,7 @@ class UserConsentModeDebugTest: XCTestCase {
 
         wait(for: [readyExp], timeout: 5.0)
 
-        for i in 1..<20 {
+        for i in 1 ..< 20 {
             let _ = client.getTreatment("FACUNDO_TEST")
             let _ = client.track(eventType: "ev", value: Double(i))
         }
@@ -116,7 +118,7 @@ class UserConsentModeDebugTest: XCTestCase {
 
         wait(for: [readyExp], timeout: 5.0)
 
-        for i in 0..<20 {
+        for i in 0 ..< 20 {
             let _ = client.getTreatment("FACUNDO_TEST")
             let _ = client.track(eventType: "ev", value: Double(i))
         }
@@ -171,7 +173,7 @@ class UserConsentModeDebugTest: XCTestCase {
 
         wait(for: [readyExp], timeout: 5.0)
 
-        for i in 0..<20 {
+        for i in 0 ..< 20 {
             let _ = client.getTreatment("FACUNDO_TEST")
             let _ = client.track(eventType: "ev", value: Double(i))
         }
@@ -229,7 +231,7 @@ class UserConsentModeDebugTest: XCTestCase {
 
         // If User consent is granted, it would be data in storage and
         // Impressions posted
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+        let splitConfig = SplitClientConfig()
         splitConfig.impressionRefreshRate = 3
         splitConfig.trafficType = trafficType
         splitConfig.eventsPushRate = 3
@@ -244,12 +246,11 @@ class UserConsentModeDebugTest: XCTestCase {
         return builder.setApiKey(IntegrationHelper.dummyApiKey)
             .setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
             .setConfig(splitConfig).build()!
-
     }
 
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
-            return TestStreamResponseBinding.createFor(request: request, code: 200)
+            TestStreamResponseBinding.createFor(request: request, code: 200)
         }
     }
 
@@ -259,10 +260,12 @@ class UserConsentModeDebugTest: XCTestCase {
 
             if request.isSplitEndpoint() {
                 if self.changeHit == 0 {
-                    self.changeHit+=1
+                    self.changeHit += 1
                     return TestDispatcherResponse(code: 200, data: Data(self.splitChange!.utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 999999999, till: 999999999).utf8))
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: Data(IntegrationHelper.emptySplitChanges(since: 999999999, till: 999999999).utf8))
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))

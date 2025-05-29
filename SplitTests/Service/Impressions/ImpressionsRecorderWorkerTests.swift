@@ -7,25 +7,24 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class ImpressionsRecorderWorkerTests: XCTestCase {
-
     var worker: ImpressionsRecorderWorker!
     var persistentImpressionStorage: PersistentImpressionsStorageStub!
     var impressionsRecorder: HttpImpressionsRecorderStub!
     var dummyImpressions: [KeyImpression]!
-
 
     override func setUp() {
         dummyImpressions = TestingHelper.createKeyImpressions(count: 5)
         dummyImpressions.append(contentsOf: TestingHelper.createKeyImpressions(feature: "split1", count: 6))
         persistentImpressionStorage = PersistentImpressionsStorageStub()
         impressionsRecorder = HttpImpressionsRecorderStub()
-        worker = ImpressionsRecorderWorker(persistentImpressionsStorage: persistentImpressionStorage,
-                                      impressionsRecorder: impressionsRecorder,
-                                      impressionsPerPush: 2)
+        worker = ImpressionsRecorderWorker(
+            persistentImpressionsStorage: persistentImpressionStorage,
+            impressionsRecorder: impressionsRecorder,
+            impressionsPerPush: 2)
     }
 
     func testSendSuccess() {
@@ -64,7 +63,6 @@ class ImpressionsRecorderWorkerTests: XCTestCase {
         XCTAssertEqual(1, impressionsRecorder.impressionsSent.count)
     }
 
-
     func testSendNoImpressions() {
         // When no impressions available recorder should not be called
         worker.flush()
@@ -74,7 +72,5 @@ class ImpressionsRecorderWorkerTests: XCTestCase {
         XCTAssertEqual(0, impressionsRecorder.impressionsSent.count)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

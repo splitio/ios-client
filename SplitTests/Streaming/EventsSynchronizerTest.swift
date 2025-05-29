@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class EventsSynchronizerTest: XCTestCase {
-
     var periodicEventsRecorderWorker: PeriodicRecorderWorkerStub!
     var eventsRecorderWorker: RecorderWorkerStub!
     var synchronizer: EventsSynchronizer!
@@ -30,11 +29,15 @@ class EventsSynchronizerTest: XCTestCase {
         syncWorkerFactory.periodicEventsRecorderWorker = periodicEventsRecorderWorker
         syncWorkerFactory.eventsRecorderWorker = eventsRecorderWorker
 
-        syncHelper = EventsRecorderSyncHelper(eventsStorage: EventsStorageStub(),
-                                              accumulator: DefaultRecorderFlushChecker(maxQueueSize: 10, maxQueueSizeInBytes: 10))
-        synchronizer = DefaultEventsSynchronizer(syncWorkerFactory: syncWorkerFactory,
-                                                 eventsSyncHelper: syncHelper,
-                                                 telemetryProducer: telemetryProducer)
+        syncHelper = EventsRecorderSyncHelper(
+            eventsStorage: EventsStorageStub(),
+            accumulator: DefaultRecorderFlushChecker(
+                maxQueueSize: 10,
+                maxQueueSizeInBytes: 10))
+        synchronizer = DefaultEventsSynchronizer(
+            syncWorkerFactory: syncWorkerFactory,
+            eventsSyncHelper: syncHelper,
+            telemetryProducer: telemetryProducer)
     }
 
     func testStart() {
@@ -66,14 +69,12 @@ class EventsSynchronizerTest: XCTestCase {
     }
 
     func testPush() {
-
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             synchronizer.push(EventDTO(trafficType: "t1", eventType: "e\(i)"))
         }
 
         ThreadUtils.delay(seconds: 1)
         XCTAssertEqual(5, telemetryProducer.events[.queued])
-
     }
 
     func testFlush() {
@@ -88,8 +89,5 @@ class EventsSynchronizerTest: XCTestCase {
         synchronizer.destroy()
 
         XCTAssertTrue(periodicEventsRecorderWorker.destroyCalled)
-
     }
-    
 }
-

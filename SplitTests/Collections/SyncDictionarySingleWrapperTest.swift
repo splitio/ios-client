@@ -6,43 +6,40 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class SyncDictionarySingleWrapperTest: XCTestCase {
-
     var dic: ConcurrentDictionary<String, String>!
     override func setUp() {
         dic = ConcurrentDictionary()
         dic.setValue("k1value1", forKey: "key1")
         dic.setValue("k1value2", forKey: "key1")
         dic.setValue("k1value", forKey: "key1")
-        
+
         dic.setValue("k2value1", forKey: "key2")
         dic.setValue("k2value", forKey: "key2")
-        
+
         dic.setValue("k3value", forKey: "key3")
         dic.setValue("k4value", forKey: "key4")
         dic.setValue("k5value", forKey: "key5")
         dic.setValue("k6value", forKey: "key6")
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 
     func testInitialSetup() {
-        let v1 = dic.value(forKey:"key1")
-        let v2 = dic.value(forKey:"key2")
-        let v5 = dic.value(forKey:"key5")
-        
+        let v1 = dic.value(forKey: "key1")
+        let v2 = dic.value(forKey: "key2")
+        let v5 = dic.value(forKey: "key5")
+
         XCTAssertEqual(6, dic.count)
-        
+
         XCTAssertEqual("k1value", v1)
         XCTAssertEqual("k2value", v2)
         XCTAssertEqual("k5value", v5)
-        
     }
-    
+
     func testRemoveValue() {
         dic.removeValue(forKey: "key1")
         dic.removeValue(forKey: "key4")
@@ -52,21 +49,21 @@ class SyncDictionarySingleWrapperTest: XCTestCase {
         XCTAssertNil(dic.value(forKey: "key4"))
         XCTAssertNil(dic.value(forKey: "key6"))
     }
-    
+
     func testAllValues() {
         let values = dic.all
-        
-        for i in 1...6 {
+
+        for i in 1 ... 6 {
             let v = values["key\(i)"]
             XCTAssertEqual("k\(i)value", v)
         }
     }
-    
+
     func testRemoveAllValues() {
         dic.removeAll()
         XCTAssertEqual(0, dic.count)
     }
-    
+
     private func indexForValue(value: String, array: [String]?) -> Int {
         guard let array = array else {
             return -1
@@ -78,5 +75,4 @@ class SyncDictionarySingleWrapperTest: XCTestCase {
         }
         return -1
     }
-
 }

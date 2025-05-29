@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class HashedImpressionsStorageTests: XCTestCase {
-
     var hashedStorage: HashedImpressionsStorage!
     var persistentStorage: PersistentHashedImpressionStorageMock!
     var lruCache: LRUCache<UInt32, Int64>!
@@ -24,8 +23,9 @@ class HashedImpressionsStorageTests: XCTestCase {
         // Adding expired
         persistentStorage.items[1000] = HashedImpression(impressionHash: 1000, time: 999, createdAt: 999)
 
-        hashedStorage = DefaultHashedImpressionsStorage(cache: lruCache,
-                                                        persistentStorage: persistentStorage)
+        hashedStorage = DefaultHashedImpressionsStorage(
+            cache: lruCache,
+            persistentStorage: persistentStorage)
     }
 
     func testLoad() {
@@ -63,7 +63,7 @@ class HashedImpressionsStorageTests: XCTestCase {
 
     func testGet() {
         hashedStorage.loadFromDb()
-        for i in 1..<count {
+        for i in 1 ..< count {
             XCTAssertNotNil(hashedStorage.get(for: UInt32(i)))
         }
     }
@@ -88,11 +88,15 @@ class HashedImpressionsStorageTests: XCTestCase {
     func testSaveOnQueue() {
         hashedStorage.loadFromDb()
         let countBef = persistentStorage.items.count
-        for i in SplitTestHelper.createHashedImpressions(start: 30, count: ServiceConstants.maxHashedImpressionsQueueSize - 1) {
+        for i in SplitTestHelper.createHashedImpressions(
+            start: 30,
+            count: ServiceConstants.maxHashedImpressionsQueueSize - 1) {
             hashedStorage.set(i.time, for: i.impressionHash)
         }
 
-        let i = SplitTestHelper.createHashedImpressions(start: 100, count: ServiceConstants.maxHashedImpressionsQueueSize - 1)[0]
+        let i = SplitTestHelper.createHashedImpressions(
+            start: 100,
+            count: ServiceConstants.maxHashedImpressionsQueueSize - 1)[0]
         hashedStorage.set(i.time, for: i.impressionHash)
 
         let countAfter = persistentStorage.items.count
@@ -139,5 +143,3 @@ class HashedImpressionsStorageTests: XCTestCase {
         }
     }
 }
-
-

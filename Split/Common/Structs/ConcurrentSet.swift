@@ -9,9 +9,10 @@
 import Foundation
 
 class ConcurrentSet<T: Hashable> {
-    private var queue = DispatchQueue(label: "Split.ConcurrentSet",
-                                      attributes: .concurrent)
-    private var items: Set<T> = Set<T>()
+    private var queue = DispatchQueue(
+        label: "Split.ConcurrentSet",
+        attributes: .concurrent)
+    private var items: Set<T> = .init()
     private var capacity: Int = -1
 
     init(capacity: Int) {
@@ -33,7 +34,7 @@ class ConcurrentSet<T: Hashable> {
     }
 
     var count: Int {
-        var count: Int = 0
+        var count = 0
         queue.sync {
             count = items.count
         }

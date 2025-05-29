@@ -9,7 +9,6 @@
 import Foundation
 
 @objc class TrafficType: NSObject {
-
     let key: Key
     let attributes: [String: Any]?
 

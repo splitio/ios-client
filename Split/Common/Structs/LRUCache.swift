@@ -21,7 +21,7 @@ class LRUCache<K: Hashable, E> {
         self.capacity = capacity
         self.elements = [K: E]()
         self.elementsQueue = [K]()
-        self.elementsQueue.reserveCapacity(capacity)
+        elementsQueue.reserveCapacity(capacity)
         self.queue = DispatchQueue(label: "split-lrucache", attributes: .concurrent)
     }
 
@@ -93,7 +93,7 @@ class LRUCache<K: Hashable, E> {
     }
 
     private func moveFirst(index: Int, key: K) {
-        self.queue.async(flags: .barrier) { [weak self] in
+        queue.async(flags: .barrier) { [weak self] in
             guard let self = self else { return }
             self.elementsQueue.remove(at: index)
             self.elementsQueue.insert(key, at: 0)

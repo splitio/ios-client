@@ -46,7 +46,7 @@ class StreamingTestingHelper {
     private func pushMessage(_ text: String, template: String) {
         var msg = text.replacingOccurrences(of: "\n", with: " ")
         msg = template.replacingOccurrences(of: kDataField, with: msg)
-        if let strBin = self.streamingBinding {
+        if let strBin = streamingBinding {
             print("Streaming helper: pushing message")
             strBin.push(message: msg)
         } else {

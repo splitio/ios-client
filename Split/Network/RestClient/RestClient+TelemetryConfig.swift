@@ -15,10 +15,10 @@ protocol RestClientTelemetryConfig: RestClient {
 extension DefaultRestClient: RestClientTelemetryConfig {
     func send(config: TelemetryConfig, completion: @escaping (DataResult<EmptyValue>) -> Void) {
         do {
-            self.execute(
-                    endpoint: endpointFactory.telemetryConfigEndpoint,
-                    body: try Json.encodeToJsonData(config),
-                    completion: completion)
+            execute(
+                endpoint: endpointFactory.telemetryConfigEndpoint,
+                body: try Json.encodeToJsonData(config),
+                completion: completion)
         } catch {
             Logger.e("Could not send time metrics. Error: " + error.localizedDescription)
         }

@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class UniqueKeyDaoStub: UniqueKeyDao {
-
     var insertedKeys = [UniqueKey]()
     var getByKeys = [UniqueKey]()
     var updatedStatus = [String: Int32]()
@@ -40,4 +39,3 @@ class UniqueKeyDaoStub: UniqueKeyDao {
         deletedKeys.append(contentsOf: events)
     }
 }
-

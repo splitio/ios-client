@@ -28,7 +28,6 @@ protocol RuleBasedSegmentChangeProcessor {
 }
 
 class DefaultRuleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor {
-
     func process(_ segmentChange: RuleBasedSegmentChange) -> ProcessedRuleBasedSegmentChange {
         let active = segmentChange.segments.filter { $0.status == .active }
         let archived = segmentChange.segments.filter { $0.status == .archived }
@@ -37,7 +36,6 @@ class DefaultRuleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor {
             activeSegments: active,
             archivedSegments: archived,
             changeNumber: segmentChange.till,
-            updateTimestamp: Date.nowMillis()
-        )
+            updateTimestamp: Date.nowMillis())
     }
 }

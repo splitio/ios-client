@@ -9,7 +9,6 @@
 import Foundation
 @testable import Split
 
-
 class HashedImpressionDaoMock: HashedImpressionDao {
     var items = [UInt32: HashedImpression]()
     func update(_ hashes: [HashedImpression]) {
@@ -17,7 +16,7 @@ class HashedImpressionDaoMock: HashedImpressionDao {
             items[$0.impressionHash] = $0
         }
     }
-    
+
     func delete(_ hashes: [HashedImpression]) {
         items.removeAll()
     }

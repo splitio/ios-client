@@ -8,20 +8,20 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ByKeyMySegmentsStorageTests: XCTestCase {
-
     var byKeyMySegmentsStorage: ByKeyMySegmentsStorage!
     var userKey = "dummyKey"
     var mySegmentsStorage: MySegmentsStorageStub!
     var dummySegments = Set(["s1", "s2", "s3"])
-    
+
     override func setUp() {
         mySegmentsStorage = MySegmentsStorageStub()
-        byKeyMySegmentsStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage,
-                                                               userKey: userKey)
+        byKeyMySegmentsStorage = DefaultByKeyMySegmentsStorage(
+            mySegmentsStorage: mySegmentsStorage,
+            userKey: userKey)
     }
 
     func testNoLoaded() {
@@ -30,7 +30,7 @@ class ByKeyMySegmentsStorageTests: XCTestCase {
     }
 
     func testGetMySegmentsAfterLoad() {
-        mySegmentsStorage.persistedSegments = [userKey : dummySegments]
+        mySegmentsStorage.persistedSegments = [userKey: dummySegments]
         byKeyMySegmentsStorage.loadLocal()
         let segments = byKeyMySegmentsStorage.getAll()
 
@@ -40,7 +40,7 @@ class ByKeyMySegmentsStorageTests: XCTestCase {
     }
 
     func testUpdateSegments() {
-        mySegmentsStorage.persistedSegments = [userKey : dummySegments]
+        mySegmentsStorage.persistedSegments = [userKey: dummySegments]
         byKeyMySegmentsStorage.loadLocal()
         let segments = byKeyMySegmentsStorage.getAll()
         byKeyMySegmentsStorage.set(change(["n1", "n2"]))
@@ -61,7 +61,7 @@ class ByKeyMySegmentsStorageTests: XCTestCase {
     }
 
     func testUpdateEmptySegments() {
-        mySegmentsStorage.persistedSegments = [userKey : dummySegments]
+        mySegmentsStorage.persistedSegments = [userKey: dummySegments]
         byKeyMySegmentsStorage.loadLocal()
         let segments = byKeyMySegmentsStorage.getAll()
         byKeyMySegmentsStorage.set(change([]))

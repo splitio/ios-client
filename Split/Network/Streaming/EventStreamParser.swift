@@ -17,7 +17,6 @@ class EventStreamParser {
     private static let kKeepAliveToken = "\(kFieldSeparator)\(kKeepAliveEvent)"
 
     func parse(streamChunk: String) -> [String: String] {
-
         var messageValues = [String: String]()
         let messageLines = streamChunk.split(separator: "\n")
         for messageLine in messageLines {
@@ -49,9 +48,8 @@ class EventStreamParser {
 
     func isKeepAlive(values: [String: String]) -> Bool {
         return values.contains { eventType, value in
-            return eventType == Self.kEventField &&
+            eventType == Self.kEventField &&
                 value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == Self.kKeepAliveEvent
         }
     }
-
 }

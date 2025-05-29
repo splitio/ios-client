@@ -1,8 +1,7 @@
-import XCTest
 @testable import Split
+import XCTest
 
 final class GeneralInfoStorageTest: XCTestCase {
-
     private var generalInfoDao: GeneralInfoDaoStub!
     private var generalInfoStorage: GeneralInfoStorage!
 

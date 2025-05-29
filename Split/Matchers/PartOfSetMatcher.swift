@@ -8,12 +8,14 @@
 import Foundation
 
 class PartOfSetMatcher: BaseMatcher, MatcherProtocol {
-
     var data: Set<String>?
 
-    init(data: [String]?, splitClient: DefaultSplitClient? = nil,
-         negate: Bool? = nil, attribute: String? = nil, type: MatcherType? = nil) {
-
+    init(
+        data: [String]?,
+        splitClient: DefaultSplitClient? = nil,
+        negate: Bool? = nil,
+        attribute: String? = nil,
+        type: MatcherType? = nil) {
         super.init(negate: negate, attribute: attribute, type: type)
         if let dataElements = data {
             let set: Set<String> = Set(dataElements.map { $0 })
@@ -22,7 +24,6 @@ class PartOfSetMatcher: BaseMatcher, MatcherProtocol {
     }
 
     func evaluate(values: EvalValues, context: EvalContext?) -> Bool {
-
         var setToCompare: Set<String>?
         if let dataElements = values.matchValue as? [String], !dataElements.isEmpty {
             setToCompare = Set(dataElements.map { $0 })

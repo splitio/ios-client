@@ -8,12 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
-
+import XCTest
 
 class PersistentUniqueKeysStorageTests: XCTestCase {
-
     var keysStorage: PersistentUniqueKeysStorage!
     var keyDao: UniqueKeyDaoStub!
 
@@ -21,12 +19,13 @@ class PersistentUniqueKeysStorageTests: XCTestCase {
         keyDao = UniqueKeyDaoStub()
         var daoProvider = CoreDataDaoProviderMock()
         daoProvider.uniqueKeyDao = keyDao
-        keysStorage = DefaultPersistentUniqueKeysStorage(database: SplitDatabaseStub(daoProvider: daoProvider), expirationPeriod: 100)
-
+        keysStorage = DefaultPersistentUniqueKeysStorage(
+            database: SplitDatabaseStub(daoProvider: daoProvider),
+            expirationPeriod: 100)
     }
 
     func testPush() {
-        self.keysStorage.pushMany(keys: createUniqueKeys())
+        keysStorage.pushMany(keys: createUniqueKeys())
 
         XCTAssertEqual(20, keyDao.insertedKeys.count)
     }
@@ -52,16 +51,15 @@ class PersistentUniqueKeysStorageTests: XCTestCase {
 
         keysStorage.setActiveAndUpdateSendCount(keys.map { $0.storageId ?? "" })
 
-        XCTAssertEqual(keys.count, keyDao.updatedStatus.values.filter { $0 ==  StorageRecordStatus.active }.count)
-        XCTAssertEqual(0, keyDao.updatedStatus.values.filter { $0 ==  StorageRecordStatus.deleted }.count )
+        XCTAssertEqual(keys.count, keyDao.updatedStatus.values.filter { $0 == StorageRecordStatus.active }.count)
+        XCTAssertEqual(0, keyDao.updatedStatus.values.filter { $0 == StorageRecordStatus.deleted }.count)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 
     func createUniqueKeys() -> [UniqueKey] {
         var keys = [UniqueKey]()
-        for i in 0..<20 {
+        for i in 0 ..< 20 {
             let key = UniqueKey(storageId: "id_\(i)", userKey: "key_\(i)", features: ["f_1_\(i)", "f_2_\(i)"])
             keys.append(key)
         }

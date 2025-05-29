@@ -55,13 +55,13 @@ protocol SseAuthenticator {
 }
 
 class DefaultSseAuthenticator: SseAuthenticator {
-
     private let restClient: RestClientSseAuthenticator
     private let syncHelper: SyncHelper
     private let resource: Resource = .token
 
-    init(restClient: RestClientSseAuthenticator,
-         syncHelper: SyncHelper) {
+    init(
+        restClient: RestClientSseAuthenticator,
+        syncHelper: SyncHelper) {
         self.restClient = restClient
         self.syncHelper = syncHelper
     }
@@ -90,7 +90,7 @@ class DefaultSseAuthenticator: SseAuthenticator {
                 return errorResult(recoverable: true)
             }
 
-        } catch HttpError.clientRelated(let httpCode, _) {
+        } catch let HttpError.clientRelated(httpCode, _) {
             syncHelper.recordHttpError(code: httpCode, resource: resource, startTime: startTime)
             return errorResult(recoverable: false)
         } catch {
@@ -102,16 +102,24 @@ class DefaultSseAuthenticator: SseAuthenticator {
             return errorResult(recoverable: true)
         }
         let connectionDelay = response.sseConnectionDelay ?? ServiceConstants.defaultSseConnectionDelayInSecs
-        return SseAuthenticationResult(success: true, errorIsRecoverable: false,
-                                       pushEnabled: response.pushEnabled, rawToken: response.token,
-                                       sseConnectionDelay: connectionDelay)
+        return SseAuthenticationResult(
+            success: true,
+            errorIsRecoverable: false,
+            pushEnabled: response.pushEnabled,
+            rawToken: response.token,
+            sseConnectionDelay: connectionDelay)
     }
 }
 
 // MARK: Private
+
 extension DefaultSseAuthenticator {
     private func errorResult(recoverable: Bool) -> SseAuthenticationResult {
-        return SseAuthenticationResult(success: false, errorIsRecoverable: recoverable,
-                                       pushEnabled: false, rawToken: nil, sseConnectionDelay: 0)
+        return SseAuthenticationResult(
+            success: false,
+            errorIsRecoverable: recoverable,
+            pushEnabled: false,
+            rawToken: nil,
+            sseConnectionDelay: 0)
     }
 }

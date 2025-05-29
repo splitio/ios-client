@@ -8,11 +8,10 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class MySegmentsBgSyncWorkerTest: XCTestCase {
-
     var mySegmentsFetcher: HttpMySegmentsFetcherStub!
     var mySegmentsStorage: PersistentMySegmentsStorageMock!
     var myLargeSegmentsStorage: PersistentMySegmentsStorageMock!
@@ -32,16 +31,13 @@ class MySegmentsBgSyncWorkerTest: XCTestCase {
     }
 
     func testOneTimeFetchSuccess() {
-
         mySegmentsFetcher.segments = segments()
         mySegmentsSyncWorker.execute()
 
         XCTAssertNotNil(mySegmentsStorage.persistedSegments[userKey])
     }
 
-
     func testNoSuccess() {
-
         mySegmentsFetcher.httpError = HttpError.clientRelated(code: -1, internalCode: -1)
         mySegmentsFetcher.segments = segments()
         mySegmentsSyncWorker.execute()
@@ -52,7 +48,8 @@ class MySegmentsBgSyncWorkerTest: XCTestCase {
     func segments() -> [AllSegmentsChange] {
         let msChange = SegmentChange(segments: ["s1", "s2"])
         let mlsChange = SegmentChange(segments: ["s1", "s2"])
-        return [AllSegmentsChange(mySegmentsChange: msChange,
-                                  myLargeSegmentsChange: mlsChange)]
+        return [AllSegmentsChange(
+            mySegmentsChange: msChange,
+            myLargeSegmentsChange: mlsChange)]
     }
 }

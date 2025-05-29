@@ -16,47 +16,47 @@ extension Substring {
 
 extension String {
     func isEmpty() -> Bool {
-        return (self.trimmingCharacters(in: .whitespacesAndNewlines) == "")
+        return trimmingCharacters(in: .whitespacesAndNewlines) == ""
     }
 
     func hasUpperCaseChar() -> Bool {
-        return self.lowercased() != self
+        return lowercased() != self
     }
 
     var dataBytes: Data? {
-        return self.data(using: .utf8)
+        return data(using: .utf8)
     }
 
     // Make sure to need a new string when using this
     // function.
     func stringPrefix(to index: Int) -> String {
-        return String(self.prefix(index))
+        return String(prefix(index))
     }
 
     // Same here
     func stringSuffix(from index: Int) -> String {
-        return String(self.suffix(index))
+        return String(suffix(index))
     }
 
     func canPrefix(_ length: Int) -> Bool {
-        return self.count >= length
+        return count >= length
     }
 
     func canSuffix(_ start: Int) -> Bool {
-        return self.count > start
+        return count > start
     }
 
     func suffix(starting start: Int) -> Substring {
-        let startIdx = self.index(self.startIndex, offsetBy: start)
-        return self[startIdx..<self.endIndex]
+        let startIdx = index(startIndex, offsetBy: start)
+        return self[startIdx ..< endIndex]
     }
 
     func contains(string: String, starting start: Int) -> Bool {
-        if !self.canSuffix(start) {
+        if !canSuffix(start) {
             return false
         }
 
-        return self.suffix(start).contains(string)
+        return suffix(start).contains(string)
     }
 
     func matchRegex(_ regex: String) -> Bool {
@@ -64,7 +64,7 @@ extension String {
             Logger.e("Error parsing regex \(regex)")
             return false
         }
-        let range = NSRange(location: 0, length: self.utf8.count)
+        let range = NSRange(location: 0, length: utf8.count)
         return regx.firstMatch(in: self, range: range) != nil
     }
 }

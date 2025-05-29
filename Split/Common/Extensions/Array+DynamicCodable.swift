@@ -10,14 +10,14 @@ import Foundation
 
 extension Array: DynamicEncodable where Element: DynamicEncodable {
     func toJsonObject() -> Any {
-        return self.map({ $0.toJsonObject() })
+        return map { $0.toJsonObject() }
     }
 }
 
 extension Array: DynamicDecodable where Element: DynamicDecodable {
     init(jsonObject: Any) throws {
         if let elements = jsonObject as? [Any] {
-            self = try elements.map({ try Element(jsonObject: $0) })
+            self = try elements.map { try Element(jsonObject: $0) }
         } else {
             Logger.i("DynamicDecodable: Could not parse objects")
             self = []

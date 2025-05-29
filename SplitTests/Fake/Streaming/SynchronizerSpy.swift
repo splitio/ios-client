@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class SynchronizerSpy: Synchronizer {
     var splitSynchronizer: Synchronizer
@@ -44,7 +44,6 @@ class SynchronizerSpy: Synchronizer {
 
     let defaultUserKey: String
 
-
     var forceMySegmentsSyncCalled = [String: Bool]()
     var forceMySegmentsSyncCount = [String: Int]()
     var forceMyLargeSegmentsSyncCalled = [String: Bool]()
@@ -55,26 +54,27 @@ class SynchronizerSpy: Synchronizer {
 
     var forceMySegmentsCalledParams = [String: ForceMySegmentsParams]()
 
-    init(splitConfig: SplitClientConfig,
-         defaultUserKey: String,
-         featureFlagsSynchronizer: FeatureFlagsSynchronizer,
-         telemetrySynchronizer: TelemetrySynchronizer?,
-         byKeyFacade: ByKeyFacade,
-         splitStorageContainer: SplitStorageContainer,
-         impressionsTracker: ImpressionsTracker,
-         eventsSynchronizer: EventsSynchronizer,
-         splitEventsManager: SplitEventsManager) {
-
+    init(
+        splitConfig: SplitClientConfig,
+        defaultUserKey: String,
+        featureFlagsSynchronizer: FeatureFlagsSynchronizer,
+        telemetrySynchronizer: TelemetrySynchronizer?,
+        byKeyFacade: ByKeyFacade,
+        splitStorageContainer: SplitStorageContainer,
+        impressionsTracker: ImpressionsTracker,
+        eventsSynchronizer: EventsSynchronizer,
+        splitEventsManager: SplitEventsManager) {
         self.defaultUserKey = defaultUserKey
-        self.splitSynchronizer = DefaultSynchronizer(splitConfig: splitConfig,
-                                                     defaultUserKey: defaultUserKey,
-                                                     featureFlagsSynchronizer: featureFlagsSynchronizer,
-                                                     telemetrySynchronizer: telemetrySynchronizer,
-                                                     byKeyFacade: byKeyFacade,
-                                                     splitStorageContainer: splitStorageContainer,
-                                                     impressionsTracker: impressionsTracker,
-                                                     eventsSynchronizer: eventsSynchronizer,
-                                                     splitEventsManager: splitEventsManager)
+        self.splitSynchronizer = DefaultSynchronizer(
+            splitConfig: splitConfig,
+            defaultUserKey: defaultUserKey,
+            featureFlagsSynchronizer: featureFlagsSynchronizer,
+            telemetrySynchronizer: telemetrySynchronizer,
+            byKeyFacade: byKeyFacade,
+            splitStorageContainer: splitStorageContainer,
+            impressionsTracker: impressionsTracker,
+            eventsSynchronizer: eventsSynchronizer,
+            splitEventsManager: splitEventsManager)
     }
 
     func synchronizeSplits() {
@@ -233,10 +233,12 @@ class SynchronizerSpy: Synchronizer {
     }
 
     func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64) {
-        Logger.v("Sync Spy: \(key) - ChangeNumbers(ms: \(changeNumbers.msChangeNumber), mls: \(changeNumbers.mlsChangeNumber), delay: \(delay)")
+        Logger
+            .v(
+                "Sync Spy: \(key) - ChangeNumbers(ms: \(changeNumbers.msChangeNumber), mls: \(changeNumbers.mlsChangeNumber), delay: \(delay)")
         splitSynchronizer.forceMySegmentsSync(forKey: key, changeNumbers: changeNumbers, delay: delay)
         forceMySegmentsSyncCalled[key] = true
-        forceMySegmentsSyncCount[key]=(forceMySegmentsSyncCount[key] ?? 0) + 1
+        forceMySegmentsSyncCount[key] = (forceMySegmentsSyncCount[key] ?? 0) + 1
         forceMySegmentsCalledParams[key] = ForceMySegmentsParams(segmentsCn: changeNumbers, delay: delay)
     }
 

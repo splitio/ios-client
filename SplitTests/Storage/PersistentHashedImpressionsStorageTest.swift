@@ -7,11 +7,10 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class PersistentHashedImpressionsStorageTests: XCTestCase {
-
     var hashedStorage: PersistentHashedImpressionsStorage!
     var hashDao: HashedImpressionDaoMock!
 
@@ -39,5 +38,3 @@ class PersistentHashedImpressionsStorageTests: XCTestCase {
         XCTAssertEqual(count, all.count)
     }
 }
-
-

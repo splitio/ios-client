@@ -7,12 +7,11 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class CertificatePinningConfigTests: XCTestCase {
-
-    let bundle: Bundle = Bundle(for: CertificatePinningConfigTests.self)
+    let bundle: Bundle = .init(for: CertificatePinningConfigTests.self)
     var builder: CertificatePinningConfig.Builder!
     let testHost = "www.superhost.com"
 
@@ -82,7 +81,6 @@ class CertificatePinningConfigTests: XCTestCase {
     }
 
     func testAddCertificateAndHashes() {
-
         builder.addPin(host: "host1", certificateName: "rsa_2048_cert.pem") // It's a der file
         builder.addPin(host: "host2", keyHash: "sha1/xISLOKMMW9KyAtns62UziyEEOylkAH1T5k0G5ARhmSg=")
         builder.addPin(host: "host3", certificateName: "rsa_4096_cert.pem") // It's a der file
@@ -95,12 +93,11 @@ class CertificatePinningConfigTests: XCTestCase {
         let pins = config.pins
 
         XCTAssertEqual(5, pins.count)
-        XCTAssertEqual(2, pins.filter { $0.algo == .sha1}.count)
-        XCTAssertEqual(3, pins.filter { $0.algo == .sha256}.count)
+        XCTAssertEqual(2, pins.filter { $0.algo == .sha1 }.count)
+        XCTAssertEqual(3, pins.filter { $0.algo == .sha256 }.count)
 
-        for i in 1..<5 {
+        for i in 1 ..< 5 {
             XCTAssertEqual(pins[i - 1].host, "host\(i)")
         }
     }
 }
-

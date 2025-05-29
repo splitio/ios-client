@@ -8,17 +8,14 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ImpressionHasherTest: XCTestCase {
-
     var testImpression: Impression!
     var testHash: UInt32!
 
-    override func setUp() {
-
-    }
+    override func setUp() {}
 
     func testDifferentFeature() {
         let impression = createImpression(feature: "someOtherFeature")
@@ -91,20 +88,21 @@ class ImpressionHasherTest: XCTestCase {
         return createImpression()
     }
 
-    func createImpression(key: String = "someKey",
-                          feature: String = "someFeature",
-                          treatment: String = "someTreatment",
-                          label: String = "someLabel",
-                          changeNumber: Int64 = 123) -> KeyImpression {
-        return KeyImpression(featureName: feature,
-                             keyName: key,
-                             bucketingKey: nil,
-                             treatment: treatment,
-                             label: label,
-                             time: Date().unixTimestamp(),
-                             changeNumber: changeNumber,
-                             previousTime: nil,
-                             storageId: nil)
+    func createImpression(
+        key: String = "someKey",
+        feature: String = "someFeature",
+        treatment: String = "someTreatment",
+        label: String = "someLabel",
+        changeNumber: Int64 = 123) -> KeyImpression {
+        return KeyImpression(
+            featureName: feature,
+            keyName: key,
+            bucketingKey: nil,
+            treatment: treatment,
+            label: label,
+            time: Date().unixTimestamp(),
+            changeNumber: changeNumber,
+            previousTime: nil,
+            storageId: nil)
     }
 }
-

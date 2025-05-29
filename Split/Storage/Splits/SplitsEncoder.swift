@@ -13,7 +13,6 @@ protocol SplitsEncoder {
 }
 
 struct SplitsParallelEncoder: SplitsEncoder {
-
     private var minTaskPerThread: Int
     private let serialEncoder: SplitsEncoder
 
@@ -24,16 +23,17 @@ struct SplitsParallelEncoder: SplitsEncoder {
 
     // Returns Name: Json
     func encode(_ list: [Split]) -> [String: String] {
-
-        if list.count == 0 {
+        if list.isEmpty {
             return [:]
         }
         Logger.v("Using parallel encoding for \(list.count) feature flags")
 
         var splitsJson = [String: String]()
-        let dataQueue = DispatchQueue(label: "split-parallel-encoding-data",
-                                      target: DispatchQueue(label: "split-parallel-encoding-data-conc",
-                                                            attributes: .concurrent))
+        let dataQueue = DispatchQueue(
+            label: "split-parallel-encoding-data",
+            target: DispatchQueue(
+                label: "split-parallel-encoding-data-conc",
+                attributes: .concurrent))
 
         let taskCount = ThreadUtils.processCount(totalTaskCount: list.count, minTaskPerThread: minTaskPerThread)
         let chunkSize = Int(list.count / taskCount)
@@ -50,7 +50,7 @@ struct SplitsParallelEncoder: SplitsEncoder {
             queue.addOperation {
                 let parsed = serialEncoder.encode(splits)
                 dataQueue.sync {
-                    splitsJson.merge( parsed, uniquingKeysWith: {(_, new) in new })
+                    splitsJson.merge(parsed, uniquingKeysWith: { _, new in new })
                 }
             }
         }
@@ -67,7 +67,7 @@ struct SplitsSerialEncoder: SplitsEncoder {
     }
 
     func encode(_ list: [Split]) -> [String: String] {
-        if list.count == 0 {
+        if list.isEmpty {
             return [:]
         }
         // Parsing one by one to avoid losing all

@@ -8,22 +8,23 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class ImpressionDaoTest: XCTestCase {
-
-
     var impressionDao: ImpressionDao!
     var impressionDaoAes128Cbc: ImpressionDao!
 
     override func setUp() {
         let queue = DispatchQueue(label: "impression dao test")
-        impressionDao = CoreDataImpressionDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                            dispatchQueue: queue))
-        impressionDaoAes128Cbc = CoreDataImpressionDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                                     dispatchQueue: queue),
-                                                       cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
+        impressionDao = CoreDataImpressionDao(coreDataHelper: IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: queue))
+        impressionDaoAes128Cbc = CoreDataImpressionDao(
+            coreDataHelper: IntegrationCoreDataHelper.get(
+                databaseName: "test",
+                dispatchQueue: queue),
+            cipher: DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey))
 
         let impressions = createImpressions()
         for impression in impressions {
@@ -41,7 +42,6 @@ class ImpressionDaoTest: XCTestCase {
     }
 
     private func insertGet(dao: ImpressionDao) {
-
         let loadedImpressions = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
 
         XCTAssertEqual(10, loadedImpressions.count)
@@ -72,9 +72,8 @@ class ImpressionDaoTest: XCTestCase {
     }
 
     private func update(dao: ImpressionDao) {
-
         let loadedImpressions = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
-        dao.update(ids: loadedImpressions.prefix(5).compactMap { return $0.storageId }, newStatus: StorageRecordStatus.deleted)
+        dao.update(ids: loadedImpressions.prefix(5).compactMap { $0.storageId }, newStatus: StorageRecordStatus.deleted)
         let active = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
         let deleted = dao.getBy(createdAt: 200, status: StorageRecordStatus.deleted, maxRows: 20)
 
@@ -92,24 +91,31 @@ class ImpressionDaoTest: XCTestCase {
 
     private func loadOutdated(dao: ImpressionDao) {
         let timestamp = Date().unixTimestamp() + 10000
-        let loadedImpressions = impressionDao.getBy(createdAt: timestamp, status: StorageRecordStatus.active, maxRows: 20)
-        let loadedImpressions1 = impressionDao.getBy(createdAt: timestamp, status: StorageRecordStatus.deleted, maxRows: 20)
+        let loadedImpressions = impressionDao.getBy(
+            createdAt: timestamp,
+            status: StorageRecordStatus.active,
+            maxRows: 20)
+        let loadedImpressions1 = impressionDao.getBy(
+            createdAt: timestamp,
+            status: StorageRecordStatus.deleted,
+            maxRows: 20)
 
         XCTAssertEqual(0, loadedImpressions.count)
         XCTAssertEqual(0, loadedImpressions1.count)
     }
-
 
     func testDataIsEncryptedInDb() {
         let cipher = DefaultCipher(cipherKey: IntegrationHelper.dummyCipherKey)
 
         // Create two datos accessing the same db
         // One with encryption and the other without it
-        let helper = IntegrationCoreDataHelper.get(databaseName: "test",
-                                                   dispatchQueue: DispatchQueue(label: "impression dao test"))
+        let helper = IntegrationCoreDataHelper.get(
+            databaseName: "test",
+            dispatchQueue: DispatchQueue(label: "impression dao test"))
         impressionDao = CoreDataImpressionDao(coreDataHelper: helper)
-        impressionDaoAes128Cbc = CoreDataImpressionDao(coreDataHelper: helper,
-                                                       cipher: cipher)
+        impressionDaoAes128Cbc = CoreDataImpressionDao(
+            coreDataHelper: helper,
+            cipher: cipher)
 
         // create impressions and get one encrypted feature name
         let impressions = createImpressions()
@@ -134,17 +140,18 @@ class ImpressionDaoTest: XCTestCase {
         var body: String? = nil
         coreDataHelper.performAndWait {
             let predicate = NSPredicate(format: "testName == %@", testName)
-            let entities = coreDataHelper.fetch(entity: .impression,
-                                                where: predicate,
-                                                rowLimit: 1).compactMap { return $0 as? ImpressionEntity }
-            if entities.count > 0 {
+            let entities = coreDataHelper.fetch(
+                entity: .impression,
+                where: predicate,
+                rowLimit: 1).compactMap { $0 as? ImpressionEntity }
+            if !entities.isEmpty {
                 body = entities[0].body
             }
         }
         return body
     }
 
-    /// TODO: Check how to test delete in inMemoryDb
+    // TODO: Check how to test delete in inMemoryDb
     func PausedtestDelete() {
         let toDelete = impressionDao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20).prefix(5)
 
@@ -154,21 +161,22 @@ class ImpressionDaoTest: XCTestCase {
         let notFound = Set(toDelete.map { $0.storageId })
 
         XCTAssertEqual(5, loadedImpressions.count)
-        XCTAssertEqual(0, loadedImpressions.filter { notFound.contains($0.storageId)}.count)
+        XCTAssertEqual(0, loadedImpressions.filter { notFound.contains($0.storageId) }.count)
     }
 
     func createImpressions() -> [KeyImpression] {
         var impressions = [KeyImpression]()
-        for _ in 0..<10 {
-            let impression = KeyImpression(featureName: "f1",
-                                           keyName: "key1",
-                                           bucketingKey: nil,
-                                           treatment: "t1",
-                                           label: "t1",
-                                           time: 1000,
-                                           changeNumber: 1000,
-                                           previousTime: nil,
-                                           storageId: nil)
+        for _ in 0 ..< 10 {
+            let impression = KeyImpression(
+                featureName: "f1",
+                keyName: "key1",
+                bucketingKey: nil,
+                treatment: "t1",
+                label: "t1",
+                time: 1000,
+                changeNumber: 1000,
+                previousTime: nil,
+                storageId: nil)
             impressions.append(impression)
         }
         return impressions

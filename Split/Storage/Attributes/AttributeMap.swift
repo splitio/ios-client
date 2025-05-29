@@ -11,7 +11,6 @@
 import Foundation
 
 class AttributeMap: DynamicCodable {
-
     var attributes: [String: Any]
 
     init(attributes: [String: Any]) {
@@ -20,7 +19,7 @@ class AttributeMap: DynamicCodable {
 
     required init(jsonObject: Any) throws {
         let jsonObj = jsonObject as? [String: Any] ?? [:]
-        attributes = jsonObj["attributes"] as? [String: Any] ?? [:]
+        self.attributes = jsonObj["attributes"] as? [String: Any] ?? [:]
     }
 
     func toJsonObject() -> Any {

@@ -26,8 +26,9 @@ class CoreDataHelper {
     private let managedObjectContext: NSManagedObjectContext
     private let persistentCoordinator: NSPersistentStoreCoordinator
 
-    init(managedObjectContext: NSManagedObjectContext,
-         persistentCoordinator: NSPersistentStoreCoordinator) {
+    init(
+        managedObjectContext: NSManagedObjectContext,
+        persistentCoordinator: NSPersistentStoreCoordinator) {
         self.managedObjectContext = managedObjectContext
         self.persistentCoordinator = persistentCoordinator
     }
@@ -36,8 +37,9 @@ class CoreDataHelper {
         var obj: NSManagedObject!
 
         managedObjectContext.performAndWait {
-            obj = NSEntityDescription.insertNewObject(forEntityName: entity.rawValue,
-                                                      into: self.managedObjectContext)
+            obj = NSEntityDescription.insertNewObject(
+                forEntityName: entity.rawValue,
+                into: self.managedObjectContext)
         }
         return obj
     }
@@ -105,7 +107,6 @@ class CoreDataHelper {
     }
 
     private func delete(entity: CoreDataEntity, predicate: NSPredicate? = nil) {
-
         managedObjectContext.performAndWait {
             let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entity.rawValue)
             if let predicate = predicate {
@@ -114,7 +115,7 @@ class CoreDataHelper {
             do {
                 var entities = try self.managedObjectContext.fetch(fetchRequest)
                 let count = entities.count
-                for _ in 0..<count {
+                for _ in 0 ..< count {
                     if let entity = entities[0] as? NSManagedObject {
                         entities.remove(at: 0)
                         self.managedObjectContext.delete(entity)

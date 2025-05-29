@@ -6,11 +6,10 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class PeriodicRecorderWorkerTests: XCTestCase {
-
     var recorderWorker: RecorderWorkerStub!
     var periodicRecorderWorker: PeriodicRecorderWorker!
 
@@ -24,7 +23,7 @@ class PeriodicRecorderWorkerTests: XCTestCase {
 
         periodicRecorderWorker.start()
 
-        for _ in 0..<5 {
+        for _ in 0 ..< 5 {
             timer.timerHandler?()
         }
 
@@ -52,6 +51,4 @@ class PeriodicRecorderWorkerTests: XCTestCase {
 
         XCTAssertEqual(1, timer.destroyCallCount)
     }
-
 }
-

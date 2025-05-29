@@ -9,7 +9,6 @@
 import Foundation
 
 public class Key: NSObject {
-
     public let matchingKey: String
     public let bucketingKey: String?
 
@@ -30,10 +29,10 @@ public class Key: NSObject {
             return false
         }
         return matchingKey == other.matchingKey
-        && bucketingKey == other.bucketingKey
+            && bucketingKey == other.bucketingKey
     }
 
     public override var description: String {
-            return "Key: \(matchingKey) - Bucketing: \(bucketingKey ?? "No bucketing")"
-        }
+        return "Key: \(matchingKey) - Bucketing: \(bucketingKey ?? "No bucketing")"
+    }
 }

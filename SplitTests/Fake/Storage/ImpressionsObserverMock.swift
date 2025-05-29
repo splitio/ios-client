@@ -10,7 +10,6 @@ import Foundation
 @testable import Split
 
 class ImpressionsObserverMock: ImpressionsObserver {
-
     var testAndSetCalled = false
     func testAndSet(impression: KeyImpression) -> Int64? {
         testAndSetCalled = true
@@ -21,7 +20,7 @@ class ImpressionsObserverMock: ImpressionsObserver {
     func clear() {
         clearCalled = true
     }
-    
+
     var saveCalled = false
     func saveHashes() {
         saveCalled = true

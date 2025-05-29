@@ -10,10 +10,6 @@ import Foundation
 @testable import Split
 
 class PersistentImpressionsStorageStub: PersistentImpressionsStorage {
-
-
-
-
     var storedImpressions = [String: KeyImpression]()
     var impressionsStatus = [String: Int32]()
 

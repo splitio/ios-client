@@ -13,7 +13,6 @@ protocol RuleBasedSegmentsEncoder {
 }
 
 class RuleBasedSegmentsSerialEncoder: RuleBasedSegmentsEncoder {
-
     private var cipher: Cipher?
 
     init(cipher: Cipher? = nil) {

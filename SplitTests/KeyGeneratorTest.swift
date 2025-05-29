@@ -8,14 +8,13 @@
 
 import Foundation
 
-import XCTest
 @testable import Split
+import XCTest
 
 class KeyGeneratorTest: XCTestCase {
     private let generator = DefaultKeyGenerator()
 
-    override func setUp() {
-    }
+    override func setUp() {}
 
     func testGenerationOk() {
         let key = generator.generateKey(size: 16)
@@ -24,7 +23,5 @@ class KeyGeneratorTest: XCTestCase {
         XCTAssertEqual(16, key?.count ?? 0)
     }
 
-    override func tearDown() {
-    }
+    override func tearDown() {}
 }
-

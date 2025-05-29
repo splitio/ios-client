@@ -24,13 +24,14 @@ class DefaultSyncGuardian: SyncGuardian {
     private let queue = DispatchQueue(label: "split-sync-guardian", target: .global())
 
     /// Parameter: maxSyncPeriod in millis
-    init(maxSyncPeriod: Int64,
-         splitConfig: SplitClientConfig,
-         timestampProvider: TimestampProvider? = nil) {
+    init(
+        maxSyncPeriod: Int64,
+        splitConfig: SplitClientConfig,
+        timestampProvider: TimestampProvider? = nil) {
         self.defaultMaxSyncPeriod = maxSyncPeriod
         self.maxSyncPeriod = maxSyncPeriod
         self.splitConfig = splitConfig
-        self.newTimestamp = timestampProvider ?? { return Date().unixTimestampInMiliseconds() }
+        self.newTimestamp = timestampProvider ?? { Date().unixTimestampInMiliseconds() }
     }
 
     func updateLastSyncTimestamp() {

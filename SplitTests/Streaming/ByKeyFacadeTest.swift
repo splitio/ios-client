@@ -7,52 +7,54 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class ByKeyFacadeTest: XCTestCase {
-
     var byKeyFacade: ByKeyFacade!
     var componentGroups: [Key: ByKeyComponentGroup]!
 
     override func setUp() {
         byKeyFacade = DefaultByKeyFacade()
         componentGroups = [Key: ByKeyComponentGroup]()
-        for i in 0..<10 {
+        for i in 0 ..< 10 {
             let key = buildKey(i)
-            let attrStorage = ByKeyAttributesStorageStub(userKey: key.matchingKey,
-                                                         attributesStorage: AttributesStorageStub())
-            let group = ByKeyComponentGroup(splitClient: SplitClientStub(),
+            let attrStorage = ByKeyAttributesStorageStub(
+                userKey: key.matchingKey,
+                attributesStorage: AttributesStorageStub())
+            let group = ByKeyComponentGroup(
+                splitClient: SplitClientStub(),
                 eventsManager: SplitEventsManagerStub(),
-                                           mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
-                                           attributesStorage: attrStorage)
+                mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
+                attributesStorage: attrStorage)
             componentGroups[key] = group
             byKeyFacade.append(group, forKey: key)
         }
     }
 
     func testAppendRemove() {
-
         // Add the group, start periodic fetching. Values should be true
         // Then remove synchronizer, reset stub and test again.
         // Values should be false because synchronizer is not in group anymore
         let key = Key(matchingKey: "someKey")
-        let attributesStorage = ByKeyAttributesStorageStub(userKey: key.matchingKey,
-                                                           attributesStorage: AttributesStorageStub())
-        let group = ByKeyComponentGroup(splitClient: SplitClientStub(),
-                                        eventsManager: SplitEventsManagerStub(),
-                                        mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
-                                        attributesStorage: attributesStorage)
+        let attributesStorage = ByKeyAttributesStorageStub(
+            userKey: key.matchingKey,
+            attributesStorage: AttributesStorageStub())
+        let group = ByKeyComponentGroup(
+            splitClient: SplitClientStub(),
+            eventsManager: SplitEventsManagerStub(),
+            mySegmentsSynchronizer: MySegmentsSynchronizerStub(),
+            attributesStorage: attributesStorage)
         byKeyFacade.append(group, forKey: key)
         byKeyFacade.startPeriodicSync()
         byKeyFacade.stopPeriodicSync()
 
-
-
         var res = [String: Bool]()
         for (gkey, gvalue) in componentGroups {
-            res[buildMapKey(key: gkey, function: "started")] = stub(gvalue.mySegmentsSynchronizer).startPeriodicFetchingCalled
-            res[buildMapKey(key: gkey, function: "stopped")] = stub(gvalue.mySegmentsSynchronizer).stopPeriodicFetchingCalled
+            res[buildMapKey(key: gkey, function: "started")] = stub(gvalue.mySegmentsSynchronizer)
+                .startPeriodicFetchingCalled
+            res[buildMapKey(key: gkey, function: "stopped")] = stub(gvalue.mySegmentsSynchronizer)
+                .stopPeriodicFetchingCalled
         }
 
         for (_, gvalue) in componentGroups {
@@ -68,8 +70,10 @@ class ByKeyFacadeTest: XCTestCase {
 
         var res1 = [String: Bool]()
         for (gkey, gvalue) in componentGroups {
-            res1[buildMapKey(key: gkey, function: "started")] = stub(gvalue.mySegmentsSynchronizer).startPeriodicFetchingCalled
-            res1[buildMapKey(key: gkey, function: "stopped")] = stub(gvalue.mySegmentsSynchronizer).stopPeriodicFetchingCalled
+            res1[buildMapKey(key: gkey, function: "started")] = stub(gvalue.mySegmentsSynchronizer)
+                .startPeriodicFetchingCalled
+            res1[buildMapKey(key: gkey, function: "stopped")] = stub(gvalue.mySegmentsSynchronizer)
+                .stopPeriodicFetchingCalled
         }
 
         for (_, value) in res {
@@ -79,7 +83,6 @@ class ByKeyFacadeTest: XCTestCase {
     }
 
     func testLoadDataFromCache() {
-
         setupTest { key in
             byKeyFacade.loadMySegmentsFromCache(forKey: key.matchingKey)
             byKeyFacade.loadAttributesFromCache(forKey: key.matchingKey)
@@ -97,7 +100,6 @@ class ByKeyFacadeTest: XCTestCase {
     }
 
     func testSynchronize() {
-
         setupTest { key in
             byKeyFacade.syncMySegments(forKey: key.matchingKey)
         }
@@ -141,19 +143,16 @@ class ByKeyFacadeTest: XCTestCase {
     }
 
     func testPeriodicStartStop() {
-        
         byKeyFacade.startPeriodicSync()
         byKeyFacade.stopPeriodicSync()
 
         assertThis { keyNum, group in
             XCTAssertTrue(stub(group.mySegmentsSynchronizer).startPeriodicFetchingCalled)
             XCTAssertTrue(stub(group.mySegmentsSynchronizer).stopPeriodicFetchingCalled)
-
         }
     }
 
     func testPeriodicStartPauseResumeStop() {
-
         byKeyFacade.startPeriodicSync()
         byKeyFacade.pause()
         byKeyFacade.resume()
@@ -168,7 +167,6 @@ class ByKeyFacadeTest: XCTestCase {
     }
 
     func testDestroy() {
-
         byKeyFacade.startPeriodicSync()
         byKeyFacade.stop()
 
@@ -213,24 +211,23 @@ class ByKeyFacadeTest: XCTestCase {
     }
 
     private func setupTest(_ test: (Key) -> Void) {
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             test(buildKey(i))
         }
     }
 
     private func setupTest(_ test: (Key, Int) -> Void) {
-        for i in 0..<5 {
+        for i in 0 ..< 5 {
             test(buildKey(i), i)
         }
     }
-
 
     private func buildKey(_ num: Int) -> Key {
         return Key(matchingKey: "key_\(num)")
     }
 
     private func assertThis(_ test: (Int, ByKeyComponentGroup) -> Void) {
-        for i in 0..<10 {
+        for i in 0 ..< 10 {
             let sync = componentGroups[buildKey(i)]!
             test(i, sync)
         }
@@ -252,4 +249,3 @@ class ByKeyFacadeTest: XCTestCase {
         return "\(key.matchingKey)_\(function)"
     }
 }
-

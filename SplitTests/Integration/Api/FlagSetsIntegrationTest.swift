@@ -6,12 +6,11 @@
 //  Copyright © 2019 Split. All rights reserved.
 //
 
-import XCTest
 @testable import Split
+import XCTest
 
 class FlagSetsIntegrationTests: XCTestCase {
-
-    struct Status {
+    enum Status {
         static let active = "ACTIVE"
         static let archived = "ARCHIVED"
     }
@@ -61,8 +60,9 @@ class FlagSetsIntegrationTests: XCTestCase {
         testDb.mySegmentsDao.update(userKey: matchingKey, change: SegmentChange(segments: segments))
         let session = HttpSessionMock()
         streamingHelper = StreamingTestingHelper()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
@@ -76,7 +76,7 @@ class FlagSetsIntegrationTests: XCTestCase {
                         self.querystring = qstr
                     }
                 }
-                self.splitChangesHit+=1
+                self.splitChangesHit += 1
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
             }
 
@@ -109,7 +109,6 @@ class FlagSetsIntegrationTests: XCTestCase {
             }
 
             if request.isTelemetryUsageEndpoint() {
-
                 if !self.firstStats {
                     return TestDispatcherResponse(code: 200)
                 }
@@ -132,11 +131,13 @@ class FlagSetsIntegrationTests: XCTestCase {
                     if self.splitChangesHit > 0 {
                         self.pollingExps![self.splitChangesHit - 1].fulfill()
                     }
-                    self.splitChangesHit+=1
+                    self.splitChangesHit += 1
                     return TestDispatcherResponse(code: 200, data: change)
                 }
-                self.splitChangesHit+=1
-                return TestDispatcherResponse(code: 200, data: IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).dataBytes)
+                self.splitChangesHit += 1
+                return TestDispatcherResponse(
+                    code: 200,
+                    data: IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).dataBytes)
             }
 
             if request.isMySegmentsEndpoint() {
@@ -160,9 +161,9 @@ class FlagSetsIntegrationTests: XCTestCase {
 
     func testInitialQuerystring() throws {
         let syncConfig = SyncConfig.builder()
-                   .addSplitFilter(SplitFilter.bySet(["set_x", "set_x", "set_3"]))
-                   .addSplitFilter(SplitFilter.bySet(["set_2", "set_3", "set_ww", "invalid+"]))
-                   .build()
+            .addSplitFilter(SplitFilter.bySet(["set_x", "set_x", "set_3"]))
+            .addSplitFilter(SplitFilter.bySet(["set_2", "set_3", "set_ww", "invalid+"]))
+            .build()
 
         try bodyTest(syncConfig: syncConfig)
 
@@ -172,9 +173,9 @@ class FlagSetsIntegrationTests: XCTestCase {
     func testInitialQuerystringWithSpec() throws {
         Spec.flagsSpec = "1.1"
         let syncConfig = SyncConfig.builder()
-                   .addSplitFilter(SplitFilter.bySet(["set_x", "set_x", "set_3"]))
-                   .addSplitFilter(SplitFilter.bySet(["set_2", "set_3", "set_ww", "invalid+"]))
-                   .build()
+            .addSplitFilter(SplitFilter.bySet(["set_x", "set_x", "set_3"]))
+            .addSplitFilter(SplitFilter.bySet(["set_2", "set_3", "set_ww", "invalid+"]))
+            .build()
 
         try bodyTest(syncConfig: syncConfig)
 
@@ -182,11 +183,10 @@ class FlagSetsIntegrationTests: XCTestCase {
     }
 
     func testTotalAndInvalidFlagSetsTelemetry() throws {
-
         let syncConfig = SyncConfig.builder()
-                   .addSplitFilter(SplitFilter.bySet(["a", "_b", "a", "a", "c"]))
-                   .addSplitFilter(SplitFilter.bySet(["d", "_d"]))
-                   .build()
+            .addSplitFilter(SplitFilter.bySet(["a", "_b", "a", "a", "c"]))
+            .addSplitFilter(SplitFilter.bySet(["d", "_d"]))
+            .build()
 
         telemetryConfigExp = XCTestExpectation()
         try bodyTest(syncConfig: syncConfig, telemetryEnabled: true)
@@ -199,8 +199,7 @@ class FlagSetsIntegrationTests: XCTestCase {
     }
 
     func testTelemetryStats() throws {
-        
-        var expLatencies = Array.init(repeating: 0, count: 23)
+        var expLatencies = Array(repeating: 0, count: 23)
         expLatencies[0] = 1
 
         let syncConfig = SyncConfig.builder()
@@ -218,7 +217,6 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         client?.flush()
 
-
         wait(for: [telemetryStatsExp!], timeout: 3)
 
         destroyTest(client: client)
@@ -228,37 +226,46 @@ class FlagSetsIntegrationTests: XCTestCase {
         XCTAssertEqual(expLatencies, telemetryStatsSent?.methodLatencies?.treatmentsByFlagSets ?? [])
         XCTAssertEqual(expLatencies, telemetryStatsSent?.methodLatencies?.treatmentsWithConfigByFlagSet ?? [])
         XCTAssertEqual(expLatencies, telemetryStatsSent?.methodLatencies?.treatmentsWithConfigByFlagSets ?? [])
-
     }
 
     func testPollingWithSets() throws {
         loadSplitChangesFlagSetsJson()
         let session = HttpSessionMock()
         streamingHelper = StreamingTestingHelper()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPollingTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildPollingTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
 
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
 
-        pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 100, till: 100,
-                                                      sets1: ["set_1", "set_2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!,
+        pollingFlagSetsHits = [
+            getChangeFlagSetsJson(
+                since: 100,
+                till: 100,
+                sets1: ["set_1", "set_2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 200, till: 200,
-                                                      sets1: ["set_1"],
-                                                      sets2: ["set_2"],
-                                                      sets3: ["set_4"])!,
+            getChangeFlagSetsJson(
+                since: 200,
+                till: 200,
+                sets1: ["set_1"],
+                sets2: ["set_2"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 300, till: 300,
-                                                      sets1: ["set_3"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_2"])!
+            getChangeFlagSetsJson(
+                since: 300,
+                till: 300,
+                sets1: ["set_3"],
+                sets2: ["set_3"],
+                sets3: ["set_2"])!,
         ]
 
-        pollingExps = [XCTestExpectation(description: "EXP_P0"),
-                       XCTestExpectation(description: "EXP_P1"),
-                       XCTestExpectation(description: "EXP_P2")]
+        pollingExps = [
+            XCTestExpectation(description: "EXP_P0"),
+            XCTestExpectation(description: "EXP_P1"),
+            XCTestExpectation(description: "EXP_P2"),
+        ]
 
         IntegrationCoreDataHelper.observeChanges()
         let dbExp1 = IntegrationCoreDataHelper.getDbExp(count: 1, entity: .split, operation: CrudKey.insert)
@@ -314,25 +321,33 @@ class FlagSetsIntegrationTests: XCTestCase {
         loadSplitChangesFlagSetsJson()
         let session = HttpSessionMock()
         streamingHelper = StreamingTestingHelper()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPollingTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildPollingTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
 
-        pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 100, till: 100,
-                                                      sets1: ["set_1", "set_2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!,
+        pollingFlagSetsHits = [
+            getChangeFlagSetsJson(
+                since: 100,
+                till: 100,
+                sets1: ["set_1", "set_2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 200, till: 200,
-                                                      sets1: ["set_1"],
-                                                      sets2: ["set_2"],
-                                                      sets3: ["set_4"])!,
+            getChangeFlagSetsJson(
+                since: 200,
+                till: 200,
+                sets1: ["set_1"],
+                sets2: ["set_2"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 300, till: 300,
-                                                      sets1: ["set_3"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_2"],
-                                                      archived: [Status.active, Status.active, Status.archived])!
+            getChangeFlagSetsJson(
+                since: 300,
+                till: 300,
+                sets1: ["set_3"],
+                sets2: ["set_3"],
+                sets3: ["set_2"],
+                archived: [Status.active, Status.active, Status.archived])!,
         ]
 
         pollingExps = [XCTestExpectation(), XCTestExpectation(), XCTestExpectation()]
@@ -386,25 +401,33 @@ class FlagSetsIntegrationTests: XCTestCase {
         loadSplitChangesFlagSetsJson()
         let session = HttpSessionMock()
         streamingHelper = StreamingTestingHelper()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPollingTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildPollingTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
 
-        pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 100, till: 100,
-                                                      sets1: ["set_1", "set_20"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"],
-                                                      names: ["mauro_java", "sp1", "sp2"])!,
-                                getChangeFlagSetsJson(since: 200, till: 200,
-                                                      sets1: ["set_20"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"],
-                                                      names: ["mauro_java", "sp1", "sp2"])!,
-                                getChangeFlagSetsJson(since: 300, till: 300,
-                                                      sets1: [],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"],
-                                                      names: ["mauro_java", "sp1", "sp2"])!
+        pollingFlagSetsHits = [
+            getChangeFlagSetsJson(
+                since: 100,
+                till: 100,
+                sets1: ["set_1", "set_20"],
+                sets2: ["set_3"],
+                sets3: ["set_4"],
+                names: ["mauro_java", "sp1", "sp2"])!,
+            getChangeFlagSetsJson(
+                since: 200,
+                till: 200,
+                sets1: ["set_20"],
+                sets2: ["set_3"],
+                sets3: ["set_4"],
+                names: ["mauro_java", "sp1", "sp2"])!,
+            getChangeFlagSetsJson(
+                since: 300,
+                till: 300,
+                sets1: [],
+                sets2: ["set_3"],
+                sets3: ["set_4"],
+                names: ["mauro_java", "sp1", "sp2"])!,
         ]
 
         pollingExps = [XCTestExpectation(description: "EXP_P0"), XCTestExpectation(description: "EXP_P1")]
@@ -426,7 +449,6 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         let split1Change02 = testDb.splitDao.getAll().filter { $0.name == "mauro_java" }[0]
 
-
         let dbExp3Upd = IntegrationCoreDataHelper.getDbExp(count: 1, entity: .split, operation: CrudKey.update)
         streamingHelper.pushSplitsMessage(TestingData.escapedUpdateSplitsNotificationGzip(pcn: 200))
 
@@ -446,19 +468,25 @@ class FlagSetsIntegrationTests: XCTestCase {
         loadSplitChangesFlagSetsJson()
         let session = HttpSessionMock()
         streamingHelper = StreamingTestingHelper()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPollingTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildPollingTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
 
-        pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 1, till: 1,
-                                                      sets1: ["set_1", "set2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!,
+        pollingFlagSetsHits = [
+            getChangeFlagSetsJson(
+                since: 1,
+                till: 1,
+                sets1: ["set_1", "set2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 1, till: 1,
-                                                      sets1: ["set_1", "set_2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!
+            getChangeFlagSetsJson(
+                since: 1,
+                till: 1,
+                sets1: ["set_1", "set_2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
         ]
 
         pollingExps = [XCTestExpectation(description: "EXP_P0"), XCTestExpectation(description: "EXP_P1")]
@@ -475,7 +503,6 @@ class FlagSetsIntegrationTests: XCTestCase {
         wait(for: [dbExp1], timeout: 5)
 
         let split1Change01 = testDb.splitDao.getAll().filter { $0.name == "workm" }
-
 
         streamingHelper.pushKeepalive()
 
@@ -518,29 +545,39 @@ class FlagSetsIntegrationTests: XCTestCase {
         loadSplitChangesFlagSetsJson()
         let session = HttpSessionMock()
         streamingHelper = StreamingTestingHelper()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPollingTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildPollingTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
 
-        pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 1, till: 1,
-                                                      sets1: ["set_1", "set2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!,
+        pollingFlagSetsHits = [
+            getChangeFlagSetsJson(
+                since: 1,
+                till: 1,
+                sets1: ["set_1", "set2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 1, till: 1,
-                                                      sets1: ["set_1", "set_2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!,
+            getChangeFlagSetsJson(
+                since: 1,
+                till: 1,
+                sets1: ["set_1", "set_2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 4, till: 4,
-                                                      sets1: ["set_1", "set_2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!
+            getChangeFlagSetsJson(
+                since: 4,
+                till: 4,
+                sets1: ["set_1", "set_2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
         ]
 
-        pollingExps = [XCTestExpectation(description: "EXP_P0"), 
-                       XCTestExpectation(description: "EXP_P1"),
-                       XCTestExpectation(description: "EXP_P2")]
+        pollingExps = [
+            XCTestExpectation(description: "EXP_P0"),
+            XCTestExpectation(description: "EXP_P1"),
+            XCTestExpectation(description: "EXP_P2"),
+        ]
         IntegrationCoreDataHelper.observeChanges()
         let dbExp1 = IntegrationCoreDataHelper.getDbExp(count: 1, entity: .split, operation: CrudKey.insert)
 
@@ -587,29 +624,39 @@ class FlagSetsIntegrationTests: XCTestCase {
         loadSplitChangesFlagSetsJson()
         let session = HttpSessionMock()
         streamingHelper = StreamingTestingHelper()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPollingTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildPollingTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
 
-        pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 1, till: 1,
-                                                      sets1: ["set_1", "set2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!,
+        pollingFlagSetsHits = [
+            getChangeFlagSetsJson(
+                since: 1,
+                till: 1,
+                sets1: ["set_1", "set2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 1, till: 1,
-                                                      sets1: ["set_1", "set_2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!,
+            getChangeFlagSetsJson(
+                since: 1,
+                till: 1,
+                sets1: ["set_1", "set_2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 4, till: 4,
-                                                      sets1: ["set_1", "set_2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!
+            getChangeFlagSetsJson(
+                since: 4,
+                till: 4,
+                sets1: ["set_1", "set_2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
         ]
 
-        pollingExps = [XCTestExpectation(description: "EXP_P0"),
-                       XCTestExpectation(description: "EXP_P1"),
-                       XCTestExpectation(description: "EXP_P2")]
+        pollingExps = [
+            XCTestExpectation(description: "EXP_P0"),
+            XCTestExpectation(description: "EXP_P1"),
+            XCTestExpectation(description: "EXP_P2"),
+        ]
         IntegrationCoreDataHelper.observeChanges()
         let dbExp1 = IntegrationCoreDataHelper.getDbExp(count: 1, entity: .split, operation: CrudKey.insert)
 
@@ -646,19 +693,25 @@ class FlagSetsIntegrationTests: XCTestCase {
         loadSplitChangesFlagSetsJson()
         let session = HttpSessionMock()
         streamingHelper = StreamingTestingHelper()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPollingTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildPollingTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
 
-        pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 1, till: 1,
-                                                      sets1: ["p_set_1", "set2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!,
+        pollingFlagSetsHits = [
+            getChangeFlagSetsJson(
+                since: 1,
+                till: 1,
+                sets1: ["p_set_1", "set2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 1, till: 1,
-                                                      sets1: ["p_set_1", "set_2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!,
+            getChangeFlagSetsJson(
+                since: 1,
+                till: 1,
+                sets1: ["p_set_1", "set_2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
         ]
 
         pollingExps = [XCTestExpectation(description: "EXP_P0"), XCTestExpectation(description: "EXP_P1")]
@@ -673,7 +726,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
         var sdkUpdateFiredCount = 0
         client?.on(event: .sdkUpdated, runInBackground: true) {
-            sdkUpdateFiredCount+=1
+            sdkUpdateFiredCount += 1
         }
 
         // Wait for db update
@@ -708,19 +761,25 @@ class FlagSetsIntegrationTests: XCTestCase {
         loadSplitChangesFlagSetsJson()
         let session = HttpSessionMock()
         streamingHelper = StreamingTestingHelper()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPollingTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(
+            dispatcher: buildPollingTestDispatcher(),
+            streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
 
-        pollingFlagSetsHits = [ getChangeFlagSetsJson(since: 1, till: 1,
-                                                      sets1: ["set_1", "set_2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!,
+        pollingFlagSetsHits = [
+            getChangeFlagSetsJson(
+                since: 1,
+                till: 1,
+                sets1: ["set_1", "set_2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
 
-                                getChangeFlagSetsJson(since: 1, till: 1,
-                                                      sets1: ["set_1", "set_2"],
-                                                      sets2: ["set_3"],
-                                                      sets3: ["set_4"])!
+            getChangeFlagSetsJson(
+                since: 1,
+                till: 1,
+                sets1: ["set_1", "set_2"],
+                sets2: ["set_3"],
+                sets3: ["set_4"])!,
         ]
 
         pollingExps = [XCTestExpectation(description: "EXP_P0"), XCTestExpectation(description: "EXP_P1")]
@@ -769,10 +828,11 @@ class FlagSetsIntegrationTests: XCTestCase {
         destroyTest(client: client)
     }
 
-    private func startTest(syncConfig: SyncConfig?, 
-                           telemetryEnabled: Bool = false,
-                           refreshRate: Int = -1) throws -> SplitClient?  {
-        let splitConfig: SplitClientConfig = SplitClientConfig()
+    private func startTest(
+        syncConfig: SyncConfig?,
+        telemetryEnabled: Bool = false,
+        refreshRate: Int = -1) throws -> SplitClient? {
+        let splitConfig = SplitClientConfig()
         splitConfig.sdkReadyTimeOut = 6000
         splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.logLevel = .verbose
@@ -790,7 +850,7 @@ class FlagSetsIntegrationTests: XCTestCase {
             splitConfig.sync = syncConfig
         }
 
-        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let key = Key(matchingKey: matchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setTestDatabase(testDb)
         _ = builder.setHttpClient(httpClient)
@@ -808,7 +868,7 @@ class FlagSetsIntegrationTests: XCTestCase {
         }
 
         var expectations = [sdkReadyExpectation]
-        if let sseExp = self.sseExp {
+        if let sseExp = sseExp {
             expectations.append(sseExp)
         }
         wait(for: expectations, timeout: 5)
@@ -832,16 +892,14 @@ class FlagSetsIntegrationTests: XCTestCase {
         return TargetingRulesChange(featureFlags: change!, ruleBasedSegments: targetingRulesChange!.ruleBasedSegments)
     }
 
-    private func getChangeFlagSetsJson(since: Int64,
-                                       till: Int64,
-                                       sets1: [String],
-                                       sets2: [String],
-                                       sets3: [String],
-                                       archived: [String]? = nil,
-                                       names: [String] = ["SPLIT_1", "SPLIT_2", "SPLIT_3"]) -> Data? {
-
-        
-
+    private func getChangeFlagSetsJson(
+        since: Int64,
+        till: Int64,
+        sets1: [String],
+        sets2: [String],
+        sets3: [String],
+        archived: [String]? = nil,
+        names: [String] = ["SPLIT_1", "SPLIT_2", "SPLIT_3"]) -> Data? {
         let nameField1 = "{{SPLIT_NAME_1}}"
         let nameField2 = "{{SPLIT_NAME_2}}"
         let nameField3 = "{{SPLIT_NAME_3}}"
@@ -883,7 +941,7 @@ class FlagSetsIntegrationTests: XCTestCase {
 
     private func loadSplitChangesFlagSetsJson() {
         if let content = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_flagsets", type: "json") {
-           changeFlagSetsJson = content
+            changeFlagSetsJson = content
         }
     }
 
@@ -896,6 +954,7 @@ class FlagSetsIntegrationTests: XCTestCase {
     }
 
     func toJsonArray(stringArray: [String]) -> String {
-        return (try? JSONSerialization.data(withJSONObject: stringArray, options: .prettyPrinted))?.stringRepresentation ?? ""
+        return (try? JSONSerialization.data(withJSONObject: stringArray, options: .prettyPrinted))?
+            .stringRepresentation ?? ""
     }
 }

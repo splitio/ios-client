@@ -7,8 +7,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import Split
+import XCTest
 
 class HttpRequestManagerTests: XCTestCase {
     var reqManager: HttpRequestManager!
@@ -38,17 +38,24 @@ class HttpRequestManagerTests: XCTestCase {
             }
             notifications.append(info)
         }
-        
+
         for result in CredentialValidationResult.allCases {
-            manager.urlSession?(URLSession.shared, task: task, didReceive: dummyChallenge) {disposition,_ in
+            manager.urlSession?(URLSession.shared, task: task, didReceive: dummyChallenge) { disposition, _ in
                 results[result] = disposition
                 exp.fulfill()
             }
         }
         wait(for: [exp], timeout: 5.0)
 
-        let res2: [CredentialValidationResult] = [.error, .invalidChain, .credentialNotPinned, .spkiError,
-                                                  .invalidCredential, .invalidParameter, .unavailableServerTrust]
+        let res2: [CredentialValidationResult] = [
+            .error,
+            .invalidChain,
+            .credentialNotPinned,
+            .spkiError,
+            .invalidCredential,
+            .invalidParameter,
+            .unavailableServerTrust,
+        ]
 
         let res3: [CredentialValidationResult] = [.noServerTrustMethod, .noPinsForDomain]
 
@@ -75,12 +82,15 @@ class HttpRequestManagerTests: XCTestCase {
         let networkError = NSError(domain: NSURLErrorDomain, code: -1005, userInfo: nil)
 
         manager.addRequest(request)
-        manager.urlSession(URLSession.shared, task: URLTaskMock(taskIdentifier: taskId), didCompleteWithError: networkError)
+        manager.urlSession(
+            URLSession.shared,
+            task: URLTaskMock(taskIdentifier: taskId),
+            didCompleteWithError: networkError)
 
         XCTAssertNotNil(request.completedError)
         if let error = request.completedError as? HttpError {
             switch error {
-            case .clientRelated(let code, let internalCode):
+            case let .clientRelated(code, internalCode):
                 XCTAssertEqual(code, 400, "Error code should be 400")
                 XCTAssertEqual(internalCode, -1, "Internal code should be -1")
             default:
@@ -94,8 +104,9 @@ class HttpRequestManagerTests: XCTestCase {
     func createRequestManager() -> URLSessionTaskDelegate {
         pinChecker = PinCheckerMock()
         pinChecker.pinResults = CredentialValidationResult.allCases
-        return DefaultHttpRequestManager(pinChecker: pinChecker,
-                                         notificationHelper: notificationHelper)
+        return DefaultHttpRequestManager(
+            pinChecker: pinChecker,
+            notificationHelper: notificationHelper)
     }
 }
 
@@ -107,8 +118,7 @@ class URLTaskMock: URLSessionDataTask {
         super.init()
     }
 
-    override func resume() {
-    }
+    override func resume() {}
 
     override var taskIdentifier: Int {
         return _taskIdentifier
