@@ -146,15 +146,17 @@ jobs:
             -Dsonar.sources=Split
             -Dsonar.exclusions=**/Tests/**,**/*.generated.swift
             -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift
-            -Dsonar.scm.provider=git
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=300
-            ${{ github.event_name == 'pull_request' && format('-Dsonar.newCode.referenceBranch={0}', github.base_ref) || '-Dsonar.newCode.referenceBranch=master' }}
-            ${{ github.event_name == 'pull_request' && '-Dsonar.pullrequest.provider=github' || '' }}
-            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.github.repository={0}', github.repository) || '' }}
-            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0}', github.event.pull_request.number) || '' }}
-            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.branch={0}', github.head_ref) || '' }}
-            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.base={0}', github.base_ref) || '' }}
+            -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift
+            -Dsonar.new.code.ignore.list.patterns=**/*.generated.swift
+            -Dsonar.qualitygate.ignoreSmallChanges=false
+            -Dsonar.newCode.referenceBranch=${{ github.event.pull_request.base.ref }}
+            -Dsonar.pullrequest.provider=github
+            -Dsonar.pullrequest.github.repository=${{ github.repository }}
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+            -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
+            -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}
