@@ -142,6 +142,12 @@ jobs:
             -Dsonar.sources=Split
             -Dsonar.exclusions=**/Tests/**,**/*.generated.swift
             -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift
+            -Dsonar.scm.provider=git
+            -Dsonar.pullrequest.provider=github
+            -Dsonar.pullrequest.github.repository=${{ github.repository }}
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+            -Dsonar.pullrequest.branch=${{ github.head_ref }}
+            -Dsonar.pullrequest.base=${{ github.base_ref }}
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}
