@@ -1,14 +1,9 @@
 name: Build TvOS
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
-      - master
-      - development
-      - "*_baseline"
+      - "**"
 
 jobs:
   build:

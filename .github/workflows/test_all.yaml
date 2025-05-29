@@ -5,6 +5,10 @@ on:
     workflows: ["Sonar Scan"]
     types:
       - completed
+    branches:
+      - master
+      - development
+      - "*_baseline"
 
 jobs:
   test:
