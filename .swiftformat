@@ -1,10 +1,6 @@
 # SwiftFormat config compliant with Google Swift Guideline
 # https://google.github.io/swift/#control-flow-statements
 
-# Specify version used in a project
-
---swiftversion 5.0
-
 # Rules explicitly required by the guideline
 
 --rules                           \
@@ -24,8 +20,6 @@ hoistPatternLet,                  \
 indent,                           \
 leadingDelimiters,                \
 linebreakAtEndOfFile,             \
-markTypes,                        \
-organizeDeclarations,             \
 redundantInit,                    \
 redundantParens,                  \
 redundantPattern,                 \
@@ -33,8 +27,8 @@ redundantRawValues,               \
 redundantType,                    \
 redundantVoidReturnType,          \
 semicolons,                       \
-sortedImports,                    \
-sortedSwitchCases,                \
+sortImports,                    \
+sortSwitchCases,                \
 spaceAroundBraces,                \
 spaceAroundBrackets,              \
 spaceAroundComments,              \
@@ -55,15 +49,6 @@ void,                             \
 wrap,                             \
 wrapArguments,                    \
 wrapAttributes,                   \
-#
-#
-# Additional rules not mentioned in the guideline, but helping to keep the codebase clean 
-# Quoting the guideline: 
-# Common themes among the rules in this section are: 
-# avoid redundancy, avoid ambiguity, and prefer implicitness over explicitness
-# unless being explicit improves readability and/or reduces ambiguity.
-#
-#
 andOperator,                      \
 isEmpty,                          \
 redundantBackticks,               \
@@ -82,14 +67,14 @@ strongifiedSelf
 
 --extensionacl on-declarations
 --funcattributes prev-line
---indent 2
---maxwidth 100
+--indent 4
+--maxwidth 120
 --typeattributes prev-line
 --funcattributes prev-line
 --storedvarattrs prev-line
 --computedvarattrs prev-line
 --complexattrs prev-line
---voidtype tuple
+--voidtype void
 --wraparguments before-first
 --wrapparameters before-first
 --wrapcollections before-first
