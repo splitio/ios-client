@@ -97,7 +97,7 @@ class DefaultEvaluator: Evaluator {
         let matcher = prerequisitesMatcherFactory(split.prerequisites ?? [])
         if !matcher.evaluate(values: values, context: getContext()) {
             return EvaluationResult(treatment: defaultTreatment,
-                                    label: ImpressionsConstants.killed,
+                                    label: ImpressionsConstants.prerequisitesNotMet,
                                     changeNumber: changeNumber,
                                     configuration: split.configurations?[defaultTreatment],
                                     impressionsDisabled: split.isImpressionsDisabled())
