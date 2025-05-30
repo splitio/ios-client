@@ -36,7 +36,10 @@ class SplitManagerTest: XCTestCase {
         for i in 0...5 {
             expectedSplitNames.append("sample_feature\(i)")
         }
-        XCTAssertEqual(splits.count, 6, "Split count should be 6")
+        expectedSplitNames.append("always_on_if_prerequisite")
+        expectedSplitNames.append("rbs_test_flag")
+        
+        XCTAssertEqual(splits.count, 8, "Split count should be 8")
         XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), expectedSplitNames.joined(separator: ","), "Loaded splits names are not correct")
         
         let splitLowercase = manager.split(featureName: "sample_feature0")

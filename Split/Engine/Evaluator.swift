@@ -97,7 +97,7 @@ class DefaultEvaluator: Evaluator {
         let matcher = prerequisitesMatcherFactory(split.prerequisites ?? [])
         if !matcher.evaluate(values: values, context: getContext()) {
             return EvaluationResult(treatment: defaultTreatment,
-                                    label: ImpressionsConstants.killed,
+                                    label: ImpressionsConstants.prerequisitesNotMet,
                                     changeNumber: changeNumber,
                                     configuration: split.configurations?[defaultTreatment],
                                     impressionsDisabled: split.isImpressionsDisabled())
@@ -109,8 +109,6 @@ class DefaultEvaluator: Evaluator {
         if let rawAlgo = split.algo, let algo = Algorithm.init(rawValue: rawAlgo) {
             splitAlgo = algo
         }
-
-        let bucketKey = selectBucketKey(matchingKey: matchingKey, bucketingKey: bucketingKey)
 
         guard let conditions: [Condition] = split.conditions,
             let trafficAllocationSeed = split.trafficAllocationSeed,
@@ -170,9 +168,7 @@ class DefaultEvaluator: Evaluator {
     }
 
     private func selectBucketKey(matchingKey: String, bucketingKey: String?) -> String {
-        if let key = bucketingKey, !key.isEmpty() {
-            return key
-        }
+        if let key = bucketingKey, !key.isEmpty { return key }
         return matchingKey
     }
     
