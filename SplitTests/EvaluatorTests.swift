@@ -158,8 +158,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.algo = nil
         evaluator = customEvaluator(split: split)
@@ -174,8 +173,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.algo = 2
         evaluator = customEvaluator(split: split)
@@ -190,8 +188,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.algo = 2
         evaluator = customEvaluator(split: split)
@@ -213,8 +210,7 @@ class EvaluatorTests: XCTestCase {
         
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_traffic_alloc_50_default_rule_50") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         let splitName = split.name!
         split.algo = 2
@@ -258,8 +254,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         let attributes = ["atributo2": ["salamin"]]
         split.algo = 2
@@ -275,8 +270,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         let attributes = ["atributo1": "mila"]
         split.algo = 2
@@ -292,8 +286,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         let attributes = ["atribute": ["papapa"]]
         split.algo = 2
@@ -310,8 +303,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.trafficAllocation = 0
         split.algo = 2
@@ -339,8 +331,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.trafficAllocation = 100
         split.algo = 2
@@ -378,6 +369,21 @@ class EvaluatorTests: XCTestCase {
         treatment = result!.treatment
         XCTAssertEqual(treatment, "on", "Result should be 'on'")
     }
+    
+    func testNewFlag() {
+        var result: EvaluationResult!
+        var evaluator: Evaluator!
+        guard let split = loadSplit(splitName: "split_prerequisites_test") else {
+            XCTFail("Test flag not found"); return
+        }
+        
+//        evaluator = customEvaluator(split: split)
+//        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
+//        XCTAssertNotNil(result)
+//        XCTAssertEqual("t4_6", result?.treatment)
+//        XCTAssertNotNil(result?.configuration)
+//        XCTAssertEqual("default rule", result?.label)
+    }
 
     func testInLargeSegmentWhitelist() {
         inLargeSegmentWhiteListTest(key: matchingKey)
@@ -403,8 +409,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.algo = 2
         if (disabled != nil) {

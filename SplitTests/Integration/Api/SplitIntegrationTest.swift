@@ -193,6 +193,42 @@ class SplitIntegrationTests: XCTestCase {
         semaphore.wait()
         factory = nil
     }
+    
+    func testPrerequisitesTreatment() throws {
+
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 30
+        splitConfig.segmentsRefreshRate = 30
+        splitConfig.impressionRefreshRate = 30
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.trafficType = trafficType
+        splitConfig.eventsPerPush = 10
+        splitConfig.eventsQueueSize = 100
+        splitConfig.eventsPushRate = 999999
+        splitConfig.eventsFirstPushWindow = 999
+        splitConfig.logLevel = TestingHelper.testLogLevel
+        splitConfig.impressionsMode = "DEBUG"
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+
+        let key: Key = Key(matchingKey: "bilal@split.io", bucketingKey: nil)
+        let factory = DefaultSplitFactoryBuilder().setHttpClient(httpClient).setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        let client = factory?.client
+        let manager = factory?.manager
+
+        // SDK Ready
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        client?.on(event: SplitEvent.sdkReady) { sdkReadyExpectation.fulfill() }
+        wait(for: [sdkReadyExpectation], timeout: 5)
+
+        // Ensures healthy JSON data, tests SplitView and default treatment
+        XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "off")
+        XCTAssertEqual(manager?.split(featureName: "always_on_if_prerequisite")!.prerequisites![0].flagName, "rbs_test_flag")
+        XCTAssertEqual(manager?.split(featureName: "always_on_if_prerequisite")!.prerequisites![0].treatments[0], "v1")
+        
+        // Tests Prerequisites Filtering
+        XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "off")
+    }
 
     func testImpressionsCount() throws {
 
