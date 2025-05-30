@@ -16,7 +16,7 @@ class SplitIntegrationTests: XCTestCase {
     let matchingKey = "CUSTOMER_ID"
     let trafficType = "account"
     let kNeverRefreshRate = 9999999
-    var splitChange: SplitChange?
+    var splitChange: TargetingRulesChange?
     var serverUrl = "localhost"
     var trackReqIndex = 0
     var largeSegmentsError = false
@@ -54,9 +54,7 @@ class SplitIntegrationTests: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(
-                    TargetingRulesChange(featureFlags: self.splitChange!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1
-                ))))
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
             }
 
             if request.isMySegmentsEndpoint() {
@@ -222,12 +220,12 @@ class SplitIntegrationTests: XCTestCase {
         wait(for: [sdkReadyExpectation], timeout: 5)
 
         // Ensures healthy JSON data, tests SplitView and default treatment
-        XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "off")
+        XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "on")
         XCTAssertEqual(manager?.split(featureName: "always_on_if_prerequisite")!.prerequisites![0].flagName, "rbs_test_flag")
         XCTAssertEqual(manager?.split(featureName: "always_on_if_prerequisite")!.prerequisites![0].treatments[0], "v1")
         
         // Tests Prerequisites Filtering
-        XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "off")
+        XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "on")
     }
 
     func testImpressionsCount() throws {
@@ -365,16 +363,18 @@ class SplitIntegrationTests: XCTestCase {
     }
 
 
-    private func loadSplitsChangeFile() -> SplitChange? {
+    private func loadSplitsChangeFile() -> TargetingRulesChange? {
         let change = loadSplitChangeFile(name: "splitchanges_1")
-        change?.since = change?.till ?? -1
+        change?.featureFlags.since = change?.featureFlags.till ?? -1
+        change?.ruleBasedSegments.since = change?.ruleBasedSegments.till ?? -1
+
         return change
     }
 
-    private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
+    private func loadSplitChangeFile(name fileName: String) -> TargetingRulesChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
            let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
-            return change.featureFlags
+            return change
         }
         return nil
     }
