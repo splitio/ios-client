@@ -192,6 +192,38 @@ class SplitIntegrationTests: XCTestCase {
         factory = nil
     }
     
+    func testPrerequisites() throws {
+
+        // Setup
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 30
+        splitConfig.segmentsRefreshRate = 30
+        splitConfig.impressionRefreshRate = 30
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.trafficType = trafficType
+        splitConfig.eventsPerPush = 10
+        splitConfig.eventsQueueSize = 100
+        splitConfig.eventsPushRate = 999999
+        splitConfig.eventsFirstPushWindow = 999
+        splitConfig.logLevel = TestingHelper.testLogLevel
+        splitConfig.impressionsMode = "DEBUG"
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+
+        let key: Key = Key(matchingKey: "123", bucketingKey: nil)
+        let factory = DefaultSplitFactoryBuilder().setHttpClient(httpClient).setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        let client = factory?.client
+        let manager = factory?.manager
+
+        // Wait for SDK Ready..
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        client?.on(event: SplitEvent.sdkReady) { sdkReadyExpectation.fulfill() }
+        wait(for: [sdkReadyExpectation], timeout: 5)
+
+        // Test
+        XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "off")
+    }
+    
     func testPrerequisitesSplitView() throws {
 
         // Setup
