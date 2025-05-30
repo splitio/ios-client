@@ -17,7 +17,7 @@ class Murmur3HashingTest: XCTestCase {
                                "murmur3-sample-v4",
                                "murmur3-sample-v3",
                                "murmur3-sample-double-treatment-users"]
-        for file in files {  
+        for file in files {
             var data = CsvHelper.readDataFromCSV(sourceClass: self, fileName: file)
             data = CsvHelper.cleanRows(file: data!)
             let csvRows = CsvHelper.csv(data: data!)
