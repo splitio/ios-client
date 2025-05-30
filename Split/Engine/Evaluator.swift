@@ -110,8 +110,6 @@ class DefaultEvaluator: Evaluator {
             splitAlgo = algo
         }
 
-        let bucketKey = selectBucketKey(matchingKey: matchingKey, bucketingKey: bucketingKey)
-
         guard let conditions: [Condition] = split.conditions,
             let trafficAllocationSeed = split.trafficAllocationSeed,
             let seed = split.seed else {
