@@ -52,8 +52,11 @@ protocol Evaluator {
 }
 
 class DefaultEvaluator: Evaluator {
-    // Internal for testing purposes
-    var splitter: SplitterProtocol = Splitter.shared
+    
+    // For testing purposes
+    internal var splitter: SplitterProtocol = Splitter.shared
+    private var prerequisitesMatcherFactory: ([Prerequisite]) -> MatcherProtocol = { prerequisites in PrerequisitesMatcher(prerequisites) }
+    
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage: MySegmentsStorage
     private let myLargeSegmentsStorage: MySegmentsStorage?
@@ -72,15 +75,27 @@ class DefaultEvaluator: Evaluator {
     func evalTreatment(matchingKey: String, bucketingKey: String?,
                        splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
 
-        guard let split = splitsStorage.get(name: splitName),
-            split.status != .archived else {
-                Logger.w("The feature flag definition for '\(splitName)' has not been found")
-                return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
+        // 1. Guarantee Split exists & is active
+        guard let split = splitsStorage.get(name: splitName), split.status != .archived else {
+            Logger.w("The feature flag definition for '\(splitName)' has not been found")
+            return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
         }
-
+        
+        // 2. Guarantee is not killed
         let changeNumber = split.changeNumber ?? -1
-        let defaultTreatment  = split.defaultTreatment ?? SplitConstants.control
-        if let killed = split.killed, killed {
+        let defaultTreatment = split.defaultTreatment ?? SplitConstants.control
+        guard let killed = split.killed, !killed else {
+            return EvaluationResult(treatment: defaultTreatment, label: ImpressionsConstants.killed, changeNumber: changeNumber,
+                                    configuration: split.configurations?[defaultTreatment], impressionsDisabled: split.isImpressionsDisabled())
+        }
+        
+        // 3. Extract necessary info
+        let bucketKey = selectBucketKey(matchingKey: matchingKey, bucketingKey: bucketingKey)
+        let values = EvalValues(matchValue: matchingKey, matchingKey: matchingKey, bucketingKey: bucketKey, attributes: attributes)
+        
+        // 4. Evaluate Prerequisites
+        let matcher = prerequisitesMatcherFactory(split.prerequisites ?? [])
+        if !matcher.evaluate(values: values, context: getContext()) {
             return EvaluationResult(treatment: defaultTreatment,
                                     label: ImpressionsConstants.killed,
                                     changeNumber: changeNumber,
@@ -160,6 +175,12 @@ class DefaultEvaluator: Evaluator {
         }
         return matchingKey
     }
+    
+    #if DEBUG
+    internal func overridePrerequisitesMatcher(_ factory: @escaping ([Prerequisite]) -> MatcherProtocol) {
+        prerequisitesMatcherFactory = factory
+    }
+    #endif
 }
 
 private extension Split {
