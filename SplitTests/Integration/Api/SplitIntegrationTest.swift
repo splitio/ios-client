@@ -192,6 +192,7 @@ class SplitIntegrationTests: XCTestCase {
         factory = nil
     }
     
+    // MARK: Prerequisites
     func testPrerequisites() throws {
 
         // Setup
@@ -323,6 +324,7 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "off", "'\(user)' is excluded from the segment in the JSON, so it does not met the prerequisite, and should return 'off'")
     }
 
+    // MARK: Impressions
     func testImpressionsCount() throws {
 
         let splitConfig: SplitClientConfig = SplitClientConfig()
@@ -407,6 +409,7 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertTrue(readyFired)
     }
 
+    // MARK: Segments
     func testReadyMyLargeSegmentsEnabledWaitMls() throws {
         readyMySegmentsEnabledTest(waitMls: true)
     }
@@ -457,7 +460,7 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertTrue(timeOutFired == endpointError)
     }
 
-
+    //  MARK: Class Helpers
     private func loadSplitsChangeFile() -> TargetingRulesChange? {
         let change = loadSplitChangeFile(name: "splitchanges_1")
         change?.featureFlags.since = change?.featureFlags.till ?? -1
