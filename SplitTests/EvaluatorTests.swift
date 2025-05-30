@@ -369,21 +369,6 @@ class EvaluatorTests: XCTestCase {
         treatment = result!.treatment
         XCTAssertEqual(treatment, "on", "Result should be 'on'")
     }
-    
-    func testNewFlag() {
-        var result: EvaluationResult!
-        var evaluator: Evaluator!
-        guard let split = loadSplit(splitName: "split_prerequisites_test") else {
-            XCTFail("Test flag not found"); return
-        }
-        
-//        evaluator = customEvaluator(split: split)
-//        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: split.name!, attributes: nil)
-//        XCTAssertNotNil(result)
-//        XCTAssertEqual("t4_6", result?.treatment)
-//        XCTAssertNotNil(result?.configuration)
-//        XCTAssertEqual("default rule", result?.label)
-    }
 
     func testInLargeSegmentWhitelist() {
         inLargeSegmentWhiteListTest(key: matchingKey)
