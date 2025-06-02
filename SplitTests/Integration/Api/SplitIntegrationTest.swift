@@ -16,7 +16,7 @@ class SplitIntegrationTests: XCTestCase {
     let matchingKey = "CUSTOMER_ID"
     let trafficType = "account"
     let kNeverRefreshRate = 9999999
-    var splitChange: SplitChange?
+    var splitChange: TargetingRulesChange?
     var serverUrl = "localhost"
     var trackReqIndex = 0
     var largeSegmentsError = false
@@ -54,9 +54,7 @@ class SplitIntegrationTests: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(
-                    TargetingRulesChange(featureFlags: self.splitChange!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1
-                ))))
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.splitChange))
             }
 
             if request.isMySegmentsEndpoint() {
@@ -172,7 +170,7 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertEqual(SplitConstants.control, ts1?["NO_EXISTING_FEATURE1"])
         XCTAssertEqual(SplitConstants.control, ts1?["NO_EXISTING_FEATURE2"])
 
-        XCTAssertEqual(33, splits?.count)
+        XCTAssertEqual(35, splits?.count)
         XCTAssertNotNil(s1)
         XCTAssertNil(s2)
         XCTAssertNotNil(i1)
@@ -193,7 +191,140 @@ class SplitIntegrationTests: XCTestCase {
         semaphore.wait()
         factory = nil
     }
+    
+    // MARK: Prerequisites
+    func testPrerequisites() throws {
 
+        // Setup
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 30
+        splitConfig.segmentsRefreshRate = 30
+        splitConfig.impressionRefreshRate = 30
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.trafficType = trafficType
+        splitConfig.eventsPerPush = 10
+        splitConfig.eventsQueueSize = 100
+        splitConfig.eventsPushRate = 999999
+        splitConfig.eventsFirstPushWindow = 999
+        splitConfig.logLevel = TestingHelper.testLogLevel
+        splitConfig.impressionsMode = "DEBUG"
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+
+        let key: Key = Key(matchingKey: "123", bucketingKey: nil)
+        let factory = DefaultSplitFactoryBuilder().setHttpClient(httpClient).setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        let client = factory?.client
+        let manager = factory?.manager
+
+        // Wait for SDK Ready..
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        client?.on(event: SplitEvent.sdkReady) { sdkReadyExpectation.fulfill() }
+        wait(for: [sdkReadyExpectation], timeout: 5)
+
+        // Test
+        XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "off")
+    }
+    
+    func testPrerequisitesSplitView() throws {
+
+        // Setup
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 30
+        splitConfig.segmentsRefreshRate = 30
+        splitConfig.impressionRefreshRate = 30
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.trafficType = trafficType
+        splitConfig.eventsPerPush = 10
+        splitConfig.eventsQueueSize = 100
+        splitConfig.eventsPushRate = 999999
+        splitConfig.eventsFirstPushWindow = 999
+        splitConfig.logLevel = TestingHelper.testLogLevel
+        splitConfig.impressionsMode = "DEBUG"
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+
+        let key: Key = Key(matchingKey: "mauro@split.io", bucketingKey: nil)
+        let factory = DefaultSplitFactoryBuilder().setHttpClient(httpClient).setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        let client = factory?.client
+        let manager = factory?.manager
+
+        // Wait for SDK Ready..
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        client?.on(event: SplitEvent.sdkReady) { sdkReadyExpectation.fulfill() }
+        wait(for: [sdkReadyExpectation], timeout: 5)
+
+        // Test
+        XCTAssertEqual(manager?.split(featureName: "always_on_if_prerequisite")!.prerequisites![0].flagName, "rbs_test_flag")
+        XCTAssertEqual(manager?.split(featureName: "always_on_if_prerequisite")!.prerequisites![0].treatments[0], "v1")
+    }
+    
+    func testPrerequisitesTreatmentPass() throws {
+        
+        let user =  "bilal@split.io" // User IN segment
+
+        // Setup
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 30
+        splitConfig.segmentsRefreshRate = 30
+        splitConfig.impressionRefreshRate = 30
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.trafficType = trafficType
+        splitConfig.eventsPerPush = 10
+        splitConfig.eventsQueueSize = 100
+        splitConfig.eventsPushRate = 999999
+        splitConfig.eventsFirstPushWindow = 999
+        splitConfig.logLevel = TestingHelper.testLogLevel
+        splitConfig.impressionsMode = "DEBUG"
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+
+        let key: Key = Key(matchingKey: user, bucketingKey: nil)
+        let factory = DefaultSplitFactoryBuilder().setHttpClient(httpClient).setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        let client = factory?.client
+
+        // Wait for SDK Ready..
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        client?.on(event: SplitEvent.sdkReady) { sdkReadyExpectation.fulfill() }
+        wait(for: [sdkReadyExpectation], timeout: 5)
+        
+        // Test
+        XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "on", "'\(user)' is part of the segment in the JSON, so it met the prerequisite, therefore it should return 'on'")
+    }
+    
+    func testPrerequisitesTreatmentNotPass() throws {
+        
+        let user = "mauro@split.io" // User EXCLUDED from segment
+
+        // Setup
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 30
+        splitConfig.segmentsRefreshRate = 30
+        splitConfig.impressionRefreshRate = 30
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.trafficType = trafficType
+        splitConfig.eventsPerPush = 10
+        splitConfig.eventsQueueSize = 100
+        splitConfig.eventsPushRate = 999999
+        splitConfig.eventsFirstPushWindow = 999
+        splitConfig.logLevel = TestingHelper.testLogLevel
+        splitConfig.impressionsMode = "DEBUG"
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+
+        let key: Key = Key(matchingKey: user, bucketingKey: nil)
+        let factory = DefaultSplitFactoryBuilder().setHttpClient(httpClient).setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        let client = factory?.client
+
+        // Wait for SDK Ready..
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        client?.on(event: SplitEvent.sdkReady) { sdkReadyExpectation.fulfill() }
+        wait(for: [sdkReadyExpectation], timeout: 5)
+        
+        // Test
+        XCTAssertEqual(client?.getTreatment("always_on_if_prerequisite"), "off", "'\(user)' is excluded from the segment in the JSON, so it does not met the prerequisite, and should return 'off'")
+    }
+
+    // MARK: Impressions
     func testImpressionsCount() throws {
 
         let splitConfig: SplitClientConfig = SplitClientConfig()
@@ -278,6 +409,7 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertTrue(readyFired)
     }
 
+    // MARK: Segments
     func testReadyMyLargeSegmentsEnabledWaitMls() throws {
         readyMySegmentsEnabledTest(waitMls: true)
     }
@@ -328,17 +460,19 @@ class SplitIntegrationTests: XCTestCase {
         XCTAssertTrue(timeOutFired == endpointError)
     }
 
-
-    private func loadSplitsChangeFile() -> SplitChange? {
+    //  MARK: Class Helpers
+    private func loadSplitsChangeFile() -> TargetingRulesChange? {
         let change = loadSplitChangeFile(name: "splitchanges_1")
-        change?.since = change?.till ?? -1
+        change?.featureFlags.since = change?.featureFlags.till ?? -1
+        change?.ruleBasedSegments.since = change?.ruleBasedSegments.till ?? -1
+
         return change
     }
 
-    private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
+    private func loadSplitChangeFile(name fileName: String) -> TargetingRulesChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
            let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
-            return change.featureFlags
+            return change
         }
         return nil
     }

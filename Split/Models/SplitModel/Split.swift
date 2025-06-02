@@ -1,12 +1,10 @@
-//
-//  Split.swift
-//  Split
-//
 //  Created by Brian Sztamfater on 28/9/17.
-//
-//
 
 import Foundation
+
+// The JSON is -partially- parsed at startup to improve SDK ready times (for example "conditions" are left out).
+// After parsing just the strictly necesary stuff, it saves the complete JSON to finish parsing later.
+// Once .sdkReady is fired, it concurrently finishes parsing the rest (on SplitStorage.get())
 
 typealias Split = SplitDTO
 
@@ -25,10 +23,11 @@ class SplitDTO: NSObject, SplitBase, Codable {
     var configurations: [String: String]?
     var sets: Set<String>?
     var impressionsDisabled: Bool?
+    var prerequisites: [Prerequisite]?
 
     var json: String = ""
 
-    var isParsed = true
+    var isCompletelyParsed = true
 
     init(name: String, trafficType: String, status: Status, sets: Set<String>?, json: String, killed: Bool = false, impressionsDisabled: Bool = false) {
         self.name = name
@@ -37,7 +36,7 @@ class SplitDTO: NSObject, SplitBase, Codable {
         self.sets = sets
         self.json = json
         self.killed = killed
-        self.isParsed = false
+        self.isCompletelyParsed = false
         self.impressionsDisabled = impressionsDisabled
     }
 
@@ -56,5 +55,29 @@ class SplitDTO: NSObject, SplitBase, Codable {
         case configurations
         case sets
         case impressionsDisabled
+        case prerequisites
     }
+}
+
+@objc public class Prerequisite: NSObject, Codable {
+    @objc public var flagName: String
+    @objc public var treatments: [String]
+    
+    enum CodingKeys: String, CodingKey {
+        case flagName = "n"
+        case treatments = "ts"
+    }
+    
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.flagName = try container.decodeIfPresent(String.self, forKey: .flagName) ?? ""
+        self.treatments = try container.decodeIfPresent([String].self, forKey: .treatments) ?? []
+    }
+    
+    #if DEBUG
+    init(flagName: String, treatments: [String]) {
+        self.flagName = flagName
+        self.treatments = treatments
+    }
+    #endif
 }

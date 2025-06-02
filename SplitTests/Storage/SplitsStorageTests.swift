@@ -287,7 +287,7 @@ class SplitsStorageTest: XCTestCase {
         var splits = [Split]()
         for i in 0..<count {
             let split = Split(name: "s\(i)", trafficType: "t1", status: .active, sets: nil, json: "")
-            split.isParsed = true
+            split.isCompletelyParsed = true
             if let sets = sets {
                 sets.forEach { fset in
                     split.sets = fset.asSet()

@@ -150,7 +150,7 @@ class SplitTestHelper {
         var splits = [Split]()
         for i in 0..<count {
             let split = Split(name: "\(namePrefix)\(i)", trafficType: "tt_\(i)", status: .active, sets: nil, json: "")
-            split.isParsed = true
+            split.isCompletelyParsed = true
             splits.append(split)
         }
         return splits
@@ -178,7 +178,7 @@ class SplitTestHelper {
 
     static func newSplit(name: String, trafficType: String) -> Split {
         let split = Split(name: name, trafficType: trafficType, status: .active, sets: nil, json: "")
-        split.isParsed = true
+        split.isCompletelyParsed = true
         return split
     }
 }

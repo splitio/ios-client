@@ -43,10 +43,9 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         let matchingKey = "nico_test"
         let splitName = "FACUNDO_TEST"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual("on", result.treatment)
         XCTAssertNil(result.configuration)
@@ -57,10 +56,9 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         let matchingKey = "bla"
         let splitName = "FACUNDO_TEST"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
         XCTAssertNil(result.configuration)
@@ -71,10 +69,9 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         let matchingKey = "anyKey"
         let splitName = "FACUNDO_TEST"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
         XCTAssertNil(result.configuration)
@@ -85,10 +82,9 @@ class EvaluatorTests: XCTestCase {
     func testInSegmentTestKey() {
         var result: EvaluationResult!
         let splitName = "a_new_split_2"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
         XCTAssertNil(result.configuration)
@@ -100,24 +96,45 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         let matchingKey = "anyKey"
         let splitName = "OldTest"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual("off", result.treatment)
         XCTAssertNotNil(result.configuration)
         XCTAssertEqual(ImpressionsConstants.killed, result.label)
     }
     
+    func testPassingPrerequisites() {
+        
+        // This overrides the matcher-factory of the Evaluator, so we can inject the mock
+        (evaluator as! DefaultEvaluator).overridePrerequisitesMatcher( { _ in PrerequisitesMatcherMock(shouldPass: true) } )
+        
+        let result = try? evaluator.evalTreatment(matchingKey: "anyKey", bucketingKey: nil, splitName: "FACUNDO_TEST", attributes: nil)
+        
+        XCTAssertNotNil(result)
+        XCTAssertEqual("off", result!.treatment, "If all prerequisites are satisfied, the flag should keep evaluating and return the default treatment")
+    }
+    
+    func testNotPassingPrerequisites() {
+        
+        // This overrides the matcher-factory of the Evaluator, so we can inject the mock
+        (evaluator as! DefaultEvaluator).overridePrerequisitesMatcher( { _ in PrerequisitesMatcherMock(shouldPass: false) } )
+        
+        let result = try? evaluator.evalTreatment(matchingKey: "anyKey", bucketingKey: nil, splitName: "FACUNDO_TEST", attributes: nil)
+        
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result?.treatment, "off", "If any prerequisite is not satisfied, the flag should return the default treatment")
+        XCTAssertEqual(ImpressionsConstants.prerequisitesNotMet, result!.label, "If any prerequisite is not satisfied, the label should be 'prerequisitesNotMet'")
+    }
+    
     func testNotInSplit() {
         var result: EvaluationResult!
         let matchingKey = "anyKey"
         let splitName = "split_not_available_to_test_right_now"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual(SplitConstants.control, result.treatment)
         XCTAssertNil(result.configuration)
@@ -128,10 +145,9 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         let matchingKey = "anyKey"
         let splitName = "broken_split"
-        do {
-            result = try evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
-        } catch {
-        }
+        
+        result = try? evaluator.evalTreatment(matchingKey: matchingKey, bucketingKey: nil, splitName: splitName, attributes: nil)
+        
         XCTAssertNotNil(result)
         XCTAssertEqual(SplitConstants.control, result.treatment)
         XCTAssertNil(result.configuration)
@@ -142,8 +158,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.algo = nil
         evaluator = customEvaluator(split: split)
@@ -158,8 +173,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.algo = 2
         evaluator = customEvaluator(split: split)
@@ -174,8 +188,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.algo = 2
         evaluator = customEvaluator(split: split)
@@ -197,8 +210,7 @@ class EvaluatorTests: XCTestCase {
         
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_traffic_alloc_50_default_rule_50") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         let splitName = split.name!
         split.algo = 2
@@ -242,8 +254,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         let attributes = ["atributo2": ["salamin"]]
         split.algo = 2
@@ -259,8 +270,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         let attributes = ["atributo1": "mila"]
         split.algo = 2
@@ -276,8 +286,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         let attributes = ["atribute": ["papapa"]]
         split.algo = 2
@@ -294,8 +303,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.trafficAllocation = 0
         split.algo = 2
@@ -323,8 +331,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.trafficAllocation = 100
         split.algo = 2
@@ -387,8 +394,7 @@ class EvaluatorTests: XCTestCase {
         var result: EvaluationResult!
         var evaluator: Evaluator!
         guard let split = loadSplit(splitName: "split_sample_feature6") else {
-            XCTAssertTrue(false)
-            return
+            XCTFail("Test flag not found"); return
         }
         split.algo = 2
         if (disabled != nil) {
