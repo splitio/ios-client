@@ -180,8 +180,8 @@ class SplitTestHelper {
         
         let splitJSONExample = """
               {
-              "trafficTypeName":"account",
-              "name":"FACUNDO_TEST",
+              "trafficTypeName":"\(trafficType)",
+              "name": "\(name)\",
               "trafficAllocation":59,
               "trafficAllocationSeed":-2108186082,
               "seed":-1947050785,
