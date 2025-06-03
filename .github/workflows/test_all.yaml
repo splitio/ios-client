@@ -5,10 +5,7 @@ on:
     workflows: ["Sonar Scan"]
     types:
       - completed
-    branches:
-      - master
-      - development
-      - "*_baseline"
+    branches-ignore: []
 
 # Cancel in-progress runs when a new workflow with the same group is triggered
 concurrency:
