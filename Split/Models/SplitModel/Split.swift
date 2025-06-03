@@ -25,8 +25,8 @@ class SplitDTO: NSObject, SplitBase, Codable {
     var impressionsDisabled: Bool?
     var prerequisites: [Prerequisite]?
 
+    // SDK loading optimization
     var json: String = ""
-
     var isCompletelyParsed = true
 
     init(name: String, trafficType: String, status: Status, sets: Set<String>?, json: String, killed: Bool = false, impressionsDisabled: Bool = false) {

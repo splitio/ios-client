@@ -177,8 +177,127 @@ class SplitTestHelper {
     }
 
     static func newSplit(name: String, trafficType: String) -> Split {
-        let split = Split(name: name, trafficType: trafficType, status: .active, sets: nil, json: "")
-        split.isCompletelyParsed = true
+        
+        let splitJSONExample = """
+              {
+              "trafficTypeName":"\(trafficType)",
+              "name": "\(name)\",
+              "trafficAllocation":59,
+              "trafficAllocationSeed":-2108186082,
+              "seed":-1947050785,
+              "status":"ACTIVE",
+              "killed":false,
+              "defaultTreatment":"off",
+              "changeNumber":1506703262916,
+              "algo":2,
+              "conditions":[
+                            {
+                            "conditionType":"WHITELIST",
+                            "matcherGroup":{
+                            "combiner":"AND",
+                            "matchers":[
+                                        {
+                                        "keySelector":null,
+                                        "matcherType":"WHITELIST",
+                                        "negate":false,
+                                        "userDefinedSegmentMatcherData":null,
+                                        "whitelistMatcherData":{
+                                        "whitelist":[
+                                                     "nico_test",
+                                                     "othertest"
+                                                     ]
+                                        },
+                                        "unaryNumericMatcherData":null,
+                                        "betweenMatcherData":null,
+                                        "booleanMatcherData":null,
+                                        "dependencyMatcherData":null,
+                                        "stringMatcherData":null
+                                        }
+                                        ]
+                            },
+                            "partitions":[
+                                          {
+                                          "treatment":"on",
+                                          "size":100
+                                          }
+                                          ],
+                            "label":"whitelisted"
+                            },
+                            {
+                            "conditionType":"WHITELIST",
+                            "matcherGroup":{
+                            "combiner":"AND",
+                            "matchers":[
+                                        {
+                                        "keySelector":null,
+                                        "matcherType":"WHITELIST",
+                                        "negate":false,
+                                        "userDefinedSegmentMatcherData":null,
+                                        "whitelistMatcherData":{
+                                        "whitelist":[
+                                                     "bla"
+                                                     ]
+                                        },
+                                        "unaryNumericMatcherData":null,
+                                        "betweenMatcherData":null,
+                                        "booleanMatcherData":null,
+                                        "dependencyMatcherData":null,
+                                        "stringMatcherData":null
+                                        }
+                                        ]
+                            },
+                            "partitions":[
+                                          {
+                                          "treatment":"off",
+                                          "size":100
+                                          }
+                                          ],
+                            "label":"whitelisted"
+                            },
+                            {
+                            "conditionType":"ROLLOUT",
+                            "matcherGroup":{
+                            "combiner":"AND",
+                            "matchers":[
+                                        {
+                                        "keySelector":{
+                                        "trafficType":"account",
+                                        "attribute":null
+                                        },
+                                        "matcherType":"ALL_KEYS",
+                                        "negate":false,
+                                        "userDefinedSegmentMatcherData":null,
+                                        "whitelistMatcherData":null,
+                                        "unaryNumericMatcherData":null,
+                                        "betweenMatcherData":null,
+                                        "booleanMatcherData":null,
+                                        "dependencyMatcherData":null,
+                                        "stringMatcherData":null
+                                        }
+                                        ]
+                            },
+                            "partitions":[
+                                          {
+                                          "treatment":"on",
+                                          "size":0
+                                          },
+                                          {
+                                          "treatment":"off",
+                                          "size":100
+                                          },
+                                          {
+                                          "treatment":"visa",
+                                          "size":0
+                                          }
+                                          ],
+                            "label":"in segment all"
+                            }
+                            ]
+              }
+            """
+        
+        let split = Split(name: name, trafficType: trafficType, status: .active, sets: nil, json: splitJSONExample)
+        split.isCompletelyParsed = false
         return split
     }
 }

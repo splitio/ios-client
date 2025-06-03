@@ -75,6 +75,41 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertEqual(1, splits.keys.filter { return $0 == "added1"}.count)
         XCTAssertTrue(persistentStorage.updateCalled)
     }
+    
+    func testFetchTwiceParseOnce() {
+
+        persistentStorage.snapshot = getTestSnapshot()
+        splitsStorage.loadLocal()
+        
+        let split = newSplit(name: "TwiceTestSplit")
+        XCTAssertFalse(split.isCompletelyParsed, "A new Split shouln't be parsed yet")
+
+        let processedChange = ProcessedSplitChange(activeSplits: [split],
+                                                   archivedSplits: [],
+                                                   changeNumber: 999, updateTimestamp: 888)
+
+        _ = splitsStorage.update(splitChange: processedChange)
+        let splitGet = splitsStorage.get(name: "TwiceTestSplit")
+        
+        XCTAssert(splitGet!.isCompletelyParsed, "After getting it once, the Split it should be parsed")
+    }
+    
+    func testFetchCaseInsensitive() {
+
+        persistentStorage.snapshot = getTestSnapshot()
+        splitsStorage.loadLocal()
+        
+        let split = newSplit(name: "TwiceTestSplit")
+        XCTAssertFalse(split.isCompletelyParsed)
+
+        let processedChange = ProcessedSplitChange(activeSplits: [split],
+                                                   archivedSplits: [],
+                                                   changeNumber: 999, updateTimestamp: 888)
+
+        _ = splitsStorage.update(splitChange: processedChange)
+        _ = splitsStorage.get(name: "TwiceTestSplit")
+        XCTAssertNotNil(splitsStorage.getAll()["twicetestsplit"])
+    }
 
     func testUpdateEmptySplits() {
 

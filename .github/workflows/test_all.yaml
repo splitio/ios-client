@@ -1,14 +1,11 @@
 name: Build and Test iOS
 
 on:
-  workflow_run:
-    workflows: ["Sonar Scan"]
-    types:
-      - completed
+  pull_request:
     branches:
-      - master
-      - development
-      - "*_baseline"
+        - master
+        - development
+        - "*_baseline"
 
 # Cancel in-progress runs when a new workflow with the same group is triggered
 concurrency:

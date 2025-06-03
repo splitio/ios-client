@@ -57,7 +57,9 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func get(name: String) -> Split? {
-        guard let split = inMemorySplits.value(forKey: name.lowercased()) else {
+        let lowercasedName = name.lowercased()
+        
+        guard let split = inMemorySplits.value(forKey: lowercasedName) else {
             return nil
         }
         if !split.isCompletelyParsed {
@@ -66,7 +68,8 @@ class DefaultSplitsStorage: SplitsStorage {
                     parsed.conditions = [SplitHelper.createDefaultCondition()]
                 }
 
-                inMemorySplits.setValue(parsed, forKey: name)
+                parsed.isCompletelyParsed = true
+                inMemorySplits.setValue(parsed, forKey: lowercasedName)
                 return parsed
             }
             return nil
