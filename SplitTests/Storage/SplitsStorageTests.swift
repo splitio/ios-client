@@ -94,7 +94,7 @@ class SplitsStorageTest: XCTestCase {
         XCTAssert(splitGet!.isCompletelyParsed, "After getting it once, the Split it should be parsed")
     }
     
-    func testFetch() {
+    func testFetchCaseInsensitive() {
 
         persistentStorage.snapshot = getTestSnapshot()
         splitsStorage.loadLocal()
