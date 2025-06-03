@@ -99,8 +99,8 @@ class SplitManagerTest: XCTestCase {
                                                                changeNumber: 2, updateTimestamp: 200))
         let splits = manager.splits
         let names = manager.splitNames
-        XCTAssertEqual(splits.count, 7, "Added one feature flag count")
-        XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), "sample_feature0,sample_feature1,sample_feature2,sample_feature3,sample_feature4,sample_feature5,sample_feature6", "Added one feature flag name check")
+        XCTAssertEqual(splits.count, 9, "Added one feature flag count")
+        XCTAssertEqual(names.sorted().joined(separator: ",").lowercased(), "sample_feature0,sample_feature1,sample_feature2,sample_feature3,sample_feature4,sample_feature5,sample_feature6,always_on_if_prerequisite,rbs_test_flag","Added one feature flag name check")
     }
 
     func testEmptyName(){
