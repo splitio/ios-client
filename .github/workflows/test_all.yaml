@@ -1,13 +1,16 @@
 name: Build and Test iOS
 
 on:
-  push:
-    branches:
-      - master
   pull_request:
     branches:
-      - master
-      - development
+        - master
+        - development
+        - "*_baseline"
+
+# Cancel in-progress runs when a new workflow with the same group is triggered
+concurrency:
+  group: ${{ github.workflow }}-${{ github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   test:

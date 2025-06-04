@@ -11,6 +11,7 @@ import Foundation
 protocol PersistentMySegmentsStorage {
     func set(_ change: SegmentChange, forKey key: String)
     func getSnapshot(forKey key: String) -> SegmentChange?
+    func deleteAll()
 }
 
 class PersistentSegmentsStorage: PersistentMySegmentsStorage {
@@ -27,6 +28,10 @@ class PersistentSegmentsStorage: PersistentMySegmentsStorage {
 
     func getSnapshot(forKey key: String) -> SegmentChange? {
         return dao.getBy(userKey: key)
+    }
+
+    func deleteAll() {
+        dao.deleteAll()
     }
 }
 

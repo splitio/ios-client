@@ -53,12 +53,12 @@ class CdnByPassTest: XCTestCase {
 
     func testInit() {
         Spec.flagsSpec = "1.1"
-        performTest(expectedRequestUrl: "https://sdk.split.io/api/splitChanges?s=1.1&since=1200&sets=c,nset1,nset2&till=1200")
+        performTest(expectedRequestUrl: "https://sdk.split.io/api/splitChanges?s=1.1&since=1200&rbSince=-1&sets=c,nset1,nset2&till=1200")
     }
 
     func testInitWithoutSpec() {
         Spec.flagsSpec = ""
-        performTest(expectedRequestUrl: "https://sdk.split.io/api/splitChanges?since=1200&sets=c,nset1,nset2&till=1200")
+        performTest(expectedRequestUrl: "https://sdk.split.io/api/splitChanges?since=1200&rbSince=-1&sets=c,nset1,nset2&till=1200")
     }
 
     private func performTest(expectedRequestUrl: String) {
@@ -156,7 +156,9 @@ class CdnByPassTest: XCTestCase {
         change?.since = Int64(since)
         change?.till = Int64(till)
 //        let split = change?.splits[0]
-        return (try? Json.encodeToJson(change)) ?? ""
+        var targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+
+        return (try? Json.encodeToJson(targetingRulesChange)) ?? ""
     }
 
     private func loadChanges() {

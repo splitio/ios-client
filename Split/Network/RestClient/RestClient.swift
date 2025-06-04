@@ -56,6 +56,8 @@ class DefaultRestClient: SplitApiRestClient {
                     parameters: HttpParameters? = nil,
                     body: Data? = nil,
                     headers: HttpHeaders? = nil,
+                    customDecoder: ((Data) throws -> T)? = nil,
+                    customFailureHandler: ((Int) throws -> Error?)? = nil,
                     completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
 
         do {
@@ -73,13 +75,29 @@ class DefaultRestClient: SplitApiRestClient {
                 }
 
                 do {
-                    let parsedObject = try json.decode(T.self)
-                    completion(DataResult { return parsedObject })
+                    if let customDecoder = customDecoder {
+                        // Use the custom decoder if provided
+                        if let parsedObject = try json.decodeWith(customDecoder) {
+                            completion(DataResult { return parsedObject })
+                        } else {
+                            completion(DataResult { return nil })
+                        }
+                    } else {
+                        // Use the default decoder
+                        let parsedObject = try json.decode(T.self)
+                        completion(DataResult { return parsedObject })
+                    }
                 } catch {
                     completion(DataResult { throw error })
                 }
             case .failure:
                 completion(DataResult {
+                    // Try custom error handling first, then fall back to default
+                    if let customError = try customFailureHandler?(response.code) {
+                        throw customError
+                    }
+
+                    // Default error handling
                     if response.code == HttpCode.uriTooLong {
                         throw HttpError.uriTooLong
                     }
@@ -90,7 +108,13 @@ class DefaultRestClient: SplitApiRestClient {
                 })
             }
             }, errorHandler: { error in
-                completion(DataResult { throw error })
+                completion(DataResult {
+                    // Try custom error handling first, then fall back to the original error
+                    if let customError = try customFailureHandler?(error.code) {
+                        throw customError
+                    }
+                    throw error
+                })
             })
         } catch HttpError.couldNotCreateRequest(let message) {
             Logger.e("An error has ocurred while sending request: \(message)" )

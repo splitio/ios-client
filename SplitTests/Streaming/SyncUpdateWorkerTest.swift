@@ -20,15 +20,19 @@ class SyncUpdateWorkerTest: XCTestCase {
 
     var synchronizer: SynchronizerStub!
     var splitsStorage: SplitsStorageStub!
+    var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
     let userKey = IntegrationHelper.dummyUserKey
     var userKeyHash: String = ""
     var telemetryProducer: TelemetryStorageStub!
     var splitChangeProcessor: SplitChangeProcessorStub!
+    var ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessorStub!
 
     override func setUp() {
         userKeyHash = DefaultMySegmentsPayloadDecoder().hash(userKey: userKey)
         synchronizer = SynchronizerStub()
         splitsStorage = SplitsStorageStub()
+        ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
+        ruleBasedSegmentChangeProcessor = RuleBasedSegmentChangeProcessorStub()
         telemetryProducer = TelemetryStorageStub()
         _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [TestingHelper.createSplit(name: "split1")],
                                                                archivedSplits: [],
@@ -37,8 +41,11 @@ class SyncUpdateWorkerTest: XCTestCase {
         splitChangeProcessor = SplitChangeProcessorStub()
         splitsUpdateWorker = SplitsUpdateWorker(synchronizer: synchronizer,
                                                 splitsStorage: splitsStorage,
+                                                ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                 splitChangeProcessor: splitChangeProcessor,
-                                                featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoderMock(),
+                                                ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
+                                                featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoderMock(type: Split.self),
+                                                ruleBasedSegmentsPayloadDecoder: RuleBasedSegmentsPayloadDecoderMock(type: RuleBasedSegment.self),
                                                 telemetryProducer: telemetryProducer)
 
         splitKillWorker = SplitKillWorker(synchronizer: synchronizer, splitsStorage: splitsStorage)
@@ -46,7 +53,7 @@ class SyncUpdateWorkerTest: XCTestCase {
 
     func testSplitUpdateWorkerNoPayload() throws {
         splitsStorage.changeNumber = 10
-        let notification = SplitsUpdateNotification(changeNumber: 100)
+        let notification = TargetingRuleUpdateNotification(changeNumber: 100)
         let exp = XCTestExpectation(description: "exp")
         synchronizer.syncSplitsChangeNumberExp = exp
 
@@ -61,10 +68,12 @@ class SyncUpdateWorkerTest: XCTestCase {
         let exp = XCTestExpectation()
         telemetryProducer.recordUpdatesFromSseExp = exp
         splitsStorage.changeNumber = 10
-        let notification = SplitsUpdateNotification(changeNumber: 100,
+        var notification = TargetingRuleUpdateNotification(
+                                                    changeNumber: 100,
                                                     previousChangeNumber: 10,
                                                     definition: "fake_definition",
                                                     compressionType: .gzip)
+        notification.entityType = .splitUpdate
 
         try splitsUpdateWorker.process(notification: notification)
 
@@ -82,10 +91,11 @@ class SyncUpdateWorkerTest: XCTestCase {
 
         splitsStorage.changeNumber = 1000
         splitsStorage.updateSplitChangeCalled = false
-        let notification = SplitsUpdateNotification(changeNumber: 100,
+        var notification = TargetingRuleUpdateNotification(changeNumber: 100,
                                                     previousChangeNumber: 10,
                                                     definition: "fake_definition",
                                                     compressionType: .gzip)
+        notification.entityType = .splitUpdate
 
         try splitsUpdateWorker.process(notification: notification)
 

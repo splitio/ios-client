@@ -175,6 +175,7 @@ class StreamingControlTest: XCTestCase {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.since = 500
         change?.till = 1000
-        return (try? Json.encodeToJson(change)) ?? IntegrationHelper.emptySplitChanges
+        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        return (try? Json.encodeToJson(targetingRulesChange)) ?? IntegrationHelper.emptySplitChanges
     }
 }

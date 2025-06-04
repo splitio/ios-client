@@ -11,7 +11,7 @@ import Foundation
 protocol FeatureFlagsSynchronizer {
     func load()
     func synchronize()
-    func synchronize(changeNumber: Int64)
+    func synchronize(changeNumber: Int64?, rbsChangeNumber: Int64?)
     func startPeriodicSync()
     func stopPeriodicSync()
     func notifyKilled()
@@ -27,7 +27,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     private var splitsSyncWorker: RetryableSyncWorker!
     private let splitsFilterQueryString: String
     private let flagsSpec: String
-    private let syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
+    private let syncTaskByChangeNumberCatalog: ConcurrentDictionary<SplitsUpdateChangeNumber, RetryableSyncWorker>
     private let syncWorkerFactory: SyncWorkerFactory
     private let splitConfig: SplitClientConfig
     private let splitEventsManager: SplitEventsManager
@@ -39,8 +39,8 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
          storageContainer: SplitStorageContainer,
          syncWorkerFactory: SyncWorkerFactory,
          broadcasterChannel: SyncEventBroadcaster,
-         syncTaskByChangeNumberCatalog: ConcurrentDictionary<Int64, RetryableSyncWorker>
-        = ConcurrentDictionary<Int64, RetryableSyncWorker>(),
+         syncTaskByChangeNumberCatalog: ConcurrentDictionary<SplitsUpdateChangeNumber, RetryableSyncWorker>
+        = ConcurrentDictionary<SplitsUpdateChangeNumber, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
          flagsSpec: String,
          splitEventsManager: SplitEventsManager) {
@@ -100,25 +100,31 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         splitsSyncWorker.start()
     }
 
-    func synchronize(changeNumber: Int64) {
+    func synchronize(changeNumber: Int64? = nil, rbsChangeNumber: Int64? = nil) {
         if isDestroyed.value || !splitConfig.syncEnabled {
             return
         }
 
-        if changeNumber <= storageContainer.splitsStorage.changeNumber {
+        if let changeNumber, changeNumber <= storageContainer.splitsStorage.changeNumber {
             return
         }
 
-        if syncTaskByChangeNumberCatalog.value(forKey: changeNumber) == nil {
+        if let rbsChangeNumber, rbsChangeNumber <= storageContainer.ruleBasedSegmentsStorage.changeNumber {
+            return
+        }
+
+        let changeNumberConfig = SplitsUpdateChangeNumber(flags: changeNumber, rbs: rbsChangeNumber)
+
+        if syncTaskByChangeNumberCatalog.value(forKey: changeNumberConfig) == nil {
             let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
-            var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(changeNumber: changeNumber,
+            var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(changeNumber: changeNumberConfig,
                                                                              reconnectBackoffCounter: reconnectBackoff)
-            syncTaskByChangeNumberCatalog.setValue(worker, forKey: changeNumber)
+            syncTaskByChangeNumberCatalog.setValue(worker, forKey: changeNumberConfig)
             worker.start()
             worker.completion = {[weak self] success in
                 if let self = self, success {
                     self.broadcasterChannel.push(event: .syncExecuted)
-                    self.syncTaskByChangeNumberCatalog.removeValue(forKey: changeNumber)
+                    self.syncTaskByChangeNumberCatalog.removeValue(forKey: changeNumberConfig)
                 }
             }
         }
@@ -170,21 +176,24 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
     private func filterSplitsInCache() {
         let splitsStorage = storageContainer.persistentSplitsStorage
+        let generalInfoStorage = storageContainer.generalInfoStorage
         let currentSplitsQueryString = splitsFilterQueryString
 
-        let filterHasChanged = currentSplitsQueryString != splitsStorage.getFilterQueryString()
-        let flagsSpecHasChanged = flagsSpec != splitsStorage.getFlagsSpec()
+        let filterHasChanged = currentSplitsQueryString != generalInfoStorage.getSplitsFilterQueryString()
+        let flagsSpecHasChanged = flagsSpec != generalInfoStorage.getFlagSpec()
 
         // if neither the filter nor the flags spec have changed, we don't need to do anything
         if filterHasChanged || flagsSpecHasChanged {
             let splitsInCache = splitsStorage.getAll()
-            var toDelete = [String]()
 
             if flagsSpecHasChanged {
                 // when flagsSpec has changed, we delete everything
-                toDelete = splitsInCache.compactMap { $0.name }
+                splitsStorage.clear()
+                storageContainer.generalInfoStorage.setFlagSpec(flagsSpec: flagsSpec)
             } else if filterHasChanged {
+
                 // if the filter has changed, we need to delete according to it
+                var toDelete = [String]()
                 let filters = splitConfig.sync.filters
                 let namesToKeep = Set(filters.filter { $0.type == .byName }.flatMap { $0.values })
                 let prefixesToKeep = Set(filters.filter { $0.type == .byPrefix }.flatMap { $0.values })
@@ -203,11 +212,12 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
                         toDelete.append(splitName)
                     }
                 }
-            }
 
-            if toDelete.count > 0 {
-                splitsStorage.delete(splitNames: toDelete)
-                storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
+                if toDelete.count > 0 {
+                    splitsStorage.delete(splitNames: toDelete)
+                    storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
+                }
+                generalInfoStorage.setSplitsFilterQueryString(filterQueryString: currentSplitsQueryString)
             }
         }
     }

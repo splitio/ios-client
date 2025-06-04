@@ -20,6 +20,7 @@ protocol DaoProvider {
     var generalInfoDao: GeneralInfoDao { get }
     var attributesDao: AttributesDao { get }
     var uniqueKeyDao: UniqueKeyDao { get }
+    var ruleBasedSegmentDao: RuleBasedSegmentDao { get }
 }
 
 struct CoreDataDaoProviderMock: DaoProvider {
@@ -33,6 +34,7 @@ struct CoreDataDaoProviderMock: DaoProvider {
     var generalInfoDao: GeneralInfoDao = GeneralInfoDaoStub()
     var attributesDao: AttributesDao = AttributesDaoStub()
     var uniqueKeyDao: UniqueKeyDao = UniqueKeyDaoStub()
+    var ruleBasedSegmentDao: RuleBasedSegmentDao = RuleBasedSegmentDaoStub()
 }
 
 class SplitDatabaseStub: SplitDatabase {
@@ -47,6 +49,7 @@ class SplitDatabaseStub: SplitDatabase {
     var generalInfoDao: GeneralInfoDao
     var attributesDao: AttributesDao
     var uniqueKeyDao: UniqueKeyDao
+    var ruleBasedSegmentDao: RuleBasedSegmentDao
     
     init(daoProvider: DaoProvider) {
         self.eventDao = daoProvider.eventDao
@@ -59,5 +62,6 @@ class SplitDatabaseStub: SplitDatabase {
         self.attributesDao = daoProvider.attributesDao
         self.uniqueKeyDao = daoProvider.uniqueKeyDao
         self.hashedImpressionDao = daoProvider.hashedImpressionDao
+        self.ruleBasedSegmentDao = daoProvider.ruleBasedSegmentDao
     }
 }

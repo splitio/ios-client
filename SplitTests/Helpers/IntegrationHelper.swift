@@ -45,11 +45,11 @@ class IntegrationHelper {
     }
 
     static var emptySplitChanges: String {
-        return "{\"splits\":[], \"since\": 9567456937865, \"till\": 9567456937869 }"
+        return "{\"ff\": {\"d\":[], \"s\": 9567456937865, \"t\": 9567456937869 }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": -1 }}"
     }
 
     static func emptySplitChanges(since: Int, till: Int) -> String {
-        return "{\"splits\":[], \"since\": \(since), \"till\": \(till) }"
+        return "{\"ff\": {\"d\":[], \"s\": \(since), \"t\": \(till) }, \"rbs\": {\"d\":[], \"s\": \(since), \"t\": \(till) }}"
     }
 
 
@@ -167,7 +167,7 @@ class IntegrationHelper {
     static func getChanges(fileName: String) -> SplitChange? {
         var change: SplitChange?
         if let content = FileHelper.readDataFromFile(sourceClass: IntegrationHelper(), name: fileName, type: "json") {
-            change = try? Json.decodeFrom(json: content, to: SplitChange.self)
+            change = try? Json.decodeFrom(json: content, to: TargetingRulesChange.self).featureFlags
         }
         return change
     }
@@ -186,8 +186,8 @@ class IntegrationHelper {
 
     static func loadSplitChangeFile(name fileName: String) -> SplitChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
-            return change
+            let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            return change.featureFlags
         }
         return nil
     }

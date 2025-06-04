@@ -8,29 +8,23 @@
 
 import Foundation
 
-protocol SyncSplitsStorage {
+protocol SyncSplitsStorage: RolloutDefinitionsCache {
     func update(splitChange: ProcessedSplitChange) -> Bool
-    func clear()
 }
 
 protocol SplitsStorage: SyncSplitsStorage {
     var changeNumber: Int64 { get }
     var updateTimestamp: Int64 { get }
-    var splitsFilterQueryString: String { get }
-    var flagsSpec: String { get }
 
     func loadLocal()
     func get(name: String) -> Split?
     func getMany(splits: [String]) -> [String: Split]
     func getAll() -> [String: Split]
     func update(splitChange: ProcessedSplitChange) -> Bool
-    func update(filterQueryString: String)
     func update(bySetsFilter: SplitFilter?)
-    func update(flagsSpec: String)
     func updateWithoutChecks(split: Split)
     func isValidTrafficType(name: String) -> Bool
     func getCount() -> Int
-    func clear()
     func destroy()
 }
 
@@ -43,8 +37,6 @@ class DefaultSplitsStorage: SplitsStorage {
 
     private(set) var changeNumber: Int64 = -1
     private(set) var updateTimestamp: Int64 = -1
-    private(set) var splitsFilterQueryString: String = ""
-    private(set) var flagsSpec: String = ""
 
     init(persistentSplitsStorage: PersistentSplitsStorage,
          flagSetsCache: FlagSetsCache) {
@@ -62,21 +54,22 @@ class DefaultSplitsStorage: SplitsStorage {
         _ = processUpdated(splits: archived, active: false)
         changeNumber = snapshot.changeNumber
         updateTimestamp = snapshot.updateTimestamp
-        splitsFilterQueryString = snapshot.splitsFilterQueryString
-        flagsSpec = snapshot.flagsSpec
     }
 
     func get(name: String) -> Split? {
-        guard let split = inMemorySplits.value(forKey: name.lowercased()) else {
+        let lowercasedName = name.lowercased()
+        
+        guard let split = inMemorySplits.value(forKey: lowercasedName) else {
             return nil
         }
-        if !split.isParsed {
+        if !split.isCompletelyParsed {
             if let parsed = try? Json.decodeFrom(json: split.json, to: Split.self) {
                 if isUnsupportedMatcher(split: parsed) {
                     parsed.conditions = [SplitHelper.createDefaultCondition()]
                 }
 
-                inMemorySplits.setValue(parsed, forKey: name)
+                parsed.isCompletelyParsed = true
+                inMemorySplits.setValue(parsed, forKey: lowercasedName)
                 return parsed
             }
             return nil
@@ -105,18 +98,8 @@ class DefaultSplitsStorage: SplitsStorage {
         return updated || removed
     }
 
-    func update(filterQueryString: String) {
-        splitsFilterQueryString = filterQueryString
-        self.persistentStorage.update(filterQueryString: filterQueryString)
-    }
-
     func update(bySetsFilter filter: SplitFilter?) {
         self.persistentStorage.update(bySetsFilter: filter)
-    }
-
-    func update(flagsSpec: String) {
-        self.flagsSpec = flagsSpec
-        self.persistentStorage.update(flagsSpec: flagsSpec)
     }
 
     func updateWithoutChecks(split: Split) {
@@ -241,3 +224,5 @@ class BackgroundSyncSplitsStorage: SyncSplitsStorage {
         persistentStorage.clear()
     }
 }
+
+

@@ -41,7 +41,7 @@ class HttpClientTest: XCTestCase {
         let dummyChanges = Data(IntegrationHelper.emptySplitChanges(since: 1, till: 2).utf8)
         let expectation = XCTestExpectation(description: "complete req")
         _ = try httpClient.sendRequest(endpoint: factory.splitChangesEndpoint, parameters:["since": 100]).getResponse(completionHandler: { response in
-            splitsChange = try? response.result.value?.decode(SplitChange.self)
+            splitsChange = try? response.result.value?.decode(TargetingRulesChange.self)?.featureFlags
             expectation.fulfill()
         }, errorHandler: { error in })
 
@@ -60,8 +60,12 @@ class HttpClientTest: XCTestCase {
         var splitsChange: SplitChange? = nil
         let dummyChanges = Data(IntegrationHelper.emptySplitChanges(since: 1, till: 2).utf8)
         let expectation = XCTestExpectation(description: "complete req")
-        _ = try httpClient.sendRequest(endpoint: factory.splitChangesEndpoint, parameters: HttpParameters([HttpParameter(key: "s", value: "2.2"), HttpParameter(key: "since", value: 100)])).getResponse(completionHandler: { response in
-            splitsChange = try? response.result.value?.decode(SplitChange.self)
+        _ = try httpClient.sendRequest(endpoint: factory.splitChangesEndpoint,
+                                       parameters: HttpParameters([
+                                        HttpParameter(key: "s", value: "2.2"),
+                                        HttpParameter(key: "since", value: 100),
+                                        HttpParameter(key: "rbSince", value: 120)])).getResponse(completionHandler: { response in
+            splitsChange = try? response.result.value?.decode(TargetingRulesChange.self)?.featureFlags
             expectation.fulfill()
         }, errorHandler: { error in })
 
@@ -74,7 +78,7 @@ class HttpClientTest: XCTestCase {
         XCTAssertEqual(1, splitsChange?.since)
         XCTAssertEqual(2, splitsChange?.till)
         XCTAssertFalse(requestManager.request.method.isUpload)
-        XCTAssertEqual("https://sdk.split.io/api/splitChanges?s=2.2&since=100", requestManager.request.url.absoluteString)
+        XCTAssertEqual("https://sdk.split.io/api/splitChanges?s=2.2&since=100&rbSince=120", requestManager.request.url.absoluteString)
     }
 
     func testDataRequestError() throws {

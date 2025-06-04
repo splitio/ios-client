@@ -37,7 +37,7 @@ class SseHandlerTest: XCTestCase {
 
     func testIncomingSplitUpdate() {
         notificationParser.incomingNotification = IncomingNotification(type: .splitUpdate, jsonData: "dummy")
-        notificationParser.splitsUpdateNotification = SplitsUpdateNotification(changeNumber: -1 ,
+        notificationParser.splitsUpdateNotification = TargetingRuleUpdateNotification(changeNumber: -1 ,
                                                                                previousChangeNumber: nil,
                                                                                definition: nil,
                                                                                compressionType: nil)

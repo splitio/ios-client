@@ -14,8 +14,6 @@ class SplitsStorageTest: XCTestCase {
 
     let dummyChangeNumber: Int64 = 100
     let dummyUpdateTimestamp: Int64 = 1000
-    let dummyQs = "dummy=1"
-    let dummyFlagsSpec = "2.2"
     let kTestCount = 10
     var flagSetsCache: FlagSetsCacheMock!
 
@@ -48,14 +46,10 @@ class SplitsStorageTest: XCTestCase {
         let splits = splitsStorage.getAll()
         let changeNumber = splitsStorage.changeNumber
         let updateTimestamp = splitsStorage.updateTimestamp
-        let qs = splitsStorage.splitsFilterQueryString
-        let flagsSpec = splitsStorage.flagsSpec
 
         XCTAssertEqual(kTestCount, splits.count)
         XCTAssertEqual(dummyChangeNumber,changeNumber)
         XCTAssertEqual(dummyUpdateTimestamp, updateTimestamp)
-        XCTAssertEqual(dummyQs, qs)
-        XCTAssertEqual(dummyFlagsSpec, flagsSpec)
     }
 
     func testUpdateSplits() {
@@ -80,6 +74,41 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertEqual(1, splits.keys.filter { return $0 == "added"}.count)
         XCTAssertEqual(1, splits.keys.filter { return $0 == "added1"}.count)
         XCTAssertTrue(persistentStorage.updateCalled)
+    }
+    
+    func testFetchTwiceParseOnce() {
+
+        persistentStorage.snapshot = getTestSnapshot()
+        splitsStorage.loadLocal()
+        
+        let split = newSplit(name: "TwiceTestSplit")
+        XCTAssertFalse(split.isCompletelyParsed, "A new Split shouln't be parsed yet")
+
+        let processedChange = ProcessedSplitChange(activeSplits: [split],
+                                                   archivedSplits: [],
+                                                   changeNumber: 999, updateTimestamp: 888)
+
+        _ = splitsStorage.update(splitChange: processedChange)
+        let splitGet = splitsStorage.get(name: "TwiceTestSplit")
+        
+        XCTAssert(splitGet!.isCompletelyParsed, "After getting it once, the Split it should be parsed")
+    }
+    
+    func testFetchCaseInsensitive() {
+
+        persistentStorage.snapshot = getTestSnapshot()
+        splitsStorage.loadLocal()
+        
+        let split = newSplit(name: "TwiceTestSplit")
+        XCTAssertFalse(split.isCompletelyParsed)
+
+        let processedChange = ProcessedSplitChange(activeSplits: [split],
+                                                   archivedSplits: [],
+                                                   changeNumber: 999, updateTimestamp: 888)
+
+        _ = splitsStorage.update(splitChange: processedChange)
+        _ = splitsStorage.get(name: "TwiceTestSplit")
+        XCTAssertNotNil(splitsStorage.getAll()["twicetestsplit"])
     }
 
     func testUpdateEmptySplits() {
@@ -268,20 +297,6 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertFalse(resultOnNoChange)
     }
 
-    func testUpdateFlagsSpec() {
-        persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
-        
-        let initialFlagsSpec = splitsStorage.flagsSpec
-        splitsStorage.update(flagsSpec: "1.2")
-        
-        let updatedFlagsSpec = splitsStorage.flagsSpec
-        
-        XCTAssertTrue(persistentStorage.updateFlagsSpecCalled)
-        XCTAssertEqual(dummyFlagsSpec, initialFlagsSpec)
-        XCTAssertEqual("1.2", updatedFlagsSpec)
-    }
-
     func testUnsupportedMatcherHasDefaultCondition() {
         let split = unsupportedMatcherSplit()
 
@@ -307,7 +322,7 @@ class SplitsStorageTest: XCTestCase {
         var splits = [Split]()
         for i in 0..<count {
             let split = Split(name: "s\(i)", trafficType: "t1", status: .active, sets: nil, json: "")
-            split.isParsed = true
+            split.isCompletelyParsed = true
             if let sets = sets {
                 sets.forEach { fset in
                     split.sets = fset.asSet()
@@ -317,14 +332,12 @@ class SplitsStorageTest: XCTestCase {
         }
 
         return SplitsSnapshot(changeNumber: dummyChangeNumber, splits: splits,
-                              updateTimestamp: dummyUpdateTimestamp,
-                              splitsFilterQueryString: dummyQs,
-                              flagsSpec: dummyFlagsSpec)
+                              updateTimestamp: dummyUpdateTimestamp)
     }
 
     private func dummySnapshot() -> SplitsSnapshot {
         return SplitsSnapshot(changeNumber: dummyChangeNumber, splits: [],
-                              updateTimestamp: dummyUpdateTimestamp, splitsFilterQueryString: dummyQs, flagsSpec: dummyFlagsSpec)
+                              updateTimestamp: dummyUpdateTimestamp)
     }
 
     private func newSplit(name: String,

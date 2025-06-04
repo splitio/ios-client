@@ -25,10 +25,6 @@ class BaseMatcher: NSObject {
         return self.negate ?? false
     }
 
-    func hasAttribute() -> Bool {
-        return self.attribute != nil
-    }
-
     func getAttribute() -> String? {
         return self.attribute
     }

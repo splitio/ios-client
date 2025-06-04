@@ -1,6 +1,6 @@
 
-{
-    "splits": [
+{"ff":{
+    "d": [
         {
             "trafficTypeName": "client",
             "name": "workm",
@@ -171,6 +171,6 @@
             ]
         }
     ],
-    "since": <FIELD_SINCE>,
-    "till": <FIELD_TILL>
-}
+    "s": <FIELD_SINCE>,
+    "t": <FIELD_TILL>
+}, "rbs": {"s": -1, "t": -1, "d": []}}

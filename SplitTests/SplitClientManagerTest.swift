@@ -108,6 +108,7 @@ class SplitClientManagerTest: XCTestCase {
                                              apiFacade: apiFacade,
                                              byKeyFacade: byKeyFacade,
                                              storageContainer: storageContainer,
+                                             rolloutCacheManager: DefaultRolloutCacheManager(generalInfoStorage: storageContainer.generalInfoStorage, rolloutCacheConfiguration: config.rolloutCacheConfiguration ?? RolloutCacheConfiguration.builder().build(), storages: storageContainer.splitsStorage, storageContainer.mySegmentsStorage, storageContainer.myLargeSegmentsStorage),
                                              syncManager: syncManager,
                                              synchronizer: synchronizer,
                                              eventsTracker: EventsTrackerStub(),

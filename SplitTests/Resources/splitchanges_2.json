@@ -1,5 +1,5 @@
-{
-    "splits":[
+{"ff": {
+    "d":[
               {
               "trafficTypeName":"account",
               "name":"FACUNDO_TEST",
@@ -128,4 +128,4 @@
     ],
     "since":-1,
     "till":1506703262916
-}
+}, "rbs": {"s":-1,"t":-1,"d":[]}}

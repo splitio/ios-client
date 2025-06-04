@@ -41,6 +41,7 @@ import Foundation
                 splitView.trafficType = split.trafficTypeName
                 splitView.defaultTreatment = split.defaultTreatment
                 splitView.killed = split.killed
+                splitView.prerequisites = split.prerequisites ?? []
                 splitView.sets = Array(split.sets ?? [])
                 splitView.configs = split.configurations ?? [String: String]()
                 splitView.impressionsDisabled = split.impressionsDisabled ?? false

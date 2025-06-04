@@ -108,7 +108,7 @@ struct TestingHelper {
                             sets: Set<String>? = nil) -> Split {
 
         let split = Split(name: name, trafficType: trafficType, status: status, sets: sets, json: "")
-        split.isParsed = true
+        split.isCompletelyParsed = true
         return split
     }
 
@@ -116,7 +116,7 @@ struct TestingHelper {
         var splits = [Split]()
         for i in 0..<10 {
             let split = Split(name: "feat_\(i)", trafficType: "tt_\(i)", status: .active, sets: nil, json: "")
-            split.isParsed = true
+            split.isCompletelyParsed = true
             splits.append(split)
         }
         return splits
@@ -195,7 +195,10 @@ struct TestingHelper {
                                      uniqueKeyStorage: PersistentUniqueKeyStorageStub(),
                                      flagSetsCache: FlagSetsCacheMock(),
                                      persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
-                                     hashedImpressionsStorage: HashedImpressionsStorageMock())
+                                     hashedImpressionsStorage: HashedImpressionsStorageMock(),
+                                     generalInfoStorage: GeneralInfoStorageMock(),
+                                     ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
+                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
     }
 
     static func createApiFacade() -> SplitApiFacade {
@@ -269,8 +272,11 @@ struct TestingHelper {
         let msChange = SegmentChange(segments: ms, changeNumber: msCn)
         let mlsChange = SegmentChange(segments: mls, changeNumber: mlsCn)
         return try! Json.encodeToJson(newAllSegmentsChange(msChange: msChange, mlsChange: mlsChange))
-
-
     }
 
+    static func createRuleBasedSegment(name: String = "test_rbs", trafficTypeName: String = "user", changeNumber: Int64 = 1000, status: Status = .active, conditions: [Condition]? = nil, excluded: Excluded? = nil) -> RuleBasedSegment {
+        let segment = RuleBasedSegment(name: name, trafficTypeName: trafficTypeName, changeNumber: changeNumber, status: status, conditions: conditions, excluded: excluded)
+        segment.isParsed = true
+        return segment
+    }
 }

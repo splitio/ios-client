@@ -11,12 +11,8 @@ import Foundation
 protocol PersistentSplitsStorage {
     func update(splitChange: ProcessedSplitChange)
     func update(split: Split)
-    func update(filterQueryString: String)
-    func update(flagsSpec: String)
     func update(bySetsFilter: SplitFilter?)
-    func getFilterQueryString() -> String
     func getBySetsFilter() -> SplitFilter?
-    func getFlagsSpec() -> String
     func getSplitsSnapshot() -> SplitsSnapshot
     func getChangeNumber() -> Int64
     func getUpdateTimestamp() -> Int64
@@ -93,8 +89,7 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
     func getSplitsSnapshot() -> SplitsSnapshot {
         return SplitsSnapshot(changeNumber: generalInfoDao.longValue(info: .splitsChangeNumber) ?? -1,
                               splits: splitDao.getAll(),
-                              updateTimestamp: generalInfoDao.longValue(info: .splitsUpdateTimestamp) ?? 0,
-                              splitsFilterQueryString: getFilterQueryString(), flagsSpec: getFlagsSpec())
+                              updateTimestamp: generalInfoDao.longValue(info: .splitsUpdateTimestamp) ?? 0)
     }
 
     func getChangeNumber() -> Int64 {

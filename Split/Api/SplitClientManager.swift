@@ -44,6 +44,7 @@ class DefaultClientManager: SplitClientManager {
          apiFacade: SplitApiFacade,
          byKeyFacade: ByKeyFacade,
          storageContainer: SplitStorageContainer,
+         rolloutCacheManager: RolloutCacheManager,
          syncManager: SyncManager,
          synchronizer: Synchronizer,
          eventsTracker: EventsTracker,
@@ -66,7 +67,8 @@ class DefaultClientManager: SplitClientManager {
         self.telemetryProducer = storageContainer.telemetryStorage
         self.evaluator = DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
                                           mySegmentsStorage: storageContainer.mySegmentsStorage,
-                                          myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage)
+                                          myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
+                                          ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage)
 
         self.telemetryStopwatch = telemetryStopwatch
 
@@ -98,7 +100,13 @@ class DefaultClientManager: SplitClientManager {
             }
         }
 
-        syncManager.start()
+        rolloutCacheManager.validateCache { [weak self] in
+            guard let self = self else {
+                return
+            }
+            Logger.v("Cache validated; starting sync manager")
+            self.syncManager.start()
+        }
     }
 
     func get(forKey key: Key) -> SplitClient {

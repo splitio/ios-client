@@ -18,7 +18,7 @@ class FetchSpecificSplitsTest: XCTestCase {
     var httpClient: HttpClient!
     var streamingBinding: TestStreamResponseBinding?
 
-    var splitChange: SplitChange?
+    var splitChange: TargetingRulesChange?
     var serverUrl = "localhost"
     var splitsRequestUrl = "localhost"
     var lastChangeNumber = 0
@@ -39,21 +39,21 @@ class FetchSpecificSplitsTest: XCTestCase {
         .addSplitFilter(SplitFilter.byName(["s1", "s2", "s3"]))
         .addSplitFilter(SplitFilter.byPrefix(["s1", "s2", "s3"]))
         .build()
-        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&names=s1,s2,s3&prefixes=s1,s2,s3")
+        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&rbSince=-1&names=s1,s2,s3&prefixes=s1,s2,s3")
     }
 
     func testByNamesFilter() {
         let syncConfig = SyncConfig.builder()
         .addSplitFilter(SplitFilter.byName(["s1", "s2", "s3"]))
         .build()
-        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&names=s1,s2,s3")
+        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&rbSince=-1&names=s1,s2,s3")
     }
 
     func testByPrefixFilter() {
         let syncConfig = SyncConfig.builder()
         .addSplitFilter(SplitFilter.byPrefix(["s1", "s2", "s3"]))
         .build()
-        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&prefixes=s1,s2,s3")
+        urlQueryStringTest(syncConfig: syncConfig, expectedResult: "/splitChanges?s=\(Spec.flagsSpec)&since=-1&rbSince=-1&prefixes=s1,s2,s3")
     }
 
 
@@ -102,14 +102,14 @@ class FetchSpecificSplitsTest: XCTestCase {
         factory = nil
     }
     
-    private func loadSplitsChangeFile() -> SplitChange? {
+    private func loadSplitsChangeFile() -> TargetingRulesChange? {
         return loadSplitChangeFile(name: "splitchanges_1")
     }
     
-    private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
+    private func loadSplitChangeFile(name fileName: String) -> TargetingRulesChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
-            self.lastChangeNumber = Int(change.till)
+           let change: TargetingRulesChange = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            self.lastChangeNumber = Int(change.featureFlags.till)
             return change
         }
         return nil
@@ -119,7 +119,6 @@ class FetchSpecificSplitsTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
-                //self.splitsRequestUrl = String(request.url.absoluteString.suffix(request.url.absoluteString.count - 17))
                 self.splitsRequestUrl = String(request.url.absoluteString)
                 let since = self.lastChangeNumber
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))

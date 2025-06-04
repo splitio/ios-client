@@ -13,6 +13,12 @@ import Foundation
     var since: Int64
     var till: Int64
 
+    enum CodingKeys: String, CodingKey {
+        case splits = "d"
+        case since = "s"
+        case till = "t"
+    }
+
     init(splits: [Split], since: Int64, till: Int64) {
         self.splits = splits
         self.since = since

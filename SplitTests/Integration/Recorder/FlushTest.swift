@@ -13,7 +13,7 @@ class FlushTests: XCTestCase {
     
     let kNeverRefreshRate = 9999999
     var httpClient: HttpClient!
-    var splitChange: SplitChange?
+    var splitChange: TargetingRulesChange?
     var serverUrl = "localhost"
     var streamingBinding: TestStreamResponseBinding?
     let sseExp = XCTestExpectation(description: "Sse conn")
@@ -158,15 +158,16 @@ class FlushTests: XCTestCase {
         return nil
     }
 
-    private func loadSplitsChangeFile() -> SplitChange? {
+    private func loadSplitsChangeFile() -> TargetingRulesChange? {
         return loadSplitChangeFile(name: "splitchanges_1")
     }
 
-    private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
+    private func loadSplitChangeFile(name fileName: String) -> TargetingRulesChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-            let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
-            change.till = Int64(Int(change.since))
-            return change
+           let targetingRulesChange = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            let flagsChange = targetingRulesChange.featureFlags
+            flagsChange.till = Int64(Int(flagsChange.since))
+            return TargetingRulesChange(featureFlags: flagsChange, ruleBasedSegments: targetingRulesChange.ruleBasedSegments)
         }
         return nil
     }

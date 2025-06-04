@@ -21,7 +21,7 @@ class SplitHelper {
         split.trafficAllocation = 100
         split.trafficAllocationSeed = 1
         split.seed = 1
-        split.isParsed = true
+        split.isCompletelyParsed = true
         return split
     }
 

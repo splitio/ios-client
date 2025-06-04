@@ -123,7 +123,7 @@ class SplitChangesTest: XCTestCase {
         semaphore.wait()
     }
 
-    private func  responseSlitChanges() -> [SplitChange] {
+    private func  responseSplitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
 
         var prevChangeNumber: Int64 = 0
@@ -149,10 +149,11 @@ class SplitChangesTest: XCTestCase {
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
 
-        let respData = responseSlitChanges()
+        let respData = responseSplitChanges()
         var responses = [TestDispatcherResponse]()
         for data in respData {
-            responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(data).utf8)))
+            let rData = TargetingRulesChange(featureFlags: data, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+            responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(rData).utf8)))
         }
 
         return { request in

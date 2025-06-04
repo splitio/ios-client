@@ -19,6 +19,7 @@ protocol Synchronizer: ImpressionLogger {
     func loadAttributesFromCache(forKey key: String)
     func syncAll()
     func synchronizeSplits(changeNumber: Int64)
+    func synchronizeRuleBasedSegments(changeNumber: Int64)
     func synchronizeMySegments(forKey key: String)
     func synchronizeTelemetryConfig()
     func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64)
@@ -123,7 +124,13 @@ class DefaultSynchronizer: Synchronizer {
 
     func synchronizeSplits(changeNumber: Int64) {
         runIfSyncEnabled {
-            self.featureFlagsSynchronizer.synchronize(changeNumber: changeNumber)
+            self.featureFlagsSynchronizer.synchronize(changeNumber: changeNumber, rbsChangeNumber: nil)
+        }
+    }
+
+    func synchronizeRuleBasedSegments(changeNumber: Int64) {
+        runIfSyncEnabled {
+            self.featureFlagsSynchronizer.synchronize(changeNumber: nil, rbsChangeNumber: changeNumber)
         }
     }
 

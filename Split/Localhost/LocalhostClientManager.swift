@@ -48,7 +48,8 @@ class LocalhostClientManager: SplitClientManager {
 
         self.evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
                                           mySegmentsStorage: EmptyMySegmentsStorage(),
-                                          myLargeSegmentsStorage: EmptyMySegmentsStorage())
+                                          myLargeSegmentsStorage: EmptyMySegmentsStorage(),
+                                          ruleBasedSegmentsStorage: nil)
 
         defaultClient = client(forKey: key)
 

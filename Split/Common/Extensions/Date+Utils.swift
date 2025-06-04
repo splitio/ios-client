@@ -52,6 +52,10 @@ extension Date {
         return Date.nowMillis() - millis
     }
 
+    static func secondsToDays(seconds: Int64) -> Int64 {
+        return seconds / 86400
+    }
+
     private static var formatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd-MM-yyyy HH:mm:ss.SSS"

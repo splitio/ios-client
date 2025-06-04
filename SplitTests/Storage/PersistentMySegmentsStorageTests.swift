@@ -73,5 +73,13 @@ class PersistentMySegmentsStorageTests: XCTestCase {
 
         XCTAssertNil(segments?.segments.count)
     }
+
+    func testDeleteAllCallsDeleteAllOnDao() {
+        let initialDeleteAllCalled = mySegmentsDao.deleteAllCalled
+        mySegmentsStorage.deleteAll()
+        let finalDeleteAllCalled = mySegmentsDao.deleteAllCalled
+        XCTAssertFalse(initialDeleteAllCalled)
+        XCTAssertTrue(finalDeleteAllCalled)
+    }
 }
 

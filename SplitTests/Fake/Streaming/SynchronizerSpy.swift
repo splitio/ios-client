@@ -20,6 +20,7 @@ class SynchronizerSpy: Synchronizer {
     var syncAllCalled = false
     var synchronizeSplitsCalled = false
     var synchronizeSplitsChangeNumberCalled = false
+    var synchronizeRuleBasedSegmentsCalled = false
     var synchronizeMySegmentsCalled = false
     var synchronizeMyLargeSegmentsCalled = false
     var forceMySegmentsCalledCount = 0
@@ -36,6 +37,7 @@ class SynchronizerSpy: Synchronizer {
 
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
+    var syncRuleBasedSegmentsExp: XCTestExpectation?
 
     var startPeriodicFetchingExp: XCTestExpectation?
     var stopPeriodicFetchingExp: XCTestExpectation?
@@ -173,6 +175,14 @@ class SynchronizerSpy: Synchronizer {
         synchronizeSplitsChangeNumberCalled = true
         splitSynchronizer.synchronizeSplits(changeNumber: changeNumber)
         if let exp = syncSplitsChangeNumberExp {
+            exp.fulfill()
+        }
+    }
+
+    func synchronizeRuleBasedSegments(changeNumber: Int64) {
+        synchronizeRuleBasedSegmentsCalled = true
+        splitSynchronizer.synchronizeRuleBasedSegments(changeNumber: changeNumber)
+        if let exp = syncRuleBasedSegmentsExp {
             exp.fulfill()
         }
     }

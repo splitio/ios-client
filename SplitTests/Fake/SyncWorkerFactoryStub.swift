@@ -30,7 +30,7 @@ class SyncWorkerFactoryStub: SyncWorkerFactory {
     private var retryableWorkerIndex = -1
     var retryableSplitsUpdateWorkers: [RetryableSyncWorker] = [RetryableSyncWorkerStub()]
 
-    func createRetryableSplitsUpdateWorker(changeNumber: Int64,
+    func createRetryableSplitsUpdateWorker(changeNumber: SplitsUpdateChangeNumber,
                                            reconnectBackoffCounter: ReconnectBackoffCounter
     ) -> RetryableSyncWorker {
 

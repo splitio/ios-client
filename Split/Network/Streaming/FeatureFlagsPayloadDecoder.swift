@@ -8,15 +8,23 @@
 
 import Foundation
 
-protocol FeatureFlagsPayloadDecoder {
-    func decode(payload: String, compressionUtil: CompressionUtil) throws -> Split
+protocol TargetingRulePayloadDecoder {
+    associatedtype DecodedType
+    func decode(payload: String, compressionUtil: CompressionUtil) throws -> DecodedType
 }
 
-struct DefaultFeatureFlagsPayloadDecoder: FeatureFlagsPayloadDecoder {
+class DefaultTargetingRulePayloadDecoder<T: Decodable>: TargetingRulePayloadDecoder {
+    typealias DecodedType = T
 
-    func decode(payload: String, compressionUtil: CompressionUtil) throws -> Split {
+    private let type: T.Type
+
+    init(type: T.Type) {
+        self.type = type
+    }
+
+    func decode(payload: String, compressionUtil: CompressionUtil) throws -> T {
         let json = try decodeAsBytes(payload: payload, compressionUtil: compressionUtil).stringRepresentation
-        return try Json.decodeFrom(json: json, to: Split.self)
+        return try Json.decodeFrom(json: json, to: type)
     }
 
     private func decodeAsBytes(payload: String, compressionUtil: CompressionUtil) throws -> Data {
@@ -27,3 +35,6 @@ struct DefaultFeatureFlagsPayloadDecoder: FeatureFlagsPayloadDecoder {
         return descomp
     }
 }
+
+typealias DefaultFeatureFlagsPayloadDecoder = DefaultTargetingRulePayloadDecoder<Split>
+typealias DefaultRuleBasedSegmentsPayloadDecoder = DefaultTargetingRulePayloadDecoder<RuleBasedSegment>

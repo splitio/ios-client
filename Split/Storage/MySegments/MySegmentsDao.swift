@@ -12,6 +12,7 @@ import CoreData
 protocol MySegmentsDao {
     func getBy(userKey: String) -> SegmentChange?
     func update(userKey: String, change: SegmentChange)
+    func deleteAll()
 }
 
 /// Added a new parameter to specify the entity to work with.
@@ -62,6 +63,15 @@ class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
                     Logger.e("Error encoding large segment: \(error)")
                 }
             }
+        }
+    }
+
+    func deleteAll() {
+        executeAsync { [weak self] in
+            guard let self = self else {
+                return
+            }
+            self.coreDataHelper.deleteAll(entity: coreDataEntity)
         }
     }
 

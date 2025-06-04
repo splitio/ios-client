@@ -193,7 +193,10 @@ class DefaultSplitEventsManager: SplitEventsManager {
            isTriggered(internal: .splitsUpdated),
            isTriggered(internal: .myLargeSegmentsUpdated),
            !isTriggered(external: .sdkReady) {
-            self.trigger(event: SplitEvent.sdkReady)
+            if !isTriggered(external: .sdkReadyFromCache) {
+                self.trigger(event: .sdkReadyFromCache)
+            }
+            self.trigger(event: .sdkReady)
         }
     }
 

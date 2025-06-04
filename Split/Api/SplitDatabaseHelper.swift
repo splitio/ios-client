@@ -125,6 +125,14 @@ struct SplitDatabaseHelper {
         let hashedImpressionsStorage = DefaultHashedImpressionsStorage(
             cache: LRUCache(capacity: ServiceConstants.lastSeenImpressionCachSize),
             persistentStorage: persistentHashedImpressionsStorage)
+        let generalInfoStorage = openGeneralInfoStorage(database: splitDatabase)
+
+        let persistentRuleBasedSegmentsStorage = DefaultPersistentRuleBasedSegmentsStorage(
+            database: splitDatabase,
+            generalInfoStorage: generalInfoStorage)
+
+        let ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(
+            persistentStorage: persistentRuleBasedSegmentsStorage)
 
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      splitsStorage: splitsStorage,
@@ -141,7 +149,10 @@ struct SplitDatabaseHelper {
                                      uniqueKeyStorage: uniqueKeyStorage,
                                      flagSetsCache: flagSetsCache,
                                      persistentHashedImpressionsStorage: persistentHashedImpressionsStorage,
-                                     hashedImpressionsStorage: hashedImpressionsStorage)
+                                     hashedImpressionsStorage: hashedImpressionsStorage,
+                                     generalInfoStorage: generalInfoStorage,
+                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
+                                     persistentRuleBasedSegmentsStorage: persistentRuleBasedSegmentsStorage)
     }
 
     static func openDatabase(dataFolderName: String,
@@ -156,6 +167,10 @@ struct SplitDatabaseHelper {
 
     static func openPersistentSplitsStorage(database: SplitDatabase) -> PersistentSplitsStorage {
         return DefaultPersistentSplitsStorage(database: database)
+    }
+
+    static func openPersistentRuleBasedSegmentsStorage(database: SplitDatabase, generalInfoStorage: GeneralInfoStorage) -> PersistentRuleBasedSegmentsStorage {
+        return DefaultPersistentRuleBasedSegmentsStorage(database: database, generalInfoStorage: generalInfoStorage)
     }
 
     static func openSplitsStorage(database: SplitDatabase,
@@ -215,6 +230,10 @@ struct SplitDatabaseHelper {
 
     static func openEventsStorage(persistentStorage: PersistentEventsStorage) -> EventsStorage {
         return MainEventsStorage(persistentStorage: persistentStorage)
+    }
+
+    static func openGeneralInfoStorage(database: SplitDatabase) -> GeneralInfoStorage {
+        return DefaultGeneralInfoStorage(database: database)
     }
 
     static func databaseName(prefix: String?, apiKey: String) -> String? {

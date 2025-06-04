@@ -234,18 +234,20 @@ class SdkUpdateStreamingTest: XCTestCase {
         semaphore.wait()
     }
 
-    private func getChanges(for hitNumber: Int) -> Data {
+    private func getChanges(for hitNumber: Int) -> SplitChange {
         if hitNumber < numbers.count {
-            return Data(self.changes[hitNumber].utf8)
+            let jsonData = Data(self.changes[hitNumber].utf8)
+            return try! Json.decodeFrom(json: jsonData, to: TargetingRulesChange.self).featureFlags
         }
-        return Data(IntegrationHelper.emptySplitChanges(since: 500, till: 500).utf8)
+        let jsonData = Data(IntegrationHelper.emptySplitChanges(since: 500, till: 500).utf8)
+        return try! Json.decodeFrom(json: jsonData, to: TargetingRulesChange.self).featureFlags
     }
     
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
                 let hitNumber = self.getAndUpdateHit()
-                return TestDispatcherResponse(code: 200, data: self.getChanges(for: hitNumber))
+                return TestDispatcherResponse(code: 200, data: try! Json.encodeToJsonData(TargetingRulesChange(featureFlags: self.getChanges(for: hitNumber), ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))))
             }
             if request.isMySegmentsEndpoint() {
                 self.mySegmentsHits+=1
@@ -324,7 +326,8 @@ class SdkUpdateStreamingTest: XCTestCase {
                 partition.size = 0
             }
         }
-        return (try? Json.encodeToJson(change)) ?? ""
+        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        return (try? Json.encodeToJson(targetingRulesChange)) ?? ""
     }
 
     private func loadChanges() {
@@ -350,7 +353,3 @@ class SdkUpdateStreamingTest: XCTestCase {
     }
 
 }
-
-
-
-

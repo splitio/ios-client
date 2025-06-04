@@ -15,7 +15,7 @@ class ReadyFromCacheTest: XCTestCase {
     var globalCacheReadyFired: Atomic<Bool>!
     var globalReadyFired : Atomic<Bool>!
     var jsonChanges: [String]!
-    var changes: [SplitChange]!
+    var changes: [TargetingRulesChange]!
     let splitName = "workm"
     var streamingBinding: TestStreamResponseBinding?
     var numbers = [500, 1000, 2000, 3000, 4000]
@@ -29,7 +29,7 @@ class ReadyFromCacheTest: XCTestCase {
         globalCacheReadyFired = Atomic(false)
         globalReadyFired = Atomic(false)
         changeHitIndex = AtomicInt(0) // First hit will be with index == 0. Index == 0 if for cache
-        changes = [SplitChange]()
+        changes = [TargetingRulesChange]()
         jsonChanges = [String]()
         loadChanges()
     }
@@ -37,7 +37,7 @@ class ReadyFromCacheTest: XCTestCase {
     func testExistingSplitsAndConnectionOk() {
         // When feature flags and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
-        splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
+        splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].featureFlags.splits[0])
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
@@ -96,7 +96,7 @@ class ReadyFromCacheTest: XCTestCase {
     func testExistingSplitsAndNoConnection() {
         // When feature flags and connection not available, ready from cache should be fired and Ready should NOT be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
-        splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
+        splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].featureFlags.splits[0])
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
         let session = HttpSessionMock()
@@ -154,7 +154,7 @@ class ReadyFromCacheTest: XCTestCase {
     }
 
     func testNotExistingSplitsAndConnectionOk() {
-        // When NO feature flags and connection available, ready from cache should NOT be fired and Ready should be fired
+        // When NO feature flags and connection available, ready from cache should be fired alongside Ready
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -201,7 +201,7 @@ class ReadyFromCacheTest: XCTestCase {
         wait(for: [readyExp], timeout: 3)
         let treatmentReady = client.getTreatment(splitName)
 
-        XCTAssertFalse(cacheReadyFired)
+        XCTAssertTrue(cacheReadyFired)
         XCTAssertTrue(readyFired)
         XCTAssertFalse(timeoutFired)
         XCTAssertEqual("control", treatmentCache)
@@ -213,7 +213,7 @@ class ReadyFromCacheTest: XCTestCase {
     func testSplitsAndConnOk_FromNoSplitFilterToFilter() {
         // When feature flags and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
-        splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].splits[0])
+        splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].featureFlags.splits[0])
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
@@ -289,13 +289,13 @@ class ReadyFromCacheTest: XCTestCase {
 
     func testSplitsAndConnOk_FromSplitFilterToNoFilter() {
         // When feature flags and connection available, ready from cache and Ready should be fired
-        changes = [SplitChange]()
+        changes = [TargetingRulesChange]()
         jsonChanges = [String]()
         loadChanges1()
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
 
-        let split =  changes[0].splits[0]
+        let split =  changes[0].featureFlags.splits[0]
         let split1Name = "split1"
         let split1Treatment = "t1"
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100) // querytrings changes so change# from 100 to -1
@@ -397,7 +397,7 @@ class ReadyFromCacheTest: XCTestCase {
         let userKey = "otherKey"
         // When splits and connection available, ready from cache and Ready should be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
-        let split1 =  changes[5].splits[1]
+        let split1 =  changes[5].featureFlags.splits[1]
         splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: ["isEnabled": true])
         splitDatabase.splitDao.syncInsertOrUpdate(split: split1)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
@@ -493,7 +493,7 @@ class ReadyFromCacheTest: XCTestCase {
         }
     }
 
-    private func getChanges(withIndex index: Int, since: Int, till: Int) -> SplitChange {
+    private func getChanges(withIndex index: Int, since: Int, till: Int) -> TargetingRulesChange {
         let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
         change?.since = Int64(since)
         change?.till = Int64(till)
@@ -509,7 +509,7 @@ class ReadyFromCacheTest: XCTestCase {
                 }
             }
         }
-        return change!
+        return TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
     }
 
     private func buildSplit(name: String, treatment: String) -> Split {
@@ -587,7 +587,7 @@ class ReadyFromCacheTest: XCTestCase {
                                     till: numbers[i])
 
             if i==2 {
-                change.splits.append(buildSplit(name: "split1", treatment: "t1"))
+                change.featureFlags.splits.append(buildSplit(name: "split1", treatment: "t1"))
             }
             changes.append(change)
             let json =  (try? Json.encodeToJson(change)) ?? ""
@@ -602,7 +602,7 @@ class ReadyFromCacheTest: XCTestCase {
                                     till: numbers[i])
 
             if i==0 {
-                change.splits.append(buildSplitWithAttrEval(name: "split1", treatment: "ta1"))
+                change.featureFlags.splits.append(buildSplitWithAttrEval(name: "split1", treatment: "ta1"))
             }
             changes.append(change)
             let json =  (try? Json.encodeToJson(change)) ?? ""

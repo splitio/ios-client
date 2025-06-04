@@ -20,7 +20,7 @@ class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
     }
 
     var synchronizeNumberCalled = false
-    func synchronize(changeNumber: Int64) {
+    func synchronize(changeNumber: Int64?, rbsChangeNumber: Int64?) {
         synchronizeNumberCalled = true
     }
 

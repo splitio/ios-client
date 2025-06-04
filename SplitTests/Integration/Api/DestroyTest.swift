@@ -12,7 +12,7 @@ import XCTest
 class DestroyTests: XCTestCase {
     
     let kNeverRefreshRate = 9999999
-    var splitChange: SplitChange?
+    var splitChange: TargetingRulesChange?
 
     var trackHitCounter = 0
     var impressionsHitCount = 0
@@ -232,8 +232,8 @@ class DestroyTests: XCTestCase {
         XCTAssertEqual("off", treatmentsWithConfigBeforeDestroy?[splitName]?.treatment)
         XCTAssertEqual(true, trackBeforeDestroy)
         XCTAssertEqual(splitName, splitBeforeDestroy?.name)
-        XCTAssertEqual(33, splitCountBeforeDestroy)
-        XCTAssertEqual(33, splitNamesCountBeforeDestroy)
+        XCTAssertEqual(35, splitCountBeforeDestroy)
+        XCTAssertEqual(35, splitNamesCountBeforeDestroy)
 
         XCTAssertEqual(SplitConstants.control, treatmentAfterDestroy)
         XCTAssertEqual(SplitConstants.control, treatmentWithConfigAfterDestroy?.treatment)
@@ -275,14 +275,14 @@ class DestroyTests: XCTestCase {
         mySegmentsHitCount = 0
     }
 
-    private func loadSplitsChangeFile() -> SplitChange? {
+    private func loadSplitsChangeFile() -> TargetingRulesChange? {
         return loadSplitChangeFile(name: "splitchanges_1")
     }
 
-    private func loadSplitChangeFile(name fileName: String) -> SplitChange? {
+    private func loadSplitChangeFile(name fileName: String) -> TargetingRulesChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: fileName, type: "json"),
-           let change = try? Json.decodeFrom(json: file, to: SplitChange.self) {
-            lastChangeNumber = Int(change.till)
+           let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            lastChangeNumber = Int(change.featureFlags.till)
             return change
         }
         return nil

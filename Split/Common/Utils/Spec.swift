@@ -9,5 +9,5 @@ import Foundation
 
 class Spec {
 
-    static var flagsSpec = "1.2"
+    static var flagsSpec = "1.3"
 }

@@ -59,6 +59,9 @@ class DbCipherTest: XCTestCase {
         // Attributes
         XCTAssertNotEqual(userKey, resultBefore.attributes.userKey)
         XCTAssertFalse(resultBefore.attributes.attributes.contains("att1"))
+        // RBS
+        XCTAssertNotEqual("test_rbs", resultBefore.ruleBasedSegments.name)
+        XCTAssertFalse(resultBefore.ruleBasedSegments.body.contains("test_rbs"))
 
         // Decrypted data
         // Splits
@@ -80,6 +83,9 @@ class DbCipherTest: XCTestCase {
         // Attributes
         XCTAssertEqual(userKey, resultAfter.attributes.userKey)
         XCTAssertTrue(resultAfter.attributes.attributes.contains("att1"))
+        // RBS
+        XCTAssertEqual("test_rbs", resultAfter.ruleBasedSegments.name)
+        XCTAssertTrue(resultAfter.ruleBasedSegments.body.contains("test_"))
     }
 
     struct DataResult {
@@ -91,6 +97,7 @@ class DbCipherTest: XCTestCase {
         let impressionsCount: String
         let uniqueKeys: (userKey: String, features: String)
         let attributes: (userKey: String, attributes: String)
+        let ruleBasedSegments: (name: String, body: String)
     }
 
     private func loadData(dbHelper: CoreDataHelper) -> DataResult {
@@ -109,7 +116,8 @@ class DbCipherTest: XCTestCase {
                                 uniqueKeys: dbHelper.fetch(entity: .uniqueKey).compactMap { $0 as? UniqueKeyEntity }.map { (userKey: $0.userKey,
                                                                                                                             features: $0.featureList) }[0],
                                 attributes: dbHelper.fetch(entity: .attribute).compactMap { $0 as? AttributeEntity }.map { (userKey: $0.userKey!,
-                                                                                                                            attributes: $0.attributes!) }[0]
+                                                                                                                            attributes: $0.attributes!) }[0],
+                                ruleBasedSegments: dbHelper.fetch(entity: .ruleBasedSegment).compactMap { $0 as? RuleBasedSegmentEntity }.map { (name: $0.name, body: $0.body )}[0]
             )
         }
         return result!
@@ -129,6 +137,7 @@ class DbCipherTest: XCTestCase {
         db.impressionsCountDao.insert(ImpressionsCountPerFeature(storageId: "id1", feature: "pepe", timeframe: 111111, count: 1) )
         db.uniqueKeyDao.insert(UniqueKey(userKey: IntegrationHelper.dummyUserKey, features: ["split1"]))
         db.attributesDao.update(userKey: userKey, attributes: ["att1": 1])
+        db.ruleBasedSegmentDao.insertOrUpdate(segment: TestingHelper.createRuleBasedSegment())
     }
 
     private func createDbHelper() -> CoreDataHelper {

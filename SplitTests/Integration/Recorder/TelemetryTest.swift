@@ -113,8 +113,8 @@ class TelemetryTest: XCTestCase {
         XCTAssertEqual(0, timeUntilReadyBefore)
         XCTAssertEqual(0, timeUntilReadyFromCacheBefore)
         XCTAssertTrue(timeUntilReady > 0)
-        XCTAssertEqual(0, timeUntilReadyFromCache)
-        XCTAssertFalse(readyFromCacheFired)
+        XCTAssertTrue(0 < timeUntilReadyFromCache && timeUntilReadyFromCache <= timeUntilReady)
+        XCTAssertTrue(readyFromCacheFired)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {

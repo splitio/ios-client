@@ -100,9 +100,9 @@ class MultiClientEvaluationTest: XCTestCase {
         let dbExp = IntegrationCoreDataHelper.getDbExp(count: 1, entity: .generalInfo,
                                                        operation: CrudKey.insert)
         var cache = [String: Bool]()
-        let changes = try! Json.decodeFrom(json: getChanges().stringRepresentation, to: SplitChange.self)
+        let changes = try! Json.decodeFrom(json: getChanges().stringRepresentation, to: TargetingRulesChange.self)
         let db = TestingHelper.createTestDatabase(name: "multi_client_the_1st", queue: dbqueue)
-        db.splitDao.syncInsertOrUpdate(split: changes.splits[0])
+        db.splitDao.syncInsertOrUpdate(split: changes.featureFlags.splits[0])
         db.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
  
         setupFactory(database: db)

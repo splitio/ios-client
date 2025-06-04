@@ -3,7 +3,7 @@
 //  Split
 //
 //  Created by Javier Avrudsky on 25/11/2020.
-//  Copyright © 2020 Split. All rights reserved.
+//  Copyright 2020 Split. All rights reserved.
 //
 
 import Foundation
@@ -15,6 +15,9 @@ enum GeneralInfo: String {
     case databaseMigrationStatus = "databaseMigrationStatus"
     case bySetsFilter = "bySetsFilter"
     case flagsSpec = "flagsSpec"
+    case rolloutCacheLastClearTimestamp = "rolloutCacheLastClearTimestamp"
+    case ruleBasedSegmentsChangeNumber = "ruleBasedSegmentsChangeNumber"
+    case lastProxyUpdateTimestamp = "lastProxyCheckTimestamp"
 }
 
 protocol GeneralInfoDao {

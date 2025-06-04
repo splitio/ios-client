@@ -37,7 +37,9 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
         Logger.d("Received notification \(notification.type)")
         switch notification.type {
         case .splitUpdate:
-            processSplitsUpdate(notification)
+            processTargetingRuleUpdate(notification)
+        case .ruleBasedSegmentUpdate:
+            processTargetingRuleUpdate(notification)
         case .mySegmentsUpdate:
             processSegmentsUpdate(notification, updateWorker: mySegmentsUpdateWorker)
         case .myLargeSegmentsUpdate:
@@ -49,13 +51,13 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
         }
     }
 
-    private func processSplitsUpdate(_ notification: IncomingNotification) {
+    private func processTargetingRuleUpdate(_ notification: IncomingNotification) {
         if let jsonData = notification.jsonData {
             do {
                 try splitsUpdateWorker.process(notification:
-                    sseNotificationParser.parseSplitUpdate(jsonString: jsonData))
+                    sseNotificationParser.parseTargetingRuleNotification(jsonString: jsonData, type: notification.type))
             } catch {
-                Logger.e("Error while parsing feature flags update notification: \(error.localizedDescription)")
+                Logger.e("Error while parsing targeting rule update notification: \(error.localizedDescription)")
             }
         }
     }

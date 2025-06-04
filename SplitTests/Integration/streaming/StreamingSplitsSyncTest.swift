@@ -145,7 +145,7 @@ class StreamingSplitsSyncTest: XCTestCase {
                 case 1:
                     self.exp1.fulfill()
                 case 2:
-                    self.self.exp2.fulfill()
+                    self.exp2.fulfill()
                 case 3:
                     self.exp3.fulfill()
                 default:
@@ -189,7 +189,8 @@ class StreamingSplitsSyncTest: XCTestCase {
                 partition.size = 0
             }
         }
-        return (try? Json.encodeToJson(change)) ?? ""
+        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        return (try? Json.encodeToJson(targetingRulesChange)) ?? ""
     }
 
     private func loadChanges() {
@@ -215,7 +216,3 @@ class StreamingSplitsSyncTest: XCTestCase {
     }
 
 }
-
-
-
-

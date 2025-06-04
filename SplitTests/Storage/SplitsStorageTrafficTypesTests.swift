@@ -25,7 +25,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         let persistent = PersistentSplitsStorageStub()
         flagSetsCache = FlagSetsCacheMock()
 
-        persistent.snapshot = SplitsSnapshot(changeNumber: 1, splits: splits, updateTimestamp: 100, splitsFilterQueryString: "", flagsSpec: "")
+        persistent.snapshot = SplitsSnapshot(changeNumber: 1, splits: splits, updateTimestamp: 100)
         splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistent, flagSetsCache: flagSetsCache)
         splitsStorage.loadLocal()
     }
@@ -179,7 +179,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
     private func newSplit(name: String, trafficType: String, status: Status = .active) -> Split {
         let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
         split.status = status
-        split.isParsed = true
+        split.isCompletelyParsed = true
         return split
     }
 }

@@ -141,22 +141,32 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
+    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
+    private let ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor
     private let syncHelper: SplitsSyncHelper
 
     init(splitFetcher: HttpSplitFetcher,
          splitsStorage: SplitsStorage,
+         generalInfoStorage: GeneralInfoStorage,
+         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
+         ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
          timer: PeriodicTimer,
          eventsManager: SplitEventsManager,
          splitConfig: SplitClientConfig) {
 
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
+        self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
+        self.ruleBasedSegmentsChangeProcessor = ruleBasedSegmentsChangeProcessor
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: splitsStorage,
+                                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                            splitChangeProcessor: splitChangeProcessor,
+                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor,
+                                           generalInfoStorage: generalInfoStorage,
                                            splitConfig: splitConfig)
         super.init(timer: timer,
                    eventsManager: eventsManager)
@@ -168,10 +178,12 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
 
-        guard let result = try? syncHelper.sync(since: splitsStorage.changeNumber) else {
+        let changeNumber = splitsStorage.changeNumber
+        let rbChangeNumber: Int64 = ruleBasedSegmentsStorage.changeNumber
+        guard let result = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber) else {
             return
         }
-        if result.success, result.featureFlagsUpdated {
+        if result.success, result.featureFlagsUpdated || result.rbsUpdated {
             notifyUpdate([.splitsUpdated])
         }
     }

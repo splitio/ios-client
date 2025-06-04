@@ -43,6 +43,7 @@ struct EvalContext {
     let evaluator: Evaluator?
     let mySegmentsStorage: MySegmentsStorage?
     let myLargeSegmentsStorage: MySegmentsStorage?
+    let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
 }
 
 protocol Evaluator {
@@ -51,34 +52,52 @@ protocol Evaluator {
 }
 
 class DefaultEvaluator: Evaluator {
-    // Internal for testing purposes
-    var splitter: SplitterProtocol = Splitter.shared
+    
+    // For testing purposes
+    internal var splitter: SplitterProtocol = Splitter.shared
+    private var prerequisitesMatcherFactory: ([Prerequisite]) -> MatcherProtocol = { prerequisites in PrerequisitesMatcher(prerequisites) }
+    
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage: MySegmentsStorage
     private let myLargeSegmentsStorage: MySegmentsStorage?
+    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
 
     init(splitsStorage: SplitsStorage,
          mySegmentsStorage: MySegmentsStorage,
-         myLargeSegmentsStorage: MySegmentsStorage?) {
+         myLargeSegmentsStorage: MySegmentsStorage? = nil,
+         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
+        self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
     }
 
     func evalTreatment(matchingKey: String, bucketingKey: String?,
                        splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
 
-        guard let split = splitsStorage.get(name: splitName),
-            split.status != .archived else {
-                Logger.w("The feature flag definition for '\(splitName)' has not been found")
-                return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
+        // 1. Guarantee Split exists & is active
+        guard let split = splitsStorage.get(name: splitName), split.status != .archived else {
+            Logger.w("The feature flag definition for '\(splitName)' has not been found")
+            return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
         }
-
+        
+        // 2. Guarantee is not killed
         let changeNumber = split.changeNumber ?? -1
-        let defaultTreatment  = split.defaultTreatment ?? SplitConstants.control
-        if let killed = split.killed, killed {
+        let defaultTreatment = split.defaultTreatment ?? SplitConstants.control
+        guard let killed = split.killed, !killed else {
+            return EvaluationResult(treatment: defaultTreatment, label: ImpressionsConstants.killed, changeNumber: changeNumber,
+                                    configuration: split.configurations?[defaultTreatment], impressionsDisabled: split.isImpressionsDisabled())
+        }
+        
+        // 3. Extract necessary info
+        let bucketKey = selectBucketKey(matchingKey: matchingKey, bucketingKey: bucketingKey)
+        let values = EvalValues(matchValue: matchingKey, matchingKey: matchingKey, bucketingKey: bucketKey, attributes: attributes)
+        
+        // 4. Evaluate Prerequisites
+        let matcher = prerequisitesMatcherFactory(split.prerequisites ?? [])
+        if !matcher.evaluate(values: values, context: getContext()) {
             return EvaluationResult(treatment: defaultTreatment,
-                                    label: ImpressionsConstants.killed,
+                                    label: ImpressionsConstants.prerequisitesNotMet,
                                     changeNumber: changeNumber,
                                     configuration: split.configurations?[defaultTreatment],
                                     impressionsDisabled: split.isImpressionsDisabled())
@@ -90,8 +109,6 @@ class DefaultEvaluator: Evaluator {
         if let rawAlgo = split.algo, let algo = Algorithm.init(rawValue: rawAlgo) {
             splitAlgo = algo
         }
-
-        let bucketKey = selectBucketKey(matchingKey: matchingKey, bucketingKey: bucketingKey)
 
         guard let conditions: [Condition] = split.conditions,
             let trafficAllocationSeed = split.trafficAllocationSeed,
@@ -146,15 +163,20 @@ class DefaultEvaluator: Evaluator {
     private func getContext() -> EvalContext {
         return EvalContext(evaluator: self,
                            mySegmentsStorage: mySegmentsStorage,
-                           myLargeSegmentsStorage: myLargeSegmentsStorage)
+                           myLargeSegmentsStorage: myLargeSegmentsStorage,
+                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage)
     }
 
     private func selectBucketKey(matchingKey: String, bucketingKey: String?) -> String {
-        if let key = bucketingKey, !key.isEmpty() {
-            return key
-        }
+        if let key = bucketingKey, !key.isEmpty { return key }
         return matchingKey
     }
+    
+    #if DEBUG
+    internal func overridePrerequisitesMatcher(_ factory: @escaping ([Prerequisite]) -> MatcherProtocol) {
+        prerequisitesMatcherFactory = factory
+    }
+    #endif
 }
 
 private extension Split {

@@ -241,6 +241,8 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         change?.splits[0].name = "NET_CORE_getTreatmentWithConfigAfterArchive"
         change?.since = 500
         change?.till = 500
-        changes = (try? Json.encodeToJson(change)) ?? IntegrationHelper.emptySplitChanges
+        changes = (try? Json.encodeToJson(
+            TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        )) ?? IntegrationHelper.emptySplitChanges
     }
 }

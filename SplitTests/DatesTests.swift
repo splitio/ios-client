@@ -15,7 +15,7 @@
 import Foundation
 import XCTest
 
-//@testable import Split
+@testable import Split
 
 class DatesTest: XCTestCase {
     
@@ -46,5 +46,15 @@ class DatesTest: XCTestCase {
         dateComponents.second = 0
         
         return calendar.date(from: dateComponents)!
+    }
+
+    func testSecondsToDays() {
+        let seconds: Int64 = 86400
+        let days = Date.secondsToDays(seconds: seconds)
+        XCTAssertEqual(days, 1, "1 day should be the result")
+
+        let seconds2: Int64 = 172800
+        let days2 = Date.secondsToDays(seconds: seconds2)
+        XCTAssertEqual(days2, 2, "2 days should be the result")
     }
 }

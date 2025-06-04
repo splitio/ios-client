@@ -353,6 +353,11 @@
 		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
+		5B48D8172DEA2CED00351925 /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
+		5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */; };
+		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
+		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
+		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
 		9500D9922C56F9BA00383593 /* HostDomainFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */; };
 		9500D9A92C59297400383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
 		9500D9AA2C59382000383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
@@ -1074,12 +1079,44 @@
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
 		C526DE4C2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C526DE4B2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift */; };
+		C539CAB62D88C1F10050C732 /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
+		C539CABE2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */; };
+		C539CABF2D88C7410050C732 /* RuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */; };
+		C539CAC02D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */; };
+		C539CAC12D88C7410050C732 /* RuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */; };
+		C539CAC42D88C7570050C732 /* PersistentRuleBasedSegmentsStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAC22D88C7570050C732 /* PersistentRuleBasedSegmentsStorageStub.swift */; };
+		C539CAC52D88C7570050C732 /* RuleBasedSegmentsStorageStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAC32D88C7570050C732 /* RuleBasedSegmentsStorageStub.swift */; };
+		C539CAC72D89DA7B0050C732 /* RuleBasedSegmentDaoTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAC62D89DA7B0050C732 /* RuleBasedSegmentDaoTest.swift */; };
+		C539CAC92D89DF1D0050C732 /* RuleBasedSegmentStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAC82D89DF1D0050C732 /* RuleBasedSegmentStorageTest.swift */; };
+		C539CACC2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CACB2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift */; };
+		C539CACE2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */; };
+		C539CACF2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */; };
+		C539CAD12D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD02D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift */; };
+		C539CAD42D8B5AD00050C732 /* RuleBasedSegmentChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD22D8B5AD00050C732 /* RuleBasedSegmentChange.swift */; };
+		C539CAD52D8B5AD00050C732 /* TargetingRulesChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD32D8B5AD00050C732 /* TargetingRulesChange.swift */; };
+		C539CAD62D8B5AD00050C732 /* RuleBasedSegmentChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD22D8B5AD00050C732 /* RuleBasedSegmentChange.swift */; };
+		C539CAD72D8B5AD00050C732 /* TargetingRulesChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD32D8B5AD00050C732 /* TargetingRulesChange.swift */; };
+		C539CAD92D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD82D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift */; };
+		C539CADA2D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAD82D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift */; };
 		C539CADC2D93229D0050C732 /* EvaluationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CADB2D93229D0050C732 /* EvaluationOptions.swift */; };
 		C539CADD2D93229D0050C732 /* EvaluationOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CADB2D93229D0050C732 /* EvaluationOptions.swift */; };
 		C539CADF2D9475CD0050C732 /* PropertyValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CADE2D9475CD0050C732 /* PropertyValidator.swift */; };
 		C539CAE02D9475CD0050C732 /* PropertyValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CADE2D9475CD0050C732 /* PropertyValidator.swift */; };
 		C539CAE22D9477770050C732 /* PropertyValidatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAE12D9477770050C732 /* PropertyValidatorStub.swift */; };
 		C539CAE62D947D2A0050C732 /* PropertyValidatorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAE32D947D2A0050C732 /* PropertyValidatorTest.swift */; };
+		C53EDFA92DD295E5000DCDBC /* TargetingRulesChangeDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFA82DD295E5000DCDBC /* TargetingRulesChangeDecoderTest.swift */; };
+		C53EDFAB2DD29640000DCDBC /* TargetingRulesChangeDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFAA2DD29640000DCDBC /* TargetingRulesChangeDecoder.swift */; };
+		C53EDFAC2DD29640000DCDBC /* TargetingRulesChangeDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFAA2DD29640000DCDBC /* TargetingRulesChangeDecoder.swift */; };
+		C53EDFAE2DD299CB000DCDBC /* RestClientSplitChangesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFAD2DD299CB000DCDBC /* RestClientSplitChangesTest.swift */; };
+		C53EDFB02DD38572000DCDBC /* RestClientCustomDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFAF2DD38572000DCDBC /* RestClientCustomDecoderTest.swift */; };
+		C53EDFC42DD3B73A000DCDBC /* RestClientCustomFailureHandlerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFC32DD3B73A000DCDBC /* RestClientCustomFailureHandlerTest.swift */; };
+		C53EDFC62DD3C53F000DCDBC /* SplitChangesErrorHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFC52DD3C53F000DCDBC /* SplitChangesErrorHandlerTests.swift */; };
+		C53EDFC82DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFC72DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift */; };
+		C53EDFC92DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFC72DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift */; };
+		C53EDFCB2DD3E257000DCDBC /* OutdatedSplitProxyHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFCA2DD3E257000DCDBC /* OutdatedSplitProxyHandlerTests.swift */; };
+		C53EDFCD2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */; };
+		C53F3C472DCB956900655753 /* SplitsSyncHelperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F3C462DCB956900655753 /* SplitsSyncHelperTest.swift */; };
+		C53F3C4F2DCD112400655753 /* RuleBasedSegmentChangeProcessorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F3C4E2DCD110700655753 /* RuleBasedSegmentChangeProcessorStub.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
 		C5977BFF2BF27375003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977BFE2BF27375003E293A /* Semver.swift */; };
 		C5977C012BF27390003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C002BF27390003E293A /* SemverTest.swift */; };
@@ -1114,10 +1151,36 @@
 		C5977C642BF7D5FC003E293A /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
 		C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F51E2BEBD893009FACD3 /* Spec.swift */; };
 		C5A3F5212BEBDAD6009FACD3 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */; };
+		C5A501C82D88A15600206F82 /* RuleBasedSegmentEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C32D88A15600206F82 /* RuleBasedSegmentEntity.swift */; };
+		C5A501C92D88A15600206F82 /* RuleBasedSegmentsDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C42D88A15600206F82 /* RuleBasedSegmentsDecoder.swift */; };
+		C5A501CD2D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C22D88A15600206F82 /* RuleBasedSegmentDao.swift */; };
+		C5A501CE2D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */; };
+		C5A501CF2D88A15600206F82 /* RuleBasedSegmentEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C32D88A15600206F82 /* RuleBasedSegmentEntity.swift */; };
+		C5A501D02D88A15600206F82 /* RuleBasedSegmentsDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C42D88A15600206F82 /* RuleBasedSegmentsDecoder.swift */; };
+		C5A501D42D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C22D88A15600206F82 /* RuleBasedSegmentDao.swift */; };
+		C5A501D52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */; };
+		C5A501DA2D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */; };
+		C5A7D5532DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A7D5522DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift */; };
+		C5A7D5572DDBD4380081D190 /* split_changes_rbs.json in Resources */ = {isa = PBXBuildFile; fileRef = C5A7D5562DDBD4280081D190 /* split_changes_rbs.json */; };
+		C5A7D5592DDBD7A30081D190 /* OutdatedProxyIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A7D5582DDBD7A30081D190 /* OutdatedProxyIntegrationTest.swift */; };
+		C5A7D5612DDF88BA0081D190 /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
 		C5BD1E4C2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */; };
 		C5BD1E522D130FB6008EF198 /* splitchanges_toggle.json in Resources */ = {isa = PBXBuildFile; fileRef = C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */; };
+		C5DF6F7A2D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF6F792D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift */; };
+		C5E967432D36CB2200112DAC /* GeneralInfoStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */; };
+		C5E9674C2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
+		C5E9674D2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
+		C5E9674F2D37098000112DAC /* RolloutCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */; };
+		C5E967502D37098000112DAC /* RolloutCacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */; };
+		C5E967522D37FA2000112DAC /* RolloutCacheConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967512D37FA2000112DAC /* RolloutCacheConfiguration.swift */; };
+		C5E967532D37FA2000112DAC /* RolloutCacheConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967512D37FA2000112DAC /* RolloutCacheConfiguration.swift */; };
+		C5E967552D37FDD500112DAC /* RolloutCacheConfigurationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967542D37FDD500112DAC /* RolloutCacheConfigurationTest.swift */; };
+		C5E967572D38013000112DAC /* GeneralInfoStorageMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967562D38013000112DAC /* GeneralInfoStorageMock.swift */; };
+		C5E9675F2D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */; };
+		C5E967602D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */; };
+		C5E967622D395DAA00112DAC /* RolloutCacheManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967612D395DAA00112DAC /* RolloutCacheManagerTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1494,6 +1557,10 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
+		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
+		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
+		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
 		9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilterTests.swift; sourceTree = "<group>"; };
 		9500D9A82C59297400383593 /* HostDomainFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilter.swift; sourceTree = "<group>"; };
 		9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v5.xcdatamodel; sourceTree = "<group>"; };
@@ -1907,10 +1974,34 @@
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
 		C526DE4B2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsPropertiesE2ETest.swift; sourceTree = "<group>"; };
+		C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegment.swift; sourceTree = "<group>"; };
+		C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentsStorage.swift; sourceTree = "<group>"; };
+		C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsStorage.swift; sourceTree = "<group>"; };
+		C539CAC22D88C7570050C732 /* PersistentRuleBasedSegmentsStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentsStorageStub.swift; sourceTree = "<group>"; };
+		C539CAC32D88C7570050C732 /* RuleBasedSegmentsStorageStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsStorageStub.swift; sourceTree = "<group>"; };
+		C539CAC62D89DA7B0050C732 /* RuleBasedSegmentDaoTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentDaoTest.swift; sourceTree = "<group>"; };
+		C539CAC82D89DF1D0050C732 /* RuleBasedSegmentStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentStorageTest.swift; sourceTree = "<group>"; };
+		C539CACB2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentStorageTest.swift; sourceTree = "<group>"; };
+		C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InRuleBasedSegmentMatcher.swift; sourceTree = "<group>"; };
+		C539CAD02D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InRuleBasedSegmentMatcherTest.swift; sourceTree = "<group>"; };
+		C539CAD22D8B5AD00050C732 /* RuleBasedSegmentChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentChange.swift; sourceTree = "<group>"; };
+		C539CAD32D8B5AD00050C732 /* TargetingRulesChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetingRulesChange.swift; sourceTree = "<group>"; };
+		C539CAD82D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessedRuleBasedSegmentChange.swift; sourceTree = "<group>"; };
 		C539CADB2D93229D0050C732 /* EvaluationOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluationOptions.swift; sourceTree = "<group>"; };
 		C539CADE2D9475CD0050C732 /* PropertyValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyValidator.swift; sourceTree = "<group>"; };
 		C539CAE12D9477770050C732 /* PropertyValidatorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyValidatorStub.swift; sourceTree = "<group>"; };
 		C539CAE32D947D2A0050C732 /* PropertyValidatorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PropertyValidatorTest.swift; sourceTree = "<group>"; };
+		C53EDFA82DD295E5000DCDBC /* TargetingRulesChangeDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetingRulesChangeDecoderTest.swift; sourceTree = "<group>"; };
+		C53EDFAA2DD29640000DCDBC /* TargetingRulesChangeDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetingRulesChangeDecoder.swift; sourceTree = "<group>"; };
+		C53EDFAD2DD299CB000DCDBC /* RestClientSplitChangesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestClientSplitChangesTest.swift; sourceTree = "<group>"; };
+		C53EDFAF2DD38572000DCDBC /* RestClientCustomDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestClientCustomDecoderTest.swift; sourceTree = "<group>"; };
+		C53EDFC32DD3B73A000DCDBC /* RestClientCustomFailureHandlerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestClientCustomFailureHandlerTest.swift; sourceTree = "<group>"; };
+		C53EDFC52DD3C53F000DCDBC /* SplitChangesErrorHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitChangesErrorHandlerTests.swift; sourceTree = "<group>"; };
+		C53EDFC72DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutdatedSplitProxyHandler.swift; sourceTree = "<group>"; };
+		C53EDFCA2DD3E257000DCDBC /* OutdatedSplitProxyHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutdatedSplitProxyHandlerTests.swift; sourceTree = "<group>"; };
+		C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelperWithProxyHandlerTests.swift; sourceTree = "<group>"; };
+		C53F3C462DCB956900655753 /* SplitsSyncHelperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelperTest.swift; sourceTree = "<group>"; };
+		C53F3C4E2DCD110700655753 /* RuleBasedSegmentChangeProcessorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentChangeProcessorStub.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
 		C5977BFE2BF27375003E293A /* Semver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
 		C5977C002BF27390003E293A /* SemverTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
@@ -1935,9 +2026,27 @@
 		C5977C582BF53F43003E293A /* splitchanges_unsupported.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_unsupported.json; sourceTree = "<group>"; };
 		C5A3F51E2BEBD893009FACD3 /* Spec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spec.swift; sourceTree = "<group>"; };
 		C5A3F5202BEBDAD6009FACD3 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
+		C5A501C22D88A15600206F82 /* RuleBasedSegmentDao.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentDao.swift; sourceTree = "<group>"; };
+		C5A501C32D88A15600206F82 /* RuleBasedSegmentEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentEntity.swift; sourceTree = "<group>"; };
+		C5A501C42D88A15600206F82 /* RuleBasedSegmentsDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsDecoder.swift; sourceTree = "<group>"; };
+		C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsEncoder.swift; sourceTree = "<group>"; };
+		C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentDaoStub.swift; sourceTree = "<group>"; };
+		C5A501DD2D88AD1B00206F82 /* split_cache_v6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v6.xcdatamodel; sourceTree = "<group>"; };
+		C5A7D5522DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsIntegrationTest.swift; sourceTree = "<group>"; };
+		C5A7D5562DDBD4280081D190 /* split_changes_rbs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_changes_rbs.json; sourceTree = "<group>"; };
+		C5A7D5582DDBD7A30081D190 /* OutdatedProxyIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutdatedProxyIntegrationTest.swift; sourceTree = "<group>"; };
 		C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecoratedImpression.swift; sourceTree = "<group>"; };
 		C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsToggleTest.swift; sourceTree = "<group>"; };
 		C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_toggle.json; sourceTree = "<group>"; };
+		C5DF6F792D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheManagerIntegrationTest.swift; sourceTree = "<group>"; };
+		C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorageTest.swift; sourceTree = "<group>"; };
+		C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorage.swift; sourceTree = "<group>"; };
+		C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheManager.swift; sourceTree = "<group>"; };
+		C5E967512D37FA2000112DAC /* RolloutCacheConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheConfiguration.swift; sourceTree = "<group>"; };
+		C5E967542D37FDD500112DAC /* RolloutCacheConfigurationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheConfigurationTest.swift; sourceTree = "<group>"; };
+		C5E967562D38013000112DAC /* GeneralInfoStorageMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorageMock.swift; sourceTree = "<group>"; };
+		C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutDefinitionsCache.swift; sourceTree = "<group>"; };
+		C5E967612D395DAA00112DAC /* RolloutCacheManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheManagerTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2158,6 +2267,7 @@
 				95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */,
 				95DAF21A29DDFAF4001C7BBE /* SplitHttpsAuthenticator.swift */,
 				95F7BC222C3876C800C5F2E4 /* SplitCertPinningAuthenticator.swift */,
+				C5E967512D37FA2000112DAC /* RolloutCacheConfiguration.swift */,
 			);
 			path = Api;
 			sourceTree = "<group>";
@@ -2285,6 +2395,9 @@
 		3B6DEEB420EA6AE20067435E /* SplitModel */ = {
 			isa = PBXGroup;
 			children = (
+				C53EDFAA2DD29640000DCDBC /* TargetingRulesChangeDecoder.swift */,
+				C539CAD22D8B5AD00050C732 /* RuleBasedSegmentChange.swift */,
+				C539CAD32D8B5AD00050C732 /* TargetingRulesChange.swift */,
 				3B6DEEB520EA6AE20067435E /* Split.swift */,
 				3B6DEEB620EA6AE20067435E /* SplitBase.swift */,
 				3B6DEEB720EA6AE20067435E /* SplitChange.swift */,
@@ -2316,6 +2429,8 @@
 		3B6DEECB20EA6AE30067435E /* Matchers */ = {
 			isa = PBXGroup;
 			children = (
+				5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */,
+				C539CACD2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift */,
 				C5A3F5222BED4EC5009FACD3 /* Semver */,
 				3B6DEECC20EA6AE30067435E /* AllKeysMatcher.swift */,
 				3B6DEECD20EA6AE30067435E /* BaseMatcher.swift */,
@@ -2393,6 +2508,7 @@
 		3B6DEEEF20EA6AE30067435E /* HttpClient */ = {
 			isa = PBXGroup;
 			children = (
+				C53EDFC72DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift */,
 				3B6DEEF120EA6AE30067435E /* HttpRequest.swift */,
 				3B6DEEF220EA6AE30067435E /* HttpDataResponse.swift */,
 				593225FE24A4D8FC00496D8B /* HttpResponse.swift */,
@@ -2492,6 +2608,7 @@
 		3B6DEF0720EA6AE40067435E /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				C5A501C72D88A15600206F82 /* RuleBasedSegments */,
 				955E122F2BFBC90700AE6D10 /* HashedImpression */,
 				952E266E2833E4210015D633 /* UniqueKeys */,
 				95DE29252736AE1E00DB3EAD /* Attributes */,
@@ -2508,6 +2625,7 @@
 				955892AA25C187EA00F67FBA /* CoreDataContextBuilder.swift */,
 				59F65EFD2562C215005FE8C9 /* CoreDataHelper.swift */,
 				950B743C2694D768005FD649 /* LegacyStorageCleaner.swift */,
+				C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -2559,6 +2677,10 @@
 				9557C1C92614F67700CD9B5C /* DbForTwoDifferentApiKeyTest.swift */,
 				9572BA842AC7611400C10FC1 /* FlagSetsCacheTests.swift */,
 				958F98712B1124EC001F35B3 /* SplitBgSynchronizerTests.swift */,
+				C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */,
+				C539CAC62D89DA7B0050C732 /* RuleBasedSegmentDaoTest.swift */,
+				C539CAC82D89DF1D0050C732 /* RuleBasedSegmentStorageTest.swift */,
+				C539CACB2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -2566,6 +2688,9 @@
 		5905D4E6255B23C8006DA3B1 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				C539CAC22D88C7570050C732 /* PersistentRuleBasedSegmentsStorageStub.swift */,
+				C539CAC32D88C7570050C732 /* RuleBasedSegmentsStorageStub.swift */,
+				C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */,
 				9560354E27D16D5700E35BC8 /* MySegmentsStorageStub.swift */,
 				95ABF510293ABDDC006ED016 /* ImpressionsStorageStub.swift */,
 				95ABF512293ABEC7006ED016 /* EventsStorageStub.swift */,
@@ -2597,6 +2722,7 @@
 				954F9C6F25795CD300140B81 /* SplitsStorageStub.swift */,
 				95B17FF4275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift */,
 				95715A9629DB16A000A1B2F9 /* SecureStorageStub.swift */,
+				C5E967562D38013000112DAC /* GeneralInfoStorageMock.swift */,
 			);
 			path = Storage;
 			sourceTree = "<group>";
@@ -2643,6 +2769,7 @@
 		590DF9CD213EB92D0082B94F /* Fake */ = {
 			isa = PBXGroup;
 			children = (
+				5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */,
 				C539CAE12D9477770050C732 /* PropertyValidatorStub.swift */,
 				954F9C73257961AA00140B81 /* Service */,
 				5905D4E6255B23C8006DA3B1 /* Storage */,
@@ -2760,6 +2887,14 @@
 			isa = PBXGroup;
 			children = (
 				C539CAE52D947D2A0050C732 /* Common */,
+				5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */,
+				C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */,
+				C53EDFCA2DD3E257000DCDBC /* OutdatedSplitProxyHandlerTests.swift */,
+				C53EDFC52DD3C53F000DCDBC /* SplitChangesErrorHandlerTests.swift */,
+				C53EDFC32DD3B73A000DCDBC /* RestClientCustomFailureHandlerTest.swift */,
+				C53EDFAF2DD38572000DCDBC /* RestClientCustomDecoderTest.swift */,
+				C53EDFAD2DD299CB000DCDBC /* RestClientSplitChangesTest.swift */,
+				C53EDFA82DD295E5000DCDBC /* TargetingRulesChangeDecoderTest.swift */,
 				C5977C0E2BF2832A003E293A /* Matcher */,
 				95ABF4B1292FDE60006ED016 /* Collections */,
 				95ABF4B0292FDDC0006ED016 /* Init */,
@@ -2804,6 +2939,7 @@
 		592C6ADB211CBB86002D120C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				C5A7D5562DDBD4280081D190 /* split_changes_rbs.json */,
 				95F7BBD32C1A273900C5F2E4 /* Cert */,
 				C5977C052BF273A3003E293A /* between_semver.csv */,
 				C5977C042BF273A3003E293A /* equal_to_semver.csv */,
@@ -3087,6 +3223,7 @@
 			children = (
 				95EEF7C6270E16ED00761B9D /* SplitComponentFactory.swift */,
 				952FA12A2A2E593900264AB5 /* SplitComponentCatalog.swift */,
+				C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */,
 			);
 			path = Initialization;
 			sourceTree = "<group>";
@@ -3096,6 +3233,7 @@
 			children = (
 				95E6DA57261CC02E00BA1BCF /* InitialCacheTest.swift */,
 				957E676525E7F8D7006F5B19 /* ReadyFromCacheTest.swift */,
+				C5DF6F792D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift */,
 			);
 			path = Cache;
 			sourceTree = "<group>";
@@ -3129,6 +3267,8 @@
 		952FA1382A320B5900264AB5 /* Api */ = {
 			isa = PBXGroup;
 			children = (
+				C5A7D5582DDBD7A30081D190 /* OutdatedProxyIntegrationTest.swift */,
+				C5A7D5522DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift */,
 				95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */,
 				95E81941287894DA00D99093 /* LoggerTest.swift */,
 				9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */,
@@ -3161,6 +3301,7 @@
 			children = (
 				5905D4C02555F99D006DA3B1 /* GeneralInfoEntity.swift */,
 				954F9AF8256EE55B00140B81 /* GeneralInfoDao.swift */,
+				C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */,
 			);
 			path = GeneralInfo;
 			sourceTree = "<group>";
@@ -3182,6 +3323,7 @@
 		954F9C73257961AA00140B81 /* Service */ = {
 			isa = PBXGroup;
 			children = (
+				C53F3C4E2DCD110700655753 /* RuleBasedSegmentChangeProcessorStub.swift */,
 				954F9C74257961C100140B81 /* HttpSplitFetcherStub.swift */,
 				95C7569C2696457500696148 /* NotificationHelperStub.swift */,
 				95F7BC262C45C12700C5F2E4 /* TlsPinCheckerMock.swift */,
@@ -3288,6 +3430,7 @@
 				956A7E2D297ED7600080D53C /* SplitsEncoderTest.swift */,
 				956A7E30297EE5A60080D53C /* ComputeProcessCountTest.swift */,
 				9572BA802AC4A4B100C10FC1 /* SplitChangeProcessorTests.swift */,
+				C53F3C462DCB956900655753 /* SplitsSyncHelperTest.swift */,
 			);
 			path = Splits;
 			sourceTree = "<group>";
@@ -3377,6 +3520,8 @@
 				95ABF4B7292FF451006ED016 /* ConfigObjcTest.m */,
 				95ABF4B9293003C1006ED016 /* ConfigTest.swift */,
 				95B0A99F2BC6B72200C31A9E /* SplitClientTests.swift */,
+				C5E967542D37FDD500112DAC /* RolloutCacheConfigurationTest.swift */,
+				C5E967612D395DAA00112DAC /* RolloutCacheManagerTest.swift */,
 			);
 			path = Init;
 			sourceTree = "<group>";
@@ -3572,6 +3717,8 @@
 		C5977C0E2BF2832A003E293A /* Matcher */ = {
 			isa = PBXGroup;
 			children = (
+				5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */,
+				C539CAD02D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift */,
 				C5977C002BF27390003E293A /* SemverTest.swift */,
 				C5977C0F2BF28846003E293A /* BetweenSemverMatcherTest.swift */,
 				C5977C1F2BF29F5B003E293A /* EqualToSemverMatcherTest.swift */,
@@ -3593,6 +3740,21 @@
 				C5977C292BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift */,
 			);
 			path = Semver;
+			sourceTree = "<group>";
+		};
+		C5A501C72D88A15600206F82 /* RuleBasedSegments */ = {
+			isa = PBXGroup;
+			children = (
+				C539CAD82D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift */,
+				C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */,
+				C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */,
+				C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */,
+				C5A501C22D88A15600206F82 /* RuleBasedSegmentDao.swift */,
+				C5A501C32D88A15600206F82 /* RuleBasedSegmentEntity.swift */,
+				C5A501C42D88A15600206F82 /* RuleBasedSegmentsDecoder.swift */,
+				C5A501C52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift */,
+			);
+			path = RuleBasedSegments;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -3835,6 +3997,7 @@
 				5919C64221C7C8A600EC35B8 /* split_traffic_allocation_1.json in Resources */,
 				C5977C082BF273A3003E293A /* equal_to_semver.csv in Resources */,
 				C5977C092BF273A3003E293A /* between_semver.csv in Resources */,
+				C5A7D5572DDBD4380081D190 /* split_changes_rbs.json in Resources */,
 				95F7BBF72C1C953000C5F2E4 /* ec_secp384r1_pub.der in Resources */,
 				595B66CF231DB0720030F330 /* splitchanges_int_test.json in Resources */,
 				59C493072167E3B400F5F774 /* murmur3-sample-v4.csv in Resources */,
@@ -3943,7 +4106,10 @@
 				955E12332BFBF22800AE6D10 /* UniqueKey.swift in Sources */,
 				95B17FFD275FCD92002DC9DF /* RestClient+TelemetryConfig.swift in Sources */,
 				C539CADF2D9475CD0050C732 /* PropertyValidator.swift in Sources */,
+				C539CAC02D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift in Sources */,
+				C539CAC12D88C7410050C732 /* RuleBasedSegmentsStorage.swift in Sources */,
 				3B6DEF6120EA6AE50067435E /* ContainsAllOfSetMatcher.swift in Sources */,
+				C539CADA2D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift in Sources */,
 				3B6DEF7320EA6AE50067435E /* Json.swift in Sources */,
 				5905D4EF255B3E7D006DA3B1 /* SplitsSnapshot.swift in Sources */,
 				599EA57A22666B84006CBA89 /* YAMLRegex.swift in Sources */,
@@ -3956,6 +4122,7 @@
 				95CED0362B459A10005E3C34 /* LocalhostSynchronizer.swift in Sources */,
 				9505682426836B20001D7B10 /* ImpressionsCountRecorder.swift in Sources */,
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,
+				C5E967502D37098000112DAC /* RolloutCacheManager.swift in Sources */,
 				598EDE78224BB3E9005D4762 /* InternalSplitClient.swift in Sources */,
 				95D9446D283BF76A00D7FFED /* UniqueKeysRecorderWorker.swift in Sources */,
 				952FA1242A2A5D4D00264AB5 /* FeatureFlagsSynchronizer.swift in Sources */,
@@ -3971,11 +4138,17 @@
 				952E267A283410620015D633 /* HashedImpression.swift in Sources */,
 				955E123F2BFE1E7A00AE6D10 /* HashedImpressionStorage.swift in Sources */,
 				3B6DEF3A20EA6AE50067435E /* Dictionary+Extensions.swift in Sources */,
+				C5A501C82D88A15600206F82 /* RuleBasedSegmentEntity.swift in Sources */,
+				C5A501C92D88A15600206F82 /* RuleBasedSegmentsDecoder.swift in Sources */,
+				C5A501CD2D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */,
+				C5A501CE2D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */,
 				95125625276B72B60091895B /* Stopwatch.swift in Sources */,
+				C5E967522D37FA2000112DAC /* RolloutCacheConfiguration.swift in Sources */,
 				957E67B025F6B3E1006F5B19 /* BackgroundSyncWorker.swift in Sources */,
 				3B6DEF2620EA6AE50067435E /* SplitClientConfig.swift in Sources */,
 				95825BD8271F4E3700A0CDAD /* Bundle+Name.swift in Sources */,
 				C5977C0B2BF2751B003E293A /* BetweenStringMatcherData.swift in Sources */,
+				C5E9674C2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */,
 				956A7E20297590DF0080D53C /* Array+Chunked.swift in Sources */,
 				3B6DEF3220EA6AE50067435E /* Murmur3Hash.swift in Sources */,
 				599EA5812266719C006CBA89 /* YamlLocalhostSplitsParser.swift in Sources */,
@@ -4025,6 +4198,9 @@
 				3B6DEF8920EA6AE50067435E /* ConcurrentArrayQueue.swift in Sources */,
 				3B6DEF3520EA6AE50067435E /* SecureDataStore.swift in Sources */,
 				95715A8129D22C1B00A1B2F9 /* SplitEncryptionLevel.swift in Sources */,
+				C539CAD42D8B5AD00050C732 /* RuleBasedSegmentChange.swift in Sources */,
+				C539CAD52D8B5AD00050C732 /* TargetingRulesChange.swift in Sources */,
+				C5E967602D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */,
 				3B6DEF2720EA6AE50067435E /* Logger.swift in Sources */,
 				3B6DEF5920EA6AE50067435E /* SplitEventsManager.swift in Sources */,
 				3B6DEF4020EA6AE50067435E /* DataType.swift in Sources */,
@@ -4066,6 +4242,7 @@
 				95C1600D27D28CF4008562E3 /* PersistentAttributesStorage.swift in Sources */,
 				95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */,
 				95C1600B27D28CB8008562E3 /* OneKeyPersistentAttributesStorage.swift in Sources */,
+				5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */,
 				9519A91127D6935700278AEC /* ByKeyAttributesStorage.swift in Sources */,
 				59D84BD622158A24003DA248 /* LocalhostSplitFactory.swift in Sources */,
 				3B6DEF4C20EA6AE50067435E /* SplitBase.swift in Sources */,
@@ -4098,6 +4275,7 @@
 				3B6DEF6320EA6AE50067435E /* ContainsStringMatcher.swift in Sources */,
 				955A5A51258D04DF00CAEE9F /* PeriodicRecorderWorker.swift in Sources */,
 				95F3F06725ACDE0400084AF8 /* EmptyMySegmentsStorage.swift in Sources */,
+				C53EDFAB2DD29640000DCDBC /* TargetingRulesChangeDecoder.swift in Sources */,
 				59B2042924F42DE80092F2E9 /* SseNotificationProcessor.swift in Sources */,
 				3B6DEF6D20EA6AE50067435E /* MatchesStringMatcher.swift in Sources */,
 				3B6DEF3420EA6AE50067435E /* Splitter.swift in Sources */,
@@ -4180,6 +4358,7 @@
 				595AD20A24DDC77C00A7B750 /* RestClient+SseAuthenticator.swift in Sources */,
 				3B6DEF5E20EA6AE50067435E /* AllKeysMatcher.swift in Sources */,
 				9500D9C92C610D9B00383593 /* PersistentMySegmentsStorage.swift in Sources */,
+				C539CACF2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift in Sources */,
 				59AD7ACC246C9DAE00F5B0B4 /* ServiceEndpoints.swift in Sources */,
 				954F9C5825780CA600140B81 /* HttpMySegmentsFetcher.swift in Sources */,
 				590DF9D4214028800082B94F /* SplitView+StringConvertible.swift in Sources */,
@@ -4198,8 +4377,10 @@
 				3B6DEF2F20EA6AE50067435E /* EvaluatorError.swift in Sources */,
 				95CED0382B45D115005E3C34 /* LocalhostFileDataSource.swift in Sources */,
 				955892AB25C187EA00F67FBA /* CoreDataContextBuilder.swift in Sources */,
+				C53EDFC82DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift in Sources */,
 				95122A0E275822F600D93F90 /* TelemetryStats.swift in Sources */,
 				3B6DEF2D20EA6AE50067435E /* SplitConstants.swift in Sources */,
+				C539CAB62D88C1F10050C732 /* RuleBasedSegment.swift in Sources */,
 				3B6DEF5320EA6AE50067435E /* WhitelistMatcherData.swift in Sources */,
 				3B6DEF5D20EA6AE50067435E /* SplitFactory.swift in Sources */,
 				3B6DEF2020EA6AE50067435E /* DefaultSplitClient.swift in Sources */,
@@ -4243,6 +4424,7 @@
 				95C8F78E27D00A5E00E118EA /* PersistentMySegmentsStorageTests.swift in Sources */,
 				955E12452BFE758F00AE6D10 /* HashedImpressionsStorageTest.swift in Sources */,
 				5959C47E228051040064F968 /* SplitClientStub.swift in Sources */,
+				C5A7D5592DDBD7A30081D190 /* OutdatedProxyIntegrationTest.swift in Sources */,
 				95ABF4B8292FF451006ED016 /* ConfigObjcTest.m in Sources */,
 				95B1801E2763BF7E002DC9DF /* TelemetryStatsRecorderWorkerTests.swift in Sources */,
 				95F3F002258D3EE700084AF8 /* HttpEventsRecorderStub.swift in Sources */,
@@ -4250,6 +4432,7 @@
 				59B2043924F5667A0092F2E9 /* SseNotificationProcessorTest.swift in Sources */,
 				592C6AC6211B718E002D120C /* SplitEventsManagerTest.swift in Sources */,
 				95C7569D2696457500696148 /* NotificationHelperStub.swift in Sources */,
+				C5E967572D38013000112DAC /* GeneralInfoStorageMock.swift in Sources */,
 				952FA12F2A2F6E4D00264AB5 /* SyncGuardianStub.swift in Sources */,
 				95F3EFFE258D3C8600084AF8 /* EventsRecorderWorkerTests.swift in Sources */,
 				955B5960280DF75E00D105CD /* MySegmentsPayloadDecoderTest.swift in Sources */,
@@ -4304,9 +4487,11 @@
 				59F4AAA82508120500A1C69A /* SyncManagerTest.swift in Sources */,
 				5919017B24A27629005BD12A /* EndpointTest.swift in Sources */,
 				5959C479227B89980064F968 /* FactoryRegistryTest.swift in Sources */,
+				C5E967552D37FDD500112DAC /* RolloutCacheConfigurationTest.swift in Sources */,
 				595AD21524E1CD4700A7B750 /* JwtTokenParserTest.swift in Sources */,
 				9573FB37273D762200086DDE /* AnyValueValidatorTests.swift in Sources */,
 				95ED4A9826497EEA00FD3569 /* TestSplitFactory.swift in Sources */,
+				C539CAD12D8AFBAF0050C732 /* InRuleBasedSegmentMatcherTest.swift in Sources */,
 				9572BA852AC7611400C10FC1 /* FlagSetsCacheTests.swift in Sources */,
 				599A6E3422FC681600D3D68C /* FlushTest.swift in Sources */,
 				95118EEB281AC83B00782F33 /* BucketSplitTest.swift in Sources */,
@@ -4329,10 +4514,14 @@
 				954F9B0F2570499700140B81 /* PersistentSplitsStorageTests.swift in Sources */,
 				955428E82568176C00331356 /* ImpressionDaoStub.swift in Sources */,
 				95F0569829B7CDD7009F5A68 /* TestDataHelper.swift in Sources */,
+				C53EDFC62DD3C53F000DCDBC /* SplitChangesErrorHandlerTests.swift in Sources */,
 				9519A91727D6B9EE00278AEC /* AttributesStorageStub.swift in Sources */,
 				95ABF513293ABEC7006ED016 /* EventsStorageStub.swift in Sources */,
+				C53EDFCB2DD3E257000DCDBC /* OutdatedSplitProxyHandlerTests.swift in Sources */,
 				952FA1262A2E255600264AB5 /* FeatureFlagsSynchronizerStub.swift in Sources */,
+				C5E967432D36CB2200112DAC /* GeneralInfoStorageTest.swift in Sources */,
 				5932260724A5325A00496D8B /* HttpTaskMock.swift in Sources */,
+				C539CAC72D89DA7B0050C732 /* RuleBasedSegmentDaoTest.swift in Sources */,
 				595AD26124E5D48500A7B750 /* ReconnectBackoffCounterTest.swift in Sources */,
 				95F3F020258E3E2F00084AF8 /* HttpImpressionsRecorderTests.swift in Sources */,
 				955B59672811F51A00D105CD /* SplitEventsManagerCoordinatorStub.swift in Sources */,
@@ -4342,6 +4531,7 @@
 				954F9B072570309400140B81 /* SplitDaoTest.swift in Sources */,
 				95F20F4A27EB533000B5B30A /* TreatmentManagerTest.swift in Sources */,
 				59F4AAA324FFCD5000A1C69A /* SyncEventBroadcasterStub.swift in Sources */,
+				C5E967622D395DAA00112DAC /* RolloutCacheManagerTest.swift in Sources */,
 				95ABF4C029314D3D006ED016 /* ImpressionsStorageTest.swift in Sources */,
 				5921ED3125378ECD000D6C8B /* StreamingInitTest.swift in Sources */,
 				95C717DE268CE137002ADB83 /* ImpressionsCountDaoStub.swift in Sources */,
@@ -4376,6 +4566,7 @@
 				C5977C282BF2B923003E293A /* GreaterThanOrEqualToSemverMatcherTest.swift in Sources */,
 				9550334A282F0FF400E5330F /* ImpressionsTrackerTest.swift in Sources */,
 				C5977C012BF27390003E293A /* SemverTest.swift in Sources */,
+				C53EDFC42DD3B73A000DCDBC /* RestClientCustomFailureHandlerTest.swift in Sources */,
 				595AD24D24E324D200A7B750 /* Base64UtilsTest.swift in Sources */,
 				599EDAF12270970500D7DACB /* SplitEventsManagerMock.swift in Sources */,
 				955B59632811E8E700D105CD /* SplitClientManagerTest.swift in Sources */,
@@ -4388,12 +4579,15 @@
 				59FB7C282202457D00ECC96A /* LocalhostParserTests.swift in Sources */,
 				95BC77EE28368FF1008E14BF /* UniqueKeyDaoTest.swift in Sources */,
 				95C1600F27D28FD4008562E3 /* PersistentAttributesStorageTests.swift in Sources */,
+				C539CAC42D88C7570050C732 /* PersistentRuleBasedSegmentsStorageStub.swift in Sources */,
+				C539CAC52D88C7570050C732 /* RuleBasedSegmentsStorageStub.swift in Sources */,
 				957E676625E7F8D7006F5B19 /* ReadyFromCacheTest.swift in Sources */,
 				9502B7B42837E70200B779C0 /* UniqueTrackerTest.swift in Sources */,
 				952BF5F8278DF57D00FF6181 /* TelemetryIntegrationTest.swift in Sources */,
 				59F4AAA124FFC94100A1C69A /* NotificationManagerKeeperTest.swift in Sources */,
 				955E12372BFCDEAC00AE6D10 /* HashedImpressionDaoMock.swift in Sources */,
 				95ABF4FC29369B73006ED016 /* TelemetrySynchronizerStub.swift in Sources */,
+				5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */,
 				C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */,
 				95715A8529D353C100A1B2F9 /* DbCipherTest.swift in Sources */,
 				59D84BDC2215CD52003DA248 /* LocalhostSplitLoaderTests.swift in Sources */,
@@ -4422,8 +4616,10 @@
 				5959C482228074800064F968 /* ValidationMessageLoggerStub.swift in Sources */,
 				59B8B8AC220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift in Sources */,
 				595AD20C24DDCB0E00A7B750 /* SseAuthenticatorTest.swift in Sources */,
+				C5A501DA2D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift in Sources */,
 				5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */,
 				955AAB8B283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift in Sources */,
+				C5DF6F7A2D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift in Sources */,
 				593225FC24A40AA900496D8B /* HttpResponseTest.swift in Sources */,
 				953911AD267A64FE0040433A /* ImpresionsObserverTest.swift in Sources */,
 				954F9C7D2579697B00140B81 /* SplitChangeProcessorStub.swift in Sources */,
@@ -4431,7 +4627,9 @@
 				9577A84B2683CBDC00D92AE1 /* ImpressionsCountRecorderWorkerTests.swift in Sources */,
 				5932260F24AAB27900496D8B /* TestUtils.swift in Sources */,
 				95F3F006258D49B600084AF8 /* PersistentEventsStorageStub.swift in Sources */,
+				C53F3C4F2DCD112400655753 /* RuleBasedSegmentChangeProcessorStub.swift in Sources */,
 				5959C477227B89820064F968 /* FactoryMonitorTest.swift in Sources */,
+				C53EDFA92DD295E5000DCDBC /* TargetingRulesChangeDecoderTest.swift in Sources */,
 				592C6ABE211B718E002D120C /* ArrayBlockingQueueTest.swift in Sources */,
 				5919017D24A28E1D005BD12A /* HttpRequestListTest.swift in Sources */,
 				593225F824A384B300496D8B /* EndpointFactoryTest.swift in Sources */,
@@ -4453,6 +4651,7 @@
 				956A7E2E297ED7600080D53C /* SplitsEncoderTest.swift in Sources */,
 				59ED408824EABD4700EF7B09 /* SseClientMock.swift in Sources */,
 				5921ED422538EA39000D6C8B /* StreamingIntegrationHelper.swift in Sources */,
+				5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */,
 				599EA57F2266708D006CBA89 /* LocalhostYamlParserTest.swift in Sources */,
 				594F5F5A253CFC2D00A945B4 /* StreamingControlTest.swift in Sources */,
 				59ED408C24EAF86000EF7B09 /* TimersManagerMock.swift in Sources */,
@@ -4464,17 +4663,20 @@
 				95825C022721F0F800A0CDAD /* UserKeyEncondingTest.swift in Sources */,
 				95ABF4C42934EFF2006ED016 /* EventsStorageTest.swift in Sources */,
 				59FB7BD721E7EC0700ECC96A /* KeyValidatorTests.swift in Sources */,
+				C539CACC2D89F79E0050C732 /* PersistentRuleBasedSegmentStorageTest.swift in Sources */,
 				9595C1A2274573DA0092123F /* AttributesEvaluationTest.swift in Sources */,
 				594F5F5E253F641000A945B4 /* BackoffCounterTimerStub.swift in Sources */,
 				599407E022403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift in Sources */,
 				59F4AAC12513C2EC00A1C69A /* PeriodicTimerStub.swift in Sources */,
 				9580C98226FB8A840021D729 /* StreamingControlResetTest.swift in Sources */,
 				95737E162ADEC794007FD15C /* StreamingTestingHelper.swift in Sources */,
+				C53EDFB02DD38572000DCDBC /* RestClientCustomDecoderTest.swift in Sources */,
 				594F5F58253A340F00A945B4 /* StreamingOccupancyTest.swift in Sources */,
 				C539CAE62D947D2A0050C732 /* PropertyValidatorTest.swift in Sources */,
 				59B2047624F9B8230092F2E9 /* PushManagerEventBroadcasterTest.swift in Sources */,
 				95F3F0302590E4BE00084AF8 /* HttpImpressionsRecorderStub.swift in Sources */,
 				C5977C2C2BF2C068003E293A /* LessThanOrEqualToSemverMatcherTest.swift in Sources */,
+				C53EDFAE2DD299CB000DCDBC /* RestClientSplitChangesTest.swift in Sources */,
 				954F9C5C25780FDD00140B81 /* HttpMySegmentsFetcherTest.swift in Sources */,
 				59F4AA9924FE8DA200A1C69A /* NotificationProcessorStub.swift in Sources */,
 				595AD21324E1849500A7B750 /* JwtParserStub.swift in Sources */,
@@ -4487,9 +4689,11 @@
 				955E12312BFBEA8600AE6D10 /* HashedImpressionDaoTest.swift in Sources */,
 				95342E992A4C71300045B201 /* FeatureFlagsPayloadDecoderMock.swift in Sources */,
 				9577A8472683B8C800D92AE1 /* HttpImpressionsCountRecorderTests.swift in Sources */,
+				C539CAC92D89DF1D0050C732 /* RuleBasedSegmentStorageTest.swift in Sources */,
 				957F8CF327BD3A41001FF7C2 /* StreamingNoReconectWhenPollingTest.swift in Sources */,
 				954F9C7025795CD300140B81 /* SplitsStorageStub.swift in Sources */,
 				594F5F532539E36400A945B4 /* StreamingMySegmentsSyncTest.swift in Sources */,
+				C53EDFCD2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift in Sources */,
 				9519A93427DBD38F00278AEC /* ByKeyMySegmentsStorageStub.swift in Sources */,
 				95B2498026F39C9B00B34507 /* MySegmentUpdateTest.swift in Sources */,
 				59F4AA9F24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift in Sources */,
@@ -4532,6 +4736,7 @@
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				95B180272763DA0E002DC9DF /* HttpTelemetryConfigRecorderTest.swift in Sources */,
 				C5977C202BF29F5B003E293A /* EqualToSemverMatcherTest.swift in Sources */,
+				C5A7D5532DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift in Sources */,
 				59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */,
 				95F7BC292C46A4C800C5F2E4 /* SecurityHelper.swift in Sources */,
 				9523B8CF28622B6500AEE178 /* CdnByPassTest.swift in Sources */,
@@ -4563,6 +4768,7 @@
 				95B1802B2763DE4B002DC9DF /* HttpTelemetryStatsRecorderTest.swift in Sources */,
 				C5977C102BF28846003E293A /* BetweenSemverMatcherTest.swift in Sources */,
 				95B17FF5275EAA6F002DC9DF /* InMemoryTelemetryStorageTest.swift in Sources */,
+				5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */,
 				95ABF511293ABDDC006ED016 /* ImpressionsStorageStub.swift in Sources */,
 				955E124D2C010B9000AE6D10 /* ImpressionsObserverMock.swift in Sources */,
 				9557C1CA2614F67700CD9B5C /* DbForTwoDifferentApiKeyTest.swift in Sources */,
@@ -4570,6 +4776,7 @@
 				C5977C572BF53D60003E293A /* UnsupportedMatcherIntegrationTest.swift in Sources */,
 				95B1800527626C70002DC9DF /* TelemetryConfigRecorderWorkerTests.swift in Sources */,
 				95ABF4C6293522D6006ED016 /* EventsTrackerTest.swift in Sources */,
+				C53F3C472DCB956900655753 /* SplitsSyncHelperTest.swift in Sources */,
 				95ABF4C829352425006ED016 /* EventValidatorStub.swift in Sources */,
 				59F4AAC42513EFF800A1C69A /* PeriodicMySegmentsSyncWorkerTest.swift in Sources */,
 				31AA21DE01A000A7C30630F2 /* SseClientTest.swift in Sources */,
@@ -4606,6 +4813,7 @@
 				95F7BBC42C077DD200C5F2E4 /* ImpressionsCountDao.swift in Sources */,
 				95B02CB228D0BDC10030EC8B /* ApiKeyValidator.swift in Sources */,
 				95880CFA2AEFF159000498A0 /* FlagSetsCache.swift in Sources */,
+				C5E9675F2D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */,
 				95B02CB328D0BDC10030EC8B /* EventValidator.swift in Sources */,
 				95B02CB428D0BDC10030EC8B /* SplitValidator.swift in Sources */,
 				95B02CB528D0BDC10030EC8B /* ValidationConfig.swift in Sources */,
@@ -4628,6 +4836,7 @@
 				95B02CC628D0BDC10030EC8B /* CompressionUtil.swift in Sources */,
 				95B02CC728D0BDC10030EC8B /* Stopwatch.swift in Sources */,
 				95B02CC828D0BDC10030EC8B /* ConcurrentArrayQueue.swift in Sources */,
+				5B48D8172DEA2CED00351925 /* PrerequisitesMatcher.swift in Sources */,
 				95B02CC928D0BDC10030EC8B /* SynchronizedList.swift in Sources */,
 				95B02CCA28D0BDC10030EC8B /* ConcurrentSet.swift in Sources */,
 				C539CADC2D93229D0050C732 /* EvaluationOptions.swift in Sources */,
@@ -4646,6 +4855,12 @@
 				95B02CD628D0BDC20030EC8B /* Dictionary+JSON.swift in Sources */,
 				95B02CD728D0BDC20030EC8B /* SplitView+StringConvertible.swift in Sources */,
 				95B02CD828D0BDC20030EC8B /* String+Utils.swift in Sources */,
+				C5A501CF2D88A15600206F82 /* RuleBasedSegmentEntity.swift in Sources */,
+				C5A501D02D88A15600206F82 /* RuleBasedSegmentsDecoder.swift in Sources */,
+				C5A501D42D88A15600206F82 /* RuleBasedSegmentDao.swift in Sources */,
+				C5A501D52D88A15600206F82 /* RuleBasedSegmentsEncoder.swift in Sources */,
+				C539CAD62D8B5AD00050C732 /* RuleBasedSegmentChange.swift in Sources */,
+				C539CAD72D8B5AD00050C732 /* TargetingRulesChange.swift in Sources */,
 				95B02CD928D0BDC20030EC8B /* Array+DynamicCodable.swift in Sources */,
 				95B02CDA28D0BDC20030EC8B /* Dictionary+DynamicCodable.swift in Sources */,
 				C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */,
@@ -4656,6 +4871,7 @@
 				95B02CDF28D0BDC20030EC8B /* ServiceConstants.swift in Sources */,
 				95B02CE028D0BDC20030EC8B /* Split.swift in Sources */,
 				95B02CE128D0BDC20030EC8B /* SplitBase.swift in Sources */,
+				C539CAD92D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift in Sources */,
 				95B02CE228D0BDC20030EC8B /* SplitChange.swift in Sources */,
 				95B02CE328D0BDC20030EC8B /* SplitModels+StringConvertible.swift in Sources */,
 				95B02CE428D0BDC20030EC8B /* BetweenMatcherData.swift in Sources */,
@@ -4669,9 +4885,11 @@
 				95B02CEB28D0BDC20030EC8B /* Matcher.swift in Sources */,
 				95B02CEC28D0BDC20030EC8B /* MatcherCombiner.swift in Sources */,
 				956A7E21297590DF0080D53C /* Array+Chunked.swift in Sources */,
+				C5A7D5612DDF88BA0081D190 /* RuleBasedSegment.swift in Sources */,
 				95B02CED28D0BDC20030EC8B /* MatcherGroup.swift in Sources */,
 				95CED0502B4DCDB1005E3C34 /* LocalhostClientManager.swift in Sources */,
 				95B02CEE28D0BDC20030EC8B /* MatcherProtocol.swift in Sources */,
+				C5E9674F2D37098000112DAC /* RolloutCacheManager.swift in Sources */,
 				95B02CEF28D0BDC20030EC8B /* MatcherType.swift in Sources */,
 				95B02CF028D0BDC20030EC8B /* Segment.swift in Sources */,
 				95B02CF128D0BDC20030EC8B /* Status.swift in Sources */,
@@ -4691,7 +4909,9 @@
 				95B02CFD28D0BDC20030EC8B /* SplitError.swift in Sources */,
 				95B02CFE28D0BDC20030EC8B /* DefaultSplitFactory.swift in Sources */,
 				95B02CFF28D0BDC20030EC8B /* SplitClientManager.swift in Sources */,
+				C5E9674D2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */,
 				95B02D0028D0BDC20030EC8B /* SplitComponentFactory.swift in Sources */,
+				C5E967532D37FA2000112DAC /* RolloutCacheConfiguration.swift in Sources */,
 				95B02D0128D0BDC20030EC8B /* SplitApiFacade.swift in Sources */,
 				95B02D0228D0BDC20030EC8B /* SplitFactory.swift in Sources */,
 				952FA1392A33778500264AB5 /* SyncGuardian.swift in Sources */,
@@ -4731,6 +4951,8 @@
 				95B02D2328D0BDC20030EC8B /* SplitEventTask.swift in Sources */,
 				95B02D2428D0BDC20030EC8B /* SplitEventActionTask.swift in Sources */,
 				95B02D2528D0BDC20030EC8B /* SplitInternalEvent.swift in Sources */,
+				C539CABE2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift in Sources */,
+				C539CABF2D88C7410050C732 /* RuleBasedSegmentsStorage.swift in Sources */,
 				95B02D2628D0BDC20030EC8B /* HashedImpression.swift in Sources */,
 				95B02D2728D0BDC20030EC8B /* UniqueKeys.swift in Sources */,
 				95B02D2828D0BDC20030EC8B /* ImpressionsTest.swift in Sources */,
@@ -4836,9 +5058,11 @@
 				95B02D7628D0BDC20030EC8B /* EventStreamParser.swift in Sources */,
 				958AD2142CA458C100E3DD43 /* SyncSegmentsUpdateWorker.swift in Sources */,
 				95B02D7728D0BDC20030EC8B /* JwtTokenParser.swift in Sources */,
+				C53EDFC92DD3DD3E000DCDBC /* OutdatedSplitProxyHandler.swift in Sources */,
 				95B02D7828D0BDC20030EC8B /* DefaultSseNotificationParser.swift in Sources */,
 				95B02D7928D0BDC20030EC8B /* SyncUpdateWorker.swift in Sources */,
 				954D4B2829F85EA00042C1D7 /* SplitHttpsAuthenticator.swift in Sources */,
+				C539CACE2D8A08C00050C732 /* InRuleBasedSegmentMatcher.swift in Sources */,
 				956A7E33297EF8B10080D53C /* SplitsEncoder.swift in Sources */,
 				95B02D7A28D0BDC20030EC8B /* SseNotificationProcessor.swift in Sources */,
 				95B02D7B28D0BDC30030EC8B /* SyncEventBroadcaster.swift in Sources */,
@@ -4859,6 +5083,7 @@
 				95B02D8928D0BDC30030EC8B /* HttpTask.swift in Sources */,
 				95B02D8A28D0BDC30030EC8B /* HttpDataRequest.swift in Sources */,
 				95B02D8B28D0BDC30030EC8B /* HttpStreamResponse.swift in Sources */,
+				C53EDFAC2DD29640000DCDBC /* TargetingRulesChangeDecoder.swift in Sources */,
 				95B02D8C28D0BDC30030EC8B /* HttpStreamRequest.swift in Sources */,
 				95B02D8D28D0BDC30030EC8B /* HttpError.swift in Sources */,
 				95B02D8E28D0BDC30030EC8B /* HttpRequestList.swift in Sources */,
@@ -5406,13 +5631,14 @@
 		59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				C5A501DD2D88AD1B00206F82 /* split_cache_v6.xcdatamodel */,
 				9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */,
 				952E26712833EBC90015D633 /* split_cache_v4.xcdatamodel */,
 				95623D8E275100770006A8F1 /* split_cache_v3.xcdatamodel */,
 				950B74302693761A005FD649 /* split_cache_v2.xcdatamodel */,
 				59E6A38925557C8D005DE642 /* split_cache.xcdatamodel */,
 			);
-			currentVersion = 9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */;
+			currentVersion = C5A501DD2D88AD1B00206F82 /* split_cache_v6.xcdatamodel */;
 			path = split_cache.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
