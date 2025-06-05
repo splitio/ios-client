@@ -5,6 +5,7 @@ on:
     types: [closed]
     branches:
       - master
+      - development
 
 jobs:
   create-tag:
