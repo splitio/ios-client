@@ -116,7 +116,7 @@ jobs:
         id: create-pr
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.DEVOPS_READONLY_GITHUB_TOKEN }}
           commit-message: "chore: Update Split SDK to version ${{ needs.create-tag.outputs.version }}"
           title: "Update Split SDK to version ${{ needs.create-tag.outputs.version }}"
           body: |
@@ -131,7 +131,7 @@ jobs:
         if: steps.create-pr.outputs.pull-request-url
         uses: actions/github-script@v6
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.DEVOPS_READONLY_GITHUB_TOKEN }}
           script: |
             const prNumber = context.payload.pull_request.number;
             const examplePrUrl = '${{ steps.create-pr.outputs.pull-request-url }}';
