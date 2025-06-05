@@ -111,8 +111,9 @@ jobs:
       - name: Push changes
         run: |
           git push origin "${{ steps.create-branch.outputs.branch_name }}"
-      
+
       - name: Create Pull Request
+        id: create-pr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -125,3 +126,19 @@ jobs:
           branch: ${{ steps.create-branch.outputs.branch_name }}
           base: master
           delete-branch: true
+
+      - name: Comment on original PR
+        if: steps.create-pr.outputs.pull-request-url
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const examplePrUrl = '${{ steps.create-pr.outputs.pull-request-url }}';
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `✅ PR created: ${examplePrUrl}`
+            });

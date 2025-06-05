@@ -4,6 +4,10 @@
 # Usage: ./scripts/release.sh <version>
 # Example: ./scripts/release.sh 3.0.0-rc1
 
+# Branch name constants - update these if branch naming changes
+MASTER_BRANCH="master"
+DEVELOPMENT_BRANCH="development"
+
 set -e
 
 # Check if version parameter is provided
@@ -30,14 +34,16 @@ if [ -n "$(git status --porcelain)" ]; then
   exit 1
 fi
 
-# Make sure we're on the latest master
+# Fetch latest changes from remote
 echo "📥 Fetching latest changes from remote..."
 git fetch origin
-git checkout master
-git pull origin master
 
-# Create release branch
-echo "🌿 Creating branch $RELEASE_BRANCH..."
+# Get current branch
+CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
+echo "📑 Current branch: $CURRENT_BRANCH"
+
+# Create release branch from current branch
+echo "🌿 Creating branch $RELEASE_BRANCH from $CURRENT_BRANCH..."
 git checkout -b $RELEASE_BRANCH
 
 # Check if this is an RC version
@@ -126,8 +132,17 @@ if [[ $GITHUB_REPO == $REMOTE_URL ]]; then
   GITHUB_REPO=$(echo $REMOTE_URL | sed -e 's/.*github.com\/\(.*\)\.git/\1/')
 fi
 
+# Determine target branch based on RC status
+if [ "$IS_RC" = true ]; then
+  TARGET_BRANCH="$DEVELOPMENT_BRANCH"
+  echo "📊 RC version detected, PR will target the $DEVELOPMENT_BRANCH branch"
+else
+  TARGET_BRANCH="$MASTER_BRANCH"
+  echo "📊 Regular version detected, PR will target the $MASTER_BRANCH branch"
+fi
+
 # Create PR URL
-PR_URL="https://github.com/$GITHUB_REPO/compare/master...$RELEASE_BRANCH?expand=1"
+PR_URL="https://github.com/$GITHUB_REPO/compare/$TARGET_BRANCH...$RELEASE_BRANCH?expand=1"
 
 echo ""
 echo "🎉 Release preparation completed successfully!"
@@ -136,6 +151,6 @@ echo "Opening browser to create pull request..."
 open "$PR_URL"
 echo ""
 echo "Next steps:"
-echo "1. Complete the pull request to merge $RELEASE_BRANCH into master"
+echo "1. Complete the pull request to merge $RELEASE_BRANCH into $TARGET_BRANCH"
 echo "2. After merging, the GitHub workflow will create and push the tag"
 echo ""
