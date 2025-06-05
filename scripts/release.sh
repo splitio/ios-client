@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Split SDK Release Script
+# Split SDK Release Preparation Script
 # Usage: ./scripts/release.sh <version>
 # Example: ./scripts/release.sh 3.0.0-rc1
 
@@ -16,6 +16,9 @@ fi
 
 VERSION=$1
 RELEASE_BRANCH="release/$VERSION"
+
+# Get current date in format: (Jun 5, 2025)
+CURRENT_DATE=$(date "+%b %-d, %Y")
 
 # Ensure we're in the repo root directory
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -37,6 +40,12 @@ git pull origin master
 echo "🌿 Creating branch $RELEASE_BRANCH..."
 git checkout -b $RELEASE_BRANCH
 
+# Check if this is an RC version
+IS_RC=false
+if [[ "$VERSION" == *"-rc"* ]]; then
+  IS_RC=true
+fi
+
 # Update Version.swift
 echo "📝 Updating Version.swift to $VERSION..."
 sed -i '' "s/private static let kVersion = \".*\"/private static let kVersion = \"$VERSION\"/" Split/Common/Utils/Version.swift
@@ -45,31 +54,68 @@ sed -i '' "s/private static let kVersion = \".*\"/private static let kVersion = 
 echo "📝 Updating Split.podspec to $VERSION..."
 sed -i '' "s/s.version          = '.*'/s.version          = '$VERSION'/" Split.podspec
 
+# Update CHANGES.txt if not an RC version
+if [ "$IS_RC" = false ]; then
+  echo "📝 Updating CHANGES.txt..."
+  
+  # Prompt for changes
+  echo ""
+  echo "Please enter the changes for version $VERSION (one per line)"
+  echo "Press Enter twice when done (or just press Enter to skip)"
+  echo ""
+  
+  CHANGES=""
+  while true; do
+    read -r line
+    
+    # Break on empty line
+    if [ -z "$line" ]; then
+      if [ -z "$CHANGES" ]; then
+        # No changes were entered, just break
+        break
+      else
+        # Confirm if done
+        read -r -p "Are you done entering changes? (y/n): " confirm
+        if [[ "$confirm" =~ ^[Yy] ]]; then
+          break
+        fi
+      fi
+    else
+      # Add the line to changes
+      if [ -z "$CHANGES" ]; then
+        CHANGES="- $line"
+      else
+        CHANGES="$CHANGES\n- $line"
+      fi
+    fi
+  done
+  
+  # Create the new entry
+  NEW_ENTRY="$VERSION: ($CURRENT_DATE)"
+  if [ -n "$CHANGES" ]; then
+    NEW_ENTRY="$NEW_ENTRY\n$CHANGES"
+  fi
+  
+  # Insert at the beginning of the file
+  sed -i '' "1s/^/$NEW_ENTRY\n\n/" CHANGES.txt
+  
+  # Add CHANGES.txt to the commit
+  git add CHANGES.txt
+fi
+
 # Commit changes
 echo "💾 Committing changes..."
-git add Split/Common/Utils/Version.swift Split.podspec
-git commit -m "chore: Update version to $VERSION"
-
-# Create tag
-echo "🏷️ Creating tag $VERSION..."
-git tag -a "$VERSION" -m "Release $VERSION"
-
-# Push changes and tag
-echo "📤 Pushing branch and tag to remote..."
-git push origin $RELEASE_BRANCH
-git push origin "$VERSION"
-
-# Verify tag in remote
-echo "✅ Verifying tag $VERSION exists in remote..."
-sleep 2
-git fetch --tags
-
-if git ls-remote --tags origin | grep -q "refs/tags/$VERSION$"; then
-  echo "✅ Tag $VERSION successfully created in remote"
+if [ "$IS_RC" = false ]; then
+  git add Split/Common/Utils/Version.swift Split.podspec CHANGES.txt
+  git commit -m "chore: Update version to $VERSION and update CHANGES.txt"
 else
-  echo "❌ Failed to verify tag $VERSION in remote"
-  exit 1
+  git add Split/Common/Utils/Version.swift Split.podspec
+  git commit -m "chore: Update version to $VERSION"
 fi
+
+# Push changes
+echo "📤 Pushing branch to remote..."
+git push origin $RELEASE_BRANCH
 
 # Get the remote URL and extract the GitHub repo path
 REMOTE_URL=$(git config --get remote.origin.url)
@@ -84,11 +130,12 @@ fi
 PR_URL="https://github.com/$GITHUB_REPO/compare/master...$RELEASE_BRANCH?expand=1"
 
 echo ""
-echo "🎉 Release $VERSION completed successfully!"
-echo ""
-echo "Next steps:"
-echo "1. Complete the pull request to merge $RELEASE_BRANCH into master"
-echo "2. After merging, the release will be available for distribution"
+echo "🎉 Release preparation completed successfully!"
 echo ""
 echo "Opening browser to create pull request..."
 open "$PR_URL"
+echo ""
+echo "Next steps:"
+echo "1. Complete the pull request to merge $RELEASE_BRANCH into master"
+echo "2. After merging, the GitHub workflow will create and push the tag"
+echo ""

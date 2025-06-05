@@ -1,0 +1,67 @@
+name: Release Tagging
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  create-tag:
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/')
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Git identity
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Extract version from branch name
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          VERSION=${BRANCH_NAME#release/}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Extracted version: $VERSION"
+
+      - name: Verify Version.swift contains correct version
+        run: |
+          VERSION_IN_FILE=$(grep -o 'private static let kVersion = "[^"]*"' Split/Common/Utils/Version.swift | cut -d'"' -f2)
+          if [ "$VERSION_IN_FILE" != "${{ env.VERSION }}" ]; then
+            echo "❌ Error: Version in Version.swift ($VERSION_IN_FILE) does not match branch version (${{ env.VERSION }})"
+            exit 1
+          fi
+          echo "✅ Version.swift contains correct version: $VERSION_IN_FILE"
+
+      - name: Verify Split.podspec contains correct version
+        run: |
+          PODSPEC_VERSION=$(grep -o "s.version          = '[^']*'" Split.podspec | cut -d"'" -f2)
+          if [ "$PODSPEC_VERSION" != "${{ env.VERSION }}" ]; then
+            echo "❌ Error: Version in Split.podspec ($PODSPEC_VERSION) does not match branch version (${{ env.VERSION }})"
+            exit 1
+          fi
+          echo "✅ Split.podspec contains correct version: $PODSPEC_VERSION"
+
+      - name: Create tag
+        run: |
+          echo "🏷️ Creating tag ${{ env.VERSION }}..."
+          git tag -a "${{ env.VERSION }}" -m "Release ${{ env.VERSION }}"
+          git push origin "${{ env.VERSION }}"
+
+      - name: Verify tag in remote
+        run: |
+          echo "✅ Verifying tag ${{ env.VERSION }} exists in remote..."
+          sleep 5
+          git fetch --tags
+          
+          if git ls-remote --tags origin | grep -q "refs/tags/${{ env.VERSION }}$"; then
+            echo "✅ Tag ${{ env.VERSION }} successfully created in remote"
+          else
+            echo "❌ Failed to verify tag ${{ env.VERSION }} in remote"
+            exit 1
+          fi
