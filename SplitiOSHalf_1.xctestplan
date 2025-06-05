@@ -32,7 +32,9 @@
       "containerPath" : "container:Split.xcodeproj",
       "identifier" : "3B6DEE5920EA6A4E0067435E",
       "name" : "Split"
-    }
+    },
+    "testRepetitionMode" : "fixedIterations",
+    "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {
