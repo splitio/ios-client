@@ -7,7 +7,13 @@
     case LARGE_SEGMENTS_UPDATED
     case RULE_BASED_SEGMENTS_UPDATED
     
-    var stringValue: String {
-        return String(describing: self)
+    public func toString() -> String {
+        switch self {
+            case .FLAGS_UPDATED: "FLAGS_UPDATED"
+            case .FLAGS_KILLED: "FLAGS_KILLED"
+            case .SEGMENTS_UPDATED: "SEGMENTS_UPDATED"
+            case .LARGE_SEGMENTS_UPDATED: "LARGE_SEGMENTS_UPDATED"
+            case .RULE_BASED_SEGMENTS_UPDATED: "RULE_BASED_SEGMENTS_UPDATED"
+        }
     }
 }
