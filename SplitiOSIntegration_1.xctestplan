@@ -590,6 +590,8 @@
         "LoggerTest\/testVerbose()",
         "LoggerTest\/testWarning()",
         "MatcherEvalTests\/testEval()",
+        "MetadataTypeTest",
+        "MetadataTypeTest\/testMetadataType()",
         "MultiClientEvaluationTest",
         "MultiClientEvaluationTest\/testEvaluation()",
         "MultiClientEvaluationTest\/testEvaluationFromCache()",

@@ -579,6 +579,8 @@
         "MatcherEvalTests",
         "MatcherEvalTests\/testEval()",
         "MatcherTest",
+        "MetadataTypeTest",
+        "MetadataTypeTest\/testMetadataType()",
         "MultiClientEvaluationTest",
         "MultiClientEvaluationTest\/testEvaluation()",
         "MultiClientEvaluationTest\/testEvaluationFromCache()",

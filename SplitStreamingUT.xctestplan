@@ -577,6 +577,8 @@
         "LoggerTest\/testVerbose()",
         "MatcherEvalTests",
         "MatcherEvalTests\/testEval()",
+        "MetadataTypeTest",
+        "MetadataTypeTest\/testMetadataType()",
         "MultiClientEvaluationTest",
         "MultiClientEvaluationTest\/testEvaluation()",
         "MultiClientEvaluationTest\/testEvaluationFromCache()",
