@@ -588,8 +588,6 @@
         "LoggerTest\/testWarning()",
         "MatcherEvalTests",
         "MatcherEvalTests\/testEval()",
-        "MetadataTypeTest",
-        "MetadataTypeTest\/testMetadataType()",
         "MultiClientEvaluationTest",
         "MultiClientEvaluationTest\/testEvaluation()",
         "MultiClientEvaluationTest\/testEvaluationWithAttributes()",
