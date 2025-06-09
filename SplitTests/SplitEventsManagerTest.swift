@@ -262,6 +262,25 @@ class SplitEventsManagerTest: XCTestCase {
 
         eventManager.stop()
     }
+    
+    func testEventWithMetadata() {
+        
+        let taskExp = XCTestExpectation()
+        
+        // Build Task
+        let metadata = EventMetadata(type: .FLAGS_KILLED, data: "TEST_FLAG")
+        
+        let handler: SplitActionWithMetadata = { handlerMetadata in
+            XCTAssertEqual(metadata.type, handlerMetadata?.type)
+            XCTAssertEqual(metadata.data, "TEST_FLAG")
+            taskExp.fulfill()
+        }
+        let task = SplitEventActionTask(action: handler, event: .sdkReady, runInBackground: false, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey), queue: nil)
+        
+        // Run & test
+        task.run(metadata)
+        wait(for: [taskExp], timeout: 3.0)
+    }
 
     func testSdkReadyFromCacheWithoutFlagCachedValues() {
 
