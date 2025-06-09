@@ -307,7 +307,7 @@ class SplitEventsManagerTest: XCTestCase {
 }
 
 class TestTask: SplitEventTask {
-    
+
     var event: SplitEvent = .sdkReady
 
     var runInBackground: Bool = false
