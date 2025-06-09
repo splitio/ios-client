@@ -1,17 +1,31 @@
-//
-//  SplitEvent.swift
-//  Split
-//
 //  Created by Sebastian Arrubia on 4/17/18.
-//
 
 import Foundation
+
+// All events (internal & external) support metadata.
+// Internal errors are propagated to the customer as events "(.sdkError)". The error info will travel as the event metadata.
+
+@objcMembers public class SplitEventWithMetadata: NSObject {
+    let type: SplitEvent
+    let metadata: EventMetadata?
+
+    @objc public init(type: SplitEvent, metadata: EventMetadata? = nil) {
+        self.type = type
+        self.metadata = metadata
+    }
+
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? SplitEventWithMetadata else { return false }
+        return self.type == other.type
+    }
+}
 
 @objc public enum SplitEvent: Int {
     case sdkReady
     case sdkReadyTimedOut
     case sdkReadyFromCache
     case sdkUpdated
+    case sdkError
 
     public func toString() -> String {
         switch self {
@@ -23,6 +37,8 @@ import Foundation
             return "SDK_READY_TIMED_OUT"
         case .sdkReadyFromCache:
             return "SDK_READY_FROM_CACHE"
+        case .sdkError:
+            return "SDK_ERROR"
         }
     }
 }
