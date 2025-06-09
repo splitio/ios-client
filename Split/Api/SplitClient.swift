@@ -8,8 +8,6 @@
 
 import Foundation
 
-public typealias SplitAction = () -> Void
-
 @objc public protocol SplitClient {
 
     // MARK: Evaluation feature

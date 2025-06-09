@@ -307,12 +307,14 @@ class SplitEventsManagerTest: XCTestCase {
 }
 
 class TestTask: SplitEventTask {
-
+    
     var event: SplitEvent = .sdkReady
 
     var runInBackground: Bool = false
 
     var queue: DispatchQueue?
+    
+    var metadata: EventMetadata? = nil
     
     var taskTriggered = false
     let label: String
@@ -328,6 +330,15 @@ class TestTask: SplitEventTask {
 
     func run() {
         print("run: \(self.label)")
+        taskTriggered = true
+        if let exp = self.exp {
+            exp.fulfill()
+        }
+    }
+    
+    func run(_ metadata: EventMetadata) {
+        print("run: \(self.label)")
+        self.metadata = metadata
         taskTriggered = true
         if let exp = self.exp {
             exp.fulfill()
