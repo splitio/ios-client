@@ -1,6 +1,18 @@
 //  Created by Martin Cardozo on 06/06/2025
 
-@objc enum MetadataType: Int {
+import Foundation
+
+@objc public class EventMetadata: NSObject {
+    var type: EventMetadataType
+    var data: String = ""
+
+    init(type: EventMetadataType, data: String) {
+        self.type = type
+        self.data = data
+    }
+}
+
+@objc enum EventMetadataType: Int {
     case FLAGS_UPDATED
     case FLAGS_KILLED
     case SEGMENTS_UPDATED
