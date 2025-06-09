@@ -587,6 +587,7 @@
         "LoggerTest\/testNone()",
         "LoggerTest\/testVerbose()",
         "LoggerTest\/testWarning()",
+	"MatcherEvalTests",
         "MultiClientEvaluationTest",
         "MultiClientEvaluationTest\/testEvaluation()",
         "MultiClientEvaluationTest\/testEvaluationFromCache()",
