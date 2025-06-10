@@ -232,7 +232,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             let queue = task.takeQueue() ?? DispatchQueue.general
             queue.async {
                 TimeChecker.logInterval("Running \(eventName) in Background queue \(queue)")
-                task.run()
+                task.run(nil)
             }
             return
         }
@@ -240,7 +240,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         DispatchQueue.main.async {
             TimeChecker.logInterval("Running event on main: \(eventName)")
             // UI Updates
-            task.run()
+            task.run(nil)
         }
     }
 
