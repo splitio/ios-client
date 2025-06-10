@@ -9,6 +9,8 @@
 import Foundation
 
 @objc public protocol SplitClient {
+    
+    // TODO: Add new channels
 
     // MARK: Evaluation feature
     func getTreatment(_ split: String, attributes: [String: Any]?) -> String
