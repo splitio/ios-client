@@ -2,7 +2,6 @@
 
 import Foundation
 
-//NOSONAR
 @objc public class EventMetadata: NSObject {
     var type: EventMetadataType
     var data: String = ""
@@ -13,7 +12,6 @@ import Foundation
     }
 }
 
-//NOSONAR
 @objc enum EventMetadataType: Int {
     case FLAGS_UPDATED
     case FLAGS_KILLED
