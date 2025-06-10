@@ -41,12 +41,12 @@ class SplitEventActionTask: SplitEventTask {
         defer { queue = nil }
         return queue
     }
-
-    func run() {
-        eventHandler?()
-    }
     
-    func run(_ metadata: EventMetadata) {
-        eventHandlerWithMetadata?(metadata)
+    func run(_ metadata: EventMetadata?) {
+        eventHandler?()
+        
+        if let metadata = metadata {
+            eventHandlerWithMetadata?(metadata)
+        }
     }
 }
