@@ -31,6 +31,8 @@ class SplitEventsManagerMock: SplitEventsManager {
     var isSdkUpdatedFired = false
 
     var isSdkReadyChecked = false
+    
+    var metadata: EventMetadata?
 
     func notifyInternalEvent(_ event:SplitInternalEvent) {
         switch event {
@@ -52,9 +54,13 @@ class SplitEventsManagerMock: SplitEventsManager {
         }
     }
 
-    var registeredEvents = [SplitEvent: SplitEventTask]()
-    func register(event: SplitEvent, task: SplitEventTask) {
-        registeredEvents[event] = task
+    var registeredEvents = [SplitEvent: SplitEventActionTask]()
+    func register(event: SplitEvent, task: SplitEventActionTask) {
+        register(event: SplitEventWithMetadata(type: event), task: task)
+    }
+    
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {
+        registeredEvents[event.type] = task
     }
     
     func start() {
@@ -78,5 +84,10 @@ class SplitEventsManagerMock: SplitEventsManager {
         default:
             return true
         }
+    }
+    
+    func notifyInternalEvent(_ event: SplitInternalEvent, metadata: EventMetadata?) {
+        self.metadata = metadata
+        notifyInternalEvent(event)
     }
 }

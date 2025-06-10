@@ -25,6 +25,10 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
     )
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
+        notifyInternalEvent(event, metadata: nil)
+    }
+
+    func notifyInternalEvent(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
         if !eventsToHandle.contains(event) {
             return
         }
@@ -33,7 +37,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
 
             self.triggered.insert(event)
             self.managers.forEach { _, manager in
-                manager.notifyInternalEvent(event)
+                manager.notifyInternalEvent(event, metadata: metadata)
             }
         }
     }
@@ -76,5 +80,6 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         }
     }
 
-    func register(event: SplitEvent, task: SplitEventTask) {}
+    func register(event: SplitEvent, task: SplitEventActionTask) {}
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {}
 }

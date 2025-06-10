@@ -15,11 +15,19 @@ class SplitEventsManagerStub: SplitEventsManager {
     var splitsKilledEventFiredCount = 0
     var splitsUpdatedEventFiredCount = 0
     var mySegmentsLoadedEventFiredCount = 0
+    var metadata: EventMetadata?
     var mySegmentsLoadedEventExp: XCTestExpectation?
     var startCalled = false
     var stopCalled = false
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
+        notifyInternalEvent(event, metadata: nil)
+    }
+
+    func notifyInternalEvent(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
+
+        self.metadata = metadata
+
         switch event {
         case .mySegmentsLoadedFromCache:
             mySegmentsLoadedEventFiredCount+=1
@@ -39,8 +47,12 @@ class SplitEventsManagerStub: SplitEventsManager {
         }
     }
 
-    var registeredEvents = [SplitEvent: SplitEventTask]()
-    func register(event: SplitEvent, task: SplitEventTask) {
+    var registeredEvents = [SplitEventWithMetadata: SplitEventActionTask]()
+    func register(event: SplitEvent, task: SplitEventActionTask) {
+        register(event: SplitEventWithMetadata(type: event), task: task)
+    }
+
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {
         registeredEvents[event] = task
     }
 

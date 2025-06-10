@@ -315,6 +315,26 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.stop()
     }
     
+    func testSplitEventActionTaskMetadata() {
+
+        // Dummy event with metadata
+        let metadataTypeToCheck: EventMetadataType = .FLAGS_KILLED
+        let metadataDataToCheck: String            = "Test-flag-42"
+        let dummyMetadata = EventMetadata(type: metadataTypeToCheck, data: metadataDataToCheck)
+
+        // This will be the task's "run()"
+        let action: SplitActionWithMetadata = { metadata in
+            XCTAssertEqual(metadataTypeToCheck, metadata!.type)
+            XCTAssertEqual(metadataDataToCheck,metadata!.data)
+        }
+
+        // SUT
+        let SUT = TestTask(exp: nil, action: action, metadata: dummyMetadata)
+
+        SUT.run(dummyMetadata)
+        XCTAssertTrue(SUT.taskTriggered)
+    }
+    
     // MARK: Helpers
     func currentTimestamp() -> Int {
         return Int(Date().unixTimestamp())
@@ -325,40 +345,21 @@ class SplitEventsManagerTest: XCTestCase {
     }
 }
 
-class TestTask: SplitEventTask {
-
-    var event: SplitEvent = .sdkReady
-
-    var runInBackground: Bool = false
-
-    var queue: DispatchQueue?
-    
-    var metadata: EventMetadata? = nil
+class TestTask: SplitEventActionTask {
     
     var taskTriggered = false
     let label: String
     var exp: XCTestExpectation?
-    init(exp: XCTestExpectation?, label: String = "") {
+    init(exp: XCTestExpectation?, label: String = "", action: SplitActionWithMetadata? = nil, metadata: EventMetadata? = nil) {
         self.exp = exp
         self.label = label
-    }
-
-    func takeQueue() -> DispatchQueue? {
-        return nil
-    }
-
-    func run() {
-        print("run: \(self.label)")
-        taskTriggered = true
-        if let exp = self.exp {
-            exp.fulfill()
-        }
+        super.init(action: action ?? { _ in }, event: .sdkReady, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
     }
     
-    func run(_ metadata: EventMetadata) {
+    override func run(_ metadata: EventMetadata?) {
         print("run: \(self.label)")
-        self.metadata = metadata
         taskTriggered = true
+        super.run(metadata)
         if let exp = self.exp {
             exp.fulfill()
         }
