@@ -8,6 +8,8 @@
 
 import Foundation
 
+//TODO: Adapt for new events
+
 protocol SplitEventsManager: AnyObject {
     func register(event: SplitEvent, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
