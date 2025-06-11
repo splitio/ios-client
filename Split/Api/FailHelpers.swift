@@ -65,7 +65,7 @@ class FailedClient: SplitClient {
             queue: DispatchQueue, execute action: @escaping SplitAction) {
     }
     
-    func on(event: SplitEvent, executeWithMetadata: SplitActionWithMetadata) {}
+    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
         return false
