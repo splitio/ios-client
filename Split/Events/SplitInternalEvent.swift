@@ -10,10 +10,6 @@ struct SplitInternalEventWithMetadata {
         self.type = type
         self.metadata = metadata
     }
-
-    static func == (lhs: SplitInternalEventWithMetadata, rhs: SplitInternalEventWithMetadata) -> Bool {
-        return lhs.type == rhs.type
-    }
 }
 
 enum SplitInternalEvent {
