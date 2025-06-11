@@ -8,8 +8,6 @@
 
 import Foundation
 
-public typealias SplitAction = () -> Void
-
 @objc public protocol SplitClient {
 
     // MARK: Evaluation feature
@@ -34,6 +32,7 @@ public typealias SplitAction = () -> Void
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
 
     func on(event: SplitEvent, execute action: @escaping SplitAction)
+    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) -> Void
     func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
 

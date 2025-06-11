@@ -262,6 +262,25 @@ class SplitEventsManagerTest: XCTestCase {
 
         eventManager.stop()
     }
+    
+    func testEventWithMetadata() {
+        
+        let taskExp = XCTestExpectation()
+        
+        // Build Task
+        let metadata = EventMetadata(type: .FLAGS_KILLED, data: "TEST_FLAG")
+        
+        let handler: SplitActionWithMetadata = { handlerMetadata in
+            XCTAssertEqual(metadata.type, handlerMetadata?.type)
+            XCTAssertEqual(metadata.data, "TEST_FLAG")
+            taskExp.fulfill()
+        }
+        let task = SplitEventActionTask(action: handler, event: .sdkReady, runInBackground: false, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey), queue: nil)
+        
+        // Run & test
+        task.run(metadata)
+        wait(for: [taskExp], timeout: 3.0)
+    }
 
     func testSdkReadyFromCacheWithoutFlagCachedValues() {
 
@@ -296,6 +315,26 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.stop()
     }
     
+    func testSplitEventActionTaskMetadata() {
+
+        // Dummy event with metadata
+        let metadataTypeToCheck: EventMetadataType = .FLAGS_KILLED
+        let metadataDataToCheck: String            = "Test-flag-42"
+        let dummyMetadata = EventMetadata(type: metadataTypeToCheck, data: metadataDataToCheck)
+
+        // This will be the task's "run()"
+        let action: SplitActionWithMetadata = { metadata in
+            XCTAssertEqual(metadataTypeToCheck, metadata!.type)
+            XCTAssertEqual(metadataDataToCheck,metadata!.data)
+        }
+
+        // SUT
+        let SUT = TestTask(exp: nil, action: action, metadata: dummyMetadata)
+
+        SUT.run(dummyMetadata)
+        XCTAssertTrue(SUT.taskTriggered)
+    }
+    
     // MARK: Helpers
     func currentTimestamp() -> Int {
         return Int(Date().unixTimestamp())
@@ -306,29 +345,21 @@ class SplitEventsManagerTest: XCTestCase {
     }
 }
 
-class TestTask: SplitEventTask {
-
-    var event: SplitEvent = .sdkReady
-
-    var runInBackground: Bool = false
-
-    var queue: DispatchQueue?
+class TestTask: SplitEventActionTask {
     
     var taskTriggered = false
     let label: String
     var exp: XCTestExpectation?
-    init(exp: XCTestExpectation?, label: String = "") {
+    init(exp: XCTestExpectation?, label: String = "", action: SplitActionWithMetadata? = nil, metadata: EventMetadata? = nil) {
         self.exp = exp
         self.label = label
+        super.init(action: action ?? { _ in }, event: .sdkReady, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
     }
-
-    func takeQueue() -> DispatchQueue? {
-        return nil
-    }
-
-    func run() {
+    
+    override func run(_ metadata: EventMetadata?) {
         print("run: \(self.label)")
         taskTriggered = true
+        super.run(metadata)
         if let exp = self.exp {
             exp.fulfill()
         }

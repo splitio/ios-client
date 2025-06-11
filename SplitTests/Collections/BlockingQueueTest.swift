@@ -25,7 +25,7 @@ class BlockingQueueTest: XCTestCase {
             while true {
                 do {
                     let event = try queue.take()
-                    local.append(event)
+                    local.append(event.type)
                     if local.count == 4 {
                         endExp.fulfill()
                     }
@@ -60,7 +60,7 @@ class BlockingQueueTest: XCTestCase {
             while true {
                 do {
                     let event = try queue.take()
-                    local.append(event)
+                    local.append(event.type)
                 } catch {
                     endExp.fulfill()
                     interrupted = true
@@ -105,8 +105,8 @@ class BlockingQueueTest: XCTestCase {
             for _ in 0..<50000 {
                 do {
                     let event = try queue.take()
-                    local.append(event)
-                    print("Took: \(event)")
+                    local.append(event.type)
+                    print("Took: \(event.type)")
                 } catch {
                 }
             }
@@ -117,8 +117,8 @@ class BlockingQueueTest: XCTestCase {
             for _ in 0..<50000 {
                 do {
                     let event = try queue.take()
-                    local.append(event)
-                    print("Took QA1: \(event)")
+                    local.append(event.type)
+                    print("Took QA1: \(event.type)")
                 } catch {
                     print("\n\n\nERROR!!!!: \(error) \n\n\n")
                 }
@@ -129,9 +129,9 @@ class BlockingQueueTest: XCTestCase {
             for _ in 0..<50000 {
                 do {
                     let event = try queue.take()
-                    local.append(event)
+                    local.append(event.type)
                     Thread.sleep(forTimeInterval: 0.3)
-                    print("Took QA2: \(event)")
+                    print("Took QA2: \(event.type)")
                 } catch {
                 }
             }
@@ -142,8 +142,8 @@ class BlockingQueueTest: XCTestCase {
                 do {
                     Thread.sleep(forTimeInterval: 0.5)
                     let event = try queue.take()
-                    local.append(event)
-                    print("Took QA3: \(event)")
+                    local.append(event.type)
+                    print("Took QA3: \(event.type)")
                 } catch {
                 }
             }
