@@ -22,9 +22,13 @@ class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
         managers[key] = nil
     }
 
-    func register(event: SplitEvent, task: SplitEventTask) {
+    func register(event: SplitEvent, task: SplitEventActionTask) {
 
     }
+    
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {}
+
+    func notifyInternalEvent(_ event: SplitInternalEvent, metadata: EventMetadata?) {}
 
     var notifiedEvents = Set<String>()
     func notifyInternalEvent(_ event: SplitInternalEvent) {

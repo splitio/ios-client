@@ -103,6 +103,9 @@ class InternalSplitClientStub: InternalSplitClient {
 
     func on(event: SplitEvent, execute action: @escaping SplitAction) {
     }
+    
+    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {
+    }
 
     func track(trafficType: String, eventType: String) -> Bool {
         return true

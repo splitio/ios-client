@@ -121,25 +121,43 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return results
     }
 
-    public func on(event: SplitEvent, runInBackground: Bool,
-                   execute action: @escaping SplitAction) {
+    public func on(event: SplitEvent, execute action: @escaping SplitAction) {
+        on(event: event, runInBackground: false, queue: nil, execute: action)
+    }
+
+    public func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {
+        on(eventWithMetadata: SplitEventWithMetadata(type: event, metadata: nil), runInBackground: false, queue: nil, execute: executeWithMetadata)
+    }
+
+    public func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
+    }
+    
+    private func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
+        on(eventWithMetadata: SplitEventWithMetadata(type: event, metadata: nil), runInBackground: runInBackground, queue: queue, execute: action)
     }
 
     public func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: true, queue: queue, execute: action)
     }
 
-    public func on(event: SplitEvent, execute action: @escaping SplitAction) {
-        on(event: event, runInBackground: false, queue: nil, execute: action)
-    }
-
-    private func on(event: SplitEvent, runInBackground: Bool,
-                    queue: DispatchQueue?, execute action: @escaping SplitAction) {
+    private func on(eventWithMetadata event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
 
         guard let factory = clientManger?.splitFactory else { return }
         if let eventsManager = self.eventsManager {
-            let task = SplitEventActionTask(action: action, event: event,
+            let task = SplitEventActionTask(action: action, event: event.type,
+                                            runInBackground: runInBackground,
+                                            factory: factory,
+                                            queue: queue)
+            eventsManager.register(event: event, task: task)
+        }
+    }
+
+    private func on(eventWithMetadata event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitActionWithMetadata) {
+
+        guard let factory = clientManger?.splitFactory else { return }
+        if let eventsManager = self.eventsManager {
+            let task = SplitEventActionTask(action: action, event: event.type,
                                             runInBackground: runInBackground,
                                             factory: factory,
                                             queue: queue)
