@@ -95,6 +95,9 @@ class SplitClientStub: SplitClient {
     func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
     }
 
+    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {
+    }
+    
     func track(trafficType: String, eventType: String) -> Bool {
         return true
     }
