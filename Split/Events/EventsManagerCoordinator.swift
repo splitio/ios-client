@@ -80,11 +80,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         }
     }
 
-    func register(event: SplitEvent, task: SplitEventActionTask) {
-        // Intentionally empty
-    }
+    func register(event: SplitEvent, task: SplitEventActionTask) {}
     
-    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {
-        // Intentionally empty
-    }
+    func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {}
 }
