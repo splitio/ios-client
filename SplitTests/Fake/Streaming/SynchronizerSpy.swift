@@ -206,10 +206,12 @@ class SynchronizerSpy: Synchronizer {
     }
 
     var notifyFeatureFlagsUpdatedCalled = false
-    func notifyFeatureFlagsUpdated() {
+    var updatedFlagsList = [String]()
+    func notifyFeatureFlagsUpdated(flagsList: [String]) {
         notifyFeatureFlagsUpdatedCalled = true
+        updatedFlagsList = flagsList
     }
-
+    
     func notifySplitKilled() {
         notifySplitKilledCalled = true
         splitSynchronizer.notifySplitKilled()

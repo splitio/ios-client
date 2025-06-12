@@ -40,7 +40,8 @@ class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
     }
 
     var notifyUpdatedCalled = false
-    func notifyUpdated() {
+    var updatedFlagsList = [String]()
+    func notifyUpdated(flagsList: [String]) {
         notifyUpdatedCalled = true
     }
 
