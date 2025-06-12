@@ -180,7 +180,7 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
             if ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd,
                                                   toRemove: processedChange.toRemove,
                                                   changeNumber: processedChange.changeNumber) {
-                synchronizer.notifyFeatureFlagsUpdated(flagsList: []) //TODO: Notify segments updated (new notification method?)
+                synchronizer.notifyFeatureFlagsUpdated(flagsList: []) //TODO: Make new notify segments updated (new notification method?)
             }
 
             telemetryProducer?.recordUpdatesFromSse(type: .splits)
