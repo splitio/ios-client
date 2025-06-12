@@ -262,7 +262,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func isTriggered(internal event: SplitInternalEventWithMetadata) -> Bool {
-        return triggered.filter { $0 == event }.count > 0
+        return triggered.filter { event.isSameType($0) }.count > 0
     }
     
     private func isTriggered(internal event: SplitInternalEvent) -> Bool {
