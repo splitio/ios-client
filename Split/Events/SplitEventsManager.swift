@@ -25,7 +25,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     private var subscriptions = [SplitEvent: [SplitEventTask]]()
     private var executionTimes: [String: Int]
-    private var triggered: [SplitInternalEventWithMetadata]
+    private var triggered: [SplitInternalEvent]
     private let processQueue: DispatchQueue
     private let dataAccessQueue: DispatchQueue
     private var isStarted: Bool
@@ -37,7 +37,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         self.isStarted = false
         self.sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
         self.readingRefreshTime = 300
-        self.triggered = [SplitInternalEventWithMetadata]()
+        self.triggered = [SplitInternalEvent]()
         self.eventsQueue = DefaultInternalEventBlockingQueue()
         self.executionTimes = [String: Int]()
         registerMaxAllowedExecutionTimesPerEvent()
@@ -157,7 +157,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             guard let event = takeEvent() else {
                 return
             }
-            self.triggered.append(event)
+            self.triggered.append(event.type)
             switch event.type {
             case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
                 if isTriggered(external: .sdkReady) {
@@ -260,13 +260,9 @@ class DefaultSplitEventsManager: SplitEventsManager {
             task.run(event.metadata)
         }
     }
-
-    private func isTriggered(internal event: SplitInternalEventWithMetadata) -> Bool {
-        return triggered.filter { event.isSameType($0) }.count > 0
-    }
     
     private func isTriggered(internal event: SplitInternalEvent) -> Bool {
-        return isTriggered(internal: SplitInternalEventWithMetadata(event, metadata: nil))
+        return triggered.filter { $0 == event }.count > 0
     }
 
     // MARK: Safe Data Access

@@ -13,14 +13,6 @@ import Foundation
         self.type = type
         self.metadata = metadata
     }
-    
-    public static func == (lhs: SplitEventWithMetadata, rhs: SplitEventWithMetadata) -> Bool {
-        return lhs.type == rhs.type && lhs.metadata == rhs.metadata
-    }
-    
-    func isSameType(_ other: SplitEventWithMetadata) -> Bool {
-        return self.type == other.type
-    }
 }
 
 @objc public enum SplitEvent: Int {
