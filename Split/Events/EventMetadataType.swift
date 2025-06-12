@@ -10,10 +10,6 @@ import Foundation
         self.type = type
         self.data = data
     }
-    
-    public static func == (lhs: EventMetadata, rhs: EventMetadata) -> Bool {
-        return lhs.type == rhs.type && lhs.data == rhs.data
-    }
 }
 
 @objc enum EventMetadataType: Int {
