@@ -44,7 +44,7 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
     func notifyKilled() {
     }
 
-    func notifyUpdated() {
+    func notifyUpdated(flagsList: [String]) {
     }
 
     func pause() {
@@ -74,7 +74,9 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
             // Update will remove all records before insert new ones
             _ = self.featureFlagsStorage.update(splitChange: change)
 
-            self.eventsManager.notifyInternalEvent(.splitsUpdated)
+            // Notify event
+            let metadata = EventMetadata(type: .FLAGS_UPDATED, data: featureFlags.values.description)
+            self.eventsManager.notifyInternalEvent(.splitsUpdated, metadata: metadata)
         }
     }
 }
