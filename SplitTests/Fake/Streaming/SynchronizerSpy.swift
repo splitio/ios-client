@@ -211,7 +211,7 @@ class SynchronizerSpy: Synchronizer {
         notifyFeatureFlagsUpdatedCalled = true
         updatedFlagsList = flagsList
     }
-    
+
     func notifySplitKilled() {
         notifySplitKilledCalled = true
         splitSynchronizer.notifySplitKilled()
