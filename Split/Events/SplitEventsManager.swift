@@ -51,6 +51,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
     
+    // MARK: Notifiers
     func notifyInternalEvent(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
         let event = SplitInternalEventWithMetadata(event, metadata: metadata)
 
@@ -65,7 +66,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         notifyInternalEvent(event, metadata: nil)
     }
-
+    
+    // MARK: Registers
     func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {
         let eventName = event.type.toString()
         processQueue.async { [weak self] in
@@ -84,6 +86,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         register(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
     }
 
+    // MARK: Flow
     func start() {
         dataAccessQueue.sync {
             if self.isStarted {
