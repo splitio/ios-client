@@ -14,7 +14,7 @@ protocol FeatureFlagsSynchronizer {
     func synchronize(changeNumber: Int64?, rbsChangeNumber: Int64?)
     func startPeriodicSync()
     func stopPeriodicSync()
-    func notifyKilled()
+    func notifyKilled(_ name: String)
     func notifyUpdated()
     func pause()
     func resume()
@@ -144,8 +144,8 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         periodicSplitsSyncWorker?.stop()
     }
 
-    func notifyKilled() {
-        splitEventsManager.notifyInternalEvent(.splitKilledNotification)
+    func notifyKilled(_ name: String) {
+        splitEventsManager.notifyInternalEvent(.splitKilledNotification, metadata: EventMetadata(type: .FLAGS_KILLED, data: name))
     }
 
     func notifyUpdated() {

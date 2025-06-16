@@ -41,7 +41,7 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
     func stopPeriodicSync() {
     }
 
-    func notifyKilled() {
+    func notifyKilled(_ name: String) {
     }
 
     func notifyUpdated() {

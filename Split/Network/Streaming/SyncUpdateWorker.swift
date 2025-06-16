@@ -223,13 +223,13 @@ class SplitKillWorker: UpdateWorker<SplitKillNotification> {
     }
 
     private func process(_ notification: SplitKillNotification) {
-        if let splitToKill = splitsStorage.get(name: notification.splitName) {
+        if let splitToKill = splitsStorage.get(name: notification.splitName), let name = splitToKill.name {
             if splitToKill.changeNumber ?? -1 < notification.changeNumber {
                 splitToKill.defaultTreatment = notification.defaultTreatment
                 splitToKill.changeNumber = notification.changeNumber
                 splitToKill.killed = true
                 splitsStorage.updateWithoutChecks(split: splitToKill)
-                synchronizer.notifySplitKilled()
+                synchronizer.notifySplitKilled(name)
             }
         }
         synchronizer.synchronizeSplits(changeNumber: notification.changeNumber)
