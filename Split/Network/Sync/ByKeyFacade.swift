@@ -178,9 +178,7 @@ class DefaultByKeyFacade: ByKeyFacade {
         }
     }
 
-    private func doInAll(forMatchingKey key: String,
-                         action: (ByKeyComponentGroup) -> Void) {
-
+    private func doInAll(forMatchingKey key: String, action: (ByKeyComponentGroup) -> Void) {
         byKeyComponents.values(forMatchingKey: key).forEach {  group in
             action(group)
         }
