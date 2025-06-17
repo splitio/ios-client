@@ -1,11 +1,5 @@
-//
-//  DefaultSplitClient.swift
-//  Split
-//
 //  Created by Brian Sztamfater on 20/9/17.
 //  Modified by Natalia Stele on 11/10/17.
-//
-//
 
 import Foundation
 
@@ -55,7 +49,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
     }
 }
 
-// MARK: Events
+// MARK: Customers Listeners
 extension DefaultSplitClient {
 
     public func on(event: SplitEvent, execute action: @escaping SplitAction) {
@@ -173,7 +167,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: Track Events
+// MARK: Tracking
 extension DefaultSplitClient {
 
     public func track(trafficType: String, eventType: String) -> Bool {
@@ -223,7 +217,7 @@ extension DefaultSplitClient {
     }
 }
 
-// MARK: Persistent attributes feature
+// MARK: Persistence
 extension DefaultSplitClient {
 
     public func setAttribute(name: String, value: Any) -> Bool {
@@ -265,8 +259,7 @@ extension DefaultSplitClient {
     }
 
     private func isValidAttribute(_ value: Any) -> Bool {
-        return anyValueValidator.isPrimitiveValue(value: value) ||
-        anyValueValidator.isList(value: value)
+        return anyValueValidator.isPrimitiveValue(value: value) || anyValueValidator.isList(value: value)
     }
 
     private func logInvalidAttribute(name: String) {
@@ -275,31 +268,31 @@ extension DefaultSplitClient {
     }
 
     private func attributesStorage() -> AttributesStorage {
-        return storageContainer.attributesStorage
+        storageContainer.attributesStorage
     }
 }
 
-// MARK: By Sets evaluation
+// MARK: By Flagsets
 extension DefaultSplitClient {
     public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
-        return treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: nil)
+        treatmentManager.getTreatmentsByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: nil)
     }
 
     public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String] {
-        return treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: nil)
+        treatmentManager.getTreatmentsByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: nil)
     }
 
     public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: nil)
+        treatmentManager.getTreatmentsWithConfigByFlagSet(flagSet: flagSet, attributes: attributes, evaluationOptions: nil)
     }
 
     public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
                                                   attributes: [String: Any]?) -> [String: SplitResult] {
-        return treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: nil)
+        treatmentManager.getTreatmentsWithConfigByFlagSets(flagSets: flagSets, attributes: attributes, evaluationOptions: nil)
     }
 }
 
-// MARK: Flush / Destroy
+// MARK: Lifecycle
 extension DefaultSplitClient {
 
     private func syncFlush() {
