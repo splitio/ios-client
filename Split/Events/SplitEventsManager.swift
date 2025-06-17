@@ -216,6 +216,32 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func trigger(event: SplitEvent) {
         trigger(event: SplitEventWithMetadata(type: event, metadata: nil))
     }
+    
+//    private func trigger(event: SplitInternalEvent) {
+//        trigger(event: SplitInternalEventWithMetadata(type: event, metadata: nil))
+//    }
+//    
+//    private func trigger(event: SplitInternalEventWithMetadata) {
+//        let eventName = event.type.toString()
+//
+//        // If executionTimes is zero, maximum executions has been reached
+//        if executionTimes(for: eventName) == 0 {
+//            return
+//        }
+//
+//        // If executionTimes is grater than zero, maximum executions decrease 1
+//        if let times = executionTimes(for: eventName), times > 0 {
+//            updateExecutionTimes(for: eventName, count: times - 1)
+//        }
+//
+//        Logger.d("Triggering SDK event \(eventName)")
+//        // If executionTimes is lower than zero, execute it without limitation
+//        if let subscriptions = getSubscriptions(for: event.type) {
+//            for task in subscriptions {
+//                executeTask(event: event, task: task)
+//            }
+//        }
+//    }
 
     private func trigger(event: SplitEventWithMetadata) {
         let eventName = event.type.toString()
