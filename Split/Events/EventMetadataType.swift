@@ -3,8 +3,8 @@
 import Foundation
 
 @objc public class EventMetadata: NSObject {
-    var type: EventMetadataType
-    var data: String = ""
+    public var type: EventMetadataType
+    public var data: String = ""
 
     init(type: EventMetadataType, data: String) {
         self.type = type
@@ -12,7 +12,7 @@ import Foundation
     }
 }
 
-@objc enum EventMetadataType: Int {
+@objc public enum EventMetadataType: Int {
     case FLAGS_UPDATED
     case FLAGS_KILLED
     case SEGMENTS_UPDATED
