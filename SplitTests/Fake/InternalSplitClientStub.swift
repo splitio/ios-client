@@ -95,86 +95,77 @@ class InternalSplitClientStub: InternalSplitClient {
         return ["": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
     
-    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {
-    }
+    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
-        return true
+        true
     }
 
     func track(trafficType: String, eventType: String, value: Double) -> Bool {
-        return true
+        true
     }
 
     func track(eventType: String) -> Bool {
-        return true
+        true
     }
 
     func track(eventType: String, value: Double) -> Bool {
-        return true
+        true
     }
 
     func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool {
-        return true
+        true
     }
 
     func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool {
-        return true
+        true
     }
 
     func track(eventType: String, properties: [String: Any]?) -> Bool {
-        return true
+        true
     }
 
     func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool {
-        return true
+        true
     }
 
     func setAttribute(name: String, value: Any) -> Bool {
-        return true
+        true
     }
 
     func getAttribute(name: String) -> Any? {
-        return nil
+        nil
     }
 
     func setAttributes(_ values: [String: Any]) -> Bool {
-        return true
+        true
     }
 
     func getAttributes() -> [String: Any]? {
-        return nil
+        nil
     }
 
     func removeAttribute(name: String) -> Bool {
-        return true
+        true
     }
 
     func clearAttributes() -> Bool {
-        return true
+        true
     }
     
-    func flush() {
-    }
+    func flush() {}
 
-    func destroy() {
-    }
+    func destroy() {}
 
-    func destroy(completion: (() -> Void)?) {
-    }
+    func destroy(completion: (() -> Void)?) {}
 
-    func on(event: SplitEvent, executeTask: SplitEventTask) {
-
-    }
+    func on(event: SplitEvent, executeTask: SplitEventTask) {}
 
     private func createControlTreatmentsDictionary<T>(splits: [String]) -> [String: T] where T: Any {
         var result = [String: T]()
