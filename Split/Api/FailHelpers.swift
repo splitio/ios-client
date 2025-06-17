@@ -1,10 +1,5 @@
-//
-//  FailHelpers.swift
-//  Split
-//
 //  Created by Javier Avrudsky on 24-Apr-2022.
 //  Copyright © 2022 Split. All rights reserved.
-//
 
 import Foundation
 
@@ -57,42 +52,38 @@ class FailedClient: SplitClient {
     func on(event: SplitEvent, execute action: @escaping SplitAction) {
     }
 
-    func on(event: SplitEvent, runInBackground: Bool,
-            execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent,
-            queue: DispatchQueue, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
     
     func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
-        return false
+        false
     }
 
     func track(trafficType: String, eventType: String, value: Double) -> Bool {
-        return false
+        false
     }
 
     func track(eventType: String) -> Bool {
-        return false
+        false
     }
 
     func track(eventType: String, value: Double) -> Bool {
-        return false
+        false
     }
 
     func setAttribute(name: String, value: Any) -> Bool {
-        return false
+        false
     }
 
     func getAttribute(name: String) -> Any? {
-        return false
+        false
     }
 
     func setAttributes(_ values: [String: Any]) -> Bool {
-        return false
+        false
     }
 
     func getAttributes() -> [String: Any]? {
@@ -100,11 +91,11 @@ class FailedClient: SplitClient {
     }
 
     func removeAttribute(name: String) -> Bool {
-        return false
+        false
     }
 
     func clearAttributes() -> Bool {
-        return false
+        false
     }
     
     func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
@@ -139,33 +130,30 @@ class FailedClient: SplitClient {
         return [:]
     }
 
-    func setUserConsent(enabled: Bool) {
-    }
+    func setUserConsent(enabled: Bool) {}
 
-    func flush() {
-    }
+    func flush() {}
 
-    func destroy() {
-    }
+    func destroy() {}
 
     func destroy(completion: (() -> Void)?) {
         completion?()
     }
 
     func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool {
-        return false
+        false
     }
 
     func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool {
-        return false
+        false
     }
 
     func track(eventType: String, properties: [String: Any]?) -> Bool {
-        return false
+        false
     }
 
     func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool {
-        return false
+        false
     }
 }
 
@@ -175,6 +163,6 @@ class FailedManager: SplitManager {
     var splitNames: [String] = []
 
     func split(featureName: String) -> SplitView? {
-        return nil
+        nil
     }
 }

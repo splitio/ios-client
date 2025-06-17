@@ -12,7 +12,7 @@ import Foundation
     }
 }
 
-@objc enum EventMetadataType: Int {
+@objc public enum EventMetadataType: Int {
     case FLAGS_UPDATED
     case FLAGS_KILLED
     case SEGMENTS_UPDATED

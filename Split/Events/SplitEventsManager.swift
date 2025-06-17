@@ -176,7 +176,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                    isTriggered(internal: .mySegmentsLoadedFromCache),
                    isTriggered(internal: .myLargeSegmentsLoadedFromCache),
                    isTriggered(internal: .attributesLoadedFromCache) {
-                    trigger(event: SplitEvent.sdkReadyFromCache)
+                    trigger(event: .sdkReadyFromCache)
                 }
             case .splitKilledNotification:
                 if isTriggered(external: .sdkReady) {
@@ -185,7 +185,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 }
             case .sdkReadyTimeoutReached:
                 if !isTriggered(external: .sdkReady) {
-                    trigger(event: SplitEvent.sdkReadyTimedOut)
+                    trigger(event: .sdkReadyTimedOut)
                 }
             }
         }
