@@ -1,20 +1,13 @@
-//
-//  SplitClient.swift
-//  Split
-//
 //  Created by Brian Sztamfater on 18/9/17.
-//
-//
 
 import Foundation
 
 @objc public protocol SplitClient {
 
-    // MARK: Evaluation feature
+    // MARK: Evaluation
     func getTreatment(_ split: String, attributes: [String: Any]?) -> String
     func getTreatment(_ split: String) -> String
-    @objc(getTreatmentsForSplits:attributes:) func getTreatments(splits: [String],
-                                                                 attributes: [String: Any]?) -> [String: String]
+    @objc(getTreatmentsForSplits:attributes:) func getTreatments(splits: [String], attributes: [String: Any]?) -> [String: String]
 
     func getTreatmentWithConfig(_ split: String) -> SplitResult
     func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?) -> SplitResult
@@ -22,27 +15,27 @@ import Foundation
     @objc(getTreatmentsWithConfigForSplits:attributes:)
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?) -> [String: SplitResult]
     
-    // MARK: Evaluation with Properties
+    // MARK: With Properties
     func getTreatment(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> String
-    @objc(getTreatmentsForSplits:attributes:evaluationOptions:) func getTreatments(splits: [String],
-                                                                 attributes: [String: Any]?,
-                                                                 evaluationOptions: EvaluationOptions?) -> [String: String]
+    @objc(getTreatmentsForSplits:attributes:evaluationOptions:)
+    func getTreatments(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String]
     func getTreatmentWithConfig(_ split: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> SplitResult
     @objc(getTreatmentsWithConfigForSplits:attributes:evaluationOptions:)
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
 
+    // MARK: Customer listeners
     func on(event: SplitEvent, execute action: @escaping SplitAction)
     func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) -> Void
     func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
 
-    // MARK: Track feature
+    // MARK: Tracking
     func track(trafficType: String, eventType: String) -> Bool
     func track(trafficType: String, eventType: String, value: Double) -> Bool
     func track(eventType: String) -> Bool
     func track(eventType: String, value: Double) -> Bool
 
-    // MARK: Persistent attributes feature
+    // MARK: Persistence
 
     /// Creates or updates the value for the given attribute
     func setAttribute(name: String, value: Any) -> Bool
@@ -62,34 +55,31 @@ import Foundation
     /// Clears all attributes stored in the SDK.
     func clearAttributes() -> Bool
 
-    // MARK: Client lifecycle
+    // MARK: Lifecycle
     func flush()
     func destroy()
     func destroy(completion: (() -> Void)?)
 
-    @objc(trackWithTrafficType:eventType:properties:) func track(trafficType: String,
-                                                                 eventType: String,
-                                                                 properties: [String: Any]?) -> Bool
+    // MARK: With Properties
+    @objc(trackWithTrafficType:eventType:properties:)
+    func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool
 
-    @objc(trackWithTrafficType:eventType:value:properties:) func track(trafficType: String,
-                                                                       eventType: String,
-                                                                       value: Double,
-                                                                       properties: [String: Any]?) -> Bool
+    @objc(trackWithTrafficType:eventType:value:properties:)
+    func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool
 
-    @objc(trackWithEventType:properties:) func track(eventType: String,
-                                                     properties: [String: Any]?) -> Bool
+    @objc(trackWithEventType:properties:)
+    func track(eventType: String, properties: [String: Any]?) -> Bool
 
-    @objc(trackWithEventType:value:properties:) func track(eventType: String,
-                                                           value: Double,
-                                                           properties: [String: Any]?) -> Bool
+    @objc(trackWithEventType:value:properties:)
+    func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool
 
-    // MARK: Evaluation with flagsets
+    // MARK: With Flagsets
     func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String]
     func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String]
     func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult]
     func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult]
     
-    // MARK: Evaluation with flagsets and properties
+    // MARK: With flagsets and properties
     func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String]
     func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String]
     func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]

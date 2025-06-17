@@ -78,7 +78,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             return
         }
 
-        let splitsStorage = self.storageContainer.splitsStorage
+        let splitsStorage = storageContainer.splitsStorage
         DispatchQueue.general.async {
             let start = Date.nowMillis()
             self.filterSplitsInCache()
