@@ -1458,12 +1458,12 @@
 		599EA57E2266708D006CBA89 /* LocalhostYamlParserTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostYamlParserTest.swift; sourceTree = "<group>"; };
 		599EA5802266719C006CBA89 /* YamlLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YamlLocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		599EA5842268E9C2006CBA89 /* LocalhostTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocalhostTests.swift; sourceTree = "<group>"; };
-		599EA58B226903DF006CBA89 /* localhost.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = localhost.yaml; sourceTree = "<group>"; };
+		599EA58B226903DF006CBA89 /* localhost.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = localhost.yaml; sourceTree = "<group>"; };
 		599EA58D226916CB006CBA89 /* localhost_legacy.splits */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = localhost_legacy.splits; sourceTree = "<group>"; };
-		599EA58F22691D57006CBA89 /* localhost_yml.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = localhost_yml.yml; sourceTree = "<group>"; };
+		599EA58F22691D57006CBA89 /* localhost_yml.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = localhost_yml.yml; sourceTree = "<group>"; };
 		599EDAF02270970500D7DACB /* SplitEventsManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsManagerMock.swift; sourceTree = "<group>"; };
 		599EDAF22270A15B00D7DACB /* localhost.splits */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = localhost.splits; sourceTree = "<group>"; };
-		599EDAF42270AD6700D7DACB /* wrong_format.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = wrong_format.yaml; sourceTree = "<group>"; };
+		599EDAF42270AD6700D7DACB /* wrong_format.yaml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.yaml; path = wrong_format.yaml; sourceTree = "<group>"; };
 		59AD7AC92465C32D00F5B0B4 /* EventDTOJsonTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventDTOJsonTest.swift; sourceTree = "<group>"; };
 		59B2042624F4171E0092F2E9 /* SyncUpdateWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUpdateWorker.swift; sourceTree = "<group>"; };
 		59B2042824F42DE80092F2E9 /* SseNotificationProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SseNotificationProcessor.swift; sourceTree = "<group>"; };
@@ -2123,6 +2123,8 @@
 		3B6DEE5020EA6A4D0067435E = {
 			isa = PBXGroup;
 			children = (
+				3B6DEE5C20EA6A4E0067435E /* Split */,
+				592C6AA6211B6C99002D120C /* SplitTests */,
 				9583C2D42C987B02001298C8 /* SplitiOSHalf_1.xctestplan */,
 				9583C2D52C987B02001298C8 /* SplitiOSHalf_2.xctestplan */,
 				950F72FD292E87A4008A0040 /* SplitiOSIntegration.xctestplan */,
@@ -2139,8 +2141,6 @@
 				95DF58F72BEC5432009220B8 /* SplitiOSUnit_3.xctestplan */,
 				95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */,
 				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
-				3B6DEE5C20EA6A4E0067435E /* Split */,
-				592C6AA6211B6C99002D120C /* SplitTests */,
 				956E418E271DC8F1008B4DB6 /* Splitlib */,
 				95825BA1271F004700A0CDAD /* Resources */,
 				95B027B228CBEF7E0030EC8B /* SplitMacOS */,
