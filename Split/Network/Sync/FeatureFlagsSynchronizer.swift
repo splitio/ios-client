@@ -147,9 +147,6 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     func notifyKilled() {
         splitEventsManager.notifyInternalEvent(.splitKilledNotification)
     }
-    
-    func foo(_ a: Int) {}
-    func foo(_ a: Int, _ b: Int = 42) {}
 
     func notifyUpdated(flagsList: [String]) {
         splitEventsManager.notifyInternalEvent(.splitsUpdated, metadata: EventMetadata(type: .FLAGS_UPDATED, data: flagsList.description))
