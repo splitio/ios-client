@@ -33,7 +33,7 @@ protocol Synchronizer: ImpressionLogger {
     func notifyFeatureFlagsUpdated(flagsList: [String])
     func notifySegmentsUpdated(forKey key: String)
     func notifyLargeSegmentsUpdated(forKey key: String)
-    func notifySplitKilled()
+    func notifySplitKilled(flag: String)
     func pause()
     func resume()
     func flush()
@@ -219,8 +219,8 @@ class DefaultSynchronizer: Synchronizer {
         byKeySynchronizer.notifyMyLargeSegmentsUpdated(forKey: key)
     }
 
-    func notifySplitKilled() {
-        featureFlagsSynchronizer.notifyKilled()
+    func notifySplitKilled(flag: String) {
+        featureFlagsSynchronizer.notifyKilled(flag: flag)
     }
 
     func pause() {

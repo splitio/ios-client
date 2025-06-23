@@ -243,7 +243,9 @@ class SynchronizerStub: Synchronizer {
         notifyFeatureFlagsUpdatedCalled = true
     }
 
-    func notifySplitKilled() {
+    var killedFlag = ""
+    func notifySplitKilled(flag: String) {
+        killedFlag = flag
         notifySplitKilledCalled = true
     }
 
