@@ -134,7 +134,14 @@ class DefaultPushNotificationManager: PushNotificationManager {
         }
         Logger.d("Streaming authentication success")
 
-        let connectionDelay = result.sseConnectionDelay
+        var connectionDelay: Int64 = 0
+        
+        #if DEBUG
+            connectionDelay = 1
+        #else
+            connectionDelay = result.sseConnectionDelay
+        #endif
+        
         self.broadcasterChannel.push(event: .pushDelayReceived(delaySeconds: connectionDelay))
         let lastId = lastConnId.value
         if connectionDelay > 0 {

@@ -23,3 +23,4 @@ enum SplitInternalEvent {
     case sdkReadyTimeoutReached
     case splitKilledNotification
 }
+
