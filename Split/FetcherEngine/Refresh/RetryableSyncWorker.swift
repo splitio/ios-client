@@ -79,16 +79,12 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
         }
     }
     
-    func notifyUpdate(_ events: [SplitInternalEvent]) {
-        events.forEach {
-            eventsManager.notifyInternalEvent($0, metadata: nil)
-        }
+    func notifyUpdate(_ event: SplitInternalEvent) {
+        eventsManager.notifyInternalEvent(event, metadata: nil)
     }
 
-    func notifyUpdate(_ events: [SplitInternalEventWithMetadata]) {
-        events.forEach {
-            eventsManager.notifyInternalEvent($0.type, metadata: $0.metadata)
-        }
+    func notifyUpdate(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
+        eventsManager.notifyInternalEvent(event, metadata: metadata)
     }
 
     func isSdkReadyTriggered() -> Bool {
@@ -149,7 +145,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() || result.featureFlagsUpdated.count > 0 {
                     let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated.description)
-                    notifyUpdate([SplitInternalEventWithMetadata(.splitsUpdated, metadata: metadata)])
+                    notifyUpdate(.splitsUpdated, metadata: metadata)
                 }
                 resetBackoffCounter()
                 return true
@@ -225,7 +221,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
             if result.success {
                 if result.featureFlagsUpdated.count > 0 {
                     let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated.description)
-                    notifyUpdate([SplitInternalEventWithMetadata(.splitsUpdated, metadata: metadata)])
+                    notifyUpdate(.splitsUpdated, metadata: metadata)
                 }
                 resetBackoffCounter()
                 return true
