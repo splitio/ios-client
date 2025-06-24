@@ -110,7 +110,7 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
         if segments.count > newSegments.count {
             mySegmentsStorage.set(SegmentChange(segments: newSegments.asArray()),
                                   forKey: key)
-            synchronizer.notifyUpdate(forKey: key, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: newSegments.asArray().joined(separator: ",")))
+            synchronizer.notifyUpdate(forKey: key, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: toRemove.joined(separator: ",")))
             telemetryProducer?.recordUpdatesFromSse(type: resource)
         }
     }
@@ -128,7 +128,7 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
                 if oldSegments.count < newSegments.count {
                     mySegmentsStorage.set(SegmentChange(segments: newSegments.asArray()),
                                           forKey: userKey)
-                    synchronizer.notifyUpdate(forKey: userKey, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: newSegments.asArray().joined(separator: ",")))
+                    synchronizer.notifyUpdate(forKey: userKey, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: segments.joined(separator: ",")))
                     telemetryProducer?.recordUpdatesFromSse(type: .mySegments)
                 }
                 return
