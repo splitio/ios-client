@@ -19,7 +19,7 @@ class SynchronizerStub: Synchronizer {
     var disableSdkCalled = false
     var disableEventsCalled = false
     var disableTelemetryCalled = false
-
+    
     var loadAndSynchronizeSplitsCalled = false
     var loadMySegmentsFromCacheCalled = false
     var loadMyLargeSegmentsFromCacheCalled = false
@@ -41,10 +41,10 @@ class SynchronizerStub: Synchronizer {
     var pushImpressionCalled = false
     var flushCalled = false
     var destroyCalled = false
-
+    
     var notifyMySegmentsUpdatedCalled = false
     var notifySplitKilledCalled = false
-
+    
     var syncSplitsExp: XCTestExpectation?
     var syncSplitsChangeNumberExp: XCTestExpectation?
     var syncRuleBasedSegmentsExp: XCTestExpectation?
@@ -52,53 +52,53 @@ class SynchronizerStub: Synchronizer {
     var syncMyLargeSegmentsExp: XCTestExpectation?
     var forceMySegmentsSyncExp = [String: XCTestExpectation]()
     var notifyMySegmentsUpdatedExp = [String: XCTestExpectation]()
-
+    
     var notifyMyLargeSegmentsUpdatedExp = [String: XCTestExpectation]()
-
+    
     var startPeriodicFetchingExp: XCTestExpectation?
     var stopPeriodicFetchingExp: XCTestExpectation?
-
+    
     var syncTelemetryConfig = false
-
+    
     var pauseCalled = false
     var resumeCalled = false
-
+    
     func loadSplitsFromCache() {
         loadAndSynchronizeSplitsCalled = true
     }
-
+    
     func loadMySegmentsFromCache() {
         loadMySegmentsFromCacheCalled = true
     }
-
+    
     func loadMyLargeSegmentsFromCache() {
         loadMyLargeSegmentsFromCacheCalled = true
     }
-
+    
     func loadAttributesFromCache() {
         loadAttributesFromCacheCalled = true
     }
-
+    
     var startForKeyCalled = [Key: Bool]()
     func start(forKey key: Key) {
         startForKeyCalled[key] = true
     }
-
+    
     var loadMySegmentsFromCacheForKeyCalled = [String: Bool]()
     func loadMySegmentsFromCache(forKey key: String) {
         loadMySegmentsFromCacheForKeyCalled[key] = true
     }
-
+    
     var loadMyLargeSegmentsFromCacheForKeyCalled = [String: Bool]()
     func loadMyLargeSegmentsFromCache(forKey key: String) {
         loadMyLargeSegmentsFromCacheForKeyCalled[key] = true
     }
-
+    
     var loadAttributesFromCacheForKeyCalled = [String: Bool]()
     func loadAttributesFromCache(forKey key: String) {
         loadAttributesFromCacheForKeyCalled[key] = true
     }
-
+    
     var synchronizeMySegmentsForKeyCalled = [String: Bool]()
     func synchronizeMySegments(forKey key: String) {
         synchronizeMySegmentsForKeyCalled[key] = true
@@ -112,22 +112,27 @@ class SynchronizerStub: Synchronizer {
         forceMySegmentsSyncForKeyCalled[key] = true
         forceMySegmentsCalledParams[key] = ForceMySegmentsParams(segmentsCn:changeNumbers,
                                                                  delay: delay)
-
+        
         if let exp = forceMySegmentsSyncExp[key] {
             exp.fulfill()
         }
     }
-
+    
     var notifySegmentsUpdatedForKeyCalled = [String: Bool]()
-    func notifySegmentsUpdated(forKey key: String) {
+    var segmentsUpdatedMetadataForKey = [String: EventMetadata?]()
+    func notifySegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
+        segmentsUpdatedMetadataForKey[key] = metadata
         notifySegmentsUpdatedForKeyCalled[key] = true
+        
         if let exp = notifyMySegmentsUpdatedExp[key] {
             exp.fulfill()
         }
     }
 
     var notifyLargeSegmentsUpdatedForKeyCalled = [String: Bool]()
-    func notifyLargeSegmentsUpdated(forKey key: String) {
+    var largeSegmentsUpdatedMetadataForKey = [String: EventMetadata?]()
+    func notifyLargeSegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
+        largeSegmentsUpdatedMetadataForKey[key] = metadata
         notifyLargeSegmentsUpdatedForKeyCalled[key] = true
         if let exp = notifyMyLargeSegmentsUpdatedExp[key] {
             exp.fulfill()

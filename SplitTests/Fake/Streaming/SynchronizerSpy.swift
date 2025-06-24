@@ -195,14 +195,18 @@ class SynchronizerSpy: Synchronizer {
         splitSynchronizer.resume()
     }
 
-    func notifySegmentsUpdated(forKey key: String) {
+    var segmentsUpdatedMetadataForKey = [String: EventMetadata?]()
+    func notifySegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
         notifyMySegmentsUpdatedCalled = true
-        splitSynchronizer.notifySegmentsUpdated(forKey: key)
+        segmentsUpdatedMetadataForKey[key] = metadata
+        splitSynchronizer.notifySegmentsUpdated(forKey: key, metadata: metadata)
     }
 
-    func notifyLargeSegmentsUpdated(forKey key: String) {
+    var largeSegmentsUpdatedMetadataForKey = [String: EventMetadata?]()
+    func notifyLargeSegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
         notifyMyLargeSegmentsUpdatedCalled = true
-        splitSynchronizer.notifyLargeSegmentsUpdated(forKey: key)
+        largeSegmentsUpdatedMetadataForKey[key] = metadata
+        splitSynchronizer.notifyLargeSegmentsUpdated(forKey: key, metadata: metadata)
     }
 
     var notifyFeatureFlagsUpdatedCalled = false

@@ -110,7 +110,7 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
         if segments.count > newSegments.count {
             mySegmentsStorage.set(SegmentChange(segments: newSegments.asArray()),
                                   forKey: key)
-            synchronizer.notifyUpdate(forKey: key)
+            synchronizer.notifyUpdate(forKey: key, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: newSegments.asArray().joined(separator: ",")))
             telemetryProducer?.recordUpdatesFromSse(type: resource)
         }
     }
@@ -128,7 +128,7 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
                 if oldSegments.count < newSegments.count {
                     mySegmentsStorage.set(SegmentChange(segments: newSegments.asArray()),
                                           forKey: userKey)
-                    synchronizer.notifyUpdate(forKey: userKey)
+                    synchronizer.notifyUpdate(forKey: userKey, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: newSegments.asArray().joined(separator: ",")))
                     telemetryProducer?.recordUpdatesFromSse(type: .mySegments)
                 }
                 return
@@ -171,7 +171,7 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
 
 protocol SegmentsSynchronizerWrapper {
     func fetch(byKey: String, changeNumbers: SegmentsChangeNumber, delay: Int64)
-    func notifyUpdate(forKey: String)
+    func notifyUpdate(forKey: String, metadata: EventMetadata?)
 }
 
 class MySegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
@@ -185,8 +185,8 @@ class MySegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
         synchronizer.forceMySegmentsSync(forKey: key, changeNumbers: changeNumbers, delay: delay)
     }
 
-    func notifyUpdate(forKey key: String) {
-        synchronizer.notifySegmentsUpdated(forKey: key)
+    func notifyUpdate(forKey key: String, metadata: EventMetadata? = nil) {
+        synchronizer.notifySegmentsUpdated(forKey: key, metadata: metadata)
     }
 }
 
@@ -201,8 +201,8 @@ class MyLargeSegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
         synchronizer.forceMySegmentsSync(forKey: key, changeNumbers: changeNumbers, delay: delay)
     }
 
-    func notifyUpdate(forKey key: String) {
-        synchronizer.notifyLargeSegmentsUpdated(forKey: key)
+    func notifyUpdate(forKey key: String, metadata: EventMetadata? = nil) {
+        synchronizer.notifyLargeSegmentsUpdated(forKey: key, metadata: metadata)
     }
 }
 
