@@ -145,11 +145,11 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     }
 
     func notifyKilled(flag: String) {
-        splitEventsManager.notifyInternalEvent(.splitKilledNotification, metadata: EventMetadata(type: .FLAGS_KILLED, data: flag))
+        splitEventsManager.notifyInternalEvent(.splitKilledNotification, metadata: EventMetadata(type: .FLAGS_KILLED, data: [flag]))
     }
 
     func notifyUpdated(flagsList: [String]) {
-        splitEventsManager.notifyInternalEvent(.splitsUpdated, metadata: EventMetadata(type: .FLAGS_UPDATED, data: flagsList.joined(separator: ",")))
+        splitEventsManager.notifyInternalEvent(.splitsUpdated, metadata: EventMetadata(type: .FLAGS_UPDATED, data: flagsList))
     }
 
     func pause() {

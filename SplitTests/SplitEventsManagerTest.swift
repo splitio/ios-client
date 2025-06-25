@@ -268,11 +268,11 @@ class SplitEventsManagerTest: XCTestCase {
         let taskExp = XCTestExpectation()
         
         // Build Task
-        let metadata = EventMetadata(type: .FLAGS_KILLED, data: "TEST_FLAG")
+        let metadata = EventMetadata(type: .FLAGS_KILLED, data: ["TEST_FLAG"])
         
         let handler: SplitActionWithMetadata = { handlerMetadata in
             XCTAssertEqual(metadata.type, handlerMetadata?.type)
-            XCTAssertEqual(metadata.data, "TEST_FLAG")
+            XCTAssertEqual(metadata.data, ["TEST_FLAG"])
             taskExp.fulfill()
         }
         let task = SplitEventActionTask(action: handler, event: .sdkReady, runInBackground: false, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey), queue: nil)
@@ -319,7 +319,7 @@ class SplitEventsManagerTest: XCTestCase {
 
         // Dummy event with metadata
         let metadataTypeToCheck: EventMetadataType = .FLAGS_KILLED
-        let metadataDataToCheck: String            = "Test-flag-42"
+        let metadataDataToCheck: [String]            = ["Test-flag-42"]
         let dummyMetadata = EventMetadata(type: metadataTypeToCheck, data: metadataDataToCheck)
 
         // This will be the task's "run()"

@@ -189,7 +189,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
                 updatedFlags.append(flag)
             }
             
-            let metadata = EventMetadata(type: .FLAGS_UPDATED, data: updatedFlags.description)
+            let metadata = EventMetadata(type: .FLAGS_UPDATED, data: updatedFlags)
             notifyUpdate(.splitsUpdated, metadata)
         }
     }
