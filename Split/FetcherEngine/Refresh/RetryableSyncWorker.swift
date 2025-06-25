@@ -79,9 +79,13 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
         }
     }
     
-    func notifyUpdate(_ result: SyncResult) {
+    func notifyFlagsUpdate(_ result: SyncResult) {
         let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated)
-        eventsManager.notifyInternalEvent(.splitsUpdated, metadata: metadata)
+        notifyUpdate(.splitsUpdated, metadata: metadata)
+    }
+    
+    func notifyUpdate(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
+        eventsManager.notifyInternalEvent(event, metadata: metadata)
     }
 
     func isSdkReadyTriggered() -> Bool {
@@ -141,7 +145,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
             if result.success {
                 if !isSdkReadyTriggered() || result.featureFlagsUpdated.count > 0 {
-                    notifyUpdate(result)
+                    notifyFlagsUpdate(result)
                 }
                 resetBackoffCounter()
                 return true
@@ -219,7 +223,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
             // Success
             if result.success {
                 if result.featureFlagsUpdated.count > 0 {
-                    notifyUpdate(result)
+                    notifyFlagsUpdate(result)
                 }
                 resetBackoffCounter()
                 return true
