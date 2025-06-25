@@ -214,7 +214,7 @@ struct TestingHelper {
     static func buildSegmentsChange(count: Int64 = 5,
                                     msAscOrder: Bool = true,
                                     mlsAscOrder: Bool = true,
-                                    segmentsChanged: Bool = false) -> [AllSegmentsChange] {
+                                    segmentsChanged: [String]) -> [AllSegmentsChange] {
         // Eventualy cn will be greater than the first
         let baseCn: Int64 = 100
         let lastMsCn = baseCn * count + 1
@@ -233,7 +233,7 @@ struct TestingHelper {
             res.append(newAllSegmentsChange(ms: msSeg, msCn: msC,
                                             mls: mlsSeg, mlsCn: mlsC))
         }
-        if segmentsChanged {
+        if !segmentsChanged.isEmpty {
             msSeg.append("s3")
             mlsSeg.append("sl3")
         }
@@ -261,7 +261,7 @@ struct TestingHelper {
 
     static func segmentsSyncResult(_ result: Bool = true,
                                    msCn: Int64 = 300, mlsCn: Int64 = 400,
-                                   msUpd: Bool = true, mlsUpd: Bool = true) -> SegmentsSyncResult {
+                                   msUpd: [String] = ["SegmentTest1"], mlsUpd: [String] = ["LargeSegmentTest1"]) -> SegmentsSyncResult {
         return SegmentsSyncResult(success: result,
                                   msChangeNumber: msCn, mlsChangeNumber: mlsCn,
                                   msUpdated: msUpd, mlsUpdated: mlsUpd)

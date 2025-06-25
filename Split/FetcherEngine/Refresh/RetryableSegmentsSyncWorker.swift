@@ -48,9 +48,9 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                     // Notifying both to trigger SDK Ready
                     notifyUpdate(.mySegmentsUpdated)
                     notifyUpdate(.myLargeSegmentsUpdated)
-                } else if  result.msUpdated || result.mlsUpdated {
+                } else if !result.msUpdated.isEmpty || !result.mlsUpdated.isEmpty {
                     // For now is not necessary specify which entity was updated
-                    notifyUpdate(.mySegmentsUpdated)
+                    notifyUpdate(.mySegmentsUpdated, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: result.mlsUpdated + result.msUpdated))
                 }
                 return true
             }
@@ -71,8 +71,8 @@ struct SegmentsSyncResult {
     let success: Bool
     let msChangeNumber: Int64
     let mlsChangeNumber: Int64
-    let msUpdated: Bool
-    let mlsUpdated: Bool
+    let msUpdated: [String]
+    let mlsUpdated: [String]
 }
 
 protocol SegmentsSyncHelper {
@@ -86,8 +86,8 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
     struct FetchResult {
         let msTill: Int64
         let mlsTill: Int64
-        let msUpdated: Bool
-        let mlsUdated: Bool
+        let msUpdated: [String]
+        let mlsUdated: [String]
     }
 
     private let segmentsFetcher: HttpMySegmentsFetcher
@@ -175,8 +175,8 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
         return SegmentsSyncResult(success: false,
                                   msChangeNumber: -1,
                                   mlsChangeNumber: -1,
-                                  msUpdated: false,
-                                  mlsUpdated: false)
+                                  msUpdated: [],
+                                  mlsUpdated: [])
     }
 
     private func fetchUntil(till: Int64?,
@@ -210,10 +210,13 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
                 Logger.d("Checking my large segments update")
                 checkAndUpdate(isChanged: mlsChanged, change: myLargeSegmentsChange, storage: myLargeSegmentsStorage)
 
+                let segmentsDiff = changeChecker.getSegmentsDiff(oldSegments: oldChange.segments, newSegments: mySegmentsChange.segments)
+                let largeSegmentsDiff = changeChecker.getSegmentsDiff(oldSegments: oldLargeChange.segments, newSegments: myLargeSegmentsChange.segments)
+                
                 return FetchResult(msTill: mySegmentsChange.unwrappedChangeNumber,
                                    mlsTill: myLargeSegmentsChange.unwrappedChangeNumber,
-                                   msUpdated: msChanged,
-                                   mlsUdated: mlsChanged)
+                                   msUpdated: segmentsDiff,
+                                   mlsUdated: largeSegmentsDiff)
             }
             prevChange = change
         }

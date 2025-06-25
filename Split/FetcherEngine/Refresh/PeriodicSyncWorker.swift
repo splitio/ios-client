@@ -229,8 +229,13 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                                              mlsTill: myLargeSegmentsStorage.changeNumber,
                                              headers: nil)
             if result.success {
-                if  result.msUpdated || result.mlsUpdated {
+                if  !result.msUpdated.isEmpty || !result.mlsUpdated.isEmpty {
                     // For now is not necessary specify which entity was updated
+                    var updatedSegments = result.msUpdated + result.mlsUpdated
+                    for segment in updatedSegments {
+                        updatedSegments.append(segment)
+                    }
+                    
                     notifyUpdate(.mySegmentsUpdated)
                 }
             }
