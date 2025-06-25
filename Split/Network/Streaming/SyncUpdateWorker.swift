@@ -124,14 +124,11 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
     }
 
     /// Process a split update notification
-    private func processSplitUpdate(payload: String,
-                                   compressionType: CompressionType,
-                                   previousChangeNumber: Int64,
-                                   changeNumber: Int64) -> Bool {
+    private func processSplitUpdate(payload: String,compressionType: CompressionType,
+                                    previousChangeNumber: Int64,
+                                    changeNumber: Int64) -> Bool {
         do {
-            let split = try self.payloadDecoder.decode(
-                payload: payload,
-                compressionUtil: self.decomProvider.decompressor(for: compressionType))
+            let split = try payloadDecoder.decode(payload: payload, compressionUtil: decomProvider.decompressor(for: compressionType))
 
             if !allRuleBasedSegmentsExist(in: split) {
                 return false
@@ -143,16 +140,14 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
 
             Logger.v("Split update received: \(change)")
 
-            let processedFlags = self.splitChangeProcessor.process(change)
-
-           if self.splitsStorage.update(splitChange: processedFlags) {
-               var updatedFlags: [String] = processedFlags.activeSplits.compactMap(\.name)
-               updatedFlags += processedFlags.archivedSplits.compactMap(\.name)
-               self.synchronizer.notifyFeatureFlagsUpdated(flagsList: updatedFlags)
-
+            let processedFlags = splitChangeProcessor.process(change)
+            
+            if splitsStorage.update(splitChange: processedFlags) {
+                let updatedFlags = processedFlags.activeSplits.compactMap(\.name) + processedFlags.archivedSplits.compactMap(\.name)
+                synchronizer.notifyFeatureFlagsUpdated(flagsList: updatedFlags)
             }
 
-            self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
+            telemetryProducer?.recordUpdatesFromSse(type: .splits)
             return true
         } catch {
             Logger.e("Error decoding feature flags payload from notification: \(error)")
@@ -162,29 +157,27 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
 
     /// Process a rule-based segment update notification
     private func processRuleBasedSegmentUpdate(payload: String,
-                                             compressionType: CompressionType,
-                                             previousChangeNumber: Int64,
-                                             changeNumber: Int64) -> Bool {
+                                               compressionType: CompressionType,
+                                               previousChangeNumber: Int64,
+                                               changeNumber: Int64) -> Bool {
         do {
-            let rbs = try self.ruleBasedSegmentsPayloadDecoder.decode(
-                payload: payload,
-                compressionUtil: self.decomProvider.decompressor(for: compressionType))
+            let rbs = try ruleBasedSegmentsPayloadDecoder.decode(payload: payload, compressionUtil: decomProvider.decompressor(for: compressionType))
 
             let change = RuleBasedSegmentChange(segments: [rbs],
-                                             since: previousChangeNumber,
-                                             till: changeNumber)
+                                                since: previousChangeNumber,
+                                                till: changeNumber)
 
             Logger.v("RBS update received: \(change)")
 
             let processedChange = ruleBasedSegmentsChangeProcessor.process(change)
 
-            if self.ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd,
-                                                  toRemove: processedChange.toRemove,
-                                                  changeNumber: processedChange.changeNumber) {
-                self.synchronizer.notifyFeatureFlagsUpdated(flagsList: []) //TODO: RBS Update
+            if ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd,
+                                               toRemove: processedChange.toRemove,
+                                               changeNumber: processedChange.changeNumber) {
+                synchronizer.notifyFeatureFlagsUpdated(flagsList: []) //TODO: RBS Update
             }
 
-            self.telemetryProducer?.recordUpdatesFromSse(type: .splits)
+            telemetryProducer?.recordUpdatesFromSse(type: .splits)
             return true
         } catch {
             Logger.e("Error decoding rule based segments payload from notification: \(error)")

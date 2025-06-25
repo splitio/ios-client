@@ -79,12 +79,9 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
         }
     }
     
-    func notifyUpdate(_ event: SplitInternalEvent) {
-        eventsManager.notifyInternalEvent(event, metadata: nil)
-    }
-
-    func notifyUpdate(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
-        eventsManager.notifyInternalEvent(event, metadata: metadata)
+    func notifyUpdate(_ result: SyncResult) {
+        let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated)
+        eventsManager.notifyInternalEvent(.splitsUpdated, metadata: metadata)
     }
 
     func isSdkReadyTriggered() -> Bool {
@@ -144,8 +141,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
             if result.success {
                 if !isSdkReadyTriggered() || result.featureFlagsUpdated.count > 0 {
-                    let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated )
-                    notifyUpdate(.splitsUpdated, metadata: metadata)
+                    notifyUpdate(result)
                 }
                 resetBackoffCounter()
                 return true
@@ -213,15 +209,17 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         }
 
         do {
+            // Try Sync
             let result = try syncHelper.sync(since: storedChangeNumber,
                                              rbSince: storedRbChangeNumber,
                                              till: flagsChangeNumber ?? rbsChangeNumber,
                                              clearBeforeUpdate: false,
                                              headers: ServiceConstants.controlNoCacheHeader)
+            
+            // Success
             if result.success {
                 if result.featureFlagsUpdated.count > 0 {
-                    let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated)
-                    notifyUpdate(.splitsUpdated, metadata: metadata)
+                    notifyUpdate(result)
                 }
                 resetBackoffCounter()
                 return true
