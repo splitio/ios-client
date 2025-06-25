@@ -13,7 +13,7 @@ struct SyncResult {
     let changeNumber: Int64
     let rbChangeNumber: Int64?
     let featureFlagsUpdated: [String]
-    let rbsUpdated: Bool
+    let rbsUpdated: [String]
 }
 
 class SplitsSyncHelper {
@@ -22,7 +22,7 @@ class SplitsSyncHelper {
         let till: Int64
         let rbTill: Int64?
         let featureFlagsUpdated: [String]
-        let rbsUpdated: Bool
+        let rbsUpdated: [String]
     }
 
     private let splitFetcher: HttpSplitFetcher
@@ -164,7 +164,7 @@ class SplitsSyncHelper {
                           changeNumber: nextSince,
                           rbChangeNumber: nextRbSince,
                           featureFlagsUpdated: [],
-                          rbsUpdated: false)
+                          rbsUpdated: [])
     }
 
     func fetchUntil(since: Int64,
@@ -178,7 +178,7 @@ class SplitsSyncHelper {
         var nextSince = since
         var nextRbSince = rbSince
         var featureFlagsUpdated: [String] = []
-        var rbsUpdated = false
+        var rbsUpdated: [String] = []
         while true {
             clearCache = clearCache && firstFetch
             // Determine which spec version to use and whether to include rbSince
@@ -202,15 +202,19 @@ class SplitsSyncHelper {
                 ruleBasedSegmentsStorage.clear()
             }
             firstFetch = false
+            
+            // FLAGS PROCESSING
             let processedSplits = splitChangeProcessor.process(flagsChange)
             if splitsStorage.update(splitChange: processedSplits) {
                 featureFlagsUpdated += processedSplits.archivedSplits.compactMap(\.name)
                 featureFlagsUpdated += processedSplits.activeSplits.compactMap(\.name)
             }
             
-            let processedChange = ruleBasedSegmentsChangeProcessor.process(targetingRulesChange.ruleBasedSegments)
-            if ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd, toRemove: processedChange.toRemove, changeNumber: processedChange.changeNumber) {
-                rbsUpdated = true
+            // RULE BASED SEGMENTS PROCESSING
+            let processedRuleBasedSegmentChange = ruleBasedSegmentsChangeProcessor.process(targetingRulesChange.ruleBasedSegments)
+            if ruleBasedSegmentsStorage.update(toAdd: processedRuleBasedSegmentChange.toAdd, toRemove: processedRuleBasedSegmentChange.toRemove, changeNumber: processedRuleBasedSegmentChange.changeNumber) {
+                rbsUpdated += processedRuleBasedSegmentChange.archivedSegments.compactMap(\.name)
+                rbsUpdated += processedRuleBasedSegmentChange.activeSegments.compactMap(\.name)
             }
 
             Logger.i("Feature flag definitions have been updated")
