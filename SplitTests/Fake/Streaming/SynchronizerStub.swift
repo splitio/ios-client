@@ -119,16 +119,20 @@ class SynchronizerStub: Synchronizer {
     }
 
     var notifySegmentsUpdatedForKeyCalled = [String: Bool]()
-    func notifySegmentsUpdated(forKey key: String) {
+    var updatedSegmentsMetadataForKey = [String: EventMetadata?]()
+    func notifySegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
         notifySegmentsUpdatedForKeyCalled[key] = true
+        updatedLargeSegmentsMetadataForKey[key] = metadata
         if let exp = notifyMySegmentsUpdatedExp[key] {
             exp.fulfill()
         }
     }
 
     var notifyLargeSegmentsUpdatedForKeyCalled = [String: Bool]()
-    func notifyLargeSegmentsUpdated(forKey key: String) {
+    var updatedLargeSegmentsMetadataForKey = [String: EventMetadata?]()
+    func notifyLargeSegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
         notifyLargeSegmentsUpdatedForKeyCalled[key] = true
+        updatedLargeSegmentsMetadataForKey[key] = metadata
         if let exp = notifyMyLargeSegmentsUpdatedExp[key] {
             exp.fulfill()
         }

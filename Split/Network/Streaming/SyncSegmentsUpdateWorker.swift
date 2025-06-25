@@ -110,7 +110,7 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
         if segments.count > newSegments.count {
             mySegmentsStorage.set(SegmentChange(segments: newSegments.asArray()),
                                   forKey: key)
-            synchronizer.notifyUpdate(forKey: key, EventMetadata(type: .SEGMENTS_UPDATED, data: newSegments.asArray().joined(separator: ",")))
+            synchronizer.notifyUpdate(forKey: key, EventMetadata(type: .SEGMENTS_UPDATED, data: newSegments.asArray() ))
             telemetryProducer?.recordUpdatesFromSse(type: resource)
         }
     }
@@ -128,7 +128,7 @@ class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
                 if oldSegments.count < newSegments.count {
                     mySegmentsStorage.set(SegmentChange(segments: newSegments.asArray()),
                                           forKey: userKey)
-                    synchronizer.notifyUpdate(forKey: userKey, EventMetadata(type: .SEGMENTS_UPDATED, data: newSegments.asArray().joined(separator: ",")))
+                    synchronizer.notifyUpdate(forKey: userKey, EventMetadata(type: .SEGMENTS_UPDATED, data: newSegments.asArray() ))
                     telemetryProducer?.recordUpdatesFromSse(type: .mySegments)
                 }
                 return
@@ -186,7 +186,7 @@ class MySegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
     }
 
     func notifyUpdate(forKey key: String, _ metadata: EventMetadata? = nil) {
-        synchronizer.notifySegmentsUpdated(forKey: key, metadata)
+        synchronizer.notifySegmentsUpdated(forKey: key, metadata: metadata)
     }
 }
 
@@ -203,7 +203,7 @@ class MyLargeSegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
     }
 
     func notifyUpdate(forKey key: String, _ metadata: EventMetadata? = nil) {
-        synchronizer.notifyLargeSegmentsUpdated(forKey: key, metadata)
+        synchronizer.notifyLargeSegmentsUpdated(forKey: key, metadata: metadata)
     }
 }
 
