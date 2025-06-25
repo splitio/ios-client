@@ -234,9 +234,12 @@ struct TestingHelper {
                                             mls: mlsSeg, mlsCn: mlsC))
         }
         if !segmentsChanged.isEmpty {
-            msSeg.append("s3")
-            mlsSeg.append("sl3")
+            segmentsChanged.forEach { segment in
+                msSeg.append(segment)
+            }
         }
+        msSeg.append("s3")
+        mlsSeg.append("sl3")
         res.append(newAllSegmentsChange(ms: msSeg, msCn: lastMsCn,
                                         mls: mlsSeg, mlsCn: lastMlsCn))
 

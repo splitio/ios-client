@@ -51,7 +51,8 @@ class SegmentsSyncHelperTests: XCTestCase {
         let goalCn: Int64 = 300
         mySegmentsStorage.changeNumber = 200
         myLargeSegmentsStorage.changeNumber = 200
-        changeChecker.haveChanged = segmentsChanged.isEmpty
+        changeChecker.haveChanged = !segmentsChanged.isEmpty
+        changeChecker.segmentsDiff = segmentsChanged
 
         let exp = XCTestExpectation()
         mySegmentsFetcher.countExp = exp

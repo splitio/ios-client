@@ -87,7 +87,7 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
         let msTill: Int64
         let mlsTill: Int64
         let msUpdated: [String]
-        let mlsUdated: [String]
+        let mlsUpdated: [String]
     }
 
     private let segmentsFetcher: HttpMySegmentsFetcher
@@ -165,7 +165,7 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
                                           msChangeNumber: result.msTill,
                                           mlsChangeNumber: result.mlsTill,
                                           msUpdated: result.msUpdated,
-                                          mlsUpdated: result.mlsUdated)
+                                          mlsUpdated: result.mlsUpdated)
             }
             attemptCount+=1
             if attemptCount < maxAttempts {
@@ -216,7 +216,7 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
                 return FetchResult(msTill: mySegmentsChange.unwrappedChangeNumber,
                                    mlsTill: myLargeSegmentsChange.unwrappedChangeNumber,
                                    msUpdated: segmentsDiff,
-                                   mlsUdated: largeSegmentsDiff)
+                                   mlsUpdated: largeSegmentsDiff)
             }
             prevChange = change
         }
