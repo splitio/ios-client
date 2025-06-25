@@ -78,11 +78,13 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
             handler(success)
         }
     }
+    
+    func notifyUpdate(_ event: SplitInternalEvent) {
+        eventsManager.notifyInternalEvent(event, metadata: nil)
+    }
 
-    func notifyUpdate(_ events: [SplitInternalEvent]) {
-        events.forEach {
-            eventsManager.notifyInternalEvent($0)
-        }
+    func notifyUpdate(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
+        eventsManager.notifyInternalEvent(event, metadata: metadata)
     }
 
     func isSdkReadyTriggered() -> Bool {
@@ -141,9 +143,9 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             let rbChangeNumber = ruleBasedSegmentsStorage.changeNumber
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
             if result.success {
-                if !isSdkReadyTriggered() ||
-                    result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                if !isSdkReadyTriggered() || result.featureFlagsUpdated.count > 0 {
+                    let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated.description)
+                    notifyUpdate(.splitsUpdated, metadata: metadata)
                 }
                 resetBackoffCounter()
                 return true
@@ -217,8 +219,9 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                              clearBeforeUpdate: false,
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
-                if result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                if result.featureFlagsUpdated.count > 0 {
+                    let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated.description)
+                    notifyUpdate(.splitsUpdated, metadata: metadata)
                 }
                 resetBackoffCounter()
                 return true

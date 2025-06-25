@@ -35,15 +35,17 @@ class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
     }
 
     var notifyKilledCalled = false
-    func notifyKilled() {
+    var killedFlag = ""
+    func notifyKilled(flag: String) {
+        killedFlag = flag
         notifyKilledCalled = true
     }
 
     var notifyUpdatedCalled = false
-    var updatedFlagsList = [String]()
+    var updatedFlags: [String] = []
     func notifyUpdated(flagsList: [String]) {
+        updatedFlags = flagsList
         notifyUpdatedCalled = true
-        updatedFlagsList = flagsList
     }
 
     var pauseCalled = false

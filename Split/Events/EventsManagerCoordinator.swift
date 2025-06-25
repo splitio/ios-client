@@ -66,7 +66,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
             manager.start()
             managers[key] = manager
             triggered.forEach {
-                manager.notifyInternalEvent($0)
+                manager.notifyInternalEvent($0, metadata: nil)
             }
         }
     }

@@ -62,7 +62,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
 
-    // Method kept for backwards compatibility. Allows notifying an event without metadata.
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         notifyInternalEvent(event, metadata: nil)
     }
@@ -164,7 +163,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             switch event.type {
             case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
                 if isTriggered(external: .sdkReady) {
-                    trigger(event: .sdkUpdated)
+                    trigger(event: .sdkUpdated, metadata: event.metadata)
                     continue
                 }
                 self.triggerSdkReadyIfNeeded()
@@ -180,7 +179,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 }
             case .splitKilledNotification:
                 if isTriggered(external: .sdkReady) {
-                    trigger(event: .sdkUpdated)
+                    trigger(event: .sdkUpdated, metadata: event.metadata)
                     continue
                 }
             case .sdkReadyTimeoutReached:
@@ -216,8 +215,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
 
-    private func trigger(event: SplitEvent) {
-        trigger(event: SplitEventWithMetadata(type: event, metadata: nil))
+    private func trigger(event: SplitEvent, metadata: EventMetadata? = nil) {
+        trigger(event: SplitEventWithMetadata(type: event, metadata: metadata))
     }
 
     private func trigger(event: SplitEventWithMetadata) {
