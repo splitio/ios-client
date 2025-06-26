@@ -21,7 +21,6 @@ protocol ByKeySynchronizer {
     func loadAttributesFromCache(forKey: String)
     func notifyMySegmentsUpdated(forKey: String, metadata: EventMetadata?)
     func notifyMyLargeSegmentsUpdated(forKey: String, metadata: EventMetadata?)
-    func notifyRuleBasedSegmentsUpdated(forKey: String, metadata: EventMetadata?)
     func startSync(forKey key: Key)
     func startPeriodicSync()
     func stopPeriodicSync()
@@ -130,12 +129,6 @@ class DefaultByKeyFacade: ByKeyFacade {
     func notifyMyLargeSegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
         doInAll(forMatchingKey: key) { group in
             group.eventsManager.notifyInternalEvent(.myLargeSegmentsUpdated, metadata: metadata)
-        }
-    }
-    
-    func notifyRuleBasedSegmentsUpdated(forKey key: String, metadata: EventMetadata?) {
-        doInAll(forMatchingKey: key) { group in
-            group.eventsManager.notifyInternalEvent(.ruleBasedSegmentsUpdated, metadata: metadata)
         }
     }
 

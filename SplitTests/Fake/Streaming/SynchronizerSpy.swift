@@ -211,9 +211,16 @@ class SynchronizerSpy: Synchronizer {
 
     var notifyFeatureFlagsUpdatedCalled = false
     var updatedFlags: [String] = []
-    func notifyFeatureFlagsUpdated(flagsList: [String]) {
-        updatedFlags = flagsList
+    func notifyFeatureFlagsUpdated(flags: [String]) {
+        updatedFlags = flags
         notifyFeatureFlagsUpdatedCalled = true
+    }
+    
+    var notifyRuleBasedSegmentsUpdatedCalled = false
+    var ruleBasedSegmentsUpdated: [String] = []
+    func notifyRuleBasedSegmentsUpdated(segments: [String]) {
+        ruleBasedSegmentsUpdated = segments
+        notifyRuleBasedSegmentsUpdatedCalled = true
     }
 
     var killedFlag = ""

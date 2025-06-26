@@ -206,8 +206,7 @@ class SplitsSyncHelper {
             // FLAGS PROCESSING
             let processedSplits = splitChangeProcessor.process(flagsChange)
             if splitsStorage.update(splitChange: processedSplits) {
-                featureFlagsUpdated += processedSplits.archivedSplits.compactMap(\.name)
-                featureFlagsUpdated += processedSplits.activeSplits.compactMap(\.name)
+                featureFlagsUpdated = (processedSplits.archivedSplits + processedSplits.activeSplits).compactMap(\.name)
             }
             
             // RULE BASED SEGMENTS PROCESSING

@@ -32,10 +32,11 @@ protocol Synchronizer: ImpressionLogger {
     func stopRecordingTelemetry()
     func pushEvent(event: EventDTO)
     
-    func notifyFeatureFlagsUpdated(flagsList: [String])
+    func notifyFeatureFlagsUpdated(flags: [String])
+    func notifySplitKilled(flag: String)
+    func notifyRuleBasedSegmentsUpdated(segments: [String])
     func notifySegmentsUpdated(forKey key: String, metadata: EventMetadata?)
     func notifyLargeSegmentsUpdated(forKey key: String, metadata: EventMetadata?)
-    func notifySplitKilled(flag: String)
     
     func pause()
     func resume()
@@ -210,8 +211,12 @@ class DefaultSynchronizer: Synchronizer {
         }
     }
 
-    func notifyFeatureFlagsUpdated(flagsList: [String]) {
-        featureFlagsSynchronizer.notifyUpdated(flagsList: flagsList)
+    func notifyFeatureFlagsUpdated(flags: [String]) {
+        featureFlagsSynchronizer.notifyUpdated(flags: flags)
+    }
+    
+    func notifyRuleBasedSegmentsUpdated(segments: [String]) {
+        featureFlagsSynchronizer.notifyUpdated(ruleBasedSegments: segments)
     }
 
     func notifySegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
@@ -220,10 +225,6 @@ class DefaultSynchronizer: Synchronizer {
 
     func notifyLargeSegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
         byKeySynchronizer.notifyMyLargeSegmentsUpdated(forKey: key, metadata: metadata)
-    }
-    
-    func notifyRuleBasedSegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
-        byKeySynchronizer.notifyRuleBasedSegmentsUpdated(forKey: key, metadata: metadata)
     }
 
     func notifySplitKilled(flag: String) {

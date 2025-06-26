@@ -227,6 +227,8 @@ class IntegrationHelper {
             return "myLargeSegmentsUpdated"
         case .myLargeSegmentsLoadedFromCache:
             return "myLargeSegmentsLoadedFromCache"
+        case .ruleBasedSegmentsUpdated:
+            return "ruleBasedSegmentsUpdated"
         }
     }
 
