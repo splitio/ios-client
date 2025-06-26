@@ -79,10 +79,11 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
         }
     }
     
-    func notifyUpdate(_ event: SplitInternalEvent) {
-        eventsManager.notifyInternalEvent(event, metadata: nil)
+    func notifyFlagsUpdate(_ result: SyncResult) {
+        let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated)
+        notifyUpdate(.splitsUpdated, metadata: metadata)
     }
-
+    
     func notifyUpdate(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
         eventsManager.notifyInternalEvent(event, metadata: metadata)
     }
@@ -144,8 +145,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
             if result.success {
                 if !isSdkReadyTriggered() || result.featureFlagsUpdated.count > 0 {
-                    let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated )
-                    notifyUpdate(.splitsUpdated, metadata: metadata)
+                    notifyFlagsUpdate(result)
                 }
                 resetBackoffCounter()
                 return true
@@ -213,15 +213,17 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         }
 
         do {
+            // Try Sync
             let result = try syncHelper.sync(since: storedChangeNumber,
                                              rbSince: storedRbChangeNumber,
                                              till: flagsChangeNumber ?? rbsChangeNumber,
                                              clearBeforeUpdate: false,
                                              headers: ServiceConstants.controlNoCacheHeader)
+            
+            // Success
             if result.success {
                 if result.featureFlagsUpdated.count > 0 {
-                    let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated)
-                    notifyUpdate(.splitsUpdated, metadata: metadata)
+                    notifyFlagsUpdate(result)
                 }
                 resetBackoffCounter()
                 return true
