@@ -183,13 +183,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         }
         
         if result.success, result.featureFlagsUpdated.count > 0 {
-            
-            var updatedFlags = result.featureFlagsUpdated
-            for flag in updatedFlags {
-                updatedFlags.append(flag)
-            }
-            
-            let metadata = EventMetadata(type: .FLAGS_UPDATED, data: updatedFlags)
+            let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated)
             notifyUpdate(.splitsUpdated, metadata)
         }
     }
