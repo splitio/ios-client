@@ -144,7 +144,7 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
             
             if splitsStorage.update(splitChange: processedFlags) {
                 let updatedFlags = (processedFlags.activeSplits + processedFlags.archivedSplits).compactMap(\.name)
-                synchronizer.notifyFeatureFlagsUpdated(flagsList: updatedFlags)
+                synchronizer.notifyFeatureFlagsUpdated(flags: updatedFlags)
             }
 
             telemetryProducer?.recordUpdatesFromSse(type: .splits)
@@ -174,7 +174,7 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
             if ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd,
                                                toRemove: processedChange.toRemove,
                                                changeNumber: processedChange.changeNumber) {
-                synchronizer.notifyFeatureFlagsUpdated(flagsList: []) //TODO: RBS Update
+                synchronizer.notifyFeatureFlagsUpdated(flags: []) //TODO: RBS Update
             }
 
             telemetryProducer?.recordUpdatesFromSse(type: .splits)
