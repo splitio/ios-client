@@ -31,8 +31,8 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor
-    private let payloadDecoder: DefaultFeatureFlagsPayloadDecoder
-    private let ruleBasedSegmentsPayloadDecoder: DefaultRuleBasedSegmentsPayloadDecoder
+    private let payloadDecoder: FeatureFlagsPayloadDecoder
+    private let ruleBasedSegmentsPayloadDecoder: RuleBasedSegmentsPayloadDecoder
     private let telemetryProducer: TelemetryRuntimeProducer?
     var decomProvider: CompressionProvider = DefaultDecompressionProvider()
 
@@ -41,8 +41,8 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
          ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
          splitChangeProcessor: SplitChangeProcessor,
          ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
-         featureFlagsPayloadDecoder: DefaultFeatureFlagsPayloadDecoder,
-         ruleBasedSegmentsPayloadDecoder: DefaultRuleBasedSegmentsPayloadDecoder,
+         featureFlagsPayloadDecoder: FeatureFlagsPayloadDecoder,
+         ruleBasedSegmentsPayloadDecoder: RuleBasedSegmentsPayloadDecoder,
          telemetryProducer: TelemetryRuntimeProducer?) {
         self.synchronizer = synchronizer
         self.splitsStorage = splitsStorage
@@ -170,8 +170,8 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
                 compressionUtil: decomProvider.decompressor(for: compressionType))
 
             let change = RuleBasedSegmentChange(segments: [rbs],
-                                             since: previousChangeNumber,
-                                             till: changeNumber)
+                                                since: previousChangeNumber,
+                                                till: changeNumber)
 
             Logger.v("RBS update received: \(change)")
 
@@ -180,9 +180,10 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
             if ruleBasedSegmentsStorage.update(toAdd: processedSegments.toAdd,
                                                   toRemove: processedSegments.toRemove,
                                                   changeNumber: processedSegments.changeNumber) {
-                var updatedSegments: [String] = processedSegments.activeSegments.compactMap(\.name)
-                updatedSegments += processedSegments.archivedSegments.compactMap(\.name)
-                synchronizer.notifyFeatureFlagsUpdated(flagsList: []) //TODO: Make new notify segments updated (new notification method?)
+                
+                let updatedSegments = processedSegments.activeSegments.compactMap(\.name) + processedSegments.archivedSegments.compactMap(\.name)
+                synchronizer.notifyRuleBasedSegmentsUpdated(forKey: <#T##String#>, metadata: EventMetadata(type: .RULE_BASED_SEGMENTS_UPDATED, data: updatedSegments))
+                //synchronizer.notifyFeatureFlagsUpdated(flagsList: []) //TODO: New notify RBS updated (new notification method?)
             }
             
             telemetryProducer?.recordUpdatesFromSse(type: .splits)

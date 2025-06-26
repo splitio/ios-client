@@ -36,5 +36,5 @@ class DefaultTargetingRulePayloadDecoder<T: Decodable>: TargetingRulePayloadDeco
     }
 }
 
-typealias DefaultFeatureFlagsPayloadDecoder = DefaultTargetingRulePayloadDecoder<Split>
-typealias DefaultRuleBasedSegmentsPayloadDecoder = DefaultTargetingRulePayloadDecoder<RuleBasedSegment>
+typealias FeatureFlagsPayloadDecoder = DefaultTargetingRulePayloadDecoder<Split>
+typealias RuleBasedSegmentsPayloadDecoder = DefaultTargetingRulePayloadDecoder<RuleBasedSegment>
