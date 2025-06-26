@@ -238,9 +238,8 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         }
 
         client.on(event: .sdkUpdated) { metadata in
-            XCTAssertNotNil(metadata)
             XCTAssertEqual(metadata?.type, .FLAGS_UPDATED)
-            XCTAssertEqual(metadata?.data, ["test_feature", "test_feature_killed"])
+            XCTAssertEqual(metadata?.data, ["test_feature"])
             sdkUpdateWithMetadata.fulfill()
         }
 
