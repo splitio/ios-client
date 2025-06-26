@@ -143,7 +143,7 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
             let processedFlags = splitChangeProcessor.process(change)
             
             if splitsStorage.update(splitChange: processedFlags) {
-                let updatedFlags = processedFlags.activeSplits.compactMap(\.name) + processedFlags.archivedSplits.compactMap(\.name)
+                let updatedFlags = (processedFlags.activeSplits + processedFlags.archivedSplits).compactMap(\.name)
                 synchronizer.notifyFeatureFlagsUpdated(flagsList: updatedFlags)
             }
 
