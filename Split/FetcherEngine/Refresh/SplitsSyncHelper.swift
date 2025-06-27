@@ -12,7 +12,7 @@ struct SyncResult {
     let success: Bool
     let changeNumber: Int64
     let rbChangeNumber: Int64?
-    let featureFlagsUpdated: Bool
+    let featureFlagsUpdated: [String]
     let rbsUpdated: Bool
 }
 
@@ -21,7 +21,7 @@ class SplitsSyncHelper {
     struct FetchResult {
         let till: Int64
         let rbTill: Int64?
-        let featureFlagsUpdated: Bool
+        let featureFlagsUpdated: [String]
         let rbsUpdated: Bool
     }
 
@@ -163,7 +163,7 @@ class SplitsSyncHelper {
         return SyncResult(success: false,
                           changeNumber: nextSince,
                           rbChangeNumber: nextRbSince,
-                          featureFlagsUpdated: false,
+                          featureFlagsUpdated: [],
                           rbsUpdated: false)
     }
 
@@ -177,7 +177,7 @@ class SplitsSyncHelper {
         var firstFetch = true
         var nextSince = since
         var nextRbSince = rbSince
-        var featureFlagsUpdated = false
+        var featureFlagsUpdated: [String] = []
         var rbsUpdated = false
         while true {
             clearCache = clearCache && firstFetch
@@ -202,8 +202,9 @@ class SplitsSyncHelper {
                 ruleBasedSegmentsStorage.clear()
             }
             firstFetch = false
-            if splitsStorage.update(splitChange: splitChangeProcessor.process(targetingRulesChange.featureFlags)) {
-                featureFlagsUpdated = true
+            let processedSplits = splitChangeProcessor.process(flagsChange)
+            if splitsStorage.update(splitChange: processedSplits) {
+                featureFlagsUpdated = (processedSplits.archivedSplits + processedSplits.activeSplits).compactMap(\.name)
             }
             
             let processedChange = ruleBasedSegmentsChangeProcessor.process(targetingRulesChange.ruleBasedSegments)

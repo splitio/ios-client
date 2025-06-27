@@ -46,11 +46,11 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() {
                     // Notifying both to trigger SDK Ready
-                    notifyUpdate([.mySegmentsUpdated])
-                    notifyUpdate([.myLargeSegmentsUpdated])
+                    notifyUpdate(.mySegmentsUpdated)
+                    notifyUpdate(.myLargeSegmentsUpdated)
                 } else if  result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
-                    notifyUpdate([.mySegmentsUpdated])
+                    notifyUpdate(.mySegmentsUpdated)
                 }
                 return true
             }

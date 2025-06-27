@@ -78,11 +78,14 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
             handler(success)
         }
     }
-
-    func notifyUpdate(_ events: [SplitInternalEvent]) {
-        events.forEach {
-            eventsManager.notifyInternalEvent($0)
-        }
+    
+    func notifyFlagsUpdate(_ result: SyncResult) {
+        let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated)
+        notifyUpdate(.splitsUpdated, metadata: metadata)
+    }
+    
+    func notifyUpdate(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
+        eventsManager.notifyInternalEvent(event, metadata: metadata)
     }
 
     func isSdkReadyTriggered() -> Bool {
@@ -141,9 +144,8 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             let rbChangeNumber = ruleBasedSegmentsStorage.changeNumber
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
             if result.success {
-                if !isSdkReadyTriggered() ||
-                    result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                if !isSdkReadyTriggered() || result.featureFlagsUpdated.count > 0 {
+                    notifyFlagsUpdate(result)
                 }
                 resetBackoffCounter()
                 return true
@@ -211,14 +213,17 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         }
 
         do {
+            // Try Sync
             let result = try syncHelper.sync(since: storedChangeNumber,
                                              rbSince: storedRbChangeNumber,
                                              till: flagsChangeNumber ?? rbsChangeNumber,
                                              clearBeforeUpdate: false,
                                              headers: ServiceConstants.controlNoCacheHeader)
+            
+            // Success
             if result.success {
-                if result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                if result.featureFlagsUpdated.count > 0 {
+                    notifyFlagsUpdate(result)
                 }
                 resetBackoffCounter()
                 return true

@@ -237,7 +237,9 @@ class SynchronizerStub: Synchronizer {
     }
 
     var notifyFeatureFlagsUpdatedCalled = true
-    func notifyFeatureFlagsUpdated() {
+    var updatedFlags: [String] = []
+    func notifyFeatureFlagsUpdated(flags: [String]) {
+        updatedFlags = flags
         notifyFeatureFlagsUpdatedCalled = true
     }
 

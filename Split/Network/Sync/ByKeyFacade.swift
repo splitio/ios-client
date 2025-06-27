@@ -77,7 +77,7 @@ class DefaultByKeyFacade: ByKeyFacade {
     func loadAttributesFromCache(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
             group.attributesStorage.loadLocal()
-            group.eventsManager.notifyInternalEvent(.attributesLoadedFromCache)
+            group.eventsManager.notifyInternalEvent(.attributesLoadedFromCache, metadata: nil)
         }
         TimeChecker.logInterval("Time until attributes loaded from cache")
     }
