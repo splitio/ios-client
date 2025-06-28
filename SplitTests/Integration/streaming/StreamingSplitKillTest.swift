@@ -27,6 +27,7 @@ class StreamingSplitKillTest: XCTestCase {
     var exp2: XCTestExpectation!
     var exp3: XCTestExpectation!
     var exp4: XCTestExpectation!
+    var exp5: XCTestExpectation!
 
     override func setUp() {
         expIndex = 1
@@ -37,7 +38,7 @@ class StreamingSplitKillTest: XCTestCase {
         loadChanges()
     }
 
-    func testSplitKill() {
+    func testSplitKill() throws {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
         splitConfig.segmentsRefreshRate = 9999
@@ -55,7 +56,7 @@ class StreamingSplitKillTest: XCTestCase {
             .setConfig(splitConfig).build()!
 
         let client = factory.client
-        let expTimeout:  TimeInterval = 5
+        let expTimeout: TimeInterval = 5
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         exp1 = XCTestExpectation(description: "Exp1")
@@ -111,6 +112,58 @@ class StreamingSplitKillTest: XCTestCase {
         XCTAssertEqual("on", treatmentNoKill)
         XCTAssertEqual("on", treatmentOldKill)
 
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+    }
+    
+    func testSplitKillWithMetadata() throws {
+        
+        // Setup
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 9999
+        splitConfig.segmentsRefreshRate = 9999
+        splitConfig.impressionRefreshRate = 999999
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.eventsPushRate = 999999
+        
+        
+        let key: Key = Key(matchingKey: userKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
+        let factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()!
+        let client = factory.client
+        let expTimeout: TimeInterval = 5
+
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        exp1 = XCTestExpectation(description: "Streaming notification")
+        exp5 = XCTestExpectation(description: "Wait for killed metadata event")
+
+        client.on(event: SplitEvent.sdkReady) { sdkReadyExpectation.fulfill() }
+        
+        // Set listener
+        client.on(event: .sdkUpdated) { [weak self] metadata in
+            if metadata?.type == .FLAGS_KILLED {
+                XCTAssertEqual(metadata?.data, ["workm"])
+                self?.exp5.fulfill()
+            }
+        }
+
+        // Simulate Kill
+        wait(for: [sdkReadyExpectation, sseConnExp], timeout: expTimeout)
+        streamingBinding?.push(message: ":keepalive") // send keep alive to confirm streaming connection ok
+        wait(for: [exp1], timeout: expTimeout)
+        waitForUpdate(secs: 1)
+        streamingBinding?.push(message: StreamingIntegrationHelper.splitKillMessagge(splitName: "workm", defaultTreatment: "conta",
+                                                                                     timestamp: numbers[splitsChangesHits],
+                                                                                     changeNumber: numbers[splitsChangesHits]))
+
+        // Exit
+        wait(for: [exp5], timeout: expTimeout)
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
             _ = semaphore.signal()
