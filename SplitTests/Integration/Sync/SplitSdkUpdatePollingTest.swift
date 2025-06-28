@@ -34,15 +34,15 @@ class SplitSdkUpdatePollingTest: XCTestCase {
     
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher("splitchanges_int_test"),
                                                           streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
     
-    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+    private func buildTestDispatcher(_ file: String) -> HttpClientTestDispatcher {
 
-        let respData = responseSplitChanges()
+        let respData = responseSplitChanges(file)
         var responses = [TestDispatcherResponse]()
         for data in respData {
             let rData = TargetingRulesChange(featureFlags: data, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
@@ -253,6 +253,11 @@ class SplitSdkUpdatePollingTest: XCTestCase {
     }
     
     func testSdkKillSplitWithMetadata() throws {
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher("split_killed_test"),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        
         let apiKey = IntegrationHelper.dummyApiKey
         let trafficType = "client"
 
@@ -282,8 +287,8 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         }
 
         client.on(event: .sdkUpdated) { metadata in
-            XCTAssertEqual(metadata?.type, .FLAGS_UPDATED)
-            XCTAssertEqual(metadata?.data, ["test_feature"])
+            XCTAssertEqual(metadata?.type, .FLAGS_KILLED)
+            XCTAssertEqual(metadata?.data, ["test_feature_kill"])
             sdkUpdateWithMetadata.fulfill()
         }
 
@@ -351,12 +356,12 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         semaphore.wait()
     }
 
-    private func  responseSplitChanges() -> [SplitChange] {
+    private func  responseSplitChanges(_ file: String) -> [SplitChange] {
         var changes = [SplitChange]()
 
         var prevChangeNumber: Int64 = 0
         for i in 0..<4 {
-            let c = loadSplitsChangeFile()!
+            let c = loadSplitsChangeFile(file)!
             c.since = c.till
             if prevChangeNumber != 0 {
                 c.till = prevChangeNumber  + kChangeNbInterval
@@ -375,8 +380,8 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         return changes
     }
 
-    private func loadSplitsChangeFile() -> SplitChange? {
-        return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_int_test")
+    private func loadSplitsChangeFile(_ file: String) -> SplitChange? {
+        return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: file)
     }
 
     private func getAndIncrement() -> Int {
