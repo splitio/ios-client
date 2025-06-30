@@ -35,7 +35,9 @@ class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
     }
 
     var notifyKilledCalled = false
-    func notifyKilled() {
+    var killedFlag = ""
+    func notifyKilled(flag: String) {
+        killedFlag = flag
         notifyKilledCalled = true
     }
 

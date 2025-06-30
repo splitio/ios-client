@@ -227,7 +227,7 @@ class SplitKillWorker: UpdateWorker<SplitKillNotification> {
                 splitToKill.changeNumber = notification.changeNumber
                 splitToKill.killed = true
                 splitsStorage.updateWithoutChecks(split: splitToKill)
-                synchronizer.notifySplitKilled()
+                synchronizer.notifySplitKilled(flag: splitToKill.name ?? "")
             }
         }
         synchronizer.synchronizeSplits(changeNumber: notification.changeNumber)

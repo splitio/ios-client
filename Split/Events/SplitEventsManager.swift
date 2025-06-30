@@ -176,7 +176,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 }
             case .splitKilledNotification:
                 if isTriggered(external: .sdkReady) {
-                    trigger(event: .sdkUpdated)
+                    trigger(event: .sdkUpdated, metadata: event.metadata)
                     continue
                 }
             case .sdkReadyTimeoutReached:
