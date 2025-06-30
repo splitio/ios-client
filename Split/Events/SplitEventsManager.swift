@@ -50,7 +50,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             }
         }
     }
-
+    
     func notifyInternalEvent(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
         let event = SplitInternalEventWithMetadata(event, metadata: metadata)
 
