@@ -43,6 +43,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         let trafficType = "client"
 
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
+        let sdkUpdate = XCTestExpectation(description: "SDK UPDATE Expectation")
         
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.segmentsRefreshRate = 99999
@@ -72,6 +73,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
 
         client.on(event: SplitEvent.sdkUpdated) {
             sdkUpdatedFired = true
+            sdkUpdate.fulfill()
         }
         
         wait(for: [sdkReady], timeout: 30)
@@ -145,7 +147,6 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         let apiKey = IntegrationHelper.dummyApiKey
         let trafficType = "client"
 
-        let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
         let sdkUpdateWithMetadata = XCTestExpectation(description: "SDK Update With Metadata Expectation")
 
         let splitConfig: SplitClientConfig = SplitClientConfig()
@@ -166,17 +167,13 @@ class SplitSdkUpdatePollingTest: XCTestCase {
 
         let client = factory!.client
 
-        client.on(event: .sdkReady) {
-            sdkReady.fulfill()
-        }
-
         client.on(event: .sdkUpdated) { metadata in
             XCTAssertEqual(metadata?.type, .FLAGS_UPDATED)
             XCTAssertEqual(metadata?.data, ["test_feature"])
             sdkUpdateWithMetadata.fulfill()
         }
 
-        wait(for: [sdkReady, sdkUpdateWithMetadata], timeout: 30)
+        wait(for: [sdkUpdateWithMetadata], timeout: 30)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -211,11 +208,16 @@ class SplitSdkUpdatePollingTest: XCTestCase {
 
         let client = factory!.client
 
-        client.on(event: .sdkReady) {
+        var sdkReadyFired = false
+        var sdkUpdatedFired = false
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyFired = true
             sdkReady.fulfill()
         }
 
-        client.on(event: .sdkUpdated) {
+        client.on(event: SplitEvent.sdkUpdated) {
+            sdkUpdatedFired = true
             sdkUpdate.fulfill()
         }
 
@@ -223,6 +225,10 @@ class SplitSdkUpdatePollingTest: XCTestCase {
 
         // wait for sdk update
         ThreadUtils.delay(seconds: 1.0)
+
+        XCTAssertTrue(sdkReadyFired)
+        XCTAssertTrue(sdkUpdatedFired)
+
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -255,10 +261,6 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         _ = builder.setHttpClient(httpClient)
         factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         let client = factory!.client
-
-        client.on(event: .sdkReady) {
-            sdkReady.fulfill()
-        }
         
         client.on(event: .sdkUpdated) { metadata in
             if metadata?.type == .SEGMENTS_UPDATED {
