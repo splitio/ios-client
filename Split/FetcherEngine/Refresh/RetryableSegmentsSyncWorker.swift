@@ -210,13 +210,13 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
                 Logger.d("Checking my large segments update")
                 checkAndUpdate(isChanged: mlsChanged, change: myLargeSegmentsChange, storage: myLargeSegmentsStorage)
 
-//                let segmentsDiff = changeChecker.getSegmentsDiff(oldSegments: oldChange.segments, newSegments: mySegmentsChange.segments)
-//                let largeSegmentsDiff = changeChecker.getSegmentsDiff(oldSegments: oldLargeChange.segments, newSegments: myLargeSegmentsChange.segments)
+                let segmentsDiff = changeChecker.getSegmentsDiff(oldSegments: oldChange.segments, newSegments: mySegmentsChange.segments)
+                let largeSegmentsDiff = changeChecker.getSegmentsDiff(oldSegments: oldLargeChange.segments, newSegments: myLargeSegmentsChange.segments)
                 
                 return FetchResult(msTill: mySegmentsChange.unwrappedChangeNumber,
                                    mlsTill: myLargeSegmentsChange.unwrappedChangeNumber,
-                                   msUpdated: mySegmentsChange.segments.compactMap(\.name),
-                                   mlsUpdated: myLargeSegmentsChange.segments.compactMap(\.name))
+                                   msUpdated: segmentsDiff,
+                                   mlsUpdated: largeSegmentsDiff)
             }
             prevChange = change
         }
