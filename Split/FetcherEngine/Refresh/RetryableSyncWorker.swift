@@ -149,9 +149,13 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                 }
                 resetBackoffCounter()
                 return true
+            } else {
+                notifyUpdate(.sdkError, metadata: EventMetadata(type: .FLAGS_SYNC_ERROR, data: [""]))
+                return false
             }
         } catch {
             Logger.e("Error while fetching splits in method: \(error.localizedDescription)")
+            notifyUpdate(.sdkError, metadata: EventMetadata(type: .FLAGS_SYNC_ERROR, data: [""]))
             errorHandler?(error)
         }
         return false
@@ -227,6 +231,9 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                 }
                 resetBackoffCounter()
                 return true
+            } else {
+                notifyUpdate(.sdkError, metadata: EventMetadata(type: .FLAGS_SYNC_ERROR, data: [""]))
+                return false
             }
         } catch {
             Logger.e("Error while fetching splits in method \(#function): \(error.localizedDescription)")
