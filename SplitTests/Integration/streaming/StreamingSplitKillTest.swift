@@ -32,12 +32,12 @@ class StreamingSplitKillTest: XCTestCase {
     override func setUp() {
         expIndex = 1
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
-                                                          streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         loadChanges()
     }
 
+    // MARK: Tests
     func testSplitKill() throws {
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 9999
@@ -64,11 +64,11 @@ class StreamingSplitKillTest: XCTestCase {
         exp3 = XCTestExpectation(description: "Exp3")
         exp4 = XCTestExpectation(description: "Exp4")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             IntegrationHelper.tlog("TIMEOUT")
         }
 
@@ -81,28 +81,25 @@ class StreamingSplitKillTest: XCTestCase {
         let splitName = "workm"
         let treatmentReady = client.getTreatment(splitName)
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
-                                                         timestamp: numbers[splitsChangesHits],
-                                                         changeNumber: numbers[splitsChangesHits]))
+        streamingBinding?.push(message: StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
+                                                                                     timestamp: numbers[splitsChangesHits],
+                                                                                     changeNumber: numbers[splitsChangesHits]))
 
         wait(for: [exp2], timeout: expTimeout)
         waitForUpdate(secs: 1)
         
         let treatmentKill = client.getTreatment(splitName)
 
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
-                                                          changeNumber: numbers[splitsChangesHits]))
+        streamingBinding?.push(message: StreamingIntegrationHelper.splitUpdateMessage(timestamp: numbers[splitsChangesHits],
+                                                                                      changeNumber: numbers[splitsChangesHits]))
 
         wait(for: [exp3], timeout: expTimeout)
         waitForUpdate(secs: 1)
         let treatmentNoKill = client.getTreatment(splitName)
         
-        streamingBinding?.push(message:
-            StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
-                                                         timestamp: numbers[0],
-                                                         changeNumber: numbers[0]))
+        streamingBinding?.push(message: StreamingIntegrationHelper.splitKillMessagge(splitName: splitName, defaultTreatment: "conta",
+                                                                                     timestamp: numbers[0],
+                                                                                     changeNumber: numbers[0]))
 
         ThreadUtils.delay(seconds: 2.0) // The server should not be hit here
         let treatmentOldKill = client.getTreatment(splitName)
@@ -128,8 +125,7 @@ class StreamingSplitKillTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        
-        
+
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
@@ -141,9 +137,10 @@ class StreamingSplitKillTest: XCTestCase {
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
         exp1 = XCTestExpectation(description: "Streaming notification")
+        exp2 = XCTestExpectation(description: "Push notification")
         exp5 = XCTestExpectation(description: "Wait for killed metadata event")
 
-        client.on(event: SplitEvent.sdkReady) { sdkReadyExpectation.fulfill() }
+        client.on(event: .sdkReady) { sdkReadyExpectation.fulfill() }
         
         // Set listener
         client.on(event: .sdkUpdated) { [weak self] metadata in
@@ -161,9 +158,10 @@ class StreamingSplitKillTest: XCTestCase {
         streamingBinding?.push(message: StreamingIntegrationHelper.splitKillMessagge(splitName: "workm", defaultTreatment: "conta",
                                                                                      timestamp: numbers[splitsChangesHits],
                                                                                      changeNumber: numbers[splitsChangesHits]))
+        wait(for: [exp5, exp2], timeout: expTimeout)
+        waitForUpdate(secs: 1)
 
-        // Exit
-        wait(for: [exp5], timeout: expTimeout)
+        // Cleanup
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
             _ = semaphore.signal()
@@ -171,6 +169,7 @@ class StreamingSplitKillTest: XCTestCase {
         semaphore.wait()
     }
     
+    //MARK: Testing Helpers
     private func getChanges(for hitNumber: Int) -> Data {
         if hitNumber < 4 {
             return Data(self.changes[hitNumber].utf8)
