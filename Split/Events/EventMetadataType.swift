@@ -13,11 +13,17 @@ import Foundation
 }
 
 @objc public enum EventMetadataType: Int {
+    
+    // Events
     case FLAGS_UPDATED
     case FLAGS_KILLED
     case SEGMENTS_UPDATED
     case LARGE_SEGMENTS_UPDATED
     case RULE_BASED_SEGMENTS_UPDATED
+    
+    // Errors
+    case FLAGS_SYNC_ERROR
+    case SEGMENTS_SYNC_ERROR
     
     public func toString() -> String {
         switch self {
@@ -26,6 +32,8 @@ import Foundation
             case .SEGMENTS_UPDATED: "SEGMENTS_UPDATED"
             case .LARGE_SEGMENTS_UPDATED: "LARGE_SEGMENTS_UPDATED"
             case .RULE_BASED_SEGMENTS_UPDATED: "RULE_BASED_SEGMENTS_UPDATED"
+            case .FLAGS_SYNC_ERROR: "FLAGS_SYNC_ERROR"
+            case .SEGMENTS_SYNC_ERROR: "SEGMENTS_SYNC_ERROR"
         }
     }
 }

@@ -186,6 +186,10 @@ class DefaultSplitEventsManager: SplitEventsManager {
                     if !isTriggered(external: .sdkReady) {
                         trigger(event: .sdkReadyTimedOut)
                     }
+                case .sdkError:
+                    if isTriggered(external: .sdkReady) {
+                        trigger(event: .sdkError, metadata: event.metadata)   
+                    }
             }
         }
     }

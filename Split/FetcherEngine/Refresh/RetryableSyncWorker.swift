@@ -230,6 +230,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
             }
         } catch {
             Logger.e("Error while fetching splits in method \(#function): \(error.localizedDescription)")
+            notifyUpdate(.sdkError, metadata: EventMetadata(type: .FLAGS_SYNC_ERROR, data: [""]))
             errorHandler?(error)
         }
         Logger.d("Feature flag changes are not updated yet")

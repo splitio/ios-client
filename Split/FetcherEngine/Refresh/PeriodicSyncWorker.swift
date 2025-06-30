@@ -182,9 +182,13 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         
-        if result.success, result.featureFlagsUpdated.count > 0 {
-            let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated)
-            notifyUpdate(.splitsUpdated, metadata: metadata)
+        if result.success {
+            if result.featureFlagsUpdated.count > 0 {
+                let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated)
+                notifyUpdate(.splitsUpdated, metadata: metadata)
+            }
+        } else {
+            notifyUpdate(.sdkError, metadata: EventMetadata(type: .FLAGS_SYNC_ERROR, data: [""]))
         }
     }
 }
@@ -235,6 +239,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
             }
         } catch {
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
+            notifyUpdate(.sdkError, metadata: EventMetadata(type: .SEGMENTS_SYNC_ERROR, data: [""]))
         }
     }
 }

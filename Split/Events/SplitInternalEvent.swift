@@ -13,6 +13,7 @@ struct SplitInternalEventWithMetadata: Equatable {
 }
 
 enum SplitInternalEvent {
+    // Events
     case mySegmentsUpdated
     case myLargeSegmentsUpdated
     case splitsUpdated
@@ -22,4 +23,7 @@ enum SplitInternalEvent {
     case attributesLoadedFromCache
     case sdkReadyTimeoutReached
     case splitKilledNotification
+    
+    // Errors
+    case sdkError
 }

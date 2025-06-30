@@ -61,6 +61,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             }
         } catch {
             Logger.e("Error while fetching segments in method: \(error.localizedDescription)")
+            notifyUpdate(.sdkError, metadata: EventMetadata(type: .SEGMENTS_SYNC_ERROR, data: [""]))
             errorHandler?(error)
         }
         return false
