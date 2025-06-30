@@ -50,7 +50,12 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                     notifyUpdate(.myLargeSegmentsUpdated, metadata: EventMetadata(type: .LARGE_SEGMENTS_UPDATED, data: result.mlsUpdated))
                 } else if !result.msUpdated.isEmpty || !result.mlsUpdated.isEmpty {
                     // For now is not necessary specify which entity was updated
-                    notifyUpdate(.mySegmentsUpdated, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: result.msUpdated + result.mlsUpdated))
+                    if !result.msUpdated.isEmpty {
+                        notifyUpdate(.mySegmentsUpdated, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: result.msUpdated))
+                    }
+                    if !result.mlsUpdated.isEmpty {
+                        notifyUpdate(.myLargeSegmentsUpdated, metadata: EventMetadata(type: .LARGE_SEGMENTS_UPDATED, data: result.mlsUpdated))
+                    }
                 }
                 return true
             }
