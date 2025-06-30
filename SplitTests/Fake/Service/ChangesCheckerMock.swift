@@ -11,9 +11,10 @@ import Foundation
 @testable import Split
 
 class MySegmentsChangesCheckerMock: MySegmentsChangesChecker {
-    
+
     var haveChanged = false
-    var segmentsDiff = [String]()
+    var diffSegments: [String] = []
+
     func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool {
         haveChanged
     }
@@ -27,7 +28,7 @@ class MySegmentsChangesCheckerMock: MySegmentsChangesChecker {
     }
     
     func getSegmentsDiff(oldSegments: [Segment], newSegments: [Segment]) -> [String] {
-        segmentsDiff
+        diffSegments
     }
 }
 

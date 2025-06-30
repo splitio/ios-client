@@ -223,6 +223,20 @@ class SynchronizerTest: XCTestCase {
 
         XCTAssertTrue(byKeyApiFacade.startSyncForKeyCalled[key] ?? false)
     }
+    
+    func testMetadataOnSegmentsByKeySync() {
+        let metadata = EventMetadata(type: .FLAGS_UPDATED, data: ["Carlos", "Juancho"])
+        synchronizer.notifySegmentsUpdated(forKey: "4", metadata: metadata)
+        
+        XCTAssertEqual(byKeyApiFacade.updatedSegmentsMetadataForKey["4"], metadata)
+    }
+    
+    func testMetadataOnLargeSegmentsByKeySync() {
+        let metadata = EventMetadata(type: .FLAGS_UPDATED, data: ["Lagarto", "Juancho"])
+        synchronizer.notifySegmentsUpdated(forKey: "5", metadata: metadata)
+        
+        XCTAssertEqual(byKeyApiFacade.updatedSegmentsMetadataForKey["5"], metadata)
+    }
 
     func testFlush() {
 

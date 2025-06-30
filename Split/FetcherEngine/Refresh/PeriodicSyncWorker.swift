@@ -183,13 +183,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         }
         
         if result.success, result.featureFlagsUpdated.count > 0 {
-            
-            var updatedFlags = result.featureFlagsUpdated
-            for flag in updatedFlags {
-                updatedFlags.append(flag)
-            }
-            
-            let metadata = EventMetadata(type: .FLAGS_UPDATED, data: updatedFlags)
+            let metadata = EventMetadata(type: .FLAGS_UPDATED, data: result.featureFlagsUpdated)
             notifyUpdate(.splitsUpdated, metadata: metadata)
         }
     }
@@ -229,10 +223,14 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                                              mlsTill: myLargeSegmentsStorage.changeNumber,
                                              headers: nil)
             if result.success {
-                if  !result.msUpdated.isEmpty || !result.mlsUpdated.isEmpty {
+                if !result.msUpdated.isEmpty || !result.mlsUpdated.isEmpty {
                     // For now is not necessary specify which entity was updated
-                    var updatedSegments = result.msUpdated + result.mlsUpdated
-                    notifyUpdate(.mySegmentsUpdated, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: updatedSegments))
+                    if !result.msUpdated.isEmpty {
+                        notifyUpdate(.mySegmentsUpdated, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: result.msUpdated))
+                    }
+                    if !result.mlsUpdated.isEmpty {
+                        notifyUpdate(.myLargeSegmentsUpdated, metadata: EventMetadata(type: .LARGE_SEGMENTS_UPDATED, data: result.msUpdated))
+                    }
                 }
             }
         } catch {
