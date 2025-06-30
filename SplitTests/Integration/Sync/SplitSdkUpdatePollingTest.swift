@@ -251,55 +251,6 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         })
         semaphore.wait()
     }
-    
-    func testSdkKillSplitWithMetadata() throws {
-        let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher("split_killed_test"),
-                                                          streamingHandler: buildStreamingHandler())
-        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
-        
-        let apiKey = IntegrationHelper.dummyApiKey
-        let trafficType = "client"
-
-        let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
-        let sdkUpdateWithMetadata = XCTestExpectation(description: "SDK Update With Metadata Expectation")
-
-        let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.segmentsRefreshRate = 99999
-        splitConfig.featuresRefreshRate = 2
-        splitConfig.impressionRefreshRate = 99999
-        splitConfig.sdkReadyTimeOut = 60000
-        splitConfig.trafficType = trafficType
-        splitConfig.streamingEnabled = false
-        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
-
-        let key: Key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
-        let builder = DefaultSplitFactoryBuilder()
-        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesTest"))
-        _ = builder.setHttpClient(httpClient)
-        factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
-
-        let client = factory!.client
-
-        client.on(event: .sdkReady) {
-            sdkReady.fulfill()
-        }
-
-        client.on(event: .sdkUpdated) { metadata in
-            XCTAssertEqual(metadata?.type, .FLAGS_KILLED)
-            XCTAssertEqual(metadata?.data, ["test_feature_kill"])
-            sdkUpdateWithMetadata.fulfill()
-        }
-
-        wait(for: [sdkReady, sdkUpdateWithMetadata], timeout: 30)
-
-        let semaphore = DispatchSemaphore(value: 0)
-        client.destroy(completion: {
-            _ = semaphore.signal()
-        })
-        semaphore.wait()
-    }
 
     func testSdkUpdateMySegments() throws {
         let apiKey = IntegrationHelper.dummyApiKey

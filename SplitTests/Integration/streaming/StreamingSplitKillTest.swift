@@ -128,8 +128,7 @@ class StreamingSplitKillTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        
-        
+
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
@@ -162,7 +161,7 @@ class StreamingSplitKillTest: XCTestCase {
                                                                                      timestamp: numbers[splitsChangesHits],
                                                                                      changeNumber: numbers[splitsChangesHits]))
 
-        // Exit
+        // Cleanup
         wait(for: [exp5], timeout: expTimeout)
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
