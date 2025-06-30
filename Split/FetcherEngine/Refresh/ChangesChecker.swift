@@ -22,6 +22,7 @@ protocol MySegmentsChangesChecker {
     func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool
     func mySegmentsHaveChanged(oldSegments: [Segment], newSegments: [Segment]) -> Bool
     func mySegmentsHaveChanged(oldSegments: [String], newSegments: [String]) -> Bool
+    func getSegmentsDiff(oldSegments: [Segment], newSegments: [Segment]) -> [String]
 }
 
 struct DefaultMySegmentsChangesChecker: MySegmentsChangesChecker {
@@ -42,5 +43,8 @@ struct DefaultMySegmentsChangesChecker: MySegmentsChangesChecker {
         return !(oldSegments.count == newSegments.count &&
                  oldSegments.sorted() == newSegments.sorted())
     }
-
+    
+    func getSegmentsDiff(oldSegments: [Segment], newSegments: [Segment]) -> [String] {
+        oldSegments.filter { !Set(newSegments.map { $0.name }).contains($0.name) }.map { $0.name }
+    }
 }

@@ -123,12 +123,16 @@ class ByKeyFacadeMock: ByKeyFacade {
     }
 
     var notifyMySegmentsUpdatedCalled = false
-    func notifyMySegmentsUpdated(forKey key: String) {
+    var updatedSegmentsMetadataForKey = [String : EventMetadata?]()
+    func notifyMySegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
+        updatedSegmentsMetadataForKey[key] = metadata
         notifyMySegmentsUpdatedCalled = true
     }
 
     var notifyMyLargeSegmentsUpdatedCalled = false
-    func notifyMyLargeSegmentsUpdated(forKey key: String) {
+    var updatedLargeSegmentsMetadataForKey = [String : EventMetadata?]()
+    func notifyMyLargeSegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
+        updatedLargeSegmentsMetadataForKey[key] = metadata
         notifyMyLargeSegmentsUpdatedCalled = true
     }
    

@@ -46,11 +46,16 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() {
                     // Notifying both to trigger SDK Ready
-                    notifyUpdate(.mySegmentsUpdated)
-                    notifyUpdate(.myLargeSegmentsUpdated)
-                } else if  result.msUpdated || result.mlsUpdated {
+                    notifyUpdate(.mySegmentsUpdated, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: result.msUpdated))
+                    notifyUpdate(.myLargeSegmentsUpdated, metadata: EventMetadata(type: .LARGE_SEGMENTS_UPDATED, data: result.mlsUpdated))
+                } else if !result.msUpdated.isEmpty || !result.mlsUpdated.isEmpty {
                     // For now is not necessary specify which entity was updated
-                    notifyUpdate(.mySegmentsUpdated)
+                    if !result.msUpdated.isEmpty {
+                        notifyUpdate(.mySegmentsUpdated, metadata: EventMetadata(type: .SEGMENTS_UPDATED, data: result.msUpdated))
+                    }
+                    if !result.mlsUpdated.isEmpty {
+                        notifyUpdate(.myLargeSegmentsUpdated, metadata: EventMetadata(type: .LARGE_SEGMENTS_UPDATED, data: result.mlsUpdated))
+                    }
                 }
                 return true
             }
@@ -71,8 +76,8 @@ struct SegmentsSyncResult {
     let success: Bool
     let msChangeNumber: Int64
     let mlsChangeNumber: Int64
-    let msUpdated: Bool
-    let mlsUpdated: Bool
+    let msUpdated: [String]
+    let mlsUpdated: [String]
 }
 
 protocol SegmentsSyncHelper {
@@ -86,8 +91,8 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
     struct FetchResult {
         let msTill: Int64
         let mlsTill: Int64
-        let msUpdated: Bool
-        let mlsUdated: Bool
+        let msUpdated: [String]
+        let mlsUpdated: [String]
     }
 
     private let segmentsFetcher: HttpMySegmentsFetcher
@@ -165,7 +170,7 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
                                           msChangeNumber: result.msTill,
                                           mlsChangeNumber: result.mlsTill,
                                           msUpdated: result.msUpdated,
-                                          mlsUpdated: result.mlsUdated)
+                                          mlsUpdated: result.mlsUpdated)
             }
             attemptCount+=1
             if attemptCount < maxAttempts {
@@ -175,8 +180,8 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
         return SegmentsSyncResult(success: false,
                                   msChangeNumber: -1,
                                   mlsChangeNumber: -1,
-                                  msUpdated: false,
-                                  mlsUpdated: false)
+                                  msUpdated: [],
+                                  mlsUpdated: [])
     }
 
     private func fetchUntil(till: Int64?,
@@ -210,10 +215,13 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
                 Logger.d("Checking my large segments update")
                 checkAndUpdate(isChanged: mlsChanged, change: myLargeSegmentsChange, storage: myLargeSegmentsStorage)
 
+                let segmentsDiff = changeChecker.getSegmentsDiff(oldSegments: oldChange.segments, newSegments: mySegmentsChange.segments)
+                let largeSegmentsDiff = changeChecker.getSegmentsDiff(oldSegments: oldLargeChange.segments, newSegments: myLargeSegmentsChange.segments)
+                
                 return FetchResult(msTill: mySegmentsChange.unwrappedChangeNumber,
                                    mlsTill: myLargeSegmentsChange.unwrappedChangeNumber,
-                                   msUpdated: msChanged,
-                                   mlsUdated: mlsChanged)
+                                   msUpdated: segmentsDiff,
+                                   mlsUpdated: largeSegmentsDiff)
             }
             prevChange = change
         }

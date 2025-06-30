@@ -9,7 +9,7 @@ import Foundation
 @testable import Split
 
 class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
-   var loadCalled = false
+    var loadCalled = false
     func load() {
         loadCalled = true
     }

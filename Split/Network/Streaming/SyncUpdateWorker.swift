@@ -169,14 +169,15 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
 
             Logger.v("RBS update received: \(change)")
 
-            let processedChange = ruleBasedSegmentsChangeProcessor.process(change)
+            let processedSegments = ruleBasedSegmentsChangeProcessor.process(change)
 
-            if ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd,
-                                               toRemove: processedChange.toRemove,
-                                               changeNumber: processedChange.changeNumber) {
-                synchronizer.notifyFeatureFlagsUpdated(flags: []) //TODO: RBS Update
+            if ruleBasedSegmentsStorage.update(toAdd: processedSegments.toAdd,
+                                                  toRemove: processedSegments.toRemove,
+                                                  changeNumber: processedSegments.changeNumber) {
+                var updatedSegments = (processedSegments.activeSegments + processedSegments.archivedSegments).compactMap(\.name)
+                synchronizer.notifyFeatureFlagsUpdated(flags: []) //TODO: Make new notify segments updated (new notification method?)
             }
-
+            
             telemetryProducer?.recordUpdatesFromSse(type: .splits)
             return true
         } catch {

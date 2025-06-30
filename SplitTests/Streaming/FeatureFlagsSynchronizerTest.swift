@@ -258,6 +258,13 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         XCTAssertTrue(persistentSplitsStorage.clearCalled)
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
+    
+    func testMetadataOnFeatureFlagsSync() {
+        synchronizer.notifyUpdated(flagsList: ["Pepe2"])
+        
+        XCTAssertEqual(eventsManager.metadata?.type, .FLAGS_UPDATED)
+        XCTAssertEqual(eventsManager.metadata?.data, ["Pepe2"])
+    }
 
     func testSynchronizeSplitsWithChangeNumber() {
 

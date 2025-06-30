@@ -51,6 +51,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
     
+    // MARK: Notifiers
     func notifyInternalEvent(_ event: SplitInternalEvent, metadata: EventMetadata? = nil) {
         let event = SplitInternalEventWithMetadata(event, metadata: metadata)
 
@@ -64,7 +65,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         notifyInternalEvent(event, metadata: nil)
     }
-
+    
+    // MARK: Registers
     func register(event: SplitEventWithMetadata, task: SplitEventActionTask) {
         let eventName = event.type.toString()
         processQueue.async { [weak self] in
@@ -83,6 +85,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         register(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
     }
 
+    // MARK: Flow
     func start() {
         dataAccessQueue.sync {
             if self.isStarted {
@@ -158,31 +161,31 @@ class DefaultSplitEventsManager: SplitEventsManager {
             }
             self.triggered.append(event.type)
             switch event.type {
-            case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
-                if isTriggered(external: .sdkReady) {
-                    trigger(event: .sdkUpdated, metadata: event.metadata)
-                    continue
-                }
-                self.triggerSdkReadyIfNeeded()
+                case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
+                    if isTriggered(external: .sdkReady) {
+                        trigger(event: .sdkUpdated, metadata: event.metadata)
+                        continue
+                    }
+                    self.triggerSdkReadyIfNeeded()
 
-            case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache,
-                    .splitsLoadedFromCache, .attributesLoadedFromCache:
-                Logger.v("Event \(event) triggered")
-                if isTriggered(internal: .splitsLoadedFromCache),
-                   isTriggered(internal: .mySegmentsLoadedFromCache),
-                   isTriggered(internal: .myLargeSegmentsLoadedFromCache),
-                   isTriggered(internal: .attributesLoadedFromCache) {
-                    trigger(event: .sdkReadyFromCache)
-                }
-            case .splitKilledNotification:
-                if isTriggered(external: .sdkReady) {
-                    trigger(event: .sdkUpdated, metadata: event.metadata)
-                    continue
-                }
-            case .sdkReadyTimeoutReached:
-                if !isTriggered(external: .sdkReady) {
-                    trigger(event: .sdkReadyTimedOut)
-                }
+                case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache,
+                        .splitsLoadedFromCache, .attributesLoadedFromCache:
+                    Logger.v("Event \(event) triggered")
+                    if isTriggered(internal: .splitsLoadedFromCache),
+                       isTriggered(internal: .mySegmentsLoadedFromCache),
+                       isTriggered(internal: .myLargeSegmentsLoadedFromCache),
+                       isTriggered(internal: .attributesLoadedFromCache) {
+                        trigger(event: .sdkReadyFromCache)
+                    }
+                case .splitKilledNotification:
+                    if isTriggered(external: .sdkReady) {
+                        trigger(event: .sdkUpdated, metadata: event.metadata)
+                        continue
+                    }
+                case .sdkReadyTimeoutReached:
+                    if !isTriggered(external: .sdkReady) {
+                        trigger(event: .sdkReadyTimedOut)
+                    }
             }
         }
     }

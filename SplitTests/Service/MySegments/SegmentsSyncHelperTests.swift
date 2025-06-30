@@ -40,18 +40,19 @@ class SegmentsSyncHelperTests: XCTestCase {
     }
 
     func testCdnByPassNoTillNoChange() throws {
-        try cdnByPassNoTill(segmentsChanged: false)
+        try cdnByPassNoTill(segmentsChanged: [])
     }
 
     func testCdnByPassNoTillChange() throws {
-        try cdnByPassNoTill(segmentsChanged: true)
+        try cdnByPassNoTill(segmentsChanged: ["Segment1"])
     }
 
-    func cdnByPassNoTill(segmentsChanged: Bool) throws {
+    func cdnByPassNoTill(segmentsChanged: [String]) throws {
         let goalCn: Int64 = 300
         mySegmentsStorage.changeNumber = 200
         myLargeSegmentsStorage.changeNumber = 200
-        changeChecker.haveChanged = segmentsChanged
+        changeChecker.haveChanged = !segmentsChanged.isEmpty
+        changeChecker.diffSegments = segmentsChanged
 
         let exp = XCTestExpectation()
         mySegmentsFetcher.countExp = exp
