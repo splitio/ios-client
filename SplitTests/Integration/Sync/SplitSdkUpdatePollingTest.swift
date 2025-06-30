@@ -33,7 +33,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
     
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher("splitchanges_int_test"), streamingHandler: buildStreamingHandler())
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
@@ -282,9 +282,9 @@ class SplitSdkUpdatePollingTest: XCTestCase {
     }
 
     //MARK:  Testing Helpers
-    private func buildTestDispatcher(_ file: String) -> HttpClientTestDispatcher {
+    private func buildTestDispatcher() -> HttpClientTestDispatcher {
 
-        let respData = responseSplitChanges(file)
+        let respData = responseSplitChanges()
         var responses = [TestDispatcherResponse]()
         for data in respData {
             let rData = TargetingRulesChange(featureFlags: data, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
@@ -346,12 +346,12 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         }
     }
     
-    private func  responseSplitChanges(_ file: String) -> [SplitChange] {
+    private func  responseSplitChanges() -> [SplitChange] {
         var changes = [SplitChange]()
 
         var prevChangeNumber: Int64 = 0
         for i in 0..<4 {
-            let c = loadSplitsChangeFile(file)!
+            let c = loadSplitsChangeFile()!
             c.since = c.till
             if prevChangeNumber != 0 {
                 c.till = prevChangeNumber  + kChangeNbInterval
@@ -370,8 +370,8 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         return changes
     }
 
-    private func loadSplitsChangeFile(_ file: String) -> SplitChange? {
-        return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: file)
+    private func loadSplitsChangeFile() -> SplitChange? {
+        return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_int_test")
     }
 
     private func getAndIncrement() -> Int {
