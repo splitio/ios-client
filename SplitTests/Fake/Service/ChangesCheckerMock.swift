@@ -11,23 +11,29 @@ import Foundation
 @testable import Split
 
 class MySegmentsChangesCheckerMock: MySegmentsChangesChecker {
+
     var haveChanged = false
+    var diffSegments: [String] = []
     func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool {
-        return haveChanged
+        haveChanged
     }
 
     func mySegmentsHaveChanged(oldSegments old: [Segment], newSegments new: [Segment]) -> Bool {
-        return haveChanged
+        haveChanged
     }
 
     func mySegmentsHaveChanged(oldSegments old: [String], newSegments new: [String]) -> Bool {
-        return haveChanged
+        haveChanged
+    }
+    
+    func getSegmentsDiff(oldSegments: [Segment], newSegments: [Segment]) -> [String] {
+        diffSegments
     }
 }
 
 struct SplitsChangesCheckerMock: SplitsChangesChecker {
     var haveChanged = false
     func splitsHaveChanged(oldChangeNumber: Int64, newChangeNumber: Int64) -> Bool {
-        return haveChanged
+        haveChanged
     }
 }

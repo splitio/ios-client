@@ -70,7 +70,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        splitConfig.logLevel = .verbose
+        splitConfig.logLevel = .info
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -92,6 +92,14 @@ class StreamingMySegmentsSyncTest: XCTestCase {
 
         client.on(event: SplitEvent.sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
+        }
+        
+        client.on(event: .sdkUpdated) { metadata in
+            print("COOL ::: \(metadata?.type) \(metadata?.data)")
+        }
+        
+        client.on(event: .sdkUpdated) {
+            print("COOL :: ")
         }
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: expTimeout)

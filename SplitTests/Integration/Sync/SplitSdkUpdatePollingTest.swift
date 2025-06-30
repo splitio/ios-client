@@ -300,7 +300,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         })
         semaphore.wait()
     }
-
+    
     func testSdkUpdateMySegments() throws {
         let apiKey = IntegrationHelper.dummyApiKey
         let trafficType = "client"
@@ -330,12 +330,12 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         var sdkReadyFired = false
         var sdkUpdatedFired = false
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyFired = true
             sdkReady.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdatedFired = true
             sdkUpdate.fulfill()
         }
@@ -348,6 +348,67 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         XCTAssertTrue(sdkReadyFired)
         XCTAssertTrue(sdkUpdatedFired)
 
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+    }
+
+    func testSdkUpdateMySegmentsWithMetadata() throws {
+        let apiKey = IntegrationHelper.dummyApiKey
+        let trafficType = "client"
+
+        let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
+        let sdkUpdate = XCTestExpectation(description: "SDK Update Expectation")
+        let sdkUpdateWithMetadata = XCTestExpectation(description: "SDK Update With Metadata Expectation")
+
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.segmentsRefreshRate = 2
+        splitConfig.featuresRefreshRate = 999999
+        splitConfig.impressionRefreshRate = 999999
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.trafficType = trafficType
+        splitConfig.streamingEnabled = false
+        splitConfig.logLevel = .verbose
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+
+        let key: Key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesTest"))
+        _ = builder.setHttpClient(httpClient)
+        factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+
+        let client = factory!.client
+
+        var sdkReadyFired = false
+        var sdkUpdatedFired = false
+
+        client.on(event: .sdkReady) {
+            sdkReadyFired = true
+            sdkReady.fulfill()
+        }
+
+        client.on(event: .sdkUpdated) {
+            sdkUpdatedFired = true
+            sdkUpdate.fulfill()
+        }
+        
+        client.on(event: .sdkUpdated) { metadata in
+            if metadata?.type == .SEGMENTS_UPDATED {
+                XCTAssertEqual(metadata?.data, ["segment1", "segment2", "segment3"])
+                sdkUpdateWithMetadata.fulfill()
+            }
+        }
+
+        wait(for: [sdkReady, sdkUpdate, sdkUpdateWithMetadata], timeout: 30)
+
+        // wait for sdk update
+        ThreadUtils.delay(seconds: 1.0)
+
+        XCTAssertTrue(sdkReadyFired)
+        XCTAssertTrue(sdkUpdatedFired)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
