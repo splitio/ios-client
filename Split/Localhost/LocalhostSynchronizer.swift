@@ -44,7 +44,10 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer {
     func notifyKilled(flag: String) {
     }
 
-    func notifyUpdated(flagsList: [String]) {
+    func notifyUpdated(flags: [String]) {
+    }
+    
+    @objc(notifyUpdatedWithRuleBasedSegments:) func notifyUpdated(ruleBasedSegments segments: [String]) {
     }
 
     func pause() {

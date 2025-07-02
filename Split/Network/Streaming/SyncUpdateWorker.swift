@@ -174,8 +174,9 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
             if ruleBasedSegmentsStorage.update(toAdd: processedSegments.toAdd,
                                                   toRemove: processedSegments.toRemove,
                                                   changeNumber: processedSegments.changeNumber) {
-                var updatedSegments = (processedSegments.activeSegments + processedSegments.archivedSegments).compactMap(\.name)
-                synchronizer.notifyFeatureFlagsUpdated(flags: []) //TODO: Make new notify segments updated (new notification method?)
+                
+                let updatedSegments = processedSegments.activeSegments.compactMap(\.name) + processedSegments.archivedSegments.compactMap(\.name)
+                synchronizer.notifyRuleBasedSegmentsUpdated(segments: updatedSegments)
             }
             
             telemetryProducer?.recordUpdatesFromSse(type: .splits)

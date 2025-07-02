@@ -15,6 +15,7 @@ struct SplitInternalEventWithMetadata: Equatable {
 enum SplitInternalEvent {
     case mySegmentsUpdated
     case myLargeSegmentsUpdated
+    case ruleBasedSegmentsUpdated
     case splitsUpdated
     case mySegmentsLoadedFromCache
     case myLargeSegmentsLoadedFromCache

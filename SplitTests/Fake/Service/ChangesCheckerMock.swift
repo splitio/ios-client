@@ -14,6 +14,7 @@ class MySegmentsChangesCheckerMock: MySegmentsChangesChecker {
 
     var haveChanged = false
     var diffSegments: [String] = []
+
     func mySegmentsHaveChanged(old: SegmentChange, new: SegmentChange) -> Bool {
         haveChanged
     }
