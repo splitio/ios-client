@@ -179,6 +179,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         let changeNumber = splitsStorage.changeNumber
         let rbChangeNumber: Int64 = ruleBasedSegmentsStorage.changeNumber
         guard let result = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber) else {
+            notifyUpdate(.sdkError, metadata: EventMetadata(type: .FLAGS_SYNC_ERROR, data: [""]))
             return
         }
         

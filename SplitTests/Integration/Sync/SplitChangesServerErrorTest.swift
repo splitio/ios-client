@@ -34,14 +34,14 @@ class SplitChangesServerErrorTest: XCTestCase {
 
     override func setUp() {
         let session = HttpSessionMock()
-        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher("splitchanges_int_test"),
                                                           streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
-    private func buildTestDispatcher() -> HttpClientTestDispatcher {
+    private func buildTestDispatcher(_ fileName: String) -> HttpClientTestDispatcher {
 
-        let respData = responseSplitChanges()
+        let respData = responseSplitChanges(fileName)
         var responses = [TestDispatcherResponse]()
         responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(
             TargetingRulesChange(featureFlags: respData[0], ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))).utf8)))
@@ -149,12 +149,72 @@ class SplitChangesServerErrorTest: XCTestCase {
         semaphore.wait()
         factory = nil
     }
+    
+    func testResponseJSONError() throws {
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher("matchers"),
+                                                          streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_f"
+        let matchingKey = "CUSTOMER_ID"
+        let trafficType = "client"
+        var treatments = [String]()
 
-    private func  responseSplitChanges() -> [SplitChange] {
+        let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
+        
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.streamingEnabled = false
+        splitConfig.featuresRefreshRate = 3
+        splitConfig.impressionRefreshRate = kNeverRefreshRate
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.trafficType = trafficType
+        splitConfig.streamingEnabled = false
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+        
+        let key: Key = Key(matchingKey: matchingKey, bucketingKey: nil)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesServerErrorTest"))
+        _ = builder.setHttpClient(httpClient)
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        
+        let client = factory!.client
+
+        var sdkReadyFired = false
+        
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyFired = true
+            sdkReady.fulfill()
+        }
+        
+        wait(for: [sdkReady], timeout: 10)
+
+        for i in 0..<4 {
+            wait(for: [spExp[i]], timeout: 40)
+            treatments.append(client.getTreatment("test_feature"))
+        }
+
+        XCTAssertTrue(sdkReadyFired)
+
+        XCTAssertEqual("on_0", treatments[0])
+        XCTAssertEqual("on_0", treatments[1])
+        XCTAssertEqual("on_0", treatments[2])
+        XCTAssertEqual("off_1", treatments[3])
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+        factory = nil
+    }
+
+    private func  responseSplitChanges(_ fileName: String) -> [SplitChange] {
         var changes = [SplitChange]()
 
         for i in 0..<2 {
-            let c = loadSplitsChangeFile()!
+            let c = loadSplitsChangeFile(fileName)!
             var prevChangeNumber = c.since
             c.since = prevChangeNumber + kChangeNbInterval
             c.till = c.since
@@ -173,8 +233,8 @@ class SplitChangesServerErrorTest: XCTestCase {
         return changes
     }
 
-    private func loadSplitsChangeFile() -> SplitChange? {
-        return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_int_test")
+    private func loadSplitsChangeFile(_ fileName: String) -> SplitChange? {
+        return FileHelper.loadSplitChangeFile(sourceClass: self, fileName: fileName)
     }
 
     private func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {

@@ -20,8 +20,8 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
     private let queue = DispatchQueue(label: "split-event-manager-coordinator")
     private let eventsToHandle: Set<SplitInternalEvent> = Set(
         [.splitsLoadedFromCache,
-        .splitsUpdated,
-        .splitKilledNotification,
+         .splitsUpdated,
+         .splitKilledNotification,
          .sdkError]
     )
 

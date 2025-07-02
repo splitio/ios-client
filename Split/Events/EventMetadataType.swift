@@ -4,9 +4,9 @@ import Foundation
 
 @objc public class EventMetadata: NSObject {
     public var type: EventMetadataType
-    public var data: [String] = []
+    public var data: [String]? = []
 
-    init(type: EventMetadataType, data: [String]) {
+    init(type: EventMetadataType, data: [String]?) {
         self.type = type
         self.data = data
     }
