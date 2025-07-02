@@ -70,7 +70,7 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPushRate = 999999
-        splitConfig.logLevel = .verbose
+        splitConfig.logLevel = .error
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -92,6 +92,22 @@ class StreamingMySegmentsSyncTest: XCTestCase {
 
         client.on(event: SplitEvent.sdkReadyTimedOut) {
             sdkReadyExpectation.fulfill()
+        }
+        
+        var segmentsMetadataExecuted = false
+        var largeSegmentsMetadataExecuted = false
+        
+        // Test with metadata
+        client.on(event: .sdkUpdated) { metadata in
+            if metadata!.type == .SEGMENTS_UPDATED {
+                XCTAssert(metadata!.data == ["new_segment"])
+                segmentsMetadataExecuted = true
+            } else if metadata!.type == .LARGE_SEGMENTS_UPDATED {
+                if let dataArr = metadata?.data as? [String] {
+                    XCTAssert(dataArr.allSatisfy { ["new_large_segment", "ls1", "ls2"].contains($0) })
+                    largeSegmentsMetadataExecuted = true
+                }
+            }
         }
 
         wait(for: [sdkReadyExpectation, sseExp], timeout: expTimeout)
@@ -127,6 +143,12 @@ class StreamingMySegmentsSyncTest: XCTestCase {
         XCTAssertEqual(inResult, treatmentFirst)
         XCTAssertEqual("on", treatmentSec)
         XCTAssertEqual("on", treatmentOld)
+        
+        if type == .mySegmentsUpdate {
+            XCTAssertTrue(segmentsMetadataExecuted)
+        } else if type == .myLargeSegmentsUpdate {
+            XCTAssertTrue(largeSegmentsMetadataExecuted)
+        }
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {

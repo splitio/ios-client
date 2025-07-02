@@ -36,18 +36,18 @@ class DefaultSseNotificationProcessor: SseNotificationProcessor {
     func process(_ notification: IncomingNotification) {
         Logger.d("Received notification \(notification.type)")
         switch notification.type {
-        case .splitUpdate:
-            processTargetingRuleUpdate(notification)
-        case .ruleBasedSegmentUpdate:
-            processTargetingRuleUpdate(notification)
-        case .mySegmentsUpdate:
-            processSegmentsUpdate(notification, updateWorker: mySegmentsUpdateWorker)
-        case .myLargeSegmentsUpdate:
-            processSegmentsUpdate(notification, updateWorker: myLargeSegmentsUpdateWorker)
-        case .splitKill:
-            processSplitKill(notification)
-        default:
-            Logger.e("Unknown notification arrived: \(notification.jsonData ?? "null" )")
+            case .splitUpdate:
+                processTargetingRuleUpdate(notification)
+            case .ruleBasedSegmentUpdate:
+                processTargetingRuleUpdate(notification)
+            case .mySegmentsUpdate:
+                processSegmentsUpdate(notification, updateWorker: mySegmentsUpdateWorker)
+            case .myLargeSegmentsUpdate:
+                processSegmentsUpdate(notification, updateWorker: myLargeSegmentsUpdateWorker)
+            case .splitKill:
+                processSplitKill(notification)
+            default:
+                Logger.e("Unknown notification arrived: \(notification.jsonData ?? "null" )")
         }
     }
 

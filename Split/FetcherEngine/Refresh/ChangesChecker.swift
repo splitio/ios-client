@@ -43,7 +43,7 @@ struct DefaultMySegmentsChangesChecker: MySegmentsChangesChecker {
         return !(oldSegments.count == newSegments.count &&
                  oldSegments.sorted() == newSegments.sorted())
     }
-
+  
     func getSegmentsDiff(oldSegments: [Segment], newSegments: [Segment]) -> [String] {
         oldSegments.filter { !Set(newSegments.map { $0.name }).contains($0.name) }.map { $0.name }
     }
