@@ -79,6 +79,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 return
             }
             self.isStarted = true
+            print("--------- Manager started ----------- :: \(Thread.current.isMainThread ? "(Main)" : "(Background)"))")
         }
         processQueue.async { [weak self] in
             if let self = self {
@@ -104,7 +105,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 self.eventsQueue.stop()
                 self.eventsQueue.stop()
             }
-
+            print("--------- Manager STOPPED -----------")
         }
     }
 
@@ -132,6 +133,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     private func takeEvent() -> SplitInternalEvent? {
         do {
+            print(" ::: Taking queue on \(Thread.current.isMainThread ? "(Main)" : "(Background)"))")
             return try eventsQueue.take()
         } catch BlockingQueueError.hasBeenStopped {
             Logger.d("Events manager stoped")
@@ -142,6 +144,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func processEvents() {
+        print(" ::: Processing on :: \(Thread.current.isMainThread ? "(Main)" : "(Background)"))")
         while isRunning() {
             guard let event = takeEvent() else {
                 return
