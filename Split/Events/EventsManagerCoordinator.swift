@@ -22,7 +22,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
         [.splitsLoadedFromCache,
          .splitsUpdated,
          .splitKilledNotification,
-         .sdkError]
+         .sdkError,
          .ruleBasedSegmentsUpdated]
     )
 
