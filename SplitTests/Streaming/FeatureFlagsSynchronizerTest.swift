@@ -260,7 +260,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     }
     
     func testMetadataOnFeatureFlagsSync() {
-        synchronizer.notifyUpdated(flagsList: ["Pepe2"])
+        synchronizer.notifyUpdated(flags: ["Pepe2"])
         
         XCTAssertEqual(eventsManager.metadata?.type, .FLAGS_UPDATED)
         XCTAssertEqual(eventsManager.metadata?.data, ["Pepe2"])

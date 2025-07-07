@@ -215,6 +215,7 @@ struct TestingHelper {
                                     msAscOrder: Bool = true,
                                     mlsAscOrder: Bool = true,
                                     segmentsChanged: [String] = []) -> [AllSegmentsChange] {
+
         // Eventualy cn will be greater than the first
         let baseCn: Int64 = 100
         let lastMsCn = baseCn * count + 1

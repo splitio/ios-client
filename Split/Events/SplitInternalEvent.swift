@@ -16,6 +16,7 @@ enum SplitInternalEvent {
     // Events
     case mySegmentsUpdated
     case myLargeSegmentsUpdated
+    case ruleBasedSegmentsUpdated
     case splitsUpdated
     case mySegmentsLoadedFromCache
     case myLargeSegmentsLoadedFromCache

@@ -132,6 +132,7 @@ class DefaultByKeyFacade: ByKeyFacade {
         }
     }
 
+    // MARK: Cycle
     func pause() {
         doInAll { group in
             group.mySegmentsSynchronizer.pause()
@@ -171,6 +172,7 @@ class DefaultByKeyFacade: ByKeyFacade {
         return byKeyComponents.count == 0
     }
 
+    // MARK: Helpers
     private func doInAll(_ action: (ByKeyComponentGroup) -> Void) {
         let all = byKeyComponents.all
         for (_, sync) in all {

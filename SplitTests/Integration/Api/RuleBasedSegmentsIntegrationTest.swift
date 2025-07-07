@@ -260,16 +260,24 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         expectedContents: String
     ) {
         let sdkUpdateExpectation = XCTestExpectation(description: "SDK_UPDATE received")
+        let sdkUpdateExpectationWithMetadata = XCTestExpectation(description: "SDK_UPDATE received with metadata")
         var sdkUpdatedTriggered = false
 
-        client.on(event: SplitEvent.sdkUpdated) {
+        client.on(event: .sdkUpdated) {
             sdkUpdatedTriggered = true
             sdkUpdateExpectation.fulfill()
+        }
+        
+        // Test metadata
+        client.on(event: .sdkUpdated) { metadata in
+            XCTAssertEqual(metadata!.type, .RULE_BASED_SEGMENTS_UPDATED)
+            XCTAssertEqual(metadata!.data, ["rbs_test"])
+            sdkUpdateExpectationWithMetadata.fulfill()
         }
 
         streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
         streamingBinding?.push(message: change)
-        wait(for: [sdkUpdateExpectation], timeout: 10)
+        wait(for: [sdkUpdateExpectation, sdkUpdateExpectationWithMetadata], timeout: 10)
 
         let containsExpectedContents = testDatabase!.ruleBasedSegmentDao.getAll().contains {
             $0.name == expectedContents

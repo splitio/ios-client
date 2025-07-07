@@ -43,9 +43,16 @@ class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
 
     var notifyUpdatedCalled = false
     var updatedFlags: [String] = []
-    func notifyUpdated(flagsList: [String]) {
-        updatedFlags = flagsList
+    func notifyUpdated(flags: [String]) {
+        updatedFlags = flags
         notifyUpdatedCalled = true
+    }
+    
+    var notifyUpdatedSegmentsCalled = false
+    var updatedSegments: [String] = []
+    func notifyUpdated(ruleBasedSegments: [String]) {
+        updatedSegments = ruleBasedSegments
+        notifyUpdatedSegmentsCalled = true
     }
 
     var pauseCalled = false

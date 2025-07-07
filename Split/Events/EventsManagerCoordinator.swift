@@ -23,6 +23,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
          .splitsUpdated,
          .splitKilledNotification,
          .sdkError]
+         .ruleBasedSegmentsUpdated]
     )
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {

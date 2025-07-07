@@ -225,6 +225,8 @@ class IntegrationHelper {
                 return "splitKilledNotification"
             case .myLargeSegmentsUpdated:
                 return "myLargeSegmentsUpdated"
+            case .ruleBasedSegmentsUpdated:
+                 return "ruleBasedSegmentsUpdated"
             case .myLargeSegmentsLoadedFromCache:
                 return "myLargeSegmentsLoadedFromCache"
             case .sdkError:

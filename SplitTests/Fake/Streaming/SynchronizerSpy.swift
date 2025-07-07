@@ -215,6 +215,13 @@ class SynchronizerSpy: Synchronizer {
         updatedFlags = flags
         notifyFeatureFlagsUpdatedCalled = true
     }
+    
+    var notifyRuleBasedSegmentsUpdatedCalled = false
+    var ruleBasedSegmentsUpdated: [String] = []
+    func notifyRuleBasedSegmentsUpdated(segments: [String]) {
+        ruleBasedSegmentsUpdated = segments
+        notifyRuleBasedSegmentsUpdatedCalled = true
+    }
 
     var killedFlag = ""
     func notifySplitKilled(flag: String) {

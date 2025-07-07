@@ -23,6 +23,7 @@ protocol Synchronizer: ImpressionLogger {
     func synchronizeMySegments(forKey key: String)
     func synchronizeTelemetryConfig()
     func forceMySegmentsSync(forKey key: String, changeNumbers: SegmentsChangeNumber, delay: Int64)
+    
     func startPeriodicFetching()
     func stopPeriodicFetching()
     func startRecordingUserData()
@@ -30,10 +31,13 @@ protocol Synchronizer: ImpressionLogger {
     func startRecordingTelemetry()
     func stopRecordingTelemetry()
     func pushEvent(event: EventDTO)
+    
     func notifyFeatureFlagsUpdated(flags: [String])
+    func notifySplitKilled(flag: String)
+    func notifyRuleBasedSegmentsUpdated(segments: [String])
     func notifySegmentsUpdated(forKey key: String, metadata: EventMetadata?)
     func notifyLargeSegmentsUpdated(forKey key: String, metadata: EventMetadata?)
-    func notifySplitKilled(flag: String)
+    
     func pause()
     func resume()
     func flush()
@@ -208,7 +212,11 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func notifyFeatureFlagsUpdated(flags: [String]) {
-        featureFlagsSynchronizer.notifyUpdated(flagsList: flags)
+        featureFlagsSynchronizer.notifyUpdated(flags: flags)
+    }
+    
+    func notifyRuleBasedSegmentsUpdated(segments: [String]) {
+        featureFlagsSynchronizer.notifyUpdated(ruleBasedSegments: segments)
     }
 
     func notifySegmentsUpdated(forKey key: String, metadata: EventMetadata? = nil) {
