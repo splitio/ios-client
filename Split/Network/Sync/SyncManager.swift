@@ -56,7 +56,7 @@ class DefaultSyncManager: SyncManager {
     }
 
     func start() {
-        print(":: -- Client running on :: Thread \(pthread_mach_thread_np(pthread_self())) \(Thread.current.isMainThread ? "(Main)" : "(Background)"))")
+        print(":: -- Client running on :: Thread \(pthread_mach_thread_np(pthread_self())) \(Thread.current.isMainThread ? "(Main)" : "(Background)")")
         
         synchronizer.loadAndSynchronizeSplits()
         synchronizer.loadMySegmentsFromCache()

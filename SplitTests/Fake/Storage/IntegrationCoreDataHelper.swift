@@ -50,6 +50,7 @@ class IntegrationCoreDataHelper  {
             print("Error creating test database")
             sempaphore.signal()
         }
+        if Thread.isMainThread { print("⚠️ BLOCKINGQUEUE .take() RUNNING ON MAIN ‼️") }
         sempaphore.wait()
         return CoreDataHelper(managedObjectContext: managedObjContext, persistentCoordinator: persistenceCoordinator)
     }

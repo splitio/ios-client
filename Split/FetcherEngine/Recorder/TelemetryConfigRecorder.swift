@@ -39,6 +39,7 @@ class DefaultHttpTelemetryConfigRecorder: HttpTelemetryConfigRecorder {
             }
             semaphore.signal()
         })
+        if Thread.isMainThread { print("⚠️ BLOCKINGQUEUE .take() RUNNING ON MAIN ‼️") }
         semaphore.wait()
 
         try syncHelper.throwIfError(httpError)

@@ -34,6 +34,7 @@ class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
             requestResult = result
             semaphore.signal()
         }
+        if Thread.isMainThread { print("⚠️ BLOCKINGQUEUE .take() RUNNING ON MAIN ‼️") }
         semaphore.wait()
         syncHelper.recordTelemetry(resource: resource, startTime: startTime)
 

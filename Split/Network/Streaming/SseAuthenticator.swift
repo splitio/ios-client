@@ -78,6 +78,7 @@ class DefaultSseAuthenticator: SseAuthenticator {
             requestResult = result
             semaphore.signal()
         }
+        if Thread.isMainThread { print("⚠️ BLOCKINGQUEUE .take() RUNNING ON MAIN ‼️") }
         semaphore.wait()
 
         let response: SseAuthenticationResponse

@@ -74,14 +74,15 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     func start() {
+        print("----------- Manager Started ----------- :: \(Thread.current.isMainThread ? "(Main)" : "(Background)")")
         dataAccessQueue.sync {
             if self.isStarted {
                 return
             }
             self.isStarted = true
-            print("--------- Manager started ----------- :: \(Thread.current.isMainThread ? "(Main)" : "(Background)"))")
         }
         processQueue.async { [weak self] in
+            print("----------- Manager Processing -------- :: \(Thread.current.isMainThread ? "(Main)" : "(Background)")")
             if let self = self {
                 self.processEvents()
             }
@@ -105,7 +106,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 self.eventsQueue.stop()
                 self.eventsQueue.stop()
             }
-            print("--------- Manager STOPPED -----------")
+            print("----------- Manager STOPPED -----------")
         }
     }
 
@@ -133,7 +134,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     private func takeEvent() -> SplitInternalEvent? {
         do {
-            print(" ::: Taking queue on \(Thread.current.isMainThread ? "(Main)" : "(Background)"))")
+            print("      Taking queue on \(Thread.current.isMainThread ? "(Main)" : "(Background)")")
             return try eventsQueue.take()
         } catch BlockingQueueError.hasBeenStopped {
             Logger.d("Events manager stoped")
@@ -144,7 +145,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
 
     private func processEvents() {
-        print(" ::: Processing on :: \(Thread.current.isMainThread ? "(Main)" : "(Background)"))")
+        print("::: Processing on :: \(Thread.current.isMainThread ? "(Main)" : "(Background)")")
         while isRunning() {
             guard let event = takeEvent() else {
                 return
@@ -194,6 +195,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
         if isTriggered(internal: .mySegmentsUpdated),
            isTriggered(internal: .splitsUpdated),
            !isTriggered(external: .sdkReady) {
+            
+            print("::: Triggering SDK_READY on :: \(Thread.current.isMainThread ? "(Main)" : "(Background)")")
             self.trigger(event: SplitEvent.sdkReady)
         }
     }

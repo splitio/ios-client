@@ -33,6 +33,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
             requestResult = result
             semaphore.signal()
         }
+        if Thread.isMainThread { print("⚠️ BLOCKINGQUEUE .take() RUNNING ON MAIN ‼️") }
         semaphore.wait()
 
         do {

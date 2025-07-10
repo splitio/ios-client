@@ -36,12 +36,19 @@ class GenericBlockingQueue<Item> {
     }
 
     func take() throws -> Item {
+        //print(Thread.callStackSymbols.joined(separator: "\n"))
         var item: Item?
         // Checks if stopped before waiting
         try checkIfStopped()
-        print("                    Waiting")
+        if Thread.isMainThread {
+            print("SDK - Take generic :: 🔴 WAITING ON MAIN ‼️ ⚠️")
+        } else {
+            print("SDK - Take generic :: 🔴 Waiting (on Background ✅)")
+        }
+        print("💤 Forced delay (3 seconds) inside take")
+        Thread.sleep(forTimeInterval: 3) // 💤 simula que tarda en signalear
         self.semaphore.wait()
-        print("                    Signal")
+        print("                      🟢 Signal")
         try dispatchQueue.sync(flags: .barrier) {
             // Checks if thread was awaked by stop or interruption
             try checkIfStopped()
@@ -87,6 +94,8 @@ class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
     }
 
     func take() throws -> SplitInternalEvent {
+        print("💤 Forced delay (3 seconds) before take()")
+        Thread.sleep(forTimeInterval: 5)
         let value =  try blockingQueue.take()
         return value
     }

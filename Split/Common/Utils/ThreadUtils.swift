@@ -16,6 +16,7 @@ class ThreadUtils {
         DispatchQueue.global().asyncAfter(deadline: .now() + seconds) {
             semaphore.signal()
         }
+        if Thread.isMainThread { print("⚠️ BLOCKINGQUEUE .take() RUNNING ON MAIN ‼️") }
         semaphore.wait()
     }
 
