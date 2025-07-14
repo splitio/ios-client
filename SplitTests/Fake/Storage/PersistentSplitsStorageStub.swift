@@ -86,4 +86,13 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
         getBySetsFilterCalled = false
         return nil
     }
+    
+    var segmentsInUse: Int64 = 0
+    func update(segmentsInUse: Int64) {
+        self.segmentsInUse = segmentsInUse
+    }
+    
+    func getSegmentsInUse() -> Int64 {
+        segmentsInUse
+    }
 }
