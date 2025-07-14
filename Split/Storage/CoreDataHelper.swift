@@ -70,7 +70,7 @@ class CoreDataHelper {
 
     func fetch(entity: CoreDataEntity, where predicate: NSPredicate? = nil, rowLimit: Int? = nil) -> [Any] {
         var entities = [Any]()
-        
+
         managedObjectContext.performAndWait {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity.rawValue)
             if let rowLimit = rowLimit {
