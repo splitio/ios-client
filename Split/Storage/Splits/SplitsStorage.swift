@@ -146,6 +146,8 @@ class DefaultSplitsStorage: SplitsStorage {
                 // Split to remove not in memory, do nothing
                 continue
             }
+            
+            usesSegments(ruleEntity: split)
 
             if loadedSplit != nil, let oldTrafficType = loadedSplit?.trafficTypeName {
                 // Must decreated old traffic type count if a feature flag is updated or removed
@@ -173,6 +175,23 @@ class DefaultSplitsStorage: SplitsStorage {
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
         return splitsUpdated || splitsRemoved
+    }
+    
+    private func usesSegments(ruleEntity: Split) -> Bool {
+        
+        guard let conditions = ruleEntity.conditions, !conditions.isEmpty else { return false }
+        
+        for condition in conditions {
+            let matchers = condition.matcherGroup?.matchers ?? []
+            
+            for matcher in matchers {
+                if (matcher.matcherType?.rawValue ?? "" == "IN_SEGMENT" || matcher.matcherType?.rawValue ?? "" == "IN_LARGE_SEGMENT") {
+                    return true
+                }
+            }
+        }
+        
+        return false\
     }
 
     func destroy() {
