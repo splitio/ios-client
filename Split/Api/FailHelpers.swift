@@ -13,7 +13,7 @@ import Foundation
 ///
 
 class FailedClient: SplitClient {
-    
+
     func getTreatment(_ split: String) -> String {
         return SplitConstants.control
     }
