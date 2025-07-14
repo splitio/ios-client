@@ -53,6 +53,15 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
     deinit {
         DefaultNotificationHelper.instance.removeAllObservers()
     }
+    
+    public func saveSegmentsInUse() -> Void {
+        print(FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask))
+        storageContainer.persistentSplitsStorage.update(segmentsInUse: 55)
+    }
+    
+    public func readSegmentsInUse() -> Int64 {
+        storageContainer.persistentSplitsStorage.getSegmentsInUse()
+    }
 }
 
 // MARK: Events

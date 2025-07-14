@@ -11,6 +11,10 @@ import Foundation
 public typealias SplitAction = () -> Void
 
 @objc public protocol SplitClient {
+    
+    // MARK: Delete
+    func saveSegmentsInUse()
+    func readSegmentsInUse() -> Int64
 
     // MARK: Evaluation feature
     func getTreatment(_ split: String, attributes: [String: Any]?) -> String

@@ -42,6 +42,9 @@ import Foundation
 ///
 
 public final class LocalhostSplitClient: NSObject, SplitClient {
+    
+    public func saveSegmentsInUse() {}
+    public func readSegmentsInUse() -> Int64 { return 0 }
 
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage = EmptyMySegmentsStorage()

@@ -14,6 +14,10 @@ import Foundation
 
 class FailedClient: SplitClient {
 
+    public func saveSegmentsInUse() {}
+    
+    func readSegmentsInUse() -> Int64 { return 0}
+    
     func getTreatment(_ split: String) -> String {
         return SplitConstants.control
     }
