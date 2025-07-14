@@ -42,7 +42,7 @@ import Foundation
 ///
 
 public final class LocalhostSplitClient: NSObject, SplitClient {
-    
+
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage = EmptyMySegmentsStorage()
 
