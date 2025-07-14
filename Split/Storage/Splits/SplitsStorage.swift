@@ -191,7 +191,7 @@ class DefaultSplitsStorage: SplitsStorage {
             }
         }
         
-        return false\
+        return false
     }
 
     func destroy() {
