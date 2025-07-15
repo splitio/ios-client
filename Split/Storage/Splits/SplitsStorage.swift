@@ -152,7 +152,7 @@ class DefaultSplitsStorage: SplitsStorage {
 
             let loadedSplit = cachedSplits[splitName]
 
-            if loadedSplit == nil, !active { // TODO: Probably, if not active decrement segmentsInUse here
+            if loadedSplit == nil, !active { // TODO: Probably, if not active decrement segmentsInUse here.
                 // Split to remove not in memory, do nothing
                 continue
             }
