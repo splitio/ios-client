@@ -275,6 +275,19 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
         XCTAssertTrue(persistentStorageStub.clearCalled)
     }
+    
+    func testSegmentsInUseCount() {
+        let segment1 = createSegmentWithMatcher(.between)
+        let segment2 = createSegmentWithMatcher(.inRuleBasedSegment)
+        let segment3 = createSegmentWithMatcher(.inRuleBasedSegment)
+        let segment4 = createSegmentWithMatcher(.inRuleBasedSegment)
+        let segment5 = createSegmentWithMatcher(.endsWith)
+
+        _ = ruleBasedSegmentsStorage.update(toAdd: Set([segment1, segment2, segment3, segment4, segment5]), toRemove: [], changeNumber: 123)
+
+        XCTAssertEqual(ruleBasedSegmentsStorage.segmentsInUse, 3)
+    }
+
 
     private func createPersistentStorageStub() -> PersistentRuleBasedSegmentsStorageStub {
         let delegate = MockPersistentRuleBasedSegmentsStorage()
@@ -291,9 +304,24 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         segment.isParsed = true
         return segment
     }
+    
+    private func createSegmentWithMatcher(_ matcher: MatcherType) -> RuleBasedSegment {
+        let segment = RuleBasedSegment()
+        segment.name = "Test_Segment_WithMatcher"
+        segment.conditions = [Condition()]
+        segment.conditions![0].matcherGroup = MatcherGroup()
+        segment.conditions![0].matcherGroup?.matchers = [Matcher()]
+        segment.conditions![0].matcherGroup?.matchers![0].matcherType = matcher
+        segment.trafficTypeName = "user"
+        segment.status = .active
+        segment.changeNumber = Int64(Date.nowMillis())
+        segment.isParsed = true
+        return segment
+    }
 }
 
 private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage {
+    
     private var segments = [
         createSegment(name: "segment_1", trafficType: "tt_1"),
         createSegment(name: "segment_2", trafficType: "tt_2"),
@@ -321,6 +349,12 @@ private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegment
         self.segments = segments
         self.snapshotChangeNumber = changeNumber
     }
+    
+    func getSegmentsInUse() -> Int64 {
+        0
+    }
+    
+    func update(segmentsInUse: Int64) {}
 
     private static func createSegment(name: String, trafficType: String) -> RuleBasedSegment {
         let segment = RuleBasedSegment()

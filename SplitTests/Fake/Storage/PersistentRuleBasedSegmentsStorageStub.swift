@@ -59,4 +59,13 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
         changeNumberCalled = true
         return delegate?.getChangeNumber() ?? -1
     }
+    
+    var segmentsInUse: Int64 = 0
+    func getSegmentsInUse() -> Int64 {
+        segmentsInUse
+    }
+    
+    func update(segmentsInUse: Int64) {
+        self.segmentsInUse = segmentsInUse
+    }
 }
