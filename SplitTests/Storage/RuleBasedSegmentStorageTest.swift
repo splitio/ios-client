@@ -349,12 +349,14 @@ private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegment
         self.segments = segments
         self.snapshotChangeNumber = changeNumber
     }
-    
+    var segmentsInUse = 0
     func getSegmentsInUse() -> Int64 {
-        0
+        return segmentsInUse
     }
     
-    func setSegmentsInUse(_ segmentsInUse: Int64) {}
+    func setSegmentsInUse(_ segmentsInUse: Int64) {
+        self.segmentsInUse = segmentsInUse
+    }
 
     private static func createSegment(name: String, trafficType: String) -> RuleBasedSegment {
         let segment = RuleBasedSegment()
