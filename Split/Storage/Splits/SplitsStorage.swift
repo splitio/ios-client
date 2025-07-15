@@ -197,7 +197,7 @@ class DefaultSplitsStorage: SplitsStorage {
         for condition in conditions {
             let matchers = condition.matcherGroup?.matchers ?? []
             for matcher in matchers {
-                if (matcher.matcherType?.rawValue ?? "" == "IN_SEGMENT" || matcher.matcherType?.rawValue ?? "" == "IN_LARGE_SEGMENT") {
+                if matcher.matcherType == .inSegment || matcher.matcherType == .inLargeSegment {
                     segmentsInUse += 1
                     return
                 }
