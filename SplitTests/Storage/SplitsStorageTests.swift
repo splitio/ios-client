@@ -366,7 +366,6 @@ class SplitsStorageTest: XCTestCase {
                           sets: [String]? = nil) -> Split {
         let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
         split.status = status
-    
         if let sets = sets {
             split.sets = sets.asSet()
         }
