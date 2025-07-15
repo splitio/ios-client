@@ -277,15 +277,23 @@ class RuleBasedSegmentStorageTest: XCTestCase {
     }
     
     func testSegmentsInUseCount() {
-        let segment1 = createSegmentWithMatcher(.between)
-        let segment2 = createSegmentWithMatcher(.inRuleBasedSegment)
-        let segment3 = createSegmentWithMatcher(.inRuleBasedSegment)
-        let segment4 = createSegmentWithMatcher(.inRuleBasedSegment)
-        let segment5 = createSegmentWithMatcher(.endsWith)
+        let segment1 = createSegmentWithMatcher("segment", .between)
+        let segment2 = createSegmentWithMatcher("segment2", .inSegment)
+        let segment3 = createSegmentWithMatcher("segment3", .inLargeSegment)
+        let segment4 = createSegmentWithMatcher("segment4", .inSegment)
+        let segment5 = createSegmentWithMatcher("segment5", .endsWith)
 
+        // 1. Counter should be 3 (ignore the other matcherTypes)
         _ = ruleBasedSegmentsStorage.update(toAdd: Set([segment1, segment2, segment3, segment4, segment5]), toRemove: [], changeNumber: 123)
-
-        XCTAssertEqual(ruleBasedSegmentsStorage.segmentsInUse, 3)
+        XCTAssertEqual(ruleBasedSegmentsStorage.ruleBasedSegmentsInUse, 3)
+        
+        // 2
+        segment1.status = .archived // Archive of Segments with other matcherTypes should be ignored..
+        segment2.status = .archived // ..and known Segments being archived should decrease the counter
+        segment3.status = .archived
+        _ = ruleBasedSegmentsStorage.update(toAdd: Set([]), toRemove: [segment1, segment2, segment3], changeNumber: 1230)
+        
+        XCTAssertEqual(ruleBasedSegmentsStorage.ruleBasedSegmentsInUse, 1)
     }
 
 
@@ -305,9 +313,9 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         return segment
     }
     
-    private func createSegmentWithMatcher(_ matcher: MatcherType) -> RuleBasedSegment {
+    private func createSegmentWithMatcher(_ name: String, _ matcher: MatcherType) -> RuleBasedSegment {
         let segment = RuleBasedSegment()
-        segment.name = "Test_Segment_WithMatcher"
+        segment.name = name
         segment.conditions = [Condition()]
         segment.conditions![0].matcherGroup = MatcherGroup()
         segment.conditions![0].matcherGroup?.matchers = [Matcher()]
@@ -366,3 +374,4 @@ private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegment
         return segment
     }
 }
+ 

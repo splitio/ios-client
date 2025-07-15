@@ -10,10 +10,11 @@ import Foundation
 @testable import Split
 
 class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
+    
     var segments = [String: RuleBasedSegment]()
     var changeNumber: Int64 = -1
     
-    var segmentsInUse: Int64 = 0
+    var ruleBasedSegmentsInUse: Int64 = 0
 
     var getCalled = false
     var containsCalled = false
