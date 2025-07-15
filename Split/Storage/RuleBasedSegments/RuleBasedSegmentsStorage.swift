@@ -79,7 +79,6 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         for segment in toAdd {
             if let segmentName = segment.name?.lowercased() {
                 inMemorySegments.setValue(segment, forKey: segmentName)
-
                 updated = true
             }
         }
