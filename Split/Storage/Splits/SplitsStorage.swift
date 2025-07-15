@@ -91,7 +91,8 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func update(splitChange: ProcessedSplitChange) -> Bool {
-        // Ensure correct count
+        
+        // Ensure correct count of flags with segments (for optimization feature)
         segmentsInUse = persistentStorage.getSegmentsInUse()
         defer { persistentStorage.update(segmentsInUse: segmentsInUse) }
         
@@ -189,7 +190,7 @@ class DefaultSplitsStorage: SplitsStorage {
     
     private func checkUsedSegments(_ split: Split) {
         // This is an optimization feature. The idea is to keep a count of the flags using
-        // segments. If zero, then never call that endpoint.
+        // segments. If zero -> never call the endpoint.
         
         guard let splitName = split.name, let conditions = split.conditions, !conditions.isEmpty, inMemorySplits.value(forKey: splitName) == nil else { return }
         
