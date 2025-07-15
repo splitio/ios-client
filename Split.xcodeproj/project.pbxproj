@@ -353,6 +353,8 @@
 		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
+		5B343EAD2E26E93B006BEBE7 /* StorageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */; };
+		5B343EAE2E26E93B006BEBE7 /* StorageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */; };
 		5B48D8172DEA2CED00351925 /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */; };
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
@@ -1557,6 +1559,7 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
@@ -2620,6 +2623,7 @@
 				5905D4DD2559C950006DA3B1 /* MySegments */,
 				3B6DEF0920EA6AE40067435E /* DefaultFileStorage.swift */,
 				5912D1462194715500BC698C /* FileStorage.swift */,
+				5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */,
 				59E6A38825557C8D005DE642 /* split_cache.xcdatamodeld */,
 				5905D4D72555FE74006DA3B1 /* SplitDatabase.swift */,
 				955892AA25C187EA00F67FBA /* CoreDataContextBuilder.swift */,
@@ -4241,6 +4245,7 @@
 				59F4AA9B24FE93E300A1C69A /* NotificationManagerKeeper.swift in Sources */,
 				95C1600D27D28CF4008562E3 /* PersistentAttributesStorage.swift in Sources */,
 				95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */,
+				5B343EAE2E26E93B006BEBE7 /* StorageHelper.swift in Sources */,
 				95C1600B27D28CB8008562E3 /* OneKeyPersistentAttributesStorage.swift in Sources */,
 				5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */,
 				9519A91127D6935700278AEC /* ByKeyAttributesStorage.swift in Sources */,
@@ -4802,6 +4807,7 @@
 				958FD8A12C51318B00E5609B /* PublicKeyHeaders.swift in Sources */,
 				956A7E17297043130080D53C /* ImpressionsStorage.swift in Sources */,
 				95B02DCD28D0BDE20030EC8B /* split_cache.xcdatamodeld in Sources */,
+				5B343EAD2E26E93B006BEBE7 /* StorageHelper.swift in Sources */,
 				95F0569129B63C61009F5A68 /* Cipher.swift in Sources */,
 				95B02CAB28D0BDC10030EC8B /* Yaml.swift in Sources */,
 				95B02CAC28D0BDC10030EC8B /* YAMLOperators.swift in Sources */,

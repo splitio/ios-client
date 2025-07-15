@@ -92,7 +92,7 @@ class DefaultSplitsStorage: SplitsStorage {
 
     func update(splitChange: ProcessedSplitChange) -> Bool {
         
-        // Ensure correct count of flags with segments (for optimization feature)
+        // Ensure count of Flags with Segments (for optimization feature)
         segmentsInUse = persistentStorage.getSegmentsInUse()
         defer { persistentStorage.update(segmentsInUse: segmentsInUse) }
         
@@ -152,13 +152,19 @@ class DefaultSplitsStorage: SplitsStorage {
 
             let loadedSplit = cachedSplits[splitName]
 
-            if loadedSplit == nil, !active { // TODO: Probably, if not active decrement segmentsInUse here
+            if loadedSplit == nil, !active {
                 // Split to remove not in memory, do nothing
                 continue
             }
-            
-            // Used to optimize "/memberships" endpoint hits
-            checkUsedSegments(split)
+            
+            // Keep count of Flags with Segments (used to optimize "/memberships" endpoint hits)
+            if StorageHelper.usesSegments(split.conditions ?? []) {
+                if inMemorySplits.value(forKey: splitName) == nil && active { // If new Split and active
+                    segmentsInUse += 1
+                } else if inMemorySplits.value(forKey: splitName) != nil && !active { // If known Split and archived
+                    segmentsInUse -= 1
+                }
+            }
 
             if loadedSplit != nil, let oldTrafficType = loadedSplit?.trafficTypeName {
                 // Must decrease old traffic type count if a feature flag is updated or removed
@@ -186,25 +192,6 @@ class DefaultSplitsStorage: SplitsStorage {
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
         return splitsUpdated || splitsRemoved
-    }
-    
-    private func checkUsedSegments(_ split: Split) {
-        // This is an optimization feature. The idea is to keep a count of the flags using
-        // segments. If zero -> never call the endpoint.
-        
-        guard let splitName = split.name, let conditions = split.conditions, !conditions.isEmpty, inMemorySplits.value(forKey: splitName) == nil else { return }
-        
-        for condition in conditions {
-            let matchers = condition.matcherGroup?.matchers ?? []
-            for matcher in matchers {
-                if matcher.matcherType == .inSegment || matcher.matcherType == .inLargeSegment {
-                    segmentsInUse += 1
-                    return
-                }
-            }
-        }
-        
-        return
     }
 
     func destroy() {
