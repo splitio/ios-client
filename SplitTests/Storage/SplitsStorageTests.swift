@@ -298,23 +298,43 @@ class SplitsStorageTest: XCTestCase {
     }
     
     func testSegmentsInUse() {
-        let split = SplitTestHelper.newSplitWithMatcherType(.inSegment)
-        let split2 = SplitTestHelper.newSplitWithMatcherType(.inLargeSegment)
+        let split = SplitTestHelper.newSplitWithMatcherType("split", .inSegment)
+        let split2 = SplitTestHelper.newSplitWithMatcherType("split2", .inLargeSegment)
+        let split3 = SplitTestHelper.newSplitWithMatcherType("split3", .inLargeSegment)
+        let split4 = SplitTestHelper.newSplitWithMatcherType("split4", .inLargeSegment)
+        let split5 = SplitTestHelper.newSplitWithMatcherType("split5", .inLargeSegment)
+        let split6 = SplitTestHelper.newSplitWithMatcherType("split6", .inLargeSegment)
         
         persistentStorage.snapshot = getTestSnapshot()
         splitsStorage.loadLocal()
 
+        // 1. Check Segments count is in 0
         XCTAssertEqual(splitsStorage.segmentsInUse, 0)
         
-        let processedChange = ProcessedSplitChange(activeSplits: [split, newSplit(name: "added"), split2],
+        // 2. Add 6 Splits (1 not using Segments)
+        var processedChange = ProcessedSplitChange(activeSplits: [split, split2, split3, split4, newSplit(name: "added"), split5],
                                                    archivedSplits: [],
                                                    changeNumber: 999, updateTimestamp: 888)
 
         _ = splitsStorage.update(splitChange: processedChange)
-        
-        XCTAssertEqual(splitsStorage.segmentsInUse, 2)
+        XCTAssertEqual(splitsStorage.segmentsInUse, 5) // One should have been ignored, so 5
         XCTAssertTrue(persistentStorage.updateCalled)
         
+        // 3. Add 2 previously added (should be ignored by the counter), and a new one
+        processedChange = ProcessedSplitChange(activeSplits: [split, split2, split6],
+                                               archivedSplits: [],
+                                               changeNumber: 9999, updateTimestamp: 8888)
+        
+        _ = splitsStorage.update(splitChange: processedChange)
+        XCTAssertEqual(splitsStorage.segmentsInUse, 6) // So, count should be 6
+        
+        // 4. Remove 2
+        processedChange = ProcessedSplitChange(activeSplits: [],
+                                               archivedSplits: [split2, split],
+                                               changeNumber: 99999, updateTimestamp: 88888)
+        
+        _ = splitsStorage.update(splitChange: processedChange)
+        XCTAssertEqual(splitsStorage.segmentsInUse, 4) // So, count should be 4
     }
 
     func testUnsupportedMatcherHasDefaultCondition() {
