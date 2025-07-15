@@ -78,7 +78,7 @@ class PersistentRuleBasedSegmentStorageTest: XCTestCase {
         XCTAssertTrue(snapshot.segments.contains { $0.name == "segment_1" })
         XCTAssertTrue(snapshot.segments.contains { $0.name == "segment_2" })
     }
-    
+
     func testClear() {
         persistentStorage.clear()
 
