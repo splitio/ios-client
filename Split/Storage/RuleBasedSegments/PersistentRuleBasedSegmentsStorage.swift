@@ -13,9 +13,6 @@ protocol PersistentRuleBasedSegmentsStorage {
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64)
     func clear()
     func getChangeNumber() -> Int64
-    
-    func getSegmentsInUse() -> Int64
-    func update(segmentsInUse: Int64)
 }
 
 class DefaultPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage {
@@ -57,13 +54,5 @@ class DefaultPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStor
 
     func getChangeNumber() -> Int64 {
         return generalInfoStorage.getRuleBasedSegmentsChangeNumber()
-    }
-    
-    func update(segmentsInUse: Int64) {
-        generalInfoStorage.setSegmentsInUse(segmentsInUse)
-    }
-    
-    func getSegmentsInUse() -> Int64 {
-        generalInfoStorage.getSegmentsInUse()
     }
 }
