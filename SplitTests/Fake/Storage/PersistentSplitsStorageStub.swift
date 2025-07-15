@@ -21,6 +21,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     var getAllCalled = false
     var updateCalled = false
+    var getSegmentsInUseCalled = false
     var deleteCalled = false
     var clearCalled = false
     var closeCalled = false

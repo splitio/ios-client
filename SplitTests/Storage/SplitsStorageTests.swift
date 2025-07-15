@@ -319,6 +319,7 @@ class SplitsStorageTest: XCTestCase {
         _ = splitsStorage.update(splitChange: processedChange)
         XCTAssertEqual(splitsStorage.segmentsInUse, 5) // One should have been ignored, so 5
         XCTAssertTrue(persistentStorage.updateCalled)
+        XCTAssertTrue(persistentStorage.getSegmentsInUseCalled)
         
         // 3. Add 2 previously added (should be ignored by the counter), and a new one
         processedChange = ProcessedSplitChange(activeSplits: [split, split2, split6],
