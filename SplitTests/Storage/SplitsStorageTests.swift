@@ -296,6 +296,26 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertTrue(resultOnAdd)
         XCTAssertFalse(resultOnNoChange)
     }
+    
+    func testSegmentsInUse() {
+        let split = SplitTestHelper.newSplitWithMatcherType(.inSegment)
+        let split2 = SplitTestHelper.newSplitWithMatcherType(.inLargeSegment)
+        
+        persistentStorage.snapshot = getTestSnapshot()
+        splitsStorage.loadLocal()
+
+        XCTAssertEqual(splitsStorage.segmentsInUse, 0)
+        
+        let processedChange = ProcessedSplitChange(activeSplits: [split, newSplit(name: "added"), split2],
+                                                   archivedSplits: [],
+                                                   changeNumber: 999, updateTimestamp: 888)
+
+        _ = splitsStorage.update(splitChange: processedChange)
+        
+        XCTAssertEqual(splitsStorage.segmentsInUse, 2)
+        XCTAssertTrue(persistentStorage.updateCalled)
+        
+    }
 
     func testUnsupportedMatcherHasDefaultCondition() {
         let split = unsupportedMatcherSplit()
@@ -346,6 +366,7 @@ class SplitsStorageTest: XCTestCase {
                           sets: [String]? = nil) -> Split {
         let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
         split.status = status
+    
         if let sets = sets {
             split.sets = sets.asSet()
         }

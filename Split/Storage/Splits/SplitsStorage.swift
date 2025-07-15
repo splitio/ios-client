@@ -15,6 +15,7 @@ protocol SyncSplitsStorage: RolloutDefinitionsCache {
 protocol SplitsStorage: SyncSplitsStorage {
     var changeNumber: Int64 { get }
     var updateTimestamp: Int64 { get }
+    var segmentsInUse: Int64 { get }
 
     func loadLocal()
     func get(name: String) -> Split?
@@ -34,7 +35,8 @@ class DefaultSplitsStorage: SplitsStorage {
     private var inMemorySplits: ConcurrentDictionary<String, Split>
     private var trafficTypes: ConcurrentDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
-
+    internal var segmentsInUse: Int64 = 0
+    
     private(set) var changeNumber: Int64 = -1
     private(set) var updateTimestamp: Int64 = -1
 
@@ -128,6 +130,8 @@ class DefaultSplitsStorage: SplitsStorage {
         var cachedTrafficTypes = trafficTypes.all
         var splitsUpdated = false
         var splitsRemoved = false
+        
+        segmentsInUse = persistentStorage.getSegmentsInUse()
 
         for split in splits {
             guard let splitName = split.name?.lowercased()  else {
@@ -142,15 +146,16 @@ class DefaultSplitsStorage: SplitsStorage {
 
             let loadedSplit = cachedSplits[splitName]
 
-            if loadedSplit == nil, !active {
+            if loadedSplit == nil, !active { // TODO: Probably, if not active decrement segmentsInUse here
                 // Split to remove not in memory, do nothing
                 continue
             }
             
-            usesSegments(ruleEntity: split)
+            // Used to optimize "/memberships" endpoint hits
+            checkUsedSegments(split)
 
             if loadedSplit != nil, let oldTrafficType = loadedSplit?.trafficTypeName {
-                // Must decreated old traffic type count if a feature flag is updated or removed
+                // Must decrease old traffic type count if a feature flag is updated or removed
                 let count = cachedTrafficTypes[oldTrafficType] ?? 0
                 if count > 1 {
                     cachedTrafficTypes[oldTrafficType] = count - 1
@@ -174,24 +179,27 @@ class DefaultSplitsStorage: SplitsStorage {
         }
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
+        persistentStorage.update(segmentsInUse: segmentsInUse)
         return splitsUpdated || splitsRemoved
     }
     
-    private func usesSegments(ruleEntity: Split) -> Bool {
+    private func checkUsedSegments(_ split: Split) {
+        // This is an optimization feature. The idea is to keep a count of the flags using
+        // segments. If zero, then never call that endpoint.
         
-        guard let conditions = ruleEntity.conditions, !conditions.isEmpty else { return false }
+        guard let splitName = split.name, let conditions = split.conditions, !conditions.isEmpty, inMemorySplits.value(forKey: splitName) == nil else { return }
         
         for condition in conditions {
             let matchers = condition.matcherGroup?.matchers ?? []
-            
             for matcher in matchers {
                 if (matcher.matcherType?.rawValue ?? "" == "IN_SEGMENT" || matcher.matcherType?.rawValue ?? "" == "IN_LARGE_SEGMENT") {
-                    return true
+                    segmentsInUse += 1
+                    return
                 }
             }
         }
         
-        return false
+        return
     }
 
     func destroy() {

@@ -21,6 +21,8 @@ class SplitsStorageStub: SplitsStorage {
     var splitsFilterQueryString: String = ""
 
     var flagsSpec: String = ""
+    
+    var segmentsInUse: Int64 = 0
 
     var loadLocalCalled = false
     var clearCalledTimes = 0
