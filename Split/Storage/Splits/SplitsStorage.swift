@@ -91,12 +91,19 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func update(splitChange: ProcessedSplitChange) -> Bool {
+        // Ensure correct count
+        segmentsInUse = persistentStorage.getSegmentsInUse()
+        defer { persistentStorage.update(segmentsInUse: segmentsInUse) }
+        
+        // Process
         let updated = processUpdated(splits: splitChange.activeSplits, active: true)
         let removed = processUpdated(splits: splitChange.archivedSplits, active: false)
 
+        // Update
         changeNumber = splitChange.changeNumber
         updateTimestamp = splitChange.updateTimestamp
         persistentStorage.update(splitChange: splitChange)
+
         return updated || removed
     }
 
@@ -130,8 +137,6 @@ class DefaultSplitsStorage: SplitsStorage {
         var cachedTrafficTypes = trafficTypes.all
         var splitsUpdated = false
         var splitsRemoved = false
-        
-        segmentsInUse = persistentStorage.getSegmentsInUse()
 
         for split in splits {
             guard let splitName = split.name?.lowercased()  else {
@@ -150,7 +155,7 @@ class DefaultSplitsStorage: SplitsStorage {
                 // Split to remove not in memory, do nothing
                 continue
             }
-            
+            
             // Used to optimize "/memberships" endpoint hits
             checkUsedSegments(split)
 
@@ -179,7 +184,6 @@ class DefaultSplitsStorage: SplitsStorage {
         }
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
-        persistentStorage.update(segmentsInUse: segmentsInUse)
         return splitsUpdated || splitsRemoved
     }
     
