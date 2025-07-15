@@ -105,7 +105,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
         // Update persistent storage
         persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
-        persistentStorage.update(segmentsInUse: segmentsInUse)
+        persistentStorage.setSegmentsInUse(segmentsInUse)
 
         return updated
     }

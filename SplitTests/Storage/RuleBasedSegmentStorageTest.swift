@@ -321,6 +321,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 }
 
 private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage {
+    
     private var segments = [
         createSegment(name: "segment_1", trafficType: "tt_1"),
         createSegment(name: "segment_2", trafficType: "tt_2"),
@@ -348,6 +349,12 @@ private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegment
         self.segments = segments
         self.snapshotChangeNumber = changeNumber
     }
+    
+    func getSegmentsInUse() -> Int64 {
+        0
+    }
+    
+    func setSegmentsInUse(_ segmentsInUse: Int64) {}
 
     private static func createSegment(name: String, trafficType: String) -> RuleBasedSegment {
         let segment = RuleBasedSegment()

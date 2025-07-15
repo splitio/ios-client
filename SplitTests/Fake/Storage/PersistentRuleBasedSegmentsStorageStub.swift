@@ -65,7 +65,7 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
         segmentsInUse
     }
     
-    func update(segmentsInUse: Int64) {
+    func setSegmentsInUse(_ segmentsInUse: Int64) {
         self.segmentsInUse = segmentsInUse
     }
 }
