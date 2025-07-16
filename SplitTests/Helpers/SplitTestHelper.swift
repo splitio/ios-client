@@ -300,4 +300,14 @@ class SplitTestHelper {
         split.isCompletelyParsed = false
         return split
     }
+    
+    static func newSplitWithMatcherType(_ name: String, _ matcher: MatcherType) -> Split {
+        let split = Split(name: name, trafficType: "User", status: .active, sets: nil, json: "")
+        split.isCompletelyParsed = true
+        split.conditions = [Condition()]
+        split.conditions?[0].matcherGroup = MatcherGroup()
+        split.conditions?[0].matcherGroup!.matchers = [Matcher()]
+        split.conditions?[0].matcherGroup!.matchers![0].matcherType = matcher
+        return split
+    }
 }
