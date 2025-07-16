@@ -285,7 +285,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
         // 1. Counter should be 3 (ignore the other matcherTypes)
         _ = ruleBasedSegmentsStorage.update(toAdd: Set([segment1, segment2, segment3, segment4, segment5]), toRemove: [], changeNumber: 123)
-        XCTAssertEqual(ruleBasedSegmentsStorage.ruleBasedSegmentsInUse, 3)
+        XCTAssertEqual(ruleBasedSegmentsStorage.segmentsInUse, 3)
         
         // 2
         segment1.status = .archived // Archive of Segments with other matcherTypes should be ignored..
@@ -293,7 +293,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         segment3.status = .archived
         _ = ruleBasedSegmentsStorage.update(toAdd: Set([]), toRemove: [segment1, segment2, segment3], changeNumber: 1230)
         
-        XCTAssertEqual(ruleBasedSegmentsStorage.ruleBasedSegmentsInUse, 1)
+        XCTAssertEqual(ruleBasedSegmentsStorage.segmentsInUse, 1)
     }
 
 
