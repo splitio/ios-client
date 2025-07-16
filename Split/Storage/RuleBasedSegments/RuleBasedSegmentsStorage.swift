@@ -10,7 +10,7 @@ import Foundation
 
 protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
     var changeNumber: Int64 { get }
-    var ruleBasedSegmentsInUse: Int64 { get }
+    var segmentsInUse: Int64 { get }
 
     func get(segmentName: String) -> RuleBasedSegment?
     func contains(segmentNames: Set<String>) -> Bool
@@ -25,7 +25,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     private(set) var changeNumber: Int64 = -1
     
-    internal var ruleBasedSegmentsInUse: Int64 = 0
+    internal var segmentsInUse: Int64 = 0
 
     init(persistentStorage: PersistentRuleBasedSegmentsStorage) {
         self.persistentStorage = persistentStorage
@@ -43,7 +43,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
                 inMemorySegments.setValue(segment, forKey: segmentName)
                 
                 if StorageHelper.usesSegments(segment.conditions) {
-                    ruleBasedSegmentsInUse += 1
+                    segmentsInUse += 1
                 }
             }
         }
@@ -56,7 +56,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         }
 
         changeNumber = snapshot.changeNumber
-        persistentStorage.setSegmentsInUse(ruleBasedSegmentsInUse)
+        persistentStorage.setSegmentsInUse(segmentsInUse)
     }
 
     func get(segmentName: String) -> RuleBasedSegment? {
@@ -83,7 +83,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool {
         
         var updated = false
-        ruleBasedSegmentsInUse = persistentStorage.getSegmentsInUse()
+        segmentsInUse = persistentStorage.getSegmentsInUse()
 
         // Process segments to add
         for segment in toAdd {
@@ -105,7 +105,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         // Keep count of Segments in use
         for segment in toAdd.union(toRemove) {
             if StorageHelper.usesSegments(segment.conditions) {
-                segment.status == .active ? (ruleBasedSegmentsInUse += 1) : (ruleBasedSegmentsInUse -= 1)
+                segment.status == .active ? (segmentsInUse += 1) : (segmentsInUse -= 1)
             }
         }
 
@@ -113,7 +113,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
         // Update persistent storage
         persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
-        persistentStorage.setSegmentsInUse(ruleBasedSegmentsInUse)
+        persistentStorage.setSegmentsInUse(segmentsInUse)
 
         return updated
     }
