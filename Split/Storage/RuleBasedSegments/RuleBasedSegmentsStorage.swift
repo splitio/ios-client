@@ -10,6 +10,7 @@ import Foundation
 
 protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
     var changeNumber: Int64 { get }
+    var segmentsInUse: Int64 { get }
 
     func get(segmentName: String) -> RuleBasedSegment?
     func contains(segmentNames: Set<String>) -> Bool
@@ -23,6 +24,8 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     private var inMemorySegments: ConcurrentDictionary<String, RuleBasedSegment>
 
     private(set) var changeNumber: Int64 = -1
+    
+    internal var segmentsInUse: Int64 = 0
 
     init(persistentStorage: PersistentRuleBasedSegmentsStorage) {
         self.persistentStorage = persistentStorage
@@ -38,6 +41,10 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         for segment in active {
             if let segmentName = segment.name?.lowercased() {
                 inMemorySegments.setValue(segment, forKey: segmentName)
+                
+                if StorageHelper.usesSegments(segment.conditions) {
+                    segmentsInUse += 1
+                }
             }
         }
 
@@ -49,6 +56,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         }
 
         changeNumber = snapshot.changeNumber
+        persistentStorage.setSegmentsInUse(segmentsInUse)
     }
 
     func get(segmentName: String) -> RuleBasedSegment? {
@@ -73,12 +81,15 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     }
 
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool {
+        
         var updated = false
+        segmentsInUse = persistentStorage.getSegmentsInUse()
 
         // Process segments to add
         for segment in toAdd {
             if let segmentName = segment.name?.lowercased() {
                 inMemorySegments.setValue(segment, forKey: segmentName)
+                
                 updated = true
             }
         }
@@ -90,11 +101,19 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
                 updated = true
             }
         }
+        
+        // Keep count of Segments in use
+        for segment in toAdd.union(toRemove) {
+            if StorageHelper.usesSegments(segment.conditions) {
+                segment.status == .active ? (segmentsInUse += 1) : (segmentsInUse -= 1)
+            }
+        }
 
         self.changeNumber = changeNumber
 
         // Update persistent storage
         persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
+        persistentStorage.setSegmentsInUse(segmentsInUse)
 
         return updated
     }
