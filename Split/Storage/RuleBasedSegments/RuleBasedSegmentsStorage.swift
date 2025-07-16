@@ -93,7 +93,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
                 updated = true
             }
         }
-    
+
         // Process segments to remove
         for segment in toRemove {
             if let segmentName = segment.name?.lowercased(), inMemorySegments.value(forKey: segmentName) != nil {
