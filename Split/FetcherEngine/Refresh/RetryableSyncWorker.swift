@@ -66,7 +66,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     private func fetchFromRemoteLoop() throws {
         var success = false
         while isRunning.value, !success {
-            success = try fetchFromRemote() //TODO: Intercept Fetch
+            success = try fetchFromRemote()
             if !success {
                 let retryTimeInSeconds = reconnectBackoffCounter.getNextRetryTime()
                 Logger.d("Retrying fetch in: \(retryTimeInSeconds)")

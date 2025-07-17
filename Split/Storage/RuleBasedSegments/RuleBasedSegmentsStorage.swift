@@ -105,7 +105,11 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         // Keep count of Segments in use
         for segment in toAdd.union(toRemove) {
             if StorageHelper.usesSegments(segment.conditions) {
-                segment.status == .active ? (segmentsInUse += 1) : (segmentsInUse -= 1)
+                if segment.status == .active && inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") == nil {
+                    segmentsInUse += 1
+                } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil && segment.status != .active {
+                    segmentsInUse -= 1
+                }
             }
         }
 
@@ -115,6 +119,9 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
         persistentStorage.setSegmentsInUse(segmentsInUse)
 
+        // Switch OFF segments fetcher if there are no segments in use
+        updateSegmentsFetcher()
+        
         return updated
     }
 
@@ -122,5 +129,13 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         inMemorySegments.removeAll()
         changeNumber = -1
         persistentStorage.clear()
+    }
+    
+    private func updateSegmentsFetcher() {
+        if segmentsInUse == 0 {
+            // TODO: segmentsFecther.stop()
+        } else {
+            // TODO: segmentsFetcher.start()
+        }
     }
 }
