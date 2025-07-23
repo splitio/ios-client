@@ -19,19 +19,23 @@ protocol MySegmentsStorage: RolloutDefinitionsCache {
     func destroy()
     func getCount(forKey key: String) -> Int
     func getCount() -> Int
+    func IsUsingSegments() -> Bool
 }
 
+// One instance per factory
 class DefaultMySegmentsStorage: MySegmentsStorage {
 
     private var inMemoryMySegments: SynchronizedDictionarySet<String, String> = SynchronizedDictionarySet()
     private let persistenStorage: PersistentMySegmentsStorage
+    private let generalInfoStorage: GeneralInfoStorage
 
     var keys: Set<String> {
         return inMemoryMySegments.keys
     }
 
-    init(persistentMySegmentsStorage: PersistentMySegmentsStorage) {
+    init(persistentMySegmentsStorage: PersistentMySegmentsStorage, generalInfoStorage: GeneralInfoStorage) {
         persistenStorage = persistentMySegmentsStorage
+        self.generalInfoStorage = generalInfoStorage
     }
 
     func loadLocal(forKey key: String) {
@@ -82,5 +86,10 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
     func clear() {
         inMemoryMySegments.removeAll()
         persistenStorage.deleteAll()
+    }
+    
+    // MARK: Segments in use Optimization
+    func IsUsingSegments() -> Bool {
+        generalInfoStorage.getSegmentsInUse() == 0
     }
 }

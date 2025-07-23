@@ -14,8 +14,10 @@ protocol ByKeyMySegmentsStorage {
     func getAll() -> Set<String>
     func set(_ change: SegmentChange)
     func getCount() -> Int
+    func IsUsingSegments() -> Bool
 }
 
+// One instance per client
 class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
 
     private let mySegmentsStorage: MySegmentsStorage
@@ -47,5 +49,10 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
 
     func getCount() -> Int {
         return mySegmentsStorage.getCount(forKey: userKey)
+    }
+     
+    // MARK: Segments in use Optimization
+    func IsUsingSegments() -> Bool {
+        mySegmentsStorage.IsUsingSegments()
     }
 }

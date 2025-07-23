@@ -15,12 +15,13 @@ class MyLargeSegmentsStorageTests: XCTestCase {
 
     var persistentStorage: PersistentMySegmentsStorageMock!
     var mySegmentsStorage: MySegmentsStorage!
+    var generalInfoStorage: GeneralInfoStorageMock!
     var userKey = "dummyKey"
     var dummyChange = SegmentChange(segments: ["s1", "s2", "s3"], changeNumber: 100)
 
     override func setUp() {
         persistentStorage = PersistentMySegmentsStorageMock()
-        mySegmentsStorage = MyLargeSegmentsStorage(persistentStorage: persistentStorage)
+        mySegmentsStorage = MyLargeSegmentsStorage(persistentStorage: persistentStorage, generalInfoStorage: generalInfoStorage)
     }
 
     func testNoLoaded() {

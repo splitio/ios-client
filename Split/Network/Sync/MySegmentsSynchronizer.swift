@@ -19,6 +19,7 @@ protocol MySegmentsSynchronizer {
     func destroy()
 }
 
+// One instance per client
 class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
 
     private let mySegmentsStorage: ByKeyMySegmentsStorage
@@ -92,31 +93,28 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func synchronizeMySegments() {
-        if isDestroyed.value {
-            return
+        runIfActive {
+            mySegmentsSyncWorker.start()
         }
-        mySegmentsSyncWorker.start()
     }
 
+    // Used for streaming
     func forceMySegmentsSync(changeNumbers: SegmentsChangeNumber, delay: Int64) {
-        if isDestroyed.value {
-            return
+        runIfActive {
+            delayedSync(changeNumbers: changeNumbers, delay: delay)
         }
-        delayedSync(changeNumbers: changeNumbers, delay: delay)
     }
 
     func startPeriodicFetching() {
-        if isDestroyed.value {
-            return
+        runIfActive {
+            periodicMySegmentsSyncWorker?.start()
         }
-        periodicMySegmentsSyncWorker?.start()
     }
 
     func stopPeriodicFetching() {
-        if isDestroyed.value {
-            return
+        runIfActive {
+            periodicMySegmentsSyncWorker?.stop()
         }
-        periodicMySegmentsSyncWorker?.stop()
     }
 
     func pause() {
@@ -124,10 +122,9 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func resume() {
-        if isDestroyed.value {
-            return
+        runIfActive {
+            periodicMySegmentsSyncWorker?.resume()
         }
-        periodicMySegmentsSyncWorker?.resume()
     }
 
     func destroy() {
@@ -149,6 +146,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
             return
         }
 
+        // What does this do?
         syncChangeNumbers?.mutate {
             if $0.msChangeNumber <= changeNumbers.msChangeNumber,
                changeNumbers.mlsChangeNumber <= changeNumbers.mlsChangeNumber {
@@ -198,5 +196,15 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
                 }
             }
         }
+    }
+    
+    fileprivate func runIfActive(_ action: () -> Void) {
+        guard !isDestroyed.value, IsUsingSegments() else { return }
+        action()
+    }
+    
+    // MARK: Segments in use Optimization
+    private func IsUsingSegments() -> Bool {
+        mySegmentsStorage.IsUsingSegments()
     }
 }

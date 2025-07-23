@@ -9,6 +9,7 @@
 import Foundation
 
 class EmptyMySegmentsStorage: MySegmentsStorage {
+    
     func changeNumber(forKey key: String) -> Int64? {
        return -1
     }
@@ -46,5 +47,9 @@ class EmptyMySegmentsStorage: MySegmentsStorage {
     }
 
     func clear() {
+    }
+    
+    func IsUsingSegments() -> Bool {
+        false
     }
 }

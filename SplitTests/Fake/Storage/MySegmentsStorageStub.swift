@@ -88,4 +88,9 @@ class MySegmentsStorageStub: MySegmentsStorage {
         clearCalledTimes+=1
         segments.removeAll()
     }
+    
+    var segmentsInUse = 0
+    func IsUsingSegments() -> Bool {
+        segmentsInUse != 0
+    }
 }

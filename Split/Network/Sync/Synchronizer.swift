@@ -67,6 +67,7 @@ class DefaultSynchronizer: Synchronizer {
     private let isSdkDisabled = Atomic(false)
     private let isEventsDisabled = Atomic(false)
     private let isTelemetryDisabled = Atomic(false)
+    // TODO: isMySegmentsEnabled?
 
     private var isDestroyed = Atomic(false)
 
@@ -139,6 +140,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeMySegments(forKey key: String) {
+        // TODO: Meter un boolean aca?
         byKeySynchronizer.syncMySegments(forKey: key)
     }
 

@@ -52,4 +52,9 @@ class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
         getCountCalledCount+=1
         return segments.count
     }
+    
+    var segmentsInUse = 0
+    func IsUsingSegments() -> Bool {
+        segmentsInUse != 0
+    }
 }

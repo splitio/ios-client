@@ -111,9 +111,11 @@ struct SplitDatabaseHelper {
 
         let persistentEventsStorage = openPersistentEventsStorage(database: splitDatabase)
         let eventsStorage = openEventsStorage(persistentStorage: persistentEventsStorage)
+        
+        let generalInfoStorage = openGeneralInfoStorage(database: splitDatabase)
 
-        let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase)
-        let myLargeSegmentsStorage = openMyLargeSegmentsStorage(database: splitDatabase)
+        let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase, generalInfoStorage: generalInfoStorage)
+        let myLargeSegmentsStorage = openMyLargeSegmentsStorage(database: splitDatabase, generalInfoStorage: generalInfoStorage)
         let attributesStorage = openAttributesStorage(database: splitDatabase,
                                                       splitClientConfig: splitClientConfig)
 
@@ -125,7 +127,6 @@ struct SplitDatabaseHelper {
         let hashedImpressionsStorage = DefaultHashedImpressionsStorage(
             cache: LRUCache(capacity: ServiceConstants.lastSeenImpressionCachSize),
             persistentStorage: persistentHashedImpressionsStorage)
-        let generalInfoStorage = openGeneralInfoStorage(database: splitDatabase)
 
         let persistentRuleBasedSegmentsStorage = DefaultPersistentRuleBasedSegmentsStorage(
             database: splitDatabase,
@@ -187,14 +188,14 @@ struct SplitDatabaseHelper {
         return DefaultPersistentMyLargeSegmentsStorage(database: database)
     }
 
-    static func openMySegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {
+    static func openMySegmentsStorage(database: SplitDatabase, generalInfoStorage: GeneralInfoStorage) -> MySegmentsStorage {
         let persistentMySegmentsStorage = openPersistentMySegmentsStorage(database: database)
-        return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage)
+        return DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentMySegmentsStorage, generalInfoStorage: generalInfoStorage)
     }
 
-    static func openMyLargeSegmentsStorage(database: SplitDatabase) -> MySegmentsStorage {
+    static func openMyLargeSegmentsStorage(database: SplitDatabase, generalInfoStorage: GeneralInfoStorage) -> MySegmentsStorage {
         let persistentMyLargeSegmentsStorage = openPersistentMyLargeSegmentsStorage(database: database)
-        return MyLargeSegmentsStorage(persistentStorage: persistentMyLargeSegmentsStorage)
+        return MyLargeSegmentsStorage(persistentStorage: persistentMyLargeSegmentsStorage, generalInfoStorage: generalInfoStorage)
     }
 
     static func openPersistentAttributesStorage(database: SplitDatabase) -> PersistentAttributesStorage {
