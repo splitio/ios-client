@@ -189,10 +189,8 @@ class DefaultSplitsStorage: SplitsStorage {
                 }
             }
         }
-        
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
-        
         return splitsUpdated || splitsRemoved
     }
 
