@@ -193,9 +193,6 @@ class DefaultSplitsStorage: SplitsStorage {
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
         
-        // Switch OFF segments fetcher if there are no segments in use
-        updateSegmentsFetcher()
-        
         return splitsUpdated || splitsRemoved
     }
 
@@ -228,14 +225,6 @@ class DefaultSplitsStorage: SplitsStorage {
         }
 
         return result
-    }
-    
-    private func updateSegmentsFetcher() {
-        if segmentsInUse == 0 {
-            // TODO: segmentsFecther.stop()
-        } else {
-            // TODO: segmentsFetcher.start()
-        }
     }
 }
 

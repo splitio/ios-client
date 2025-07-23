@@ -84,6 +84,17 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         
         var updated = false
         segmentsInUse = persistentStorage.getSegmentsInUse()
+        
+        // Keep count of Segments in use
+        for segment in toAdd.union(toRemove) {
+            if StorageHelper.usesSegments(segment.conditions) {
+                if let segmentName = segment.name?.lowercased(), segment.status == .active && inMemorySegments.value(forKey: segmentName) == nil {
+                    segmentsInUse += 1
+                } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil && segment.status != .active {
+                    segmentsInUse -= 1
+                }
+            }
+        }
 
         // Process segments to add
         for segment in toAdd {
@@ -101,26 +112,12 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
                 updated = true
             }
         }
-        
-        // Keep count of Segments in use
-        for segment in toAdd.union(toRemove) {
-            if StorageHelper.usesSegments(segment.conditions) {
-                if segment.status == .active && inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") == nil {
-                    segmentsInUse += 1
-                } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil && segment.status != .active {
-                    segmentsInUse -= 1
-                }
-            }
-        }
 
         self.changeNumber = changeNumber
 
         // Update persistent storage
         persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
         persistentStorage.setSegmentsInUse(segmentsInUse)
-
-        // Switch OFF segments fetcher if there are no segments in use
-        updateSegmentsFetcher()
         
         return updated
     }
@@ -129,13 +126,5 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         inMemorySegments.removeAll()
         changeNumber = -1
         persistentStorage.clear()
-    }
-    
-    private func updateSegmentsFetcher() {
-        if segmentsInUse == 0 {
-            // TODO: segmentsFecther.stop()
-        } else {
-            // TODO: segmentsFetcher.start()
-        }
     }
 }
