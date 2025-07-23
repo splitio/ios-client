@@ -21,6 +21,7 @@ class MySegmentsStorageTests: XCTestCase {
 
     override func setUp() {
         persistentStorage = PersistentMySegmentsStorageMock()
+        generalInfoStorage = GeneralInfoStorageMock()
         mySegmentsStorage = DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentStorage, generalInfoStorage: generalInfoStorage)
     }
 
