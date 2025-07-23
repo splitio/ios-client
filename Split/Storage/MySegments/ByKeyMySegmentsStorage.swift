@@ -51,7 +51,7 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
         return mySegmentsStorage.getCount(forKey: userKey)
     }
      
-    // MARK: Segments in use Optimization
+    // MARK: For Network Traffic Optimization
     func IsUsingSegments() -> Bool {
         mySegmentsStorage.IsUsingSegments()
     }
