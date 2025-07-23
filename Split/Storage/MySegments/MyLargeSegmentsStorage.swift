@@ -95,7 +95,7 @@ class MyLargeSegmentsStorage: MySegmentsStorage {
         }
     }
     
-    // MARK: Segments in use Optimization
+    // MARK: For Network Traffic Optimization
     func IsUsingSegments() -> Bool {
         generalInfoStorage.getSegmentsInUse() == 0
     }
