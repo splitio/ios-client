@@ -156,7 +156,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
             case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache,
                     .splitsLoadedFromCache, .attributesLoadedFromCache:
                 Logger.v("Event \(event) triggered")
-                print("::: EVENT \(event)")
                 if isTriggered(internal: .splitsLoadedFromCache),
                    isTriggered(internal: .mySegmentsLoadedFromCache),
                    isTriggered(internal: .myLargeSegmentsLoadedFromCache),
