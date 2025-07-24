@@ -78,16 +78,12 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         if isDestroyed.value {
             return
         }
-        print("::: Loading from Cache ::: Segments")
         DispatchQueue.general.async { [weak self] in
             guard let self = self else { return }
             self.mySegmentsStorage.loadLocal()
-            print("::: Loaded from Cache ::: Segments")
             self.eventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
             self.myLargeSegmentsStorage.loadLocal()
-            print("::: Loaded from Cache ::: Large Segments")
             self.eventsManager.notifyInternalEvent(.myLargeSegmentsLoadedFromCache)
-            TimeChecker.logInterval("Time until my segments loaded from cache")
             let msChangeNumber = self.mySegmentsStorage.changeNumber
             let mlsChangeNumber = self.myLargeSegmentsStorage.changeNumber
             self.syncChangeNumbers?.set(SegmentsChangeNumber(msChangeNumber: msChangeNumber,
