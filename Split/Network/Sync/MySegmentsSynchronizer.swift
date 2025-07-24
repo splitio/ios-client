@@ -78,14 +78,11 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         if isDestroyed.value {
             return
         }
-        print("::: Loading from Cache ::: Segments")
         DispatchQueue.general.async { [weak self] in
             guard let self = self else { return }
             self.mySegmentsStorage.loadLocal()
-            print("::: Loaded from Cache ::: Segments")
             self.eventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
             self.myLargeSegmentsStorage.loadLocal()
-            print("::: Loaded from Cache ::: Large Segments")
             self.eventsManager.notifyInternalEvent(.myLargeSegmentsLoadedFromCache)
             TimeChecker.logInterval("Time until my segments loaded from cache")
             let msChangeNumber = self.mySegmentsStorage.changeNumber
@@ -96,28 +93,32 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func synchronizeMySegments() {
-        if !isDestroyed.value {
-            mySegmentsSyncWorker.start()
+        if isDestroyed.value {
+            return
         }
+        mySegmentsSyncWorker.start()
     }
 
     // Used for streaming
     func forceMySegmentsSync(changeNumbers: SegmentsChangeNumber, delay: Int64) {
-        if !isDestroyed.value {
-            delayedSync(changeNumbers: changeNumbers, delay: delay)
+        if isDestroyed.value {
+            return
         }
+        delayedSync(changeNumbers: changeNumbers, delay: delay)
     }
 
     func startPeriodicFetching() {
-        if !isDestroyed.value {
-            periodicMySegmentsSyncWorker?.start()
+        if isDestroyed.value {
+            return
         }
+        periodicMySegmentsSyncWorker?.start()
     }
 
     func stopPeriodicFetching() {
-        if !isDestroyed.value {
-            periodicMySegmentsSyncWorker?.stop()
+        if isDestroyed.value {
+            return
         }
+        periodicMySegmentsSyncWorker?.stop()
     }
 
     func pause() {
@@ -125,9 +126,10 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func resume() {
-        if !isDestroyed.value {
-            periodicMySegmentsSyncWorker?.resume()
+        if isDestroyed.value {
+            return
         }
+        periodicMySegmentsSyncWorker?.resume()
     }
 
     func destroy() {

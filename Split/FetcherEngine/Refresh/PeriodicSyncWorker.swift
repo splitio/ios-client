@@ -220,7 +220,6 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         }
 
         do {
-            
             let result = try syncHelper.sync(msTill: mySegmentsStorage.changeNumber,
                                              mlsTill: myLargeSegmentsStorage.changeNumber,
                                              headers: nil)

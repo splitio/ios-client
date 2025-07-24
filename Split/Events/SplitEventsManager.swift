@@ -28,8 +28,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private let dataAccessQueue: DispatchQueue
     private var isStarted: Bool
     private var eventsQueue: InternalEventBlockingQueue
-    
-    // TODO: expose sdkReady status
 
     init(config: SplitClientConfig) {
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process", attributes: .concurrent)
@@ -148,7 +146,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
             self.triggered.append(event)
             switch event {
             case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
-                if event == .splitsUpdated { print("::: SPLITS UPDATED") }
                 if isTriggered(external: .sdkReady) {
                     trigger(event: .sdkUpdated)
                     continue
@@ -158,7 +155,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
             case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache,
                     .splitsLoadedFromCache, .attributesLoadedFromCache:
                 Logger.v("Event \(event) triggered")
-                print("::: EVENT \(event)")
                 if isTriggered(internal: .splitsLoadedFromCache),
                    isTriggered(internal: .mySegmentsLoadedFromCache),
                    isTriggered(internal: .myLargeSegmentsLoadedFromCache),
