@@ -155,7 +155,6 @@ class InstantFeatureFlagsUpdateTest: XCTestCase {
         mySegExp = XCTestExpectation()
         ffExp = XCTestExpectation()
         streamingHelper.pushKeepalive()
-        // This one is failing, I assume because the split_change is not using segments (how do I fix this on the JSON?)
         wait(for: [mySegExp!, ffExp!], timeout: 5)
         let treatmentBefore = client.getTreatment(featureFlag)
         mySegExp = nil
