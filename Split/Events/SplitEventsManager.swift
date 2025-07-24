@@ -28,8 +28,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private let dataAccessQueue: DispatchQueue
     private var isStarted: Bool
     private var eventsQueue: InternalEventBlockingQueue
-    
-    // TODO: expose sdkReady status
 
     init(config: SplitClientConfig) {
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process", attributes: .concurrent)
