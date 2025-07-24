@@ -83,8 +83,8 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
             self.mySegmentsStorage.loadLocal()
             self.eventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
             self.myLargeSegmentsStorage.loadLocal()
-            TimeChecker.logInterval("Time until my segments loaded from cache")
             self.eventsManager.notifyInternalEvent(.myLargeSegmentsLoadedFromCache)
+            TimeChecker.logInterval("Time until my segments loaded from cache")
             let msChangeNumber = self.mySegmentsStorage.changeNumber
             let mlsChangeNumber = self.myLargeSegmentsStorage.changeNumber
             self.syncChangeNumbers?.set(SegmentsChangeNumber(msChangeNumber: msChangeNumber,
