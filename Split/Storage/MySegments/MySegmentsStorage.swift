@@ -90,6 +90,6 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
     
     // MARK: Segments in use Optimization
     func IsUsingSegments() -> Bool {
-        generalInfoStorage.getSegmentsInUse() == 0
+        generalInfoStorage.getSegmentsInUse() > 0
     }
 }
