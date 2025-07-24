@@ -25,7 +25,6 @@ class MySegmentsStorageStub: MySegmentsStorage {
         return Set(segments.keys.map { $0 })
     }
     
-
     func changeNumber(forKey key: String) -> Int64? {
         return changeNumber
     }
@@ -90,7 +89,9 @@ class MySegmentsStorageStub: MySegmentsStorage {
     }
     
     var segmentsInUse = 0
-    func IsUsingSegments() -> Bool {
-        segmentsInUse != 0
+    var isUsingSegmentsCalled = false
+    func isUsingSegments() -> Bool {
+        isUsingSegmentsCalled = true
+        return segmentsInUse > 0
     }
 }

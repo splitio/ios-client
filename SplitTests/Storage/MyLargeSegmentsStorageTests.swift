@@ -150,6 +150,11 @@ class MyLargeSegmentsStorageTests: XCTestCase {
         XCTAssertEqual(100, cn1)
         XCTAssertEqual(200, cn2)
     }
+    
+    func testIsUsingSegments() {
+        generalInfoStorage.setSegmentsInUse(5)
+        XCTAssertTrue(mySegmentsStorage.isUsingSegments())
+    }
 
     func testClearAll() {
         let otherKey = "otherKey"
