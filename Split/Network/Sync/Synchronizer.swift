@@ -140,7 +140,7 @@ class DefaultSynchronizer: Synchronizer {
     }
 
     func synchronizeMySegments(forKey key: String) {
-        // TODO: Meter un boolean aca?
+        // TODO: Use a boolean here?
         byKeySynchronizer.syncMySegments(forKey: key)
     }
 
