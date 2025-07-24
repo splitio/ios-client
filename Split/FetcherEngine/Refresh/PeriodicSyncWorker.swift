@@ -213,12 +213,13 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
     }
 
     override func fetchFromRemote() {
-        // Polling should be done once sdk ready is fired in initial sync
-        if !isSdkReadyFired() {
+        // Polling should be done once sdk ready is fired in initial sync, and if there are Segments in use
+        if !isSdkReadyFired() || !(myLargeSegmentsStorage.IsUsingSegments()) {
             return
         }
 
         do {
+            
             let result = try syncHelper.sync(msTill: mySegmentsStorage.changeNumber,
                                              mlsTill: myLargeSegmentsStorage.changeNumber,
                                              headers: nil)

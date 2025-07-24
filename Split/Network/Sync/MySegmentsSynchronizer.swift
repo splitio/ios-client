@@ -96,26 +96,26 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func synchronizeMySegments() {
-        runIfActive {
+        if !isDestroyed.value {
             mySegmentsSyncWorker.start()
         }
     }
 
     // Used for streaming
     func forceMySegmentsSync(changeNumbers: SegmentsChangeNumber, delay: Int64) {
-        runIfActive {
+        if !isDestroyed.value {
             delayedSync(changeNumbers: changeNumbers, delay: delay)
         }
     }
 
     func startPeriodicFetching() {
-        runIfActive {
+        if !isDestroyed.value {
             periodicMySegmentsSyncWorker?.start()
         }
     }
 
     func stopPeriodicFetching() {
-        runIfActive {
+        if !isDestroyed.value {
             periodicMySegmentsSyncWorker?.stop()
         }
     }
@@ -125,7 +125,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
     }
 
     func resume() {
-        runIfActive {
+        if !isDestroyed.value {
             periodicMySegmentsSyncWorker?.resume()
         }
     }
@@ -199,15 +199,5 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
                 }
             }
         }
-    }
-    
-    fileprivate func runIfActive(_ action: () -> Void) {
-        guard !isDestroyed.value, IsUsingSegments() else { return }
-        action()
-    }
-    
-    // MARK: Segments in use Optimization
-    private func IsUsingSegments() -> Bool {
-        mySegmentsStorage.IsUsingSegments()
     }
 }

@@ -79,7 +79,7 @@ class SingleSyncTest: XCTestCase {
         wait(for: [impCountExp!], timeout: 10)
 
         XCTAssertEqual(1, splitsHitCount)
-        XCTAssertEqual(1, mySegmentsHitCount) // One for key
+        XCTAssertEqual(4, mySegmentsHitCount) // One for key
         XCTAssertEqual(0, sseAuthHitCount)
         XCTAssertTrue(eventsHitCount > 3)
         XCTAssertTrue(impressionsHitCount > 3)
@@ -119,7 +119,7 @@ class SingleSyncTest: XCTestCase {
         }
 
         XCTAssertEqual(1, splitsHitCount)
-        XCTAssertEqual(1, mySegmentsHitCount) // One for key
+        XCTAssertEqual(4, mySegmentsHitCount) // One for key
         XCTAssertEqual(0, sseAuthHitCount)
         XCTAssertTrue(eventsHitCount > 3)
         XCTAssertTrue(impressionsHitCount > 3)
@@ -161,8 +161,7 @@ class SingleSyncTest: XCTestCase {
         wait(for: [impCountExp!, uKeyExp!], timeout: 10)
 
         XCTAssertEqual(1, splitsHitCount)
-        // I guess this is proof that the optimization is working, but I dont quite understand why does it hit it once
-        XCTAssertEqual(1, mySegmentsHitCount) // One for key
+        XCTAssertEqual(4, mySegmentsHitCount) // One for key
         XCTAssertEqual(0, sseAuthHitCount)
         XCTAssertTrue(eventsHitCount > 3)
         XCTAssertTrue(uniqueKeysHitCount > 0)

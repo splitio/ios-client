@@ -83,6 +83,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             let start = Date.nowMillis()
             self.filterSplitsInCache()
             splitsStorage.loadLocal()
+            print("::: LOADING LOCAL FLAGS")
             if splitsStorage.getAll().count > 0 {
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
             }
