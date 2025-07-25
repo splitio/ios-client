@@ -213,7 +213,7 @@ class MySegmentUpdateTest: XCTestCase {
         waitExp.isInverted = true
         wait(for: [waitExp], timeout: 15)
         
-        // MARK: Key part of the test: After 15 seconds if hit /memberships just once
+        // MARK: Key part of the test: After 15 seconds it hit /memberships just once
         XCTAssertEqual(membershipsHit, 1)
         
         let semaphore = DispatchSemaphore(value: 0)
