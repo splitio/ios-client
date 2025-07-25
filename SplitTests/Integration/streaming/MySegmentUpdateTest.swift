@@ -189,6 +189,61 @@ class MySegmentUpdateTest: XCTestCase {
         })
         semaphore.wait()
     }
+    
+    func testSdkReadyWaitsForSegments() throws {
+        
+        var sdkReadyFired = false
+        let userKey = "test-user-key"
+        
+        let sdkReady = XCTestExpectation(description: "SDK should be ready")
+        let segmentsHit = XCTestExpectation(description: "/memberships should be hit at least once")
+        let membershipsHit = XCTestExpectation(description: "/memberships should be hit multiple times")
+        
+        //MARK: This is the key part of this test
+        membershipsHit.expectedFulfillmentCount = 4
+
+        // Configure dispatcher here
+        let dispatcher: HttpClientTestDispatcher = { request in
+            if request.url.absoluteString.contains("/splitChanges") {
+                // Send splitChanges using Segments
+                let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitchanges_1", sourceClass: IntegrationHelper())
+                return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
+            }
+
+            if request.url.absoluteString.contains("/memberships") {
+                segmentsHit.fulfill()
+                membershipsHit.fulfill()
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 200)
+        }
+
+        // Setup Factory, Network & Client
+        let testFactory = TestSplitFactory(userKey: userKey)
+        testFactory.createHttpClient(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
+        try testFactory.buildSdk(polling: true)
+        let client = testFactory.client
+
+        client.on(event: .sdkReady) {
+            sdkReadyFired = true
+            sdkReady.fulfill()
+        }
+        
+        wait(for: [segmentsHit], timeout: 3)
+        XCTAssertEqual(sdkReadyFired, false)
+        
+        wait(for: [sdkReady, membershipsHit], timeout: 20)
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy {
+            semaphore.signal()
+        }
+        semaphore.wait()
+    }
 
     func testMySegmentsUpdateBounded() throws {
         try mySegmentsUpdateBoundedTest(type: .mySegmentsUpdate)
@@ -360,17 +415,17 @@ class MySegmentUpdateTest: XCTestCase {
             }
 
             if request.isMySegmentsEndpoint() {
-                let hit = nextHitCount(key: request.url.lastPathComponent)
-                msHit = msHit + 1
-                if msHit == 2 {
-                    mySegExp.fulfill()
+                let hit = self.nextHitCount(key: request.url.lastPathComponent)
+                self.msHit = self.msHit + 1
+                if self.msHit == 2 {
+                    self.mySegExp.fulfill()
                 }
-                segUboundFetchExp?.fulfill()
-                return createResponse(code: 200, json: updatedSegments(index: hit))
+                self.segUboundFetchExp?.fulfill()
+                return self.createResponse(code: 200, json: self.updatedSegments(index: hit))
             }
 
             if request.isAuthEndpoint() {
-                isSseAuthHit = true
+                self.isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             }
             return TestDispatcherResponse(code: 500)
