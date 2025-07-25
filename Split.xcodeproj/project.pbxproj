@@ -353,6 +353,7 @@
 		59FB7C35220329B900ECC96A /* SplitFactoryBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */; };
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
+		5B279CF92E340FC600B73A36 /* splitschanges_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */; };
 		5B343EAD2E26E93B006BEBE7 /* StorageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */; };
 		5B343EAE2E26E93B006BEBE7 /* StorageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */; };
 		5B48D8172DEA2CED00351925 /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
@@ -1559,6 +1560,7 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitschanges_no_segments.json; sourceTree = "<group>"; };
 		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
@@ -2943,6 +2945,7 @@
 		592C6ADB211CBB86002D120C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */,
 				C5A7D5562DDBD4280081D190 /* split_changes_rbs.json */,
 				95F7BBD32C1A273900C5F2E4 /* Cert */,
 				C5977C052BF273A3003E293A /* between_semver.csv */,
@@ -3991,6 +3994,7 @@
 				95F7BBDE2C1A27C200C5F2E4 /* rsa_3072_public_01.pem in Resources */,
 				C5BD1E522D130FB6008EF198 /* splitchanges_toggle.json in Resources */,
 				95F7BBDA2C1A27C200C5F2E4 /* rsa_2048_public_01.pem in Resources */,
+				5B279CF92E340FC600B73A36 /* splitschanges_no_segments.json in Resources */,
 				592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */,
 				950F72FF292E8D6C008A0040 /* SplitiOSFull.xctestplan in Resources */,
 				59FB7C2A2202463000ECC96A /* localhost_1.splits in Resources */,

@@ -141,6 +141,8 @@ class MySegmentUpdateTest: XCTestCase {
                 membershipsHit.fulfill()
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
+            
+            return TestDispatcherResponse(code: 500)
         }
 
         // Setup Factory, Network & Client
@@ -158,6 +160,61 @@ class MySegmentUpdateTest: XCTestCase {
         XCTAssertEqual(sdkReadyFired, false)
         
         wait(for: [sdkReady, membershipsHit], timeout: 20)
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy {
+            semaphore.signal()
+        }
+        semaphore.wait()
+    }
+    
+    func testSdkAvoidsMembershipsIfNoSegmentsAreUsed() throws {
+        
+        var sdkReadyFired = false
+        let userKey = "test-user-key"
+        
+        let sdkReady = XCTestExpectation(description: "SDK should be ready")
+        let segmentsHit = XCTestExpectation(description: "/memberships should be hit at least once")
+        var membershipsHit = 0
+
+        // Configure dispatcher here
+        let dispatcher: HttpClientTestDispatcher = { request in
+            if request.url.absoluteString.contains("/splitChanges") {
+                // Send splitChanges using Segments
+                let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper())
+                return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
+            }
+
+            if request.url.absoluteString.contains("/memberships") {
+                segmentsHit.fulfill()
+                membershipsHit += 1
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            
+            return TestDispatcherResponse(code: 200)
+        }
+
+        // Setup Factory, Network & Client
+        let testFactory = TestSplitFactory(userKey: userKey)
+        testFactory.createHttpClient(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
+        try testFactory.buildSdk(polling: true)
+        let client = testFactory.client
+
+        client.on(event: .sdkReady) {
+            sdkReadyFired = true
+            sdkReady.fulfill()
+        }
+        
+        wait(for: [segmentsHit], timeout: 3)
+        XCTAssertEqual(sdkReadyFired, false)
+        
+        // Imverted expectation
+        let waitExp = XCTestExpectation(description: "Just waiting")
+        waitExp.isInverted = true
+        wait(for: [waitExp], timeout: 15)
+        
+        // MARK: Key part of the test: After 15 seconds if hit /memberships just once
+        XCTAssertEqual(membershipsHit, 1)
         
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy {
