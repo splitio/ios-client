@@ -15,12 +15,14 @@ class MySegmentsStorageTests: XCTestCase {
 
     var persistentStorage: PersistentMySegmentsStorageMock!
     var mySegmentsStorage: MySegmentsStorage!
+    var generalInfoStorage: GeneralInfoStorageMock!
     var userKey = "dummyKey"
     var dummySegments = SegmentChange(segments: ["s1", "s2", "s3"])
 
     override func setUp() {
         persistentStorage = PersistentMySegmentsStorageMock()
-        mySegmentsStorage = DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentStorage)
+        generalInfoStorage = GeneralInfoStorageMock()
+        mySegmentsStorage = DefaultMySegmentsStorage(persistentMySegmentsStorage: persistentStorage, generalInfoStorage: generalInfoStorage)
     }
 
     func testNoLoaded() {
@@ -119,6 +121,20 @@ class MySegmentsStorageTests: XCTestCase {
 
         XCTAssertEqual(-1, cn1)
         XCTAssertEqual(-1, cn2)
+    }
+    
+    func testIsUsingSegments() {
+        generalInfoStorage.setSegmentsInUse(0)
+        XCTAssertEqual(mySegmentsStorage.isUsingSegments(), false)
+        
+        generalInfoStorage.setSegmentsInUse(5)
+        XCTAssertEqual(mySegmentsStorage.isUsingSegments(), true)
+        
+        generalInfoStorage.setSegmentsInUse(-1)
+        XCTAssertEqual(mySegmentsStorage.isUsingSegments(), false)
+        
+        generalInfoStorage.setSegmentsInUse(6)
+        XCTAssertEqual(mySegmentsStorage.isUsingSegments(), true)
     }
 
     func testClearAll() {

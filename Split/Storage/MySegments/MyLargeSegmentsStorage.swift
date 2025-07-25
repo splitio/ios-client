@@ -15,13 +15,15 @@ class MyLargeSegmentsStorage: MySegmentsStorage {
     private let defaultChangeNumber = ServiceConstants.defaultSegmentsChangeNumber
     private let syncQueue: DispatchQueue
     private let syncQueueKey = DispatchSpecificKey<Void>()
+    private let generalInfoStorage: GeneralInfoStorage
 
     var keys: Set<String> {
         return inMemorySegments.keys
     }
 
-    init(persistentStorage: PersistentMySegmentsStorage) {
+    init(persistentStorage: PersistentMySegmentsStorage, generalInfoStorage: GeneralInfoStorage) {
         self.persistentStorage = persistentStorage
+        self.generalInfoStorage = generalInfoStorage
         self.syncQueue = DispatchQueue(label: "split-large-segments-storage")
         syncQueue.setSpecific(key: syncQueueKey, value: ())
     }
@@ -91,5 +93,10 @@ class MyLargeSegmentsStorage: MySegmentsStorage {
         } else {
             return syncQueue.sync(execute: block)
         }
+    }
+    
+    // MARK: For Network Traffic Optimization
+    func isUsingSegments() -> Bool {
+        generalInfoStorage.getSegmentsInUse() > 0
     }
 }

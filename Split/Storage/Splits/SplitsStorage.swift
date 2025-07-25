@@ -49,6 +49,11 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func loadLocal() {
+        
+        // Ensure count of Flags with Segments (for optimization feature)
+        segmentsInUse = persistentStorage.getSegmentsInUse()
+        defer { persistentStorage.update(segmentsInUse: segmentsInUse) }
+        
         let snapshot = persistentStorage.getSplitsSnapshot()
         let active = snapshot.splits.filter { $0.status == .active }
         let archived = snapshot.splits.filter { $0.status == .archived }

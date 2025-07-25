@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol MySegmentsStorage: RolloutDefinitionsCache {
+protocol MySegmentsStorage: RolloutDefinitionsCache, SegmentsChecker {
     var keys: Set<String> { get }
     func loadLocal(forKey key: String)
     func changeNumber(forKey key: String) -> Int64?
@@ -21,17 +21,24 @@ protocol MySegmentsStorage: RolloutDefinitionsCache {
     func getCount() -> Int
 }
 
+protocol SegmentsChecker {
+    func isUsingSegments() -> Bool
+}
+
+// One instance per factory
 class DefaultMySegmentsStorage: MySegmentsStorage {
 
     private var inMemoryMySegments: SynchronizedDictionarySet<String, String> = SynchronizedDictionarySet()
     private let persistenStorage: PersistentMySegmentsStorage
+    private let generalInfoStorage: GeneralInfoStorage
 
     var keys: Set<String> {
         return inMemoryMySegments.keys
     }
 
-    init(persistentMySegmentsStorage: PersistentMySegmentsStorage) {
+    init(persistentMySegmentsStorage: PersistentMySegmentsStorage, generalInfoStorage: GeneralInfoStorage) {
         persistenStorage = persistentMySegmentsStorage
+        self.generalInfoStorage = generalInfoStorage
     }
 
     func loadLocal(forKey key: String) {
@@ -82,5 +89,10 @@ class DefaultMySegmentsStorage: MySegmentsStorage {
     func clear() {
         inMemoryMySegments.removeAll()
         persistenStorage.deleteAll()
+    }
+    
+    // MARK: For Network Traffic Optimization
+    func isUsingSegments() -> Bool {
+        generalInfoStorage.getSegmentsInUse() > 0
     }
 }

@@ -213,8 +213,9 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
     }
 
     override func fetchFromRemote() {
-        // Polling should be done once sdk ready is fired in initial sync
-        if !isSdkReadyFired() {
+        // Polling should be done once sdk ready is fired in initial sync, and if there are Segments in use.
+        // Both storages read the same value so we can use any of them (using myLargeSegmentsStorage).
+        if !isSdkReadyFired() || !(myLargeSegmentsStorage.isUsingSegments()) {
             return
         }
 
