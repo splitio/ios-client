@@ -115,6 +115,80 @@ class MySegmentUpdateTest: XCTestCase {
         })
         semaphore.wait()
     }
+    
+    func testInitWithSegmentsInUse(type: NotificationType) throws {
+        let userKey = "key1"
+        testFactory = TestSplitFactory(userKey: userKey)
+        testFactory.createHttpClient(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
+        mySegExp = XCTestExpectation()
+        try testFactory.buildSdk()
+        let syncSpy = testFactory.synchronizerSpy
+        let client = testFactory.client
+        let db = testFactory.splitDatabase
+
+        let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
+        var sdkUpdExp = XCTestExpectation(description: "SDK UPDATE Expectation")
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyExp.fulfill()
+        }
+
+        client.on(event: SplitEvent.sdkUpdated) {
+            sdkUpdExp.fulfill()
+        }
+
+        // Wait for hitting my segments two times (sdk ready and full sync after streaming connection)
+        wait(for: [sdkReadyExp, sseExp], timeout: 50)
+
+        streamingBinding?.push(message: ":keepalive")
+
+        wait(for: [mySegExp], timeout: 5)
+
+        // Unbounded fetch notification should trigger my segments
+        // refresh on synchronizer
+        // Set count to 0 to start counting hits
+        syncSpy.forceMySegmentsCalledCount = 0
+        sdkUpdExp = XCTestExpectation()
+        pushMessage(TestingData.unboundedNotification(type: type, cn: mySegmentsCns[cnIndex()]))
+        wait(for: [sdkUpdExp], timeout: 5)
+
+        // Should not trigger any fetch to my segments because
+        // this payload doesn't have "key1" enabled
+
+        Thread.sleep(forTimeInterval: 0.5)
+        pushMessage(TestingData.escapedBoundedNotificationZlib(type: type, cn: mySegmentsCns[cnIndex()]))
+
+        // Pushed key list message. Key 1 should add a segment
+        sdkUpdExp = XCTestExpectation()
+
+        Thread.sleep(forTimeInterval: 0.5)
+        pushMessage(TestingData.escapedKeyListNotificationGzip(type: type, cn: mySegmentsCns[cnIndex()]))
+        wait(for: [sdkUpdExp], timeout: 5)
+
+        sdkUpdExp = XCTestExpectation()
+        Thread.sleep(forTimeInterval: 0.5)
+        pushMessage(TestingData.segmentRemovalNotification(type: type, cn: mySegmentsCns[cnIndex()]))
+        wait(for: [sdkUpdExp], timeout: 5)
+
+        Thread.sleep(forTimeInterval: 2.0)
+        var segmentEntity: [String]!
+        if type == .mySegmentsUpdate {
+            segmentEntity = db.mySegmentsDao.getBy(userKey: testFactory.userKey)?.segments.map { $0.name } ?? []
+        } else {
+            segmentEntity = db.myLargeSegmentsDao.getBy(userKey: testFactory.userKey)?.segments.map { $0.name } ?? []
+        }
+
+        // Hits are not asserted because tests will fail if expectations are not fulfilled
+        XCTAssertEqual(1, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
+        XCTAssertEqual(1, segmentEntity.filter { $0 == "new_segment_added" }.count)
+        XCTAssertEqual(0, segmentEntity.filter { $0 == "segment1" }.count)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+    }
 
     func testMySegmentsUpdateBounded() throws {
         try mySegmentsUpdateBoundedTest(type: .mySegmentsUpdate)
@@ -286,17 +360,17 @@ class MySegmentUpdateTest: XCTestCase {
             }
 
             if request.isMySegmentsEndpoint() {
-                let hit = self.nextHitCount(key: request.url.lastPathComponent)
-                self.msHit = self.msHit + 1
-                if self.msHit == 2 {
-                    self.mySegExp.fulfill()
+                let hit = nextHitCount(key: request.url.lastPathComponent)
+                msHit = msHit + 1
+                if msHit == 2 {
+                    mySegExp.fulfill()
                 }
-                self.segUboundFetchExp?.fulfill()
-                return self.createResponse(code: 200, json: self.updatedSegments(index: hit))
+                segUboundFetchExp?.fulfill()
+                return createResponse(code: 200, json: updatedSegments(index: hit))
             }
 
             if request.isAuthEndpoint() {
-                self.isSseAuthHit = true
+                isSseAuthHit = true
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             }
             return TestDispatcherResponse(code: 500)
