@@ -141,11 +141,6 @@ class MySegmentUpdateTest: XCTestCase {
                 membershipsHit.fulfill()
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
-
-            if request.isAuthEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
-            }
-            return TestDispatcherResponse(code: 200)
         }
 
         // Setup Factory, Network & Client
