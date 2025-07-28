@@ -108,7 +108,7 @@ class SplitIntegrationTests: XCTestCase {
         splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.impressionsMode = "DEBUG"
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+        .set(sdkEndpoint: "localhost").set(eventsEndpoint: "localhost").build()
 
         splitConfig.impressionListener = { impression in
             impressions[IntegrationHelper.buildImpressionKey(impression: impression)] = impression
