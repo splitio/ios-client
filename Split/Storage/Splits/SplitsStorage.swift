@@ -167,7 +167,6 @@ class DefaultSplitsStorage: SplitsStorage {
             if StorageHelper.usesSegments(split.conditions ?? []) {
                 if inMemorySplits.value(forKey: splitName) == nil && active { // If new Split and active
                     segmentsInUse += 1
-                    print("::: NEW FLAG USING SEGMENTS")
                 } else if inMemorySplits.value(forKey: splitName) != nil && !active { // If known Split and archived
                     segmentsInUse -= 1
                 }

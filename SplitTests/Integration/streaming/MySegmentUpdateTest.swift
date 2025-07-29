@@ -395,19 +395,17 @@ class MySegmentUpdateTest: XCTestCase {
         let segmentsHit = XCTestExpectation(description: "/memberships should be hit at least once")
         var membershipsHit = 0
         
-        var json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // send splitChanges wtih Segments
+        var json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // no Segments
 
         // 1. Configure dispatcher
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.url.absoluteString.contains("/splitChanges") {
-                print("::: Getting flags")
                 return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
             }
 
             if request.url.absoluteString.contains("/memberships") {
                 segmentsHit.fulfill()
                 membershipsHit += 1
-                print("::: Hit /memberships")
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
             
@@ -416,8 +414,8 @@ class MySegmentUpdateTest: XCTestCase {
 
         // 2. Setup Factory, Network & Client
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 10
-        splitConfig.segmentsRefreshRate = 10
+        splitConfig.featuresRefreshRate = 5
+        splitConfig.segmentsRefreshRate = 5
         splitConfig.impressionRefreshRate = 30
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPerPush = 10
@@ -431,8 +429,6 @@ class MySegmentUpdateTest: XCTestCase {
         
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.3")
-        let savedSplit = SplitTestHelper.newSplitWithMatcherType("splits_segments", .allKeys)
-        splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit)
         
         let userKey = "test-user-key"
         let key: Key = Key(matchingKey: userKey, bucketingKey: nil)
@@ -464,16 +460,16 @@ class MySegmentUpdateTest: XCTestCase {
         // MARK: Key part
         var waitExp = XCTestExpectation(description: "Just waiting")
         waitExp.isInverted = true // Inverted expectation
-        wait(for: [waitExp], timeout: 20)
+        wait(for: [waitExp], timeout: 10)
         XCTAssertEqual(membershipsHit, 1, "After some time, if segments are not used, SDK shouldn't hit /memberships")
         
         // MARK: Key part 2
-        json = IntegrationHelper.loadSplitChangeFileJson(name: "splitchanges_1", sourceClass: IntegrationHelper()) // send splitChanges, now WITH Segments
+        json = IntegrationHelper.loadSplitChangeFileJson(name: "splitchanges_1", sourceClass: IntegrationHelper()) // splitChanges, now WITH Segments
         
         waitExp = XCTestExpectation(description: "Just waiting")
         waitExp.isInverted = true // Inverted expectation
-        wait(for: [waitExp], timeout: 20)
-        XCTAssertGreaterThan(membershipsHit, 1, "If new flags with segments arrive, the mechanism should be restarted and SDK should hit /memberships many times again")
+        wait(for: [waitExp], timeout: 15)
+        XCTAssertGreaterThan(membershipsHit, 2, "If new flags with segments arrive, the mechanism should be restarted and SDK should hit /memberships many times again")
         
         // Cleanup
         if let client = client {
