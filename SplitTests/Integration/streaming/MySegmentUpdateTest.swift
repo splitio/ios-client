@@ -343,7 +343,7 @@ class MySegmentUpdateTest: XCTestCase {
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.3")
         splitDatabase.generalInfoDao.update(info: .segmentsInUse, longValue: 1)
-        let savedSplit = SplitTestHelper.newSplitWithMatcherType("splits_segments", .allKeys)
+        let savedSplit = SplitTestHelper.newSplitWithMatcherType("splits_segments", .inSegment)
         splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit)
         
         let userKey = "test-user-key"
