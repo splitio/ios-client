@@ -312,7 +312,7 @@ class MySegmentUpdateTest: XCTestCase {
         // 1. Configure dispatcher
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.url.absoluteString.contains("/splitChanges") {
-                let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // send splitChanges wtih Segments
+                let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // splitChanges wtih no Segments
                 return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
             }
 
