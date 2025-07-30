@@ -100,7 +100,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
                 }
             }
         }
-        
+
         // Process segments to add
         for segment in toAdd {
             if let segmentName = segment.name?.lowercased() {
@@ -108,7 +108,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
                 updated = true
             }
         }
-        
+
         // Process segments to remove
         for segment in toRemove {
             if let segmentName = segment.name?.lowercased(), inMemorySegments.value(forKey: segmentName) != nil {
@@ -116,9 +116,9 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
                 updated = true
             }
         }
-        
+
         self.changeNumber = changeNumber
-        
+
         // Update persistent storage
         persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
         
