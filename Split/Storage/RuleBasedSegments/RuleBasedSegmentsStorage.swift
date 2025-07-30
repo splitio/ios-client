@@ -37,6 +37,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         if persistentStorage.getSegmentsInUse() == nil {
             forceReparsing()
         } else {
+            segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
             let snapshot = persistentStorage.getSnapshot()
             let active = snapshot.segments.filter { $0.status == .active }
             let archived = snapshot.segments.filter { $0.status == .archived }
@@ -89,6 +90,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool {
         
         var updated = false
+        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
         
         // Keep count of Segments in use
         for segment in toAdd.union(toRemove) {
@@ -121,6 +123,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
         // Update persistent storage
         persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
+        persistentStorage.setSegmentsInUse(segmentsInUse)
 
         return updated
     }
@@ -147,7 +150,5 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         }
         
         _ = update(toAdd: Set(persistedActiveSplits), toRemove: Set(snapshot.segments.filter { $0.status == .archived }), changeNumber: snapshot.changeNumber)
-        
-        persistentStorage.setSegmentsInUse(segmentsInUse)
     }
 }
