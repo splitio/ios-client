@@ -169,7 +169,6 @@ class DefaultSplitsStorage: SplitsStorage {
                     segmentsInUse += 1
                 } else if inMemorySplits.value(forKey: splitName) != nil && !active { // If known Split and archived
                     segmentsInUse -= 1
-
                 }
             }
 
