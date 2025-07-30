@@ -121,8 +121,6 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
         // Update persistent storage
         persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
-        
-        //persistentStorage.setSegmentsInUse(segmentsInUse)
 
         return updated
     }
@@ -148,7 +146,8 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
             inMemorySegments.removeValue(forKey: splitName) // And remove it, so processUpdate() thinks they are new
         }
         
-        // TODO: Process segments
-        //_ = processUpdated(splits: persistedActiveSplits, active: true)
+        _ = update(toAdd: Set(persistedActiveSplits), toRemove: Set(snapshot.segments.filter { $0.status == .archived }), changeNumber: snapshot.changeNumber)
+        
+        persistentStorage.setSegmentsInUse(segmentsInUse)
     }
 }
