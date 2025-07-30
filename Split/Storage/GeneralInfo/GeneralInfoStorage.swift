@@ -19,7 +19,7 @@ protocol GeneralInfoStorage {
     func setLastProxyUpdateTimestamp(_ timestamp: Int64)
     
     // Segments in use (for /memberships optimization)
-    func getSegmentsInUse() -> Int64
+    func getSegmentsInUse() -> Int64?
     func setSegmentsInUse(_ count: Int64)
 }
 
@@ -83,8 +83,8 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
         generalInfoDao.update(info: .lastProxyUpdateTimestamp, longValue: timestamp)
     }
     
-    func getSegmentsInUse() -> Int64 {
-        return generalInfoDao.longValue(info: .segmentsInUse) ?? 0
+    func getSegmentsInUse() -> Int64? {
+        generalInfoDao.longValue(info: .segmentsInUse)
     }
 
     func setSegmentsInUse(_ count: Int64) {

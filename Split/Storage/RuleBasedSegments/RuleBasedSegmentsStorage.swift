@@ -83,40 +83,44 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool {
         
         var updated = false
-        segmentsInUse = persistentStorage.getSegmentsInUse()
         
-        // Keep count of Segments in use
-        for segment in toAdd.union(toRemove) {
-            if StorageHelper.usesSegments(segment.conditions) {
-                if let segmentName = segment.name?.lowercased(), segment.status == .active && inMemorySegments.value(forKey: segmentName) == nil {
-                    segmentsInUse += 1
-                } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil && segment.status != .active {
-                    segmentsInUse -= 1
+        if persistentStorage.getSegmentsInUse() == nil {
+            forceReparsing()
+        } else {
+            
+            // Keep count of Segments in use
+            for segment in toAdd.union(toRemove) {
+                if StorageHelper.usesSegments(segment.conditions) {
+                    if let segmentName = segment.name?.lowercased(), segment.status == .active && inMemorySegments.value(forKey: segmentName) == nil {
+                        segmentsInUse += 1
+                    } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil && segment.status != .active {
+                        segmentsInUse -= 1
+                    }
                 }
             }
-        }
-
-        // Process segments to add
-        for segment in toAdd {
-            if let segmentName = segment.name?.lowercased() {
-                inMemorySegments.setValue(segment, forKey: segmentName)
-                
-                updated = true
+            
+            // Process segments to add
+            for segment in toAdd {
+                if let segmentName = segment.name?.lowercased() {
+                    inMemorySegments.setValue(segment, forKey: segmentName)
+                    updated = true
+                }
             }
-        }
-
-        // Process segments to remove
-        for segment in toRemove {
-            if let segmentName = segment.name?.lowercased(), inMemorySegments.value(forKey: segmentName) != nil {
-                inMemorySegments.removeValue(forKey: segmentName)
-                updated = true
+            
+            // Process segments to remove
+            for segment in toRemove {
+                if let segmentName = segment.name?.lowercased(), inMemorySegments.value(forKey: segmentName) != nil {
+                    inMemorySegments.removeValue(forKey: segmentName)
+                    updated = true
+                }
             }
+            
+            self.changeNumber = changeNumber
+            
+            // Update persistent storage
+            persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
         }
-
-        self.changeNumber = changeNumber
-
-        // Update persistent storage
-        persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
+        
         persistentStorage.setSegmentsInUse(segmentsInUse)
 
         return updated
@@ -126,5 +130,27 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         inMemorySegments.removeAll()
         changeNumber = -1
         persistentStorage.clear()
+    }
+    
+    private func forceReparsing() {
+        let snapshot = persistentStorage.getSnapshot()
+        var persistedActiveSplits = snapshot.segments.filter { $0.status == .active }
+        
+        for i in 0..<persistedActiveSplits.count {
+            guard let splitName = persistedActiveSplits[i].name else { continue }
+            
+            inMemorySegments.setValue(persistedActiveSplits[i], forKey: splitName) // Add it so get() recognizes them
+            
+            if let parsedSplit = get(segmentName: splitName) { // Parse it
+                persistedActiveSplits[i] = parsedSplit
+            }
+            inMemorySegments.removeValue(forKey: splitName) // And remove it, so processUpdate() thinks they are new
+        }
+        
+        //_ = processUpdated(splits: persistedActiveSplits, active: true)
+        
+        // If after re-scanning the DB the counter is still in 0 (i.e.: persisted flags don't use Segments), set it to
+        // zero to avoid running this process again.
+        if persistentStorage.getSegmentsInUse() == nil { persistentStorage.setSegmentsInUse(0) }
     }
 }

@@ -50,17 +50,20 @@ class DefaultSplitsStorage: SplitsStorage {
 
     func loadLocal() {
         
-        // Ensure count of Flags with Segments (for optimization feature)
-        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
-        defer { persistentStorage.update(segmentsInUse: segmentsInUse) }
+        if persistentStorage.getSegmentsInUse() == nil { // First time running Smart Pausing (this should be run just *ONCE*, per user, ever).
+            forceReparsing()                             // The goal is to re-parse the persisted flags to have a correct count of SegmentsInUse.
+        } else {
+            // Normal flow
+            let snapshot = persistentStorage.getSplitsSnapshot()
+            let active = snapshot.splits.filter { $0.status == .active }
+            let archived = snapshot.splits.filter { $0.status == .archived }
+            _ = processUpdated(splits: active, active: true)
+            _ = processUpdated(splits: archived, active: false)
+            changeNumber = snapshot.changeNumber
+            updateTimestamp = snapshot.updateTimestamp
+        }
         
-        let snapshot = persistentStorage.getSplitsSnapshot()
-        let active = snapshot.splits.filter { $0.status == .active }
-        let archived = snapshot.splits.filter { $0.status == .archived }
-        _ = processUpdated(splits: active, active: true)
-        _ = processUpdated(splits: archived, active: false)
-        changeNumber = snapshot.changeNumber
-        updateTimestamp = snapshot.updateTimestamp
+        persistentStorage.update(segmentsInUse: segmentsInUse)
     }
 
     func get(name: String) -> Split? {
@@ -163,7 +166,7 @@ class DefaultSplitsStorage: SplitsStorage {
                 continue
             }
             
-            // Keep count of Flags with Segments (used to optimize "/memberships" endpoint hits)
+            // Keep count of Flags with Segments (used to optimize "/memberships" hits)
             if StorageHelper.usesSegments(split.conditions ?? []) {
                 if inMemorySplits.value(forKey: splitName) == nil && active { // If new Split and active
                     segmentsInUse += 1
@@ -229,6 +232,28 @@ class DefaultSplitsStorage: SplitsStorage {
         }
 
         return result
+    }
+    
+    private func forceReparsing() {
+        let snapshot = persistentStorage.getSplitsSnapshot()
+        var persistedActiveSplits = snapshot.splits.filter { $0.status == .active }
+        
+        for i in 0..<persistedActiveSplits.count {
+            guard let splitName = persistedActiveSplits[i].name else { continue }
+            
+            inMemorySplits.setValue(persistedActiveSplits[i], forKey: splitName) // Add it so get() recognizes them
+            
+            if let parsedSplit = get(name: splitName) { // Parse it
+                persistedActiveSplits[i] = parsedSplit
+            }
+            inMemorySplits.removeValue(forKey: splitName) // And remove it, so processUpdate() thinks they are new
+        }
+        
+        _ = processUpdated(splits: persistedActiveSplits, active: true)
+        
+        // If after re-scanning the DB the counter is still in 0 (i.e.: persisted flags don't use Segments), set it to
+        // zero to avoid running this process again.
+        if persistentStorage.getSegmentsInUse() == nil { persistentStorage.update(segmentsInUse: 0) }
     }
 }
 

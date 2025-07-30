@@ -76,4 +76,8 @@ class LocalhostSplitsStorage: SplitsStorage {
     func destroy() {
         inMemorySplits.removeAll()
     }
+    
+    func forceReparsing() {
+        
+    }
 }
