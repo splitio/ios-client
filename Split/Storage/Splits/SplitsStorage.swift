@@ -54,6 +54,7 @@ class DefaultSplitsStorage: SplitsStorage {
             forceReparsing()                             // The goal is to re-parse the persisted flags to have a correct count of SegmentsInUse.
         } else {
             // Normal flow
+            segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
             let snapshot = persistentStorage.getSplitsSnapshot()
             let active = snapshot.splits.filter { $0.status == .active }
             let archived = snapshot.splits.filter { $0.status == .archived }
@@ -235,6 +236,7 @@ class DefaultSplitsStorage: SplitsStorage {
     }
     
     private func forceReparsing() {
+        print("::: FORCING REPARSING")
         let snapshot = persistentStorage.getSplitsSnapshot()
         var persistedActiveSplits = snapshot.splits.filter { $0.status == .active }
         
@@ -250,10 +252,6 @@ class DefaultSplitsStorage: SplitsStorage {
         }
         
         _ = processUpdated(splits: persistedActiveSplits, active: true)
-        
-        // If after re-scanning the DB the counter is still in 0 (i.e.: persisted flags don't use Segments), set it to
-        // zero to avoid running this process again.
-        if persistentStorage.getSegmentsInUse() == nil { persistentStorage.update(segmentsInUse: 0) }
     }
 }
 
