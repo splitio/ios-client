@@ -30,11 +30,12 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
     var isSseAuthHit = false
     var isSseHit = false
     var streamingBinding: TestStreamResponseBinding?
-    let sseExp = XCTestExpectation(description: "Sse conn")
+    var sseExp = XCTestExpectation(description: "Sse conn")
     var authRequestUrl: String = ""
     var targetingRulesChange: String!
     var testDatabase: SplitDatabase?
     var useEmptySegments: Bool = true
+    var trackedSplitChangeRequests: [HttpDataRequest] = []
 
     override func setUp() {
         let session = HttpSessionMock()
@@ -82,6 +83,86 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
         let attributes = ["email": "test@split.io"]
         let treatment = client!.getTreatment("rbs_split", attributes: attributes)
         XCTAssertEqual("on", treatment)
+    }
+
+    func testRbSinceParameterProgression() {
+        // Clear any previous tracked requests
+        trackedSplitChangeRequests.removeAll()
+
+        // Set up custom response that will return some RBS data
+        targetingRulesChange = RuleBasedSegmentsIntegrationTest.splitChangeWithReferencedRbs(flagSince: 1, rbsSince: 1)
+
+        // Create first client - this should trigger initial sync with rbSince=-1
+        let firstClient = getReadyClient()
+        XCTAssertNotNil(firstClient, "First client not ready")
+
+        // Wait for initial sync to complete
+        sleep(2)
+
+        // Create countdown latch for destroy completion
+        let destroyExpectation = XCTestExpectation(description: "First client destroy completed")
+
+        // Destroy the first client to clean up
+        firstClient?.destroy {
+            destroyExpectation.fulfill()
+        }
+
+        // Wait for destroy to complete
+        wait(for: [destroyExpectation], timeout: 10)
+
+        // Clear streaming binding and reset for second client
+        streamingBinding = nil
+        isSseHit = false
+        isSseAuthHit = false
+
+        // Reset SSE expectation for the second client
+        sseExp = XCTestExpectation(description: "Sse conn")
+
+        // Update the response to simulate changed data that would trigger another sync
+        targetingRulesChange = RuleBasedSegmentsIntegrationTest.splitChangeWithReferencedRbs(flagSince: 2, rbsSince: 2)
+
+        // Create second client - this should trigger sync with rbSince != -1 (using stored value)
+        let secondClient = getReadyClient()
+        XCTAssertNotNil(secondClient, "Second client not ready")
+
+        // Wait for second sync to complete
+        sleep(2)
+
+        // Create countdown latch for second client destroy completion
+        let secondDestroyExpectation = XCTestExpectation(description: "Second client destroy completed")
+
+        // Clean up second client
+        secondClient?.destroy {
+            secondDestroyExpectation.fulfill()
+        }
+
+        // Wait for second destroy to complete
+        wait(for: [secondDestroyExpectation], timeout: 10)
+
+        // Extract rbSince values from the tracked requests
+        let rbSinceValues = trackedSplitChangeRequests.compactMap { request -> String? in
+            let url = request.url
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                  let queryItems = components.queryItems else {
+                return nil
+            }
+
+            return queryItems.first { $0.name == "rbSince" }?.value
+        }
+
+        // Verify we have at least 2 requests
+        XCTAssertGreaterThanOrEqual(rbSinceValues.count, 2, "Should have at least 2 splitChanges requests")
+
+        // Verify first request uses rbSince=-1
+        XCTAssertEqual(rbSinceValues.first, "-1", "First splitChanges request should use rbSince=-1")
+
+        // Verify subsequent requests don't use -1
+        if rbSinceValues.count > 1 {
+            XCTAssertNotEqual(rbSinceValues[1], "-1", "Second splitChanges request should not use rbSince=-1")
+
+            // Verify that the second request uses rbSince=1 (the value from the first response)
+            XCTAssertEqual(rbSinceValues[1], "1", "Second splitChanges request should use rbSince=1 from previous response")
+        }
     }
 
     func testReferencedRuleBasedSegmentNotPresentTriggersFetch() {
@@ -187,6 +268,8 @@ class RuleBasedSegmentsIntegrationTest: XCTestCase {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
+                self.trackedSplitChangeRequests.append(request)
+
                 if let change = self.targetingRulesChange {
                     return TestDispatcherResponse(code: 200, data: Data(change.utf8))
                 }
