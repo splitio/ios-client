@@ -242,8 +242,8 @@ class MySegmentUpdateTest: XCTestCase {
 
         // 2. Setup Factory, Network & Client
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 4
-        splitConfig.segmentsRefreshRate = 4
+        splitConfig.featuresRefreshRate = 1
+        splitConfig.segmentsRefreshRate = 1
         splitConfig.impressionRefreshRate = 30
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPerPush = 10
@@ -327,8 +327,8 @@ class MySegmentUpdateTest: XCTestCase {
 
         // 2. Setup Factory, Network & Client
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 4
-        splitConfig.segmentsRefreshRate = 4
+        splitConfig.featuresRefreshRate = 1
+        splitConfig.segmentsRefreshRate = 1
         splitConfig.impressionRefreshRate = 30
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPerPush = 10
@@ -411,8 +411,8 @@ class MySegmentUpdateTest: XCTestCase {
 
         // 2. Setup Factory, Network & Client
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 5
-        splitConfig.segmentsRefreshRate = 5
+        splitConfig.featuresRefreshRate = 2
+        splitConfig.segmentsRefreshRate = 2
         splitConfig.impressionRefreshRate = 30
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPerPush = 10
