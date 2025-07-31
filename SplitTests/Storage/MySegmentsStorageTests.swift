@@ -124,8 +124,17 @@ class MySegmentsStorageTests: XCTestCase {
     }
     
     func testIsUsingSegments() {
+        generalInfoStorage.setSegmentsInUse(0)
+        XCTAssertEqual(mySegmentsStorage.isUsingSegments(), false)
+        
         generalInfoStorage.setSegmentsInUse(5)
-        XCTAssertTrue(mySegmentsStorage.isUsingSegments())
+        XCTAssertEqual(mySegmentsStorage.isUsingSegments(), true)
+        
+        generalInfoStorage.setSegmentsInUse(-1)
+        XCTAssertEqual(mySegmentsStorage.isUsingSegments(), false)
+        
+        generalInfoStorage.setSegmentsInUse(6)
+        XCTAssertEqual(mySegmentsStorage.isUsingSegments(), true)
     }
 
     func testClearAll() {
