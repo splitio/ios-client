@@ -1169,6 +1169,9 @@
 		C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */; };
 		C5BD1E522D130FB6008EF198 /* splitchanges_toggle.json in Resources */ = {isa = PBXBuildFile; fileRef = C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */; };
 		C5DF6F7A2D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF6F792D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift */; };
+		C5E34ECD2E3BD66400517BD3 /* ProxyConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34ECA2E3BD66400517BD3 /* ProxyConfigurationTests.swift */; };
+		C5E34ED02E3BD6A400517BD3 /* ProxyConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34ECE2E3BD6A400517BD3 /* ProxyConfiguration.swift */; };
+		C5E34ED12E3BD6A400517BD3 /* ProxyConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34ECE2E3BD6A400517BD3 /* ProxyConfiguration.swift */; };
 		C5E967432D36CB2200112DAC /* GeneralInfoStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */; };
 		C5E9674C2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
 		C5E9674D2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
@@ -2039,6 +2042,8 @@
 		C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsToggleTest.swift; sourceTree = "<group>"; };
 		C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_toggle.json; sourceTree = "<group>"; };
 		C5DF6F792D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheManagerIntegrationTest.swift; sourceTree = "<group>"; };
+		C5E34ECA2E3BD66400517BD3 /* ProxyConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyConfigurationTests.swift; sourceTree = "<group>"; };
+		C5E34ECE2E3BD6A400517BD3 /* ProxyConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyConfiguration.swift; sourceTree = "<group>"; };
 		C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorageTest.swift; sourceTree = "<group>"; };
 		C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorage.swift; sourceTree = "<group>"; };
 		C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheManager.swift; sourceTree = "<group>"; };
@@ -2466,6 +2471,7 @@
 		3B6DEEE220EA6AE30067435E /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				C5E34ECF2E3BD6A400517BD3 /* Proxy */,
 				95F7BBCD2C10FD1100C5F2E4 /* Security */,
 				95B1802E2767DDC4002DC9DF /* Sync */,
 				59EFD30524BCE3CF0052920D /* Streaming */,
@@ -2886,6 +2892,7 @@
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
 			isa = PBXGroup;
 			children = (
+				C5E34ECC2E3BD66400517BD3 /* Network */,
 				C539CAE52D947D2A0050C732 /* Common */,
 				5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */,
 				C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */,
@@ -3757,6 +3764,30 @@
 			path = RuleBasedSegments;
 			sourceTree = "<group>";
 		};
+		C5E34ECB2E3BD66400517BD3 /* Proxy */ = {
+			isa = PBXGroup;
+			children = (
+				C5E34ECA2E3BD66400517BD3 /* ProxyConfigurationTests.swift */,
+			);
+			path = Proxy;
+			sourceTree = "<group>";
+		};
+		C5E34ECC2E3BD66400517BD3 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				C5E34ECB2E3BD66400517BD3 /* Proxy */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		C5E34ECF2E3BD6A400517BD3 /* Proxy */ = {
+			isa = PBXGroup;
+			children = (
+				C5E34ECE2E3BD6A400517BD3 /* ProxyConfiguration.swift */,
+			);
+			path = Proxy;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -3787,7 +3818,6 @@
 				3B6DEE5520EA6A4E0067435E /* Sources */,
 				3B6DEE5620EA6A4E0067435E /* Frameworks */,
 				3B6DEE5820EA6A4E0067435E /* Resources */,
-				598F9BE1230DAEBC00F0E4C0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -4030,26 +4060,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		598F9BE1230DAEBC00F0E4C0 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		3B6DEE5520EA6A4E0067435E /* Sources */ = {
@@ -4396,6 +4406,7 @@
 				3B6DEF6920EA6AE50067435E /* EqualToSetMatcher.swift in Sources */,
 				31AA251394DE280C77882C76 /* HttpDataRequest.swift in Sources */,
 				957E67AC25F66123006F5B19 /* SplitsSyncHelper.swift in Sources */,
+				C5E34ED02E3BD6A400517BD3 /* ProxyConfiguration.swift in Sources */,
 				31AA2785C12C110A50A5FD4E /* RestClient+TrackEvents.swift in Sources */,
 				31AA2C1F4964CD9D0769D021 /* RestClient+Impressions.swift in Sources */,
 				95C027712A4A3FED000B9B4F /* FeatureFlagsPayloadDecoder.swift in Sources */,
@@ -4695,6 +4706,7 @@
 				594F5F532539E36400A945B4 /* StreamingMySegmentsSyncTest.swift in Sources */,
 				C53EDFCD2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift in Sources */,
 				9519A93427DBD38F00278AEC /* ByKeyMySegmentsStorageStub.swift in Sources */,
+				C5E34ECD2E3BD66400517BD3 /* ProxyConfigurationTests.swift in Sources */,
 				95B2498026F39C9B00B34507 /* MySegmentUpdateTest.swift in Sources */,
 				59F4AA9F24FE9FA100A1C69A /* NotificiationManagerKeeperStub.swift in Sources */,
 				954F9AFF2570082C00140B81 /* SplitDaoStub.swift in Sources */,
@@ -5012,6 +5024,7 @@
 				95B02D5328D0BDC20030EC8B /* BetweenMatcher.swift in Sources */,
 				95B02D5428D0BDC20030EC8B /* ContainsAllOfSetMatcher.swift in Sources */,
 				95B02D5528D0BDC20030EC8B /* ContainsAnyOfSetMatcher.swift in Sources */,
+				C5E34ED12E3BD6A400517BD3 /* ProxyConfiguration.swift in Sources */,
 				95B02D5628D0BDC20030EC8B /* ContainsStringMatcher.swift in Sources */,
 				956A7E18297043280080D53C /* UserConsentManager.swift in Sources */,
 				95B02D5728D0BDC20030EC8B /* DateTime.swift in Sources */,
