@@ -51,7 +51,7 @@ class DefaultSplitsStorage: SplitsStorage {
     func loadLocal() {
         
         // Ensure count of Flags with Segments (for optimization feature)
-        segmentsInUse = persistentStorage.getSegmentsInUse()
+        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
         defer { persistentStorage.update(segmentsInUse: segmentsInUse) }
         
         let snapshot = persistentStorage.getSplitsSnapshot()
@@ -98,7 +98,7 @@ class DefaultSplitsStorage: SplitsStorage {
     func update(splitChange: ProcessedSplitChange) -> Bool {
         
         // Ensure count of Flags with Segments (for optimization feature)
-        segmentsInUse = persistentStorage.getSegmentsInUse()
+        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
         defer { persistentStorage.update(segmentsInUse: segmentsInUse) }
         
         // Process
@@ -145,6 +145,7 @@ class DefaultSplitsStorage: SplitsStorage {
         var splitsRemoved = false
 
         for split in splits {
+
             guard let splitName = split.name?.lowercased()  else {
                 Logger.e("Invalid feature flag name received while updating feature flags")
                 continue

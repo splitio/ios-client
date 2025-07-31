@@ -177,7 +177,6 @@ class SplitTestHelper {
     }
 
     static func newSplit(name: String, trafficType: String) -> Split {
-        
         let splitJSONExample = """
               {
               "trafficTypeName":"\(trafficType)",
