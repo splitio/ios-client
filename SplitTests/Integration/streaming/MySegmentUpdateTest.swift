@@ -477,11 +477,7 @@ class MySegmentUpdateTest: XCTestCase {
         // MARK: METER 2 RULE BASED SEGMENTS
         
         var sdkReadyFired = false
-        var cacheReadyFired = true
         let sdkReady = XCTestExpectation(description: "SDK should be ready")
-        let cacheReadyExp = XCTestExpectation(description: "Cache should be ready")
-        let segmentsHit = XCTestExpectation(description: "/memberships should be hit at least once")
-        var membershipsHit = 0
         
         var json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // no Segments
 
@@ -493,8 +489,6 @@ class MySegmentUpdateTest: XCTestCase {
             }
 
             if request.url.absoluteString.contains("/memberships") {
-                segmentsHit.fulfill()
-                membershipsHit += 1
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
             

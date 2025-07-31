@@ -78,13 +78,15 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             return
         }
 
-        let splitsStorage = self.storageContainer.splitsStorage
+        let splitsStorage = storageContainer.splitsStorage
         let ruleBasedSegmentsStorage = storageContainer.ruleBasedSegmentsStorage
+        let shouldReParse = (storageContainer.generalInfoStorage.getSegmentsInUse() == nil) // Part of /memberships hits optimization
+        
         DispatchQueue.general.async {
             let start = Date.nowMillis()
             self.filterSplitsInCache()
-            splitsStorage.loadLocal()
-            ruleBasedSegmentsStorage.loadLocal()
+            splitsStorage.loadLocal(forceReparse: shouldReParse)
+            ruleBasedSegmentsStorage.loadLocal(forceReparse: shouldReParse)
             if splitsStorage.getAll().count > 0 {
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
             }

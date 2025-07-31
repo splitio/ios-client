@@ -15,7 +15,7 @@ protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
     func get(segmentName: String) -> RuleBasedSegment?
     func contains(segmentNames: Set<String>) -> Bool
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool
-    func loadLocal()
+    func loadLocal(forceReparse: Bool)
 }
 
 class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
@@ -32,9 +32,9 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         self.inMemorySegments = ConcurrentDictionary()
     }
 
-    func loadLocal() {
+    func loadLocal(forceReparse: Bool = false) {
         
-        if persistentStorage.getSegmentsInUse() == nil {
+        if forceReparse {
             forceReparsing()
         } else {
             segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0

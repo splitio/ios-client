@@ -27,7 +27,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
 
         persistent.snapshot = SplitsSnapshot(changeNumber: 1, splits: splits, updateTimestamp: 100)
         splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistent, flagSetsCache: flagSetsCache)
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
     }
 
     override func tearDown() {

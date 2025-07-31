@@ -17,7 +17,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     var updateTimestamp: Int64 { get }
     var segmentsInUse: Int64 { get }
 
-    func loadLocal()
+    func loadLocal(forceReparse: Bool)
     func get(name: String) -> Split?
     func getMany(splits: [String]) -> [String: Split]
     func getAll() -> [String: Split]
@@ -48,10 +48,10 @@ class DefaultSplitsStorage: SplitsStorage {
         self.flagSetsCache = flagSetsCache
     }
 
-    func loadLocal() {
+    func loadLocal(forceReparse: Bool = false) {
         
-        if persistentStorage.getSegmentsInUse() == nil { // First time running Smart Pausing (this should be run just *ONCE*, per user, ever).
-            forceReparsing()                             // The goal is to re-parse the persisted flags to have a correct count of SegmentsInUse.
+        if forceReparse {       // First time running Smart Pausing (this should be run just *ONCE*, per user, ever).
+            forceReparsing()    // The goal is to re-parse the persisted flags to have a correct count of SegmentsInUse.
         } else {
             // Normal flow
             segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0

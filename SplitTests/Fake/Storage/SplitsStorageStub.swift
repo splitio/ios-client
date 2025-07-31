@@ -39,7 +39,9 @@ class SplitsStorageStub: SplitsStorage {
 
     private let inMemorySplits = ConcurrentDictionary<String, Split>()
     
-    func loadLocal() {
+    var forcedReparse = false
+    func loadLocal(forceReparse: Bool = false) {
+        forcedReparse = forceReparse
         loadLocalCalled = true
     }
     

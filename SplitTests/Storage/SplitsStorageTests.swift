@@ -41,7 +41,7 @@ class SplitsStorageTest: XCTestCase {
 
         persistentStorage.snapshot = getTestSnapshot()
 
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         let splits = splitsStorage.getAll()
         let changeNumber = splitsStorage.changeNumber
@@ -55,7 +55,7 @@ class SplitsStorageTest: XCTestCase {
     func testUpdateSplits() {
 
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         let processedChange = ProcessedSplitChange(activeSplits: [newSplit(name: "added"), newSplit(name: "added1")],
                                                    archivedSplits: [newSplit(name: "s1", status: .archived)],
@@ -79,7 +79,7 @@ class SplitsStorageTest: XCTestCase {
     func testFetchTwiceParseOnce() {
 
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
         
         let split = newSplit(name: "TwiceTestSplit")
         XCTAssertFalse(split.isCompletelyParsed, "A new Split shouln't be parsed yet")
@@ -97,7 +97,7 @@ class SplitsStorageTest: XCTestCase {
     func testFetchCaseInsensitive() {
 
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
         
         let split = newSplit(name: "TwiceTestSplit")
         XCTAssertFalse(split.isCompletelyParsed)
@@ -114,7 +114,7 @@ class SplitsStorageTest: XCTestCase {
     func testUpdateEmptySplits() {
 
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         let processedChange = ProcessedSplitChange(activeSplits: [],
                                                    archivedSplits: [],
@@ -134,7 +134,7 @@ class SplitsStorageTest: XCTestCase {
 
     func testGetMany() {
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         let splits = splitsStorage.getMany(splits: ["s1", "s9"])
 
@@ -145,7 +145,7 @@ class SplitsStorageTest: XCTestCase {
 
     func testGetManyEmpty() {
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         let splits = splitsStorage.getMany(splits: [])
 
@@ -155,7 +155,7 @@ class SplitsStorageTest: XCTestCase {
     func testUpdatedSplitTrafficType() {
 
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         let s1 = newSplit(name: "s1", status: .active, trafficType: "tt")
 
@@ -187,7 +187,7 @@ class SplitsStorageTest: XCTestCase {
     func testChangedTrafficTypeForSplit() {
 
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         let s1t1 = newSplit(name: "n_s1", status: .active, trafficType: "tt")
         let s1t2 = newSplit(name: "n_s1", status: .active, trafficType: "mytt")
@@ -213,7 +213,7 @@ class SplitsStorageTest: XCTestCase {
     func testExistingChangedTrafficTypeForSplit() {
 
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         let s0 = newSplit(name: "n_s0", status: .active, trafficType: "tt")
         let s1t1 = newSplit(name: "n_s1", status: .active, trafficType: "tt")
@@ -239,7 +239,7 @@ class SplitsStorageTest: XCTestCase {
 
     func testUpdateSplit() {
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
         let s0 = newSplit(name: "s0", status: .active, trafficType: "ttupdated")
         splitsStorage.updateWithoutChecks(split: s0)
         let updatedSplit = splitsStorage.get(name: "s0")
@@ -271,7 +271,7 @@ class SplitsStorageTest: XCTestCase {
                                                      ]
         )
 
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         var processedChange = ProcessedSplitChange(activeSplits: [],
                                                    archivedSplits: [newSplit(name: "s1", status: .archived, sets: ["set1"])],
@@ -306,7 +306,7 @@ class SplitsStorageTest: XCTestCase {
         let split6 = SplitTestHelper.newSplitWithMatcherType("split6", .inLargeSegment)
         
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         // 1. Check Segments count is in 0
         XCTAssertEqual(splitsStorage.segmentsInUse, 0)
@@ -342,7 +342,7 @@ class SplitsStorageTest: XCTestCase {
         let split = unsupportedMatcherSplit()
 
         persistentStorage.snapshot = getTestSnapshot()
-        splitsStorage.loadLocal()
+        splitsStorage.loadLocal(forceReparse: false)
 
         _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [split],
                                                                    archivedSplits: [],
