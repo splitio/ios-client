@@ -20,6 +20,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     var persistentSplitsStorage: PersistentSplitsStorageStub!
 
     var splitsStorage: SplitsStorageStub!
+    var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
 
     var updateWorkerCatalog = ConcurrentDictionary<SplitsUpdateChangeNumber, RetryableSyncWorker>()
     var syncWorkerFactory: SyncWorkerFactoryStub!
@@ -46,6 +47,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
         syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
         splitsStorage = SplitsStorageStub()
+        ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
         broadcasterChannel = SyncEventBroadcasterStub()
         generalInfoStorage = GeneralInfoStorageMock()
         telemetryStorageStub = TelemetryStorageStub()
@@ -70,7 +72,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                      persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
                                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
                                                      generalInfoStorage: generalInfoStorage,
-                                                     ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
+                                                     ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
 
         splitConfig =  SplitClientConfig()
@@ -143,6 +145,14 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         XCTAssertTrue(splitsStorage.loadLocalCalled)
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
         XCTAssertEqual(1, eventsManager.splitsLoadedEventFiredCount)
+    }
+
+    func testRuleBasedSegmentLoadLocalIsCalled() {
+        synchronizer.load()
+
+        ThreadUtils.delay(seconds: 0.5)
+
+        XCTAssertTrue(ruleBasedSegmentsStorage.loadLocalCalled)
     }
 
     func testLoadSplitWhenQuerystringNamesChanges() {

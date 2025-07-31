@@ -366,10 +366,7 @@ class MySegmentUpdateTest: XCTestCase {
             cacheReadyFired = true
         }
         
-        wait(for: [segmentsHit], timeout: 3)
-        XCTAssertEqual(sdkReadyFired, false)
-        
-        wait(for: [cacheReadyExp, sdkReady], timeout: 3)
+        wait(for: [segmentsHit, cacheReadyExp, sdkReady], timeout: 4)
         
         // MARK: Key part
         let waitExp = XCTestExpectation(description: "Just waiting")

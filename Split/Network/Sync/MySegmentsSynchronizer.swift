@@ -151,13 +151,6 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
             return
         }
 
-        // What does this do?
-        syncChangeNumbers?.mutate {
-            if $0.msChangeNumber <= changeNumbers.msChangeNumber,
-               changeNumbers.mlsChangeNumber <= changeNumbers.mlsChangeNumber {
-            }
-        }
-
         if timerManager?.isScheduled(timer: .syncSegments) ?? false {
             return
         }
