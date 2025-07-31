@@ -1175,6 +1175,9 @@
 		C5E34ED32E3BF4BB00517BD3 /* ProxyCertificateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34ED22E3BF4BB00517BD3 /* ProxyCertificateManager.swift */; };
 		C5E34ED42E3BF4BB00517BD3 /* ProxyCertificateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34ED22E3BF4BB00517BD3 /* ProxyCertificateManager.swift */; };
 		C5E34ED62E3BF4C400517BD3 /* ProxyCertificateManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34ED52E3BF4C400517BD3 /* ProxyCertificateManagerTests.swift */; };
+		C5E34ED82E3BF5B900517BD3 /* SimpleTunnelEstablisherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34ED72E3BF5B900517BD3 /* SimpleTunnelEstablisherTests.swift */; };
+		C5E34EDA2E3BF65500517BD3 /* SimpleTunnelEstablisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34ED92E3BF65500517BD3 /* SimpleTunnelEstablisher.swift */; };
+		C5E34EDB2E3BF65500517BD3 /* SimpleTunnelEstablisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34ED92E3BF65500517BD3 /* SimpleTunnelEstablisher.swift */; };
 		C5E967432D36CB2200112DAC /* GeneralInfoStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */; };
 		C5E9674C2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
 		C5E9674D2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
@@ -2049,6 +2052,8 @@
 		C5E34ECE2E3BD6A400517BD3 /* ProxyConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyConfiguration.swift; sourceTree = "<group>"; };
 		C5E34ED22E3BF4BB00517BD3 /* ProxyCertificateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCertificateManager.swift; sourceTree = "<group>"; };
 		C5E34ED52E3BF4C400517BD3 /* ProxyCertificateManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyCertificateManagerTests.swift; sourceTree = "<group>"; };
+		C5E34ED72E3BF5B900517BD3 /* SimpleTunnelEstablisherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleTunnelEstablisherTests.swift; sourceTree = "<group>"; };
+		C5E34ED92E3BF65500517BD3 /* SimpleTunnelEstablisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleTunnelEstablisher.swift; sourceTree = "<group>"; };
 		C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorageTest.swift; sourceTree = "<group>"; };
 		C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorage.swift; sourceTree = "<group>"; };
 		C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheManager.swift; sourceTree = "<group>"; };
@@ -3772,6 +3777,7 @@
 		C5E34ECB2E3BD66400517BD3 /* Proxy */ = {
 			isa = PBXGroup;
 			children = (
+				C5E34ED72E3BF5B900517BD3 /* SimpleTunnelEstablisherTests.swift */,
 				C5E34ED52E3BF4C400517BD3 /* ProxyCertificateManagerTests.swift */,
 				C5E34ECA2E3BD66400517BD3 /* ProxyConfigurationTests.swift */,
 			);
@@ -3789,6 +3795,7 @@
 		C5E34ECF2E3BD6A400517BD3 /* Proxy */ = {
 			isa = PBXGroup;
 			children = (
+				C5E34ED92E3BF65500517BD3 /* SimpleTunnelEstablisher.swift */,
 				C5E34ED22E3BF4BB00517BD3 /* ProxyCertificateManager.swift */,
 				C5E34ECE2E3BD6A400517BD3 /* ProxyConfiguration.swift */,
 			);
@@ -4138,6 +4145,7 @@
 				95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */,
 				95CED0362B459A10005E3C34 /* LocalhostSynchronizer.swift in Sources */,
 				9505682426836B20001D7B10 /* ImpressionsCountRecorder.swift in Sources */,
+				C5E34EDA2E3BF65500517BD3 /* SimpleTunnelEstablisher.swift in Sources */,
 				3B6DEF3020EA6AE50067435E /* Evaluator.swift in Sources */,
 				C5E967502D37098000112DAC /* RolloutCacheManager.swift in Sources */,
 				598EDE78224BB3E9005D4762 /* InternalSplitClient.swift in Sources */,
@@ -4760,6 +4768,7 @@
 				C5A7D5532DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift in Sources */,
 				59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */,
 				95F7BC292C46A4C800C5F2E4 /* SecurityHelper.swift in Sources */,
+				C5E34ED82E3BF5B900517BD3 /* SimpleTunnelEstablisherTests.swift in Sources */,
 				9523B8CF28622B6500AEE178 /* CdnByPassTest.swift in Sources */,
 				955E123D2BFD2A6700AE6D10 /* PersistentHashedImpressionsStorageTest.swift in Sources */,
 				59F4AABD2513A2E900A1C69A /* SplitsUpdateWorkerTest.swift in Sources */,
@@ -5040,6 +5049,7 @@
 				95B02D5828D0BDC20030EC8B /* DependencyMatcher.swift in Sources */,
 				95B02D5928D0BDC20030EC8B /* EndsWithMatcher.swift in Sources */,
 				95B02D5A28D0BDC20030EC8B /* EqualToBooleanMatcher.swift in Sources */,
+				C5E34EDB2E3BF65500517BD3 /* SimpleTunnelEstablisher.swift in Sources */,
 				95B02D5B28D0BDC20030EC8B /* EqualToMatcher.swift in Sources */,
 				95B02D5C28D0BDC20030EC8B /* EqualToSetMatcher.swift in Sources */,
 				95B02D5D28D0BDC20030EC8B /* GreaterThanOrEqualToMatcher.swift in Sources */,
