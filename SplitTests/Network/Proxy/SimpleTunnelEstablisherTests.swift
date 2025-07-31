@@ -20,6 +20,28 @@ class SimpleTunnelEstablisherTests: XCTestCase {
         waitForExpectations(timeout: 2.0, handler: nil)
     }
     
+    func testEstablishTunnel_non200Response_returnsError() {
+        // Given: a proxy config and a host that triggers a non-200 response simulation
+        let proxyUrl = URL(string: "https://proxy.example.com:8080")!
+        let caCertData = Data([0x01, 0x02, 0x03])
+        let proxyConfig = try! ProxyConfiguration(proxyURL: proxyUrl, caCertificateData: caCertData)
+        let establisher = SimpleTunnelEstablisher()
+        let expectation = self.expectation(description: "Tunnel establishment fails with non-200 response")
+        
+        // When: simulate a non-200 response (for now, use a special host to trigger this in the implementation)
+        establisher.establishTunnel(to: "not200.example.com", port: 443, through: proxyConfig) { streamTask, error in
+            // Then: should return error, not a stream task
+            XCTAssertNil(streamTask)
+            XCTAssertNotNil(error)
+            if let nsError = error as NSError? {
+                XCTAssertEqual(nsError.domain, "SimpleTunnelEstablisher")
+                XCTAssertEqual(nsError.code, 407) // Simulated proxy auth required
+            }
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 2.0, handler: nil)
+    }
+
     func testEstablishTunnel_connectionFailure_returnsError() {
         // Given: a valid ProxyConfiguration (dummy CA data for now)
         let proxyUrl = URL(string: "https://proxy.example.com:8080")!
