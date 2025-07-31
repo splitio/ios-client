@@ -93,7 +93,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
         self.segmentsInUse = segmentsInUse
     }
     
-    func getSegmentsInUse() -> Int64? {
+    func getSegmentsInUse() -> Int64 {
         getSegmentsInUseCalled = true
         return segmentsInUse
     }
