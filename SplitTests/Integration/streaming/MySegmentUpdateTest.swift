@@ -476,12 +476,7 @@ class MySegmentUpdateTest: XCTestCase {
     
     func testSDKReparsesDatabaseIfSegmentsInUseIsNull() throws {
         
-        // MARK: Meter flags con segments en la db, pero el contador esta en NULL o no existe
-        // MARK: Arrancar el SDK
-        // MARK: Verificar que el contador esta actualizado
         // MARK: Verificar que se haya llamado a la funcion de force-reparsing
-        
-        // MARK: Acordate de cambiar LOS DOS storages
         // MARK: METER 2 RULE BASED SEGMENTS
         
         var sdkReadyFired = false

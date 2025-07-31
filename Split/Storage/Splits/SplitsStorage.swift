@@ -236,7 +236,6 @@ class DefaultSplitsStorage: SplitsStorage {
     }
     
     private func forceReparsing() {
-        print("::: FORCING REPARSING")
         let snapshot = persistentStorage.getSplitsSnapshot()
         var persistedActiveSplits = snapshot.splits.filter { $0.status == .active }
         
