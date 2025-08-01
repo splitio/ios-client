@@ -7,7 +7,7 @@ enum ProxyConfigurationError: Error, Equatable {
 }
 
 /// A configuration for proxy connections with TLS support
-struct ProxyConfiguration {
+public struct ProxyConfiguration {
     /// The URL of the proxy server
     let proxyURL: URL
     
@@ -24,7 +24,7 @@ struct ProxyConfiguration {
      - Throws: `ProxyConfigurationError.invalidProxyURL` if the URL is invalid
                `ProxyConfigurationError.invalidCertificateData` if the certificate data is empty
      */
-    init(proxyURL: URL, caCertificateData: Data) throws {
+    public init(proxyURL: URL, caCertificateData: Data) throws {
         // Validate proxy URL
         guard let scheme = proxyURL.scheme, let host = proxyURL.host, !host.isEmpty else {
             throw ProxyConfigurationError.invalidProxyURL

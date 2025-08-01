@@ -11,6 +11,9 @@ import Foundation
 public typealias SplitImpressionListener = (SplitImpression) -> Void
 
 public class SplitClientConfig: NSObject {
+    /// Optional proxy configuration for SDK HTTP requests
+    public var proxyConfiguration: ProxyConfiguration?
+
 
     ///
     /// How many milliseconds to wait before triggering a timeout event when the SDK is being initialized.

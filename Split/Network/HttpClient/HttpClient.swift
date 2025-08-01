@@ -123,11 +123,16 @@ class DefaultHttpClient {
 
     init(configuration: HttpSessionConfig = HttpSessionConfig.default,
          session: HttpSession? = nil,
-         requestManager: HttpRequestManager? = nil) {
+         requestManager: HttpRequestManager? = nil,
+         proxyConfiguration: ProxyConfiguration? = nil) {
 
         self.configuration = configuration
         self.testSession = session
         self.testRequestManager = requestManager
+        // --- Production Proxy Integration ---
+        if let proxyConfig = proxyConfiguration {
+            self.proxyClient = ProxyHttpClient(proxyConfig: proxyConfig)
+        }
     }
 
     func startIfNeeded() {
