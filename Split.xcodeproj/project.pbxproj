@@ -1184,6 +1184,9 @@
 		C5E34EE22E3C046900517BD3 /* ProxyHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34EE12E3C046900517BD3 /* ProxyHttpClient.swift */; };
 		C5E34EE32E3C046900517BD3 /* ProxyHttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34EE12E3C046900517BD3 /* ProxyHttpClient.swift */; };
 		C5E34EE52E3C047200517BD3 /* ProxyHttpClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34EE42E3C047200517BD3 /* ProxyHttpClientTests.swift */; };
+		C5E34EE82E3C09AD00517BD3 /* DefaultHttpClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34EE62E3C09AD00517BD3 /* DefaultHttpClientTests.swift */; };
+		C5E34EEA2E3C0A0400517BD3 /* ProxyHttpDataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34EE92E3C0A0400517BD3 /* ProxyHttpDataRequest.swift */; };
+		C5E34EEB2E3C0A0400517BD3 /* ProxyHttpDataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E34EE92E3C0A0400517BD3 /* ProxyHttpDataRequest.swift */; };
 		C5E967432D36CB2200112DAC /* GeneralInfoStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */; };
 		C5E9674C2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
 		C5E9674D2D36E87600112DAC /* GeneralInfoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */; };
@@ -2064,6 +2067,8 @@
 		C5E34EDF2E3BFF1B00517BD3 /* BasicHttpExecutorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHttpExecutorTests.swift; sourceTree = "<group>"; };
 		C5E34EE12E3C046900517BD3 /* ProxyHttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyHttpClient.swift; sourceTree = "<group>"; };
 		C5E34EE42E3C047200517BD3 /* ProxyHttpClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyHttpClientTests.swift; sourceTree = "<group>"; };
+		C5E34EE62E3C09AD00517BD3 /* DefaultHttpClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultHttpClientTests.swift; sourceTree = "<group>"; };
+		C5E34EE92E3C0A0400517BD3 /* ProxyHttpDataRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyHttpDataRequest.swift; sourceTree = "<group>"; };
 		C5E967422D36CB2200112DAC /* GeneralInfoStorageTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorageTest.swift; sourceTree = "<group>"; };
 		C5E9674B2D36E87600112DAC /* GeneralInfoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralInfoStorage.swift; sourceTree = "<group>"; };
 		C5E9674E2D37098000112DAC /* RolloutCacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheManager.swift; sourceTree = "<group>"; };
@@ -3799,6 +3804,7 @@
 		C5E34ECC2E3BD66400517BD3 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				C5E34EE72E3C09AD00517BD3 /* HttpClient */,
 				C5E34ECB2E3BD66400517BD3 /* Proxy */,
 			);
 			path = Network;
@@ -3807,6 +3813,7 @@
 		C5E34ECF2E3BD6A400517BD3 /* Proxy */ = {
 			isa = PBXGroup;
 			children = (
+				C5E34EE92E3C0A0400517BD3 /* ProxyHttpDataRequest.swift */,
 				C5E34EE12E3C046900517BD3 /* ProxyHttpClient.swift */,
 				C5E34EDC2E3BFF1200517BD3 /* BasicHttpExecutor.swift */,
 				C5E34ED92E3BF65500517BD3 /* SimpleTunnelEstablisher.swift */,
@@ -3814,6 +3821,14 @@
 				C5E34ECE2E3BD6A400517BD3 /* ProxyConfiguration.swift */,
 			);
 			path = Proxy;
+			sourceTree = "<group>";
+		};
+		C5E34EE72E3C09AD00517BD3 /* HttpClient */ = {
+			isa = PBXGroup;
+			children = (
+				C5E34EE62E3C09AD00517BD3 /* DefaultHttpClientTests.swift */,
+			);
+			path = HttpClient;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4332,6 +4347,7 @@
 				955BB4952820653F00762D7E /* SseClientFactory.swift in Sources */,
 				3B6DEF3920EA6AE50067435E /* Date+Utils.swift in Sources */,
 				59EFD2F624B5FB7B0052920D /* HttpSession.swift in Sources */,
+				C5E34EEA2E3C0A0400517BD3 /* ProxyHttpDataRequest.swift in Sources */,
 				3B6DEF4420EA6AE50067435E /* KeySelector.swift in Sources */,
 				9519A8F827D2AE2400278AEC /* AttributesStorage.swift in Sources */,
 				95D7D7DE26D97FE8002E4D75 /* UInt64+bits.swift in Sources */,
@@ -4528,6 +4544,7 @@
 				595AD20024DAF61700A7B750 /* FetchSpecificSplitsTest.swift in Sources */,
 				59F4AAA5250007BD00A1C69A /* SseHandlerStub.swift in Sources */,
 				59F4AAA82508120500A1C69A /* SyncManagerTest.swift in Sources */,
+				C5E34EE82E3C09AD00517BD3 /* DefaultHttpClientTests.swift in Sources */,
 				5919017B24A27629005BD12A /* EndpointTest.swift in Sources */,
 				5959C479227B89980064F968 /* FactoryRegistryTest.swift in Sources */,
 				C5E967552D37FDD500112DAC /* RolloutCacheConfigurationTest.swift in Sources */,
@@ -5096,6 +5113,7 @@
 				9500D9B82C5ADBFD00383593 /* SegmentsChange.swift in Sources */,
 				95B02D6B28D0BDC20030EC8B /* ByKeyFacade.swift in Sources */,
 				95B02D6C28D0BDC20030EC8B /* TelemetrySynchronizer.swift in Sources */,
+				C5E34EEB2E3C0A0400517BD3 /* ProxyHttpDataRequest.swift in Sources */,
 				95B02D6D28D0BDC20030EC8B /* SyncCommons.swift in Sources */,
 				95B02D6E28D0BDC20030EC8B /* SseNotifications.swift in Sources */,
 				95B02D6F28D0BDC20030EC8B /* SegmentsPayloadDecoder.swift in Sources */,

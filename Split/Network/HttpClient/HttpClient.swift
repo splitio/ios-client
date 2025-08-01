@@ -104,6 +104,14 @@ class DefaultHttpClient {
         return DefaultHttpClient()
     }()
 
+    // --- Proxy Integration ---
+    private var proxyClient: ProxyHttpClient?
+
+    // For testing: allow injection of proxy client
+    func setProxyClientForTest(_ proxy: ProxyHttpClient) {
+        self.proxyClient = proxy
+    }
+
     private var testSession: HttpSession?
     private var testRequestManager: HttpRequestManager?
 
@@ -187,6 +195,16 @@ extension DefaultHttpClient: HttpClient {
             httpHeaders += headers
         }
 
+        // --- Proxy integration: only for GET requests with absolute URL and proxyClient set ---
+        if let proxyClient = proxyClient,
+           endpoint.method == .get,
+           endpoint.url.scheme?.hasPrefix("http") == true {
+            // Create a fake HttpDataRequest that calls the proxy and delivers the result
+            let proxyRequest = ProxyHttpDataRequest(url: endpoint.url, proxyClient: proxyClient)
+            proxyRequest.send()
+            return proxyRequest
+        }
+        // --- Normal path ---
         let request = try self.createRequest(endpoint.url, method: endpoint.method, parameters: parameters,
                                              headers: httpHeaders, body: body)
         request.send()
