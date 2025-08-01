@@ -91,7 +91,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
 
         defaultManager = try components.getSplitManager()
         _ = try components.buildRestClient(
-            httpClient: params.httpClient ?? DefaultHttpClient.shared,
+            httpClient: params.httpClient ?? components.buildHttpClient(),
             reachabilityChecker: params.reachabilityChecker ?? ReachabilityWrapper())
 
         let splitApiFacade = try components.buildSplitApiFacade(testHttpClient: params.httpClient)

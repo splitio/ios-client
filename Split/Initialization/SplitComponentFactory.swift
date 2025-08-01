@@ -14,6 +14,13 @@ enum ComponentError: Error {
 }
 
 class SplitComponentFactory {
+    /// Build the main HttpClient, wiring proxyConfiguration from SplitClientConfig
+    func buildHttpClient() -> HttpClient {
+        return DefaultHttpClient(
+            configuration: HttpSessionConfig.default,
+            proxyConfiguration: splitClientConfig.proxyConfiguration)
+    }
+
     private let kImpressionsFlushCheckerName = "kImpressionsFlushChecker"
     private let kEventsFlushCheckerName = "kEventsFlushChecker"
 
@@ -234,6 +241,7 @@ extension SplitComponentFactory {
     func buildRestClient(httpClient: HttpClient,
                          reachabilityChecker: HostReachabilityChecker) throws -> SplitApiRestClient {
         let endpointFactory = try getEndpointFactory()
+        let httpClient = httpClient ?? buildHttpClient()
         let component: SplitApiRestClient = DefaultRestClient(httpClient: httpClient,
                                                               endpointFactory: endpointFactory,
                                                               reachabilityChecker: reachabilityChecker)
