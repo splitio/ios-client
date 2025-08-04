@@ -39,7 +39,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         let snapshot = persistentStorage.getSnapshot()
         let active = snapshot.segments.filter { $0.status == .active }
         let archived = snapshot.segments.filter { $0.status == .archived }
-        
+
         // Process active segments
         for segment in active {
             if let segmentName = segment.name?.lowercased() {
