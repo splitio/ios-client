@@ -91,7 +91,7 @@ class DefaultSplitsStorage: SplitsStorage {
         changeNumber = splitChange.changeNumber
         updateTimestamp = splitChange.updateTimestamp
         persistentStorage.update(splitChange: splitChange)
-        
+
         return updated || removed
     }
 
