@@ -17,8 +17,6 @@ class ProxyHttpClient {
     /// Sends a GET request to the given URL, using proxy if configured
     func sendRequest(to url: URL, completion: @escaping (Data?, Int, Error?) -> Void) {
         guard let proxyConfig = proxyConfig else {
-            // For POC, just return dummy data for direct connection
-            completion("DIRECT".data(using: .utf8), 200, nil)
             return
         }
         tunnelEstablisher.establishTunnel(to: url.host ?? "", port: url.port ?? 443, through: proxyConfig) { tunnel, error in
