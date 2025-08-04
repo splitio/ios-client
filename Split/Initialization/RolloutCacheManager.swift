@@ -19,7 +19,6 @@ class DefaultRolloutCacheManager: RolloutCacheManager {
     }
 
     func validateCache(listener: (() -> Void)) {
-        
         defer {
             listener()
         }
