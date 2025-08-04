@@ -410,8 +410,8 @@ class MySegmentUpdateTest: XCTestCase {
         
         // 2. Setup Factory, Network & Client
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.featuresRefreshRate = 5
-        splitConfig.segmentsRefreshRate = 5
+        splitConfig.featuresRefreshRate = 2
+        splitConfig.segmentsRefreshRate = 2
         splitConfig.impressionRefreshRate = 30
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.eventsPerPush = 10
@@ -455,7 +455,7 @@ class MySegmentUpdateTest: XCTestCase {
         // MARK: Key part
         var waitExp = XCTestExpectation(description: "Just waiting")
         waitExp.isInverted = true // Inverted expectation
-        wait(for: [waitExp], timeout: 10)
+        wait(for: [waitExp], timeout: 5)
         XCTAssertEqual(membershipsHit, 1, "After some time, if segments are not used, SDK shouldn't hit /memberships")
         
         // MARK: Key part 2
@@ -463,7 +463,7 @@ class MySegmentUpdateTest: XCTestCase {
         
         waitExp = XCTestExpectation(description: "Just waiting")
         waitExp.isInverted = true // Inverted expectation
-        wait(for: [waitExp], timeout: 15)
+        wait(for: [waitExp], timeout: 5)
         XCTAssertGreaterThan(membershipsHit, 2, "If new flags with segments arrive, the mechanism should be restarted and SDK should hit /memberships many times again")
         
         // Cleanup

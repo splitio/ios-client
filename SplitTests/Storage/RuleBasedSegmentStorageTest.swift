@@ -357,9 +357,10 @@ private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegment
         self.segments = segments
         self.snapshotChangeNumber = changeNumber
     }
+    
     var segmentsInUse: Int64 = 0
     func getSegmentsInUse() -> Int64? {
-        return segmentsInUse
+        segmentsInUse
     }
     
     func setSegmentsInUse(_ segmentsInUse: Int64) {

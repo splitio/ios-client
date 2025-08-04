@@ -43,9 +43,13 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         // Process active segments
         for segment in active {
             if let segmentName = segment.name?.lowercased() {
-                if inMemorySegments.value(forKey: segmentName) == nil, StorageHelper.usesSegments(segment.conditions) {
-                    segmentsInUse += 1
-                    inMemorySegments.setValue(segment, forKey: segmentName)
+                if inMemorySegments.value(forKey: segmentName) == nil {
+                    if let parsedSegment = parseSegment(segment), StorageHelper.usesSegments(parsedSegment.conditions) {
+                        segmentsInUse += 1
+                        inMemorySegments.setValue(parsedSegment, forKey: segmentName)
+                    } else {
+                        inMemorySegments.setValue(segment, forKey: segmentName)
+                    }
                 }
             }
         }
@@ -97,25 +101,29 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     }
 
     private func processToAdd(_ toAdd: Set<RuleBasedSegment>) -> Bool { // Process segments to add
+        var result = false
+        
         for segment in toAdd {
             if let segmentName = segment.name?.lowercased() {
                 updateSegmentsCount(segment)
                 inMemorySegments.setValue(segment, forKey: segmentName)
-                return true
+                result = true
             }
         }
-        return false
+        return result
     }
     
     private func processToRemove(_ toRemove: Set<RuleBasedSegment>) -> Bool { // Process segments to remove
+        var result = false
+        
         for segment in toRemove {
             if let segmentName = segment.name?.lowercased(), inMemorySegments.value(forKey: segmentName) != nil {
                 updateSegmentsCount(segment)
                 inMemorySegments.removeValue(forKey: segmentName)
-                return true
+                result = true
             }
         }
-        return false
+        return result
     }
 
     func clear() {
@@ -125,8 +133,8 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     }
     
     func forceParsing() {
-        let snapshot = persistentStorage.getSnapshot()
-        let activeSegments = snapshot.segments.filter { $0.status == .active }
+        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
+        let activeSegments = persistentStorage.getSnapshot().segments.filter { $0.status == .active }
         
         for i in 0..<activeSegments.count {
             guard let segmentName = activeSegments[i].name else { continue }
@@ -146,9 +154,9 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     }
     
     fileprivate func updateSegmentsCount(_ segment: RuleBasedSegment) {
-        if let segmentName = segment.name?.lowercased(), segment.status == .active && inMemorySegments.value(forKey: segmentName) == nil {
+        if let segmentName = segment.name?.lowercased(), segment.status == .active, inMemorySegments.value(forKey: segmentName) == nil, StorageHelper.usesSegments(segment.conditions) {
             segmentsInUse += 1
-        } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil && segment.status != .active {
+        } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil, segment.status != .active, StorageHelper.usesSegments(segment.conditions) {
             segmentsInUse -= 1
         }
     }
