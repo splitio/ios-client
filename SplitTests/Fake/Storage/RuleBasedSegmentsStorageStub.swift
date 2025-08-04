@@ -73,9 +73,12 @@ class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
         changeNumber = -1
     }
 
-    var forceReparseOnLoadLocal: Bool = false
-    func loadLocal(forceReparse: Bool = false) {
-        forceReparseOnLoadLocal = forceReparse
+    func loadLocal() {
         loadLocalCalled = true
+    }
+    
+    var forcedReparse: Bool = false
+    func forceParsing() {
+        forcedReparse = true
     }
 }

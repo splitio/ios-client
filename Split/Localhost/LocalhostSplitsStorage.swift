@@ -21,7 +21,7 @@ class LocalhostSplitsStorage: SplitsStorage {
     init() {
     }
 
-    func loadLocal(forceReparse: Bool = false) {
+    func loadLocal() {
     }
 
     func get(name: String) -> Split? {
@@ -77,7 +77,7 @@ class LocalhostSplitsStorage: SplitsStorage {
         inMemorySplits.removeAll()
     }
     
-    func forceReparsing() {
+    func forceParsing() {
         
     }
 }

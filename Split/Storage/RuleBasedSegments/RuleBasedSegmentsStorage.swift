@@ -15,7 +15,8 @@ protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
     func get(segmentName: String) -> RuleBasedSegment?
     func contains(segmentNames: Set<String>) -> Bool
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool
-    func loadLocal(forceReparse: Bool)
+    func loadLocal()
+    func forceParsing() // For Lazy Parsing optimization
 }
 
 class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
@@ -32,37 +33,32 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         self.inMemorySegments = ConcurrentDictionary()
     }
 
-    func loadLocal(forceReparse: Bool = false) {
+    func loadLocal() {
         
-        if forceReparse {
-            forceReparsing()
-        } else {
-            segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
-            let snapshot = persistentStorage.getSnapshot()
-            let active = snapshot.segments.filter { $0.status == .active }
-            let archived = snapshot.segments.filter { $0.status == .archived }
-            
-            // Process active segments
-            for segment in active {
-                if let segmentName = segment.name?.lowercased() {
-                    inMemorySegments.setValue(segment, forKey: segmentName)
-                    
-                    if StorageHelper.usesSegments(segment.conditions) {
-                        segmentsInUse += 1
-                    }
+        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
+        let snapshot = persistentStorage.getSnapshot()
+        let active = snapshot.segments.filter { $0.status == .active }
+        let archived = snapshot.segments.filter { $0.status == .archived }
+        
+        // Process active segments
+        for segment in active {
+            if let segmentName = segment.name?.lowercased() {
+                inMemorySegments.setValue(segment, forKey: segmentName)
+                
+                if StorageHelper.usesSegments(segment.conditions) {
+                    segmentsInUse += 1
                 }
             }
-            
-            // Process archived segments - remove them from memory if they exist
-            for segment in archived {
-                if let segmentName = segment.name?.lowercased() {
-                    inMemorySegments.removeValue(forKey: segmentName)
-                }
-            }
-            
-            changeNumber = snapshot.changeNumber
         }
         
+        // Process archived segments - remove them from memory if they exist
+        for segment in archived {
+            if let segmentName = segment.name?.lowercased() {
+                inMemorySegments.removeValue(forKey: segmentName)
+            }
+        }
+        
+        changeNumber = snapshot.changeNumber
         persistentStorage.setSegmentsInUse(segmentsInUse)
     }
 
@@ -128,27 +124,23 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         return updated
     }
 
+
     func clear() {
         inMemorySegments.removeAll()
         changeNumber = -1
         persistentStorage.clear()
     }
     
-    private func forceReparsing() {
+    func forceParsing() {
         let snapshot = persistentStorage.getSnapshot()
         var persistedActiveSplits = snapshot.segments.filter { $0.status == .active }
         
         for i in 0..<persistedActiveSplits.count {
             guard let splitName = persistedActiveSplits[i].name else { continue }
             
-            inMemorySegments.setValue(persistedActiveSplits[i], forKey: splitName) // Add it so get() recognizes them
-            
             if let parsedSplit = get(segmentName: splitName) { // Parse it
                 persistedActiveSplits[i] = parsedSplit
             }
-            inMemorySegments.removeValue(forKey: splitName) // And remove it, so processUpdate() thinks they are new
         }
-        
-        _ = update(toAdd: Set(persistedActiveSplits), toRemove: Set(snapshot.segments.filter { $0.status == .archived }), changeNumber: snapshot.changeNumber)
     }
 }

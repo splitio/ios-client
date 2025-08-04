@@ -318,7 +318,7 @@ class MySegmentUpdateTest: XCTestCase {
             if request.url.absoluteString.contains("/memberships") {
                 segmentsHit.fulfill()
                 membershipsHit += 1
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.mySegments(names: ["", ""]).utf8))
             }
             
             return TestDispatcherResponse(code: 200)
@@ -341,6 +341,7 @@ class MySegmentUpdateTest: XCTestCase {
         
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
         splitDatabase.generalInfoDao.update(info: .segmentsInUse, longValue: 1)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.3")
         let savedSplit = SplitTestHelper.newSplitWithMatcherType("splits_segments", .inSegment)
         splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit)
         
@@ -472,9 +473,6 @@ class MySegmentUpdateTest: XCTestCase {
     }
     
     func testSDKReparsesDatabaseIfSegmentsInUseIsNull() throws {
-        
-        // MARK: Verificar que se haya llamado a la funcion de force-reparsing
-        // MARK: METER 2 RULE BASED SEGMENTS
         
         var sdkReadyFired = false
         let sdkReady = XCTestExpectation(description: "SDK should be ready")
