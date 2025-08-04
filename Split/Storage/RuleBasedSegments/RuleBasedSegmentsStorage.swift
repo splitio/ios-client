@@ -22,7 +22,7 @@ protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
 class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     private var persistentStorage: PersistentRuleBasedSegmentsStorage
-    private var inMemorySegments: ConcurrentDictionary<String, RuleBasedSegment>
+    var inMemorySegments: ConcurrentDictionary<String, RuleBasedSegment>
 
     private(set) var changeNumber: Int64 = -1
     
@@ -34,32 +34,13 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     }
 
     func loadLocal() {
-        
         segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
         let snapshot = persistentStorage.getSnapshot()
         let active = snapshot.segments.filter { $0.status == .active }
         let archived = snapshot.segments.filter { $0.status == .archived }
 
-        // Process active segments
-        for segment in active {
-            if let segmentName = segment.name?.lowercased() {
-                if inMemorySegments.value(forKey: segmentName) == nil {
-                    if let parsedSegment = parseSegment(segment), StorageHelper.usesSegments(parsedSegment.conditions) {
-                        segmentsInUse += 1
-                        inMemorySegments.setValue(parsedSegment, forKey: segmentName)
-                    } else {
-                        inMemorySegments.setValue(segment, forKey: segmentName)
-                    }
-                }
-            }
-        }
-
-        // Process archived segments - remove them from memory if they exist
-        for segment in archived {
-            if let segmentName = segment.name?.lowercased() {
-                inMemorySegments.removeValue(forKey: segmentName)
-            }
-        }
+        _ = processToAdd(Set(active))
+        _ = processToRemove(Set(archived))
 
         changeNumber = snapshot.changeNumber
         persistentStorage.setSegmentsInUse(segmentsInUse)
@@ -70,6 +51,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
         if !segment.isParsed { // Parse if neccesaty (Lazy Parsing)
             if let parsedSegment = parseSegment(segment) {
+                inMemorySegments.setValue(parsedSegment, forKey: segmentName.lowercased())
                 return parsedSegment
             }
             return nil

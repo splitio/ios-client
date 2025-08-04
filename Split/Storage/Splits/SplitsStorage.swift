@@ -33,9 +33,9 @@ protocol SplitsStorage: SyncSplitsStorage {
 class DefaultSplitsStorage: SplitsStorage {
 
     private var persistentStorage: PersistentSplitsStorage
-    private var inMemorySplits: ConcurrentDictionary<String, Split>
     private var trafficTypes: ConcurrentDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
+    internal var inMemorySplits: ConcurrentDictionary<String, Split>
     internal var segmentsInUse: Int64 = 0
     
     private(set) var changeNumber: Int64 = -1
