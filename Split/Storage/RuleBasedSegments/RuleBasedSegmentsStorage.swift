@@ -53,14 +53,14 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
                 }
             }
         }
-        
+
         // Process archived segments - remove them from memory if they exist
         for segment in archived {
             if let segmentName = segment.name?.lowercased() {
                 inMemorySegments.removeValue(forKey: segmentName)
             }
         }
-        
+
         changeNumber = snapshot.changeNumber
         persistentStorage.setSegmentsInUse(segmentsInUse)
     }
