@@ -6,7 +6,7 @@ class ProxyHttpDataRequest: HttpDataRequest {
     let url: URL
     let method: HttpMethod = .get
     let parameters: HttpParameters? = nil
-    let headers: HttpHeaders = [:]
+    let headers: HttpHeaders
     let body: Data? = nil
     var responseCode: Int = 0
     var pinnedCredentialFail: Bool = false
@@ -22,15 +22,16 @@ class ProxyHttpDataRequest: HttpDataRequest {
     
     let proxyClient: ProxyHttpClient
     
-    init(url: URL, proxyClient: ProxyHttpClient) {
+    init(url: URL, proxyClient: ProxyHttpClient, headers: HttpHeaders) {
         self.url = url
         self.proxyClient = proxyClient
+        self.headers = headers
     }
     
     func send() {
         guard !sent else { return }
         sent = true
-        proxyClient.sendRequest(to: url) { data, statusCode, error in
+        proxyClient.sendRequest(to: url, headers: headers) { data, statusCode, error in
             self.data = data
             self.responseCode = statusCode
             let httpResponse = HttpResponse(code: statusCode, data: data)

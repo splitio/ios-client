@@ -206,7 +206,7 @@ extension DefaultHttpClient: HttpClient {
            endpoint.url.scheme?.hasPrefix("http") == true {
             Logger.d("Routing through proxy tunnel: [method=\(endpoint.method)] [url=\(endpoint.url.absoluteString)]" )
             // Create a fake HttpDataRequest that calls the proxy and delivers the result
-            let proxyRequest = ProxyHttpDataRequest(url: endpoint.url, proxyClient: proxyClient)
+            let proxyRequest = ProxyHttpDataRequest(url: endpoint.url, proxyClient: proxyClient, headers: endpoint.headers ?? [:])
             proxyRequest.send()
             return proxyRequest
         }

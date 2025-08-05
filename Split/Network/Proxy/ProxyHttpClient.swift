@@ -15,7 +15,7 @@ class ProxyHttpClient {
     }
     
     /// Sends a GET request to the given URL, using proxy if configured
-    func sendRequest(to url: URL, completion: @escaping (Data?, Int, Error?) -> Void) {
+    func sendRequest(to url: URL, headers: [String: String], completion: @escaping (Data?, Int, Error?) -> Void) {
         guard let proxyConfig = proxyConfig else {
             return
         }
@@ -24,7 +24,7 @@ class ProxyHttpClient {
                 completion(nil, 0, error)
                 return
             }
-            self.httpExecutor.executeRequest(url: url, through: tunnel, completion: completion)
+            self.httpExecutor.executeRequest(url: url, headers: headers, through: tunnel, completion: completion)
         }
     }
 }
