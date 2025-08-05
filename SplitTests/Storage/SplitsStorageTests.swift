@@ -46,11 +46,11 @@ class SplitsStorageTest: XCTestCase {
         noLoadedStorage?.loadLocal()
 
         XCTAssertNotNil(noLoadedStorage)
-        var splitToCheck = noLoadedStorage!.inMemorySplits.value(forKey: "split_1")!
+        var splitToCheck = noLoadedStorage!.getInMemorySplits().value(forKey: "split_1")!
         XCTAssertEqual(splitToCheck.isCompletelyParsed, false, "Split_1 shouldn't be parsed")
         
         _ = noLoadedStorage?.get(name: "split_2")
-        splitToCheck = noLoadedStorage!.inMemorySplits.value(forKey: "split_2")!
+        splitToCheck = noLoadedStorage!.getInMemorySplits().value(forKey: "split_2")!
         XCTAssertEqual(splitToCheck.isCompletelyParsed, true, "Split_2 should be parsed")
     }
 

@@ -37,11 +37,11 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         noLoadedRbs?.loadLocal()
 
         XCTAssertNotNil(noLoadedRbs)
-        var segmentToCheck = noLoadedRbs!.inMemorySegments.value(forKey: "segment_1")!
+        var segmentToCheck = noLoadedRbs!.getInMemorySegments().value(forKey: "segment_1")!
         XCTAssertEqual(segmentToCheck.isParsed, false, "segment_1 shouldn't be parsed")
         
         _ = noLoadedRbs?.get(segmentName: "segment_2")
-        segmentToCheck = noLoadedRbs!.inMemorySegments.value(forKey: "segment_2")!
+        segmentToCheck = noLoadedRbs!.getInMemorySegments().value(forKey: "segment_2")!
         XCTAssertEqual(segmentToCheck.isParsed, true, "segment_2 should be parsed")
     }
 

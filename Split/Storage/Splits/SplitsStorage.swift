@@ -35,7 +35,7 @@ class DefaultSplitsStorage: SplitsStorage {
     private var persistentStorage: PersistentSplitsStorage
     private var trafficTypes: ConcurrentDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
-    internal var inMemorySplits: ConcurrentDictionary<String, Split>
+    private var inMemorySplits: ConcurrentDictionary<String, Split>
     internal var segmentsInUse: Int64 = 0
     
     private(set) var changeNumber: Int64 = -1
@@ -250,6 +250,12 @@ class DefaultSplitsStorage: SplitsStorage {
             }
         }
     }
+    
+    #if DEBUG
+    func getInMemorySplits() -> ConcurrentDictionary<String, Split>  {
+        inMemorySplits
+    }
+    #endif
 }
 
 class BackgroundSyncSplitsStorage: SyncSplitsStorage {

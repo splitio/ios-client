@@ -22,7 +22,7 @@ protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
 class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     private var persistentStorage: PersistentRuleBasedSegmentsStorage
-    var inMemorySegments: ConcurrentDictionary<String, RuleBasedSegment>
+    private var inMemorySegments: ConcurrentDictionary<String, RuleBasedSegment>
 
     private(set) var changeNumber: Int64 = -1
     
@@ -142,4 +142,10 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
             segmentsInUse -= 1
         }
     }
+    
+    #if DEBUG
+    func getInMemorySegments() -> ConcurrentDictionary<String, RuleBasedSegment>  {
+        inMemorySegments
+    }
+    #endif
 }
