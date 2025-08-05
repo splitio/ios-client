@@ -1,6 +1,4 @@
 import Foundation
-import Network
-import Security
 
 /// TLS connection wrapper that bridges Security framework with URLSessionStreamTask
 class TLSConnection {
@@ -18,14 +16,30 @@ class TLSConnection {
     /// SSL read callback implementation
     func read(data: UnsafeMutableRawPointer?, length: UnsafeMutablePointer<Int>) -> OSStatus {
         guard let data = data else {
+            print("[TLSConnection] Read called with null data pointer")
             length.pointee = 0
             return errSSLInternal
         }
         
         let requestedLength = length.pointee
+        print("[TLSConnection] Read requested: \(requestedLength) bytes, tunnel state: \(tunnel.state.rawValue)")
+        
+        // Check tunnel state before attempting read
+        guard tunnel.state == .running else {
+            print("[TLSConnection] Tunnel not running, state: \(tunnel.state.rawValue)")
+            length.pointee = 0
+            return errSSLClosedGraceful
+        }
         
         // Perform read on tunnel
         tunnel.readData(ofMinLength: 1, maxLength: requestedLength, timeout: 10) { [weak self] responseData, _, error in
+            if let error = error {
+                print("[TLSConnection] Tunnel read error: \(error.localizedDescription)")
+            } else if let data = responseData {
+                print("[TLSConnection] Tunnel read success: \(data.count) bytes")
+            } else {
+                print("[TLSConnection] Tunnel read returned no data and no error")
+            }
             self?.readBuffer = responseData
             self?.readError = error
             self?.readSemaphore.signal()
@@ -57,15 +71,30 @@ class TLSConnection {
     /// SSL write callback implementation
     func write(data: UnsafeRawPointer?, length: UnsafeMutablePointer<Int>) -> OSStatus {
         guard let data = data else {
+            print("[TLSConnection] Write called with null data pointer")
             length.pointee = 0
             return errSSLInternal
         }
         
         let dataLength = length.pointee
+        print("[TLSConnection] Write requested: \(dataLength) bytes, tunnel state: \(tunnel.state.rawValue)")
+        
+        // Check tunnel state before attempting write
+        guard tunnel.state == .running else {
+            print("[TLSConnection] Tunnel not running for write, state: \(tunnel.state.rawValue)")
+            length.pointee = 0
+            return errSSLClosedGraceful
+        }
+        
         let writeData = Data(bytes: data, count: dataLength)
         
         // Perform write on tunnel
         tunnel.write(writeData, timeout: 10) { [weak self] error in
+            if let error = error {
+                print("[TLSConnection] Tunnel write error: \(error.localizedDescription)")
+            } else {
+                print("[TLSConnection] Tunnel write success: \(dataLength) bytes")
+            }
             self?.writeError = error
             self?.writeSemaphore.signal()
         }
@@ -124,6 +153,7 @@ class BasicHttpExecutor {
     /// Establishes TLS connection over the existing tunnel
     private func establishTLSConnection(tunnel: URLSessionStreamTask, hostname: String, completion: @escaping (SSLContext?, Error?) -> Void) {
         print("[BasicHttpExecutor] Starting TLS handshake with \(hostname)")
+        print("[BasicHttpExecutor] Tunnel state: \(tunnel.state.rawValue)")
         
         // Create SSL context
         guard let context = SSLCreateContext(nil, .clientSide, .streamType) else {
@@ -140,38 +170,107 @@ class BasicHttpExecutor {
             return
         }
         
-        // Set up I/O callbacks to use our tunnel
-        let connectionRef = Unmanaged.passRetained(TLSConnection(tunnel: tunnel)).toOpaque()
+        // Check tunnel state
+        print("[BasicHttpExecutor] Checking tunnel state: \(tunnel.state.rawValue) (0=suspended, 1=running, 2=canceling, 3=completed)")
         
-        let readCallback: SSLReadFunc = { connection, data, dataLength in
-            let tlsConnection = Unmanaged<TLSConnection>.fromOpaque(connection).takeUnretainedValue()
-            return tlsConnection.read(data: data, length: dataLength)
+        // Check for invalid tunnel states that can't be recovered
+        if tunnel.state == .canceling || tunnel.state == .completed {
+            let error = NSError(domain: "BasicHttpExecutor", code: -101, userInfo: [NSLocalizedDescriptionKey: "Tunnel is in invalid state: \(tunnel.state.rawValue) - cannot establish TLS connection"])
+            completion(nil, error)
+            return
         }
         
-        let writeCallback: SSLWriteFunc = { connection, data, dataLength in
-            let tlsConnection = Unmanaged<TLSConnection>.fromOpaque(connection).takeUnretainedValue()
-            return tlsConnection.write(data: data, length: dataLength)
+        if tunnel.state == .suspended {
+            print("[BasicHttpExecutor] WARNING: Tunnel is suspended - this should not happen with new implementation")
+            print("[BasicHttpExecutor] Attempting to resume tunnel as fallback")
+            tunnel.resume()
+            
+            // Wait for resume to take effect
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                print("[BasicHttpExecutor] Tunnel state after resume: \(tunnel.state.rawValue)")
+                if tunnel.state == .running {
+                    self.proceedWithTLSSetup(tunnel: tunnel, hostname: hostname, context: context, completion: completion)
+                } else {
+                    let error = NSError(domain: "BasicHttpExecutor", code: -102, userInfo: [NSLocalizedDescriptionKey: "Failed to resume tunnel - state: \(tunnel.state.rawValue)"])
+                    completion(nil, error)
+                }
+            }
+        } else if tunnel.state == .running {
+            // Tunnel is running as expected - proceed with small delay for proxy cleanup
+            print("[BasicHttpExecutor] Tunnel is running, proceeding with TLS setup after cleanup delay")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                print("[BasicHttpExecutor] Proceeding with TLS setup, tunnel state: \(tunnel.state.rawValue)")
+                self.proceedWithTLSSetup(tunnel: tunnel, hostname: hostname, context: context, completion: completion)
+            }
+        } else {
+            let error = NSError(domain: "BasicHttpExecutor", code: -103, userInfo: [NSLocalizedDescriptionKey: "Tunnel is in unexpected state: \(tunnel.state.rawValue)"])
+            completion(nil, error)
         }
+    }
+    
+    /// Proceeds with TLS setup after tunnel is confirmed to be running
+    private func proceedWithTLSSetup(tunnel: URLSessionStreamTask, hostname: String, context: SSLContext, completion: @escaping (SSLContext?, Error?) -> Void) {
+        print("[BasicHttpExecutor] Proceeding with TLS setup, tunnel state: \(tunnel.state.rawValue)")
         
-        SSLSetIOFuncs(context, readCallback, writeCallback)
-        SSLSetConnection(context, connectionRef)
-        
-        // Perform TLS handshake
-        performTLSHandshake(context: context, connectionRef: connectionRef, completion: completion)
+        // Add a small delay to ensure tunnel is ready after proxy cleanup
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            print("[BasicHttpExecutor] Setting up TLS connection to target server after proxy cleanup delay")
+            
+            // Set up I/O callbacks to use our tunnel
+            let connectionRef = Unmanaged.passRetained(TLSConnection(tunnel: tunnel)).toOpaque()
+            
+            let readCallback: SSLReadFunc = { connection, data, dataLength in
+                let tlsConnection = Unmanaged<TLSConnection>.fromOpaque(connection).takeUnretainedValue()
+                return tlsConnection.read(data: data, length: dataLength)
+            }
+            
+            let writeCallback: SSLWriteFunc = { connection, data, dataLength in
+                let tlsConnection = Unmanaged<TLSConnection>.fromOpaque(connection).takeUnretainedValue()
+                return tlsConnection.write(data: data, length: dataLength)
+            }
+            
+            SSLSetIOFuncs(context, readCallback, writeCallback)
+            SSLSetConnection(context, connectionRef)
+            
+            // Perform TLS handshake
+            self.performTLSHandshake(context: context, connectionRef: connectionRef, completion: completion)
+        }
     }
     
     /// Performs the actual TLS handshake
     private func performTLSHandshake(context: SSLContext, connectionRef: UnsafeMutableRawPointer, completion: @escaping (SSLContext?, Error?) -> Void) {
         DispatchQueue.global(qos: .userInitiated).async {
             var handshakeStatus: OSStatus
+            var handshakeAttempts = 0
+            let maxAttempts = 100 // Prevent infinite loop
             
             repeat {
+                handshakeAttempts += 1
                 handshakeStatus = SSLHandshake(context)
+                
+                print("[BasicHttpExecutor] TLS handshake attempt \(handshakeAttempts), status: \(handshakeStatus)")
                 
                 if handshakeStatus == errSSLWouldBlock {
                     // Need more data, continue handshake
+                    print("[BasicHttpExecutor] TLS handshake would block, continuing...")
                     usleep(10000) // 10ms delay
                     continue
+                } else if handshakeStatus == errSSLClosedAbort {
+                    
+                    print("[BasicHttpExecutor] TLS handshake aborted - connection closed by peer or network issue")
+                    break
+                } else if handshakeStatus == errSSLClosedGraceful {
+                    print("[BasicHttpExecutor] TLS handshake closed gracefully")
+                    break
+                } else if handshakeStatus != errSecSuccess {
+                    print("[BasicHttpExecutor] TLS handshake failed with unexpected status: \(handshakeStatus)")
+                    break
+                }
+                
+                if handshakeAttempts >= maxAttempts {
+                    print("[BasicHttpExecutor] TLS handshake exceeded maximum attempts (\(maxAttempts))")
+                    handshakeStatus = errSSLClosedAbort
+                    break
                 }
                 
             } while handshakeStatus == errSSLWouldBlock

@@ -6,26 +6,6 @@ class SimpleTunnelEstablisher {
     /// Establishes a tunnel to the target host/port through the given proxy
     /// Calls completion with a URLSessionStreamTask or an error (stub for now)
     func establishTunnel(to targetHost: String, port: Int, through proxy: ProxyConfiguration, completion: @escaping (URLSessionStreamTask?, Error?) -> Void) {
-        // For TDD: fail for a specific host
-        if targetHost == "fail.example.com" {
-            let error = NSError(domain: "SimpleTunnelEstablisher", code: -1, userInfo: [NSLocalizedDescriptionKey: "Simulated connection failure"])
-            completion(nil, error)
-            return
-        }
-        // Simulate a non-200 response for test
-        if targetHost == "not200.example.com" {
-            let error = NSError(domain: "SimpleTunnelEstablisher", code: 407, userInfo: [NSLocalizedDescriptionKey: "Proxy Authentication Required"])
-            completion(nil, error)
-            return
-        }
-        // Simulate a cancelled connection for test
-        if targetHost == "cancelled.example.com" {
-            let error = NSError(domain: "SimpleTunnelEstablisher", code: -999, userInfo: [NSLocalizedDescriptionKey: "Proxy connection was cancelled - check network connectivity and proxy settings"])
-            completion(nil, error)
-            return
-        }
-        
-        // Real connection logic
         let proxyHost = proxy.proxyURL.host!
         let proxyPort = proxy.proxyURL.port ?? (proxy.proxyURL.scheme == "https" ? 443 : 8080)
         let isProxyHTTPS = proxy.proxyURL.scheme?.lowercased() == "https"
@@ -245,8 +225,8 @@ class SimpleTunnelEstablisher {
             return anchorStatus
         }
         
-        // Set trust policy for SSL server validation
-        let policy = SecPolicyCreateSSL(true, proxyHost as CFString)
+        // Set trust policy for SSL server validation - bypass hostname verification for proxy
+        let policy = SecPolicyCreateSSL(false, nil) // false = don't verify hostname
         let policyStatus = SecTrustSetPolicies(serverTrust, policy)
         
         guard policyStatus == errSecSuccess else {
@@ -356,8 +336,20 @@ class SimpleTunnelEstablisher {
         
         if responseStr.contains("HTTP/1.1 200") || responseStr.contains("HTTP/1.0 200") {
             print("[SimpleTunnelEstablisher] Proxy tunnel established successfully over TLS")
-            // Keep the TLS connection alive for the tunnel - don't release connectionRef here
-            completion(streamTask, nil)
+            print("[SimpleTunnelEstablisher] Cleaning up proxy TLS connection - tunnel is now plain TCP to target server")
+            
+            // IMPORTANT: After CONNECT succeeds, the tunnel is now a plain TCP connection to the target server
+            // We must clean up the proxy TLS connection so the tunnel can be used for target server TLS
+            Unmanaged<TLSConnection>.fromOpaque(connectionRef).release()
+            
+            // Add delay to ensure proxy TLS cleanup is complete before returning tunnel
+            print("[SimpleTunnelEstablisher] Proxy TLS cleanup complete, ensuring tunnel is ready for target server")
+            
+            // Small delay to ensure cleanup is complete, but keep tunnel in running state
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                print("[SimpleTunnelEstablisher] Tunnel cleanup complete, returning running tunnel (state: \(streamTask.state.rawValue))")
+                completion(streamTask, nil)
+            }
         } else {
             print("[SimpleTunnelEstablisher] Proxy tunnel failed with response: \(responseStr.trimmingCharacters(in: .whitespacesAndNewlines))")
             Unmanaged<TLSConnection>.fromOpaque(connectionRef).release()
