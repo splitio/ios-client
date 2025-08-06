@@ -1,4 +1,5 @@
 import Foundation
+import Security
 
 /// TLS connection wrapper that bridges Security framework with URLSessionStreamTask
 class TLSConnection {
@@ -231,6 +232,8 @@ class BasicHttpExecutor {
             
             SSLSetIOFuncs(context, readCallback, writeCallback)
             SSLSetConnection(context, connectionRef)
+                // Ask SSL to break after server authentication so we can inspect the certificate chain
+                SSLSetSessionOption(context, .breakOnServerAuth, true)
             
             // Perform TLS handshake
             self.performTLSHandshake(context: context, connectionRef: connectionRef, completion: completion)
@@ -242,7 +245,7 @@ class BasicHttpExecutor {
         DispatchQueue.global(qos: .userInitiated).async {
             var handshakeStatus: OSStatus
             var handshakeAttempts = 0
-            let maxAttempts = 100 // Prevent infinite loop
+            let maxAttempts = 1 // Prevent infinite loop
             
             repeat {
                 handshakeAttempts += 1
@@ -250,6 +253,14 @@ class BasicHttpExecutor {
                 
                 print("[BasicHttpExecutor] TLS handshake attempt \(handshakeAttempts), status: \(handshakeStatus)")
                 
+                // If server auth completed, inspect certificates then resume handshake
+                if handshakeStatus == -9841 {
+                    print("[BasicHttpExecutor] Server authentication completed – inspecting peer certificates")
+                    self.logPeerCertificates(context: context)
+                    // Resume handshake to continue even if certs are expired/untrusted (debug mode)
+                    handshakeStatus = SSLHandshake(context)
+                    print("[BasicHttpExecutor] Resuming TLS handshake, status: \(handshakeStatus)")
+                }
                 if handshakeStatus == errSSLWouldBlock {
                     // Need more data, continue handshake
                     print("[BasicHttpExecutor] TLS handshake would block, continuing...")
@@ -274,6 +285,9 @@ class BasicHttpExecutor {
                 }
                 
             } while handshakeStatus == errSSLWouldBlock
+
+            // Log certificate chain information regardless of handshake outcome
+            self.logPeerCertificates(context: context)
             
             DispatchQueue.main.async {
                 if handshakeStatus == errSecSuccess {
@@ -290,6 +304,25 @@ class BasicHttpExecutor {
         }
     }
     
+    /// Logs peer certificate chain public information for debugging purposes
+    private func logPeerCertificates(context: SSLContext) {
+        var trustOptional: SecTrust?
+        let status = SSLCopyPeerTrust(context, &trustOptional)
+        guard status == errSecSuccess, let trust = trustOptional else {
+            print("[BasicHttpExecutor] Unable to obtain peer trust. Status: \(status)")
+            return
+        }
+        let certCount = SecTrustGetCertificateCount(trust)
+        print("[BasicHttpExecutor] Peer provided \(certCount) certificates:")
+        for index in 0..<certCount {
+            if let cert = SecTrustGetCertificateAtIndex(trust, index) {
+                let subject = SecCertificateCopySubjectSummary(cert) as String? ?? "<unknown>"
+                print("  [Cert \(index)] Subject: \(subject)")
+            }
+        }
+    }
+    
+
     /// Sends HTTP request over TLS-secured tunnel
     private func sendHttpsRequest(url: URL, headers: [String: String], sslContext: SSLContext, completion: @escaping (Data?, Int, Error?) -> Void) {
         // Get the connection reference from SSL context for cleanup
