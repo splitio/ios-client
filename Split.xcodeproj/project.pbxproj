@@ -1083,6 +1083,8 @@
 		C50D2AE32E44121200A79AC6 /* TLSOverTLSTunnelURLSessionBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50D2AE22E44121200A79AC6 /* TLSOverTLSTunnelURLSessionBridge.swift */; };
 		C50D2AE42E44121200A79AC6 /* TLSOverTLSTunnelURLSessionBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50D2AE22E44121200A79AC6 /* TLSOverTLSTunnelURLSessionBridge.swift */; };
 		C50D2AE62E44121F00A79AC6 /* TLSOverTLSTunnelURLSessionBridgeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50D2AE52E44121F00A79AC6 /* TLSOverTLSTunnelURLSessionBridgeTests.swift */; };
+		C50D2AE92E44D81300A79AC6 /* ProxyHttpClientTLSIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50D2AE82E44D81300A79AC6 /* ProxyHttpClientTLSIntegrationTest.swift */; };
+		C50D2AEA2E44D81300A79AC6 /* BasicHttpExecutorTLSIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C50D2AE72E44D81300A79AC6 /* BasicHttpExecutorTLSIntegrationTest.swift */; };
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
 		C526DE4C2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C526DE4B2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift */; };
 		C539CAB62D88C1F10050C732 /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
@@ -1996,6 +1998,8 @@
 		C50D2ADF2E440F3A00A79AC6 /* TLSOverTLSTunnel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSOverTLSTunnel.swift; sourceTree = "<group>"; };
 		C50D2AE22E44121200A79AC6 /* TLSOverTLSTunnelURLSessionBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSOverTLSTunnelURLSessionBridge.swift; sourceTree = "<group>"; };
 		C50D2AE52E44121F00A79AC6 /* TLSOverTLSTunnelURLSessionBridgeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSOverTLSTunnelURLSessionBridgeTests.swift; sourceTree = "<group>"; };
+		C50D2AE72E44D81300A79AC6 /* BasicHttpExecutorTLSIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicHttpExecutorTLSIntegrationTest.swift; sourceTree = "<group>"; };
+		C50D2AE82E44D81300A79AC6 /* ProxyHttpClientTLSIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyHttpClientTLSIntegrationTest.swift; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
 		C526DE4B2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsPropertiesE2ETest.swift; sourceTree = "<group>"; };
 		C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegment.swift; sourceTree = "<group>"; };
@@ -3794,6 +3798,8 @@
 		C5E34ECB2E3BD66400517BD3 /* Proxy */ = {
 			isa = PBXGroup;
 			children = (
+				C50D2AE72E44D81300A79AC6 /* BasicHttpExecutorTLSIntegrationTest.swift */,
+				C50D2AE82E44D81300A79AC6 /* ProxyHttpClientTLSIntegrationTest.swift */,
 				C50D2AE52E44121F00A79AC6 /* TLSOverTLSTunnelURLSessionBridgeTests.swift */,
 				C50D2ADD2E440F1B00A79AC6 /* TLSOverTLSTunnelTests.swift */,
 				C5E34ED52E3BF4C400517BD3 /* ProxyCertificateManagerTests.swift */,
@@ -4485,6 +4491,8 @@
 				9500D9DC2C6278F900383593 /* PersistentMyLargeSegmentsStorageMock.swift in Sources */,
 				954F9B0B2570431900140B81 /* GeneralInfoDaoTests.swift in Sources */,
 				95C8F78E27D00A5E00E118EA /* PersistentMySegmentsStorageTests.swift in Sources */,
+				C50D2AE92E44D81300A79AC6 /* ProxyHttpClientTLSIntegrationTest.swift in Sources */,
+				C50D2AEA2E44D81300A79AC6 /* BasicHttpExecutorTLSIntegrationTest.swift in Sources */,
 				955E12452BFE758F00AE6D10 /* HashedImpressionsStorageTest.swift in Sources */,
 				5959C47E228051040064F968 /* SplitClientStub.swift in Sources */,
 				C5A7D5592DDBD7A30081D190 /* OutdatedProxyIntegrationTest.swift in Sources */,

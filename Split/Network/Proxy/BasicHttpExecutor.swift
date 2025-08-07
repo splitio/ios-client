@@ -115,6 +115,61 @@ class TLSConnection {
 
 /// Minimal HTTP executor for requests through a proxy tunnel
 class BasicHttpExecutor {
+    
+    // MARK: - TLS Integration Properties
+    
+    /// TLS tunnel bridge for Network.framework integration
+    private var tlsTunnelBridge: TLSOverTLSTunnelURLSessionBridge?
+    
+    /// Indicates whether Network.framework TLS is being used instead of Security framework
+    private var _usesNetworkFrameworkTLS: Bool = false
+    
+    /// Public getter for TLS framework being used
+    var usesNetworkFrameworkTLS: Bool {
+        return _usesNetworkFrameworkTLS
+    }
+    
+    /// Public getter for deprecated Security framework usage
+    var usesSecurityFrameworkSSL: Bool {
+        return !_usesNetworkFrameworkTLS
+    }
+    
+    // MARK: - TLS Integration Methods
+    
+    /// Configures the executor to use TLS-over-TLS tunnel instead of Security framework
+    /// - Parameters:
+    ///   - bridge: The TLS tunnel bridge to use for Network.framework integration
+    ///   - completion: Called with success/failure of configuration
+    func configureTLSTunnel(_ bridge: TLSOverTLSTunnelURLSessionBridge, completion: @escaping (Bool) -> Void) {
+        self.tlsTunnelBridge = bridge
+        self._usesNetworkFrameworkTLS = true
+        
+        print("[BasicHttpExecutor] Configured to use Network.framework TLS tunnel instead of Security framework")
+        completion(true)
+    }
+    
+    /// Executes an HTTPS request using the configured TLS tunnel (Network.framework)
+    /// - Parameters:
+    ///   - url: The HTTPS URL to request
+    ///   - headers: HTTP headers to include
+    ///   - completion: Called with response data, status code, and error
+    func executeHTTPSRequestWithTunnel(url: URL, headers: [String: String], completion: @escaping (Data?, Int, Error?) -> Void) {
+        guard let bridge = tlsTunnelBridge else {
+            let error = NSError(domain: "BasicHttpExecutor", code: -200, userInfo: [NSLocalizedDescriptionKey: "TLS tunnel bridge not configured. Call configureTLSTunnel first."])
+            completion(nil, 0, error)
+            return
+        }
+        
+        print("[BasicHttpExecutor] Executing HTTPS request via Network.framework TLS tunnel")
+        print("[BasicHttpExecutor] URL: \(url.absoluteString)")
+        
+        // Use the bridge to execute the request through the TLS-over-TLS tunnel
+        bridge.executeRequest(url: url, headers: headers) { data, response, error in
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+            completion(data, statusCode, error)
+        }
+    }
+    
     /// Executes a GET request through the given tunnel
     /// Calls completion with response data, status code, or error
     func executeRequest(url: URL, headers: [String: String], through tunnel: URLSessionStreamTask, completion: @escaping (Data?, Int, Error?) -> Void) {
@@ -128,6 +183,19 @@ class BasicHttpExecutor {
     
     /// Executes an HTTPS request through the tunnel with TLS
     private func executeHttpsRequest(url: URL, headers: [String: String], through tunnel: URLSessionStreamTask, completion: @escaping (Data?, Int, Error?) -> Void) {
+        
+        // If TLS tunnel bridge is configured, use Network.framework approach
+        if _usesNetworkFrameworkTLS, let bridge = tlsTunnelBridge {
+            print("[BasicHttpExecutor] Using Network.framework TLS tunnel for HTTPS request")
+            bridge.executeRequest(url: url, headers: headers) { data, response, error in
+                let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+                completion(data, statusCode, error)
+            }
+            return
+        }
+        
+        // Fallback to deprecated Security framework approach (will cause -9806 errors)
+        print("[BasicHttpExecutor] WARNING: Using deprecated Security framework TLS - this may cause -9806 errors")
         print("[BasicHttpExecutor] HTTPS request detected, establishing TLS connection over tunnel")
         
         // Create TLS context for the connection

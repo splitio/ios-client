@@ -3,8 +3,7 @@ import Network
 
 /// URLSession bridge that integrates TLSOverTLSTunnel with existing HTTP client architecture
 /// This bridge allows seamless integration with BasicHttpExecutor and other URLSession-based components
-@available(iOS 12.0, *)
-class TLSOverTLSTunnelURLSessionBridge {
+internal class TLSOverTLSTunnelURLSessionBridge {
     
     // MARK: - Configuration Types
     
@@ -234,7 +233,6 @@ class TLSOverTLSTunnelURLSessionBridge {
 
 // MARK: - Target Configuration Access
 
-@available(iOS 12.0, *)
 extension TLSOverTLSTunnelURLSessionBridge {
     /// Provides access to target configuration for bridge consumers
     var targetConfig: TLSOverTLSTunnel.TargetConfig {

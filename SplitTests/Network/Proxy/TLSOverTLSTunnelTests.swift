@@ -2,7 +2,6 @@ import XCTest
 import Network
 @testable import Split
 
-@available(iOS 12.0, *)
 class TLSOverTLSTunnelTests: XCTestCase {
     
     // MARK: - Phase 1: Basic Tunnel Creation Tests

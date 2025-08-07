@@ -4,7 +4,6 @@ import Security
 
 /// A TLS-over-TLS tunnel implementation using Network.framework
 /// Establishes dual TLS connections: proxy TLS → target TLS
-@available(iOS 12.0, *)
 class TLSOverTLSTunnel: NSObject {
     
     // MARK: - Configuration Types

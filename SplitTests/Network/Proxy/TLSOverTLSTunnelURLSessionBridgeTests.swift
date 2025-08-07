@@ -2,7 +2,6 @@ import XCTest
 import Network
 @testable import Split
 
-@available(iOS 12.0, *)
 class TLSOverTLSTunnelURLSessionBridgeTests: XCTestCase {
     
     // MARK: - Phase 4: URLSession Integration Tests
