@@ -73,18 +73,18 @@ class GenericBlockingQueue<Item> {
 
 // Protocol to allow mocking
 protocol InternalEventBlockingQueue {
-    func add(_ item: SplitInternalEvent)
-    func take() throws -> SplitInternalEvent
+    func add(_ item: SplitInternalEventWithMetadata)
+    func take() throws -> SplitInternalEventWithMetadata
     func stop()
 }
 
 class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
-    let blockingQueue = GenericBlockingQueue<SplitInternalEvent>()
-    func add(_ item: SplitInternalEvent) {
+    let blockingQueue = GenericBlockingQueue<SplitInternalEventWithMetadata>()
+    func add(_ item: SplitInternalEventWithMetadata) {
         blockingQueue.add(item)
     }
 
-    func take() throws -> SplitInternalEvent {
+    func take() throws -> SplitInternalEventWithMetadata {
         let value =  try blockingQueue.take()
         return value
     }

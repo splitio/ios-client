@@ -225,7 +225,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
             if result.success {
                 if  result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
-                    notifyUpdate([.mySegmentsUpdated])
+                    notifyUpdate([.mySegmentsUpdated(nil)])
                 }
             }
         } catch {

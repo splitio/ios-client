@@ -179,7 +179,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     func isTriggered(external event: SplitEvent) -> Bool {
         var triggered = false
         dataAccessQueue.sync {
-            if let times = executionTimes[event.toString()] {
+            if let times = executionTimes[event] {
                 triggered =  (times == 0)
             } else {
                 triggered = false
