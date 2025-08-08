@@ -10,7 +10,9 @@ import Foundation
 class SplitEventActionTask: SplitEventTask {
 
     private var eventHandler: SplitAction?
+    private var eventHandlerWithMetadata: SplitActionWithMetadata?
     private var queue: DispatchQueue?
+    
     var event: SplitEvent
     var runInBackground: Bool = false
     var factory: SplitFactory
@@ -33,7 +35,9 @@ class SplitEventActionTask: SplitEventTask {
         return queue
     }
 
-    func run() {
-        eventHandler?()
+    func run(_ metadata: EventMetadata?) {
+        if let metadata = metadata {
+            eventHandlerWithMetadata?(metadata)
+        }
     }
 }
