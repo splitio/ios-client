@@ -89,7 +89,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 self.executeTask(event: event, task: task)
                 return
             }
-            self.subscribe(task: task, to: event)
+            self.subscribe(task: task, to: event.type)
         }
     }
 
@@ -166,7 +166,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             guard let event = takeEvent() else {
                 return
             }
-            triggered.append(event.type)
+            triggered.append(event)
             switch event.type {
                 case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
                     if isTriggered(external: .sdkReady) {
@@ -225,8 +225,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
     
-    private func trigger(event: SplitInternalEvent) {
-        let eventName = event.type.toString()
+    private func trigger(event: SplitEvent) {
+        let eventName = event.toString()
 
         // If executionTimes is zero, maximum executions has been reached
         if executionTimes(for: eventName) == 0 {
@@ -245,6 +245,10 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 executeTask(event: event, task: task)
             }
         }
+    }
+    
+    private func executeTask(event: SplitEvent, task: SplitEventTask) {
+        executeTask(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
     }
 
     private func executeTask(event: SplitEventWithMetadata, task: SplitEventTask) {
