@@ -88,15 +88,24 @@ extension DefaultSplitClient {
         task.event = event
         on(event: event, executeTask: task)
     }
+    
+    private func onWithMetadata(event: SplitEventWithMetadata, runInBackground: Bool, queue: DispatchQueue?, execute actionWithMetadata: @escaping SplitActionWithMetadata) {
+        guard let factory = clientManager?.splitFactory else { return }
+        let task = SplitEventActionTask(action: actionWithMetadata, event: event.type, runInBackground: runInBackground, factory: factory, queue: queue)
+        on(event: event.type, executeTask: task)
+    }
 
-    private func on(event: SplitEvent, executeTask task: SplitEventTask) {
-        if  event != .sdkReadyFromCache,
-            eventsManager.eventAlreadyTriggered(event: event) {
-            Logger.w("A handler was added for \(event.toString()) on the SDK, " +
-                     "which has already fired and won’t be emitted again. The callback won’t be executed.")
+    public func on(event: SplitEvent, executeWithMetadata action: SplitActionWithMetadata?) {
+        guard let action = action else { return }
+        onWithMetadata(event: SplitEventWithMetadata(type: event, metadata: nil), runInBackground: true, queue: nil, execute: action)
+    }
+
+    private func on(event: SplitEvent, executeTask task: SplitEventActionTask) {
+        if  event != .sdkReadyFromCache, eventsManager.eventAlreadyTriggered(event: event) {
+            Logger.w("A handler was added for \(event.toString()) on the SDK, which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }
-        eventsManager.register(event: event, task: task)
+        eventsManager.register(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
     }
 }
 

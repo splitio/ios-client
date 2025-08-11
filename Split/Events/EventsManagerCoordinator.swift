@@ -14,6 +14,7 @@ protocol SplitEventsManagerCoordinator: SplitEventsManager {
 }
 
 class MainSplitEventsManager: SplitEventsManagerCoordinator {
+    
     private var defaultManager: SplitEventsManager?
     private var managers = [Key: SplitEventsManager]()
     private var triggered = Set<SplitInternalEvent>()
@@ -82,4 +83,6 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
     }
 
     func register(event: SplitEvent, task: SplitEventTask) {}
+    
+    func register(event: SplitEventWithMetadata, task: any SplitEventTask) {}
 }

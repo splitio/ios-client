@@ -57,6 +57,10 @@ class SplitEventsManagerMock: SplitEventsManager {
         registeredEvents[event] = task
     }
     
+    func register(event: SplitEventWithMetadata, task: any SplitEventTask) {
+        registeredEvents[event.type] = task
+    }
+    
     func start() {
     }
 

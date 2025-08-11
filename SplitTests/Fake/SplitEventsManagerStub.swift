@@ -43,6 +43,10 @@ class SplitEventsManagerStub: SplitEventsManager {
     func register(event: SplitEvent, task: SplitEventTask) {
         registeredEvents[event] = task
     }
+    
+    func register(event: SplitEventWithMetadata, task: SplitEventTask) {
+        registeredEvents[event.type] = task
+    }
 
     func start() {
         startCalled = true

@@ -10,6 +10,7 @@ import Foundation
 
 protocol SplitEventsManager: AnyObject {
     func register(event: SplitEvent, task: SplitEventTask)
+    func register(event: SplitEventWithMetadata, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
     func start()
     func stop()
@@ -59,25 +60,11 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
     
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        processQueue.async { [weak self] in
-            if let self = self {
-                Logger.v("Event \(event) notified")
-                self.eventsQueue.add(SplitInternalEventWithMetadata(event, metadata: nil))
-            }
-        }
+        notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
     }
 
     func register(event: SplitEvent, task: SplitEventTask) {
-        let eventName = event.toString()
-        processQueue.async { [weak self] in
-            guard let self = self else { return }
-            // If event is already triggered, execute the task
-            if let times = self.executionTimes(for: eventName), times == 0 {
-                self.executeTask(event: event, task: task)
-                return
-            }
-            self.subscribe(task: task, to: event)
-        }
+        register(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
     }
     
     func register(event: SplitEventWithMetadata, task: SplitEventTask) {
@@ -170,7 +157,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             switch event.type {
                 case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
                     if isTriggered(external: .sdkReady) {
-                        trigger(event: .sdkUpdated)
+                        trigger(event: SplitEventWithMetadata(type: .sdkUpdated, metadata: event.metadata))
                         continue
                     }
                     triggerSdkReadyIfNeeded()
@@ -226,7 +213,11 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
     
     private func trigger(event: SplitEvent) {
-        let eventName = event.toString()
+        trigger(event: SplitEventWithMetadata(type: event, metadata: nil))
+    }
+    
+    private func trigger(event: SplitEventWithMetadata) {
+        let eventName = event.type.toString()
 
         // If executionTimes is zero, maximum executions has been reached
         if executionTimes(for: eventName) == 0 {
@@ -240,7 +231,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
         Logger.d("Triggering SDK event \(eventName)")
         // If executionTimes is lower than zero, execute it without limitation
-        if let subscriptions = getSubscriptions(for: event) {
+        if let subscriptions = getSubscriptions(for: event.type) {
             for task in subscriptions {
                 executeTask(event: event, task: task)
             }

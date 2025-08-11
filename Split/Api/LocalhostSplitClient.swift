@@ -146,6 +146,10 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
             eventsManager.register(event: event, task: task)
         }
     }
+    
+    public func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {
+        
+    }
 
     public func track(trafficType: String, eventType: String) -> Bool {
         return true

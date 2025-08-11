@@ -35,6 +35,7 @@ public typealias SplitActionWithMetadata = (EventMetadata) -> Void
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
 
     func on(event: SplitEvent, execute action: @escaping SplitAction)
+    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata)
     func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
 
