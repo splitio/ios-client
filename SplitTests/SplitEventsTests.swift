@@ -5,7 +5,7 @@ import XCTest
 
 class SplitEventsTests {
     func testSplitInternalEventsWithMetadata() {
-        let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
+        var event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
         XCTAssertEqual(event.metadata!.type.toString(), "FEATURE_FLAGS_SYNC_ERROR")
         event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: EventMetadata(type: .SEGMENTS_SYNC_ERROR, data: []))
         XCTAssertEqual(event.metadata!.type.toString(), "SEGMENTS_SYNC_ERROR")
