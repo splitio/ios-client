@@ -60,7 +60,9 @@ class BlockingQueueTest: XCTestCase {
             while true {
                 do {
                     let event = try queue.take()
-                    local.append(event.type)
+                    local.append(event)
+                } catch BlockingQueueError.noElementAvailable {
+                    continue
                 } catch {
                     endExp.fulfill()
                     interrupted = true
@@ -200,6 +202,21 @@ class BlockingQueueTest: XCTestCase {
         }
 
         wait(for: [endExp], timeout: 50)
+    }
+
+    func testCallingTakeOnEmptyQueueThrowsNoElementAvailable() {
+        let endExp = XCTestExpectation()
+        let queue = DefaultInternalEventBlockingQueue()
+
+        do {
+            _ = try queue.take()
+        } catch BlockingQueueError.noElementAvailable {
+            endExp.fulfill()
+        } catch {
+            XCTFail()
+        }
+
+        self.wait(for: [endExp], timeout: 1)
     }
 }
 
