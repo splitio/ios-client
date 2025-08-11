@@ -39,7 +39,6 @@ enum EventMetadataType: Int {
                 return "FEATURE_FLAGS_SYNC_ERROR"
             case .SEGMENTS_SYNC_ERROR:
                 return "SEGMENTS_SYNC_ERROR"
-            
         }
     }
 }
