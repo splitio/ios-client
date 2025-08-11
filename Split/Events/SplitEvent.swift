@@ -15,11 +15,6 @@ import Foundation
         self.type = type
         self.metadata = metadata
     }
-    
-    public override func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? SplitEventWithMetadata else { return false }
-        return self.type == other.type
-    }
 }
 
 @objc public enum SplitEvent: Int {
