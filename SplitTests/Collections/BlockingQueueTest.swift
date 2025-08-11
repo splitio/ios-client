@@ -34,9 +34,9 @@ class BlockingQueueTest: XCTestCase {
             }
         }
         globalQ.asyncAfter(deadline: .now() + 1) {
-            queue.add(SplitInternalEvent.mySegmentsLoadedFromCache)
+            queue.add(.mySegmentsLoadedFromCache)
             globalQ.asyncAfter(deadline: .now() + 1) {
-                queue.add(SplitInternalEvent.splitsLoadedFromCache)
+                queue.add(.splitsLoadedFromCache)
             }
         }
 

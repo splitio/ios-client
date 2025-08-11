@@ -45,7 +45,7 @@ class SplitClientTests: XCTestCase {
         }
 
         for event in events {
-            guard let task = eventsManager.registeredEvents[event] else {
+            guard let task = eventsManager.registeredEvents[SplitEventWithMetadata(type: event, metadata: nil)] else {
                 XCTAssertTrue(false)
                 continue
             }
@@ -61,7 +61,7 @@ class SplitClientTests: XCTestCase {
         }
 
         for event in events {
-            guard let task = eventsManager.registeredEvents[event] else {
+            guard let task = eventsManager.registeredEvents[SplitEventWithMetadata(type: event, metadata: nil)] else {
                 XCTAssertTrue(false)
                 continue
             }
@@ -77,7 +77,7 @@ class SplitClientTests: XCTestCase {
         }
 
         for event in events {
-            guard let task = eventsManager.registeredEvents[event] else {
+            guard let task = eventsManager.registeredEvents[SplitEventWithMetadata(type: event, metadata: nil)] else {
                 XCTAssertTrue(false)
                 continue
             }

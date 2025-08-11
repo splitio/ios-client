@@ -81,12 +81,12 @@ protocol InternalEventBlockingQueue {
 class DefaultInternalEventBlockingQueue: InternalEventBlockingQueue {
     let blockingQueue = GenericBlockingQueue<SplitInternalEventWithMetadata>()
     
-    func add(_ item: SplitInternalEvent) {
-        blockingQueue.add(SplitInternalEventWithMetadata(item, metadata: nil))
-    }
-    
     func add(_ item: SplitInternalEventWithMetadata) {
         blockingQueue.add(item)
+    }
+    
+    func add(_ item: SplitInternalEvent) {
+        blockingQueue.add(SplitInternalEventWithMetadata(item, metadata: nil))
     }
 
     func take() throws -> SplitInternalEventWithMetadata {
