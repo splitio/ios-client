@@ -227,8 +227,6 @@ class IntegrationHelper {
                 return "myLargeSegmentsUpdated"
             case .myLargeSegmentsLoadedFromCache:
                 return "myLargeSegmentsLoadedFromCache"
-            case .sdkError:
-                return "sdkError"
         }
     }
 

@@ -22,8 +22,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
     private let eventsToHandle: Set<SplitInternalEvent> = Set(
         [.splitsLoadedFromCache,
         .splitsUpdated,
-        .splitKilledNotification,
-        .sdkError]
+        .splitKilledNotification]
     )
     
     func notifyInternalEvent(_ event: SplitInternalEvent) {

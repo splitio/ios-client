@@ -54,5 +54,4 @@ enum SplitInternalEvent {
     case attributesLoadedFromCache
     case sdkReadyTimeoutReached
     case splitKilledNotification
-    case sdkError
 }
