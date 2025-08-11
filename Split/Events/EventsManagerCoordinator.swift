@@ -83,5 +83,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
 
     func register(event: SplitEvent, task: SplitEventTask) {}
     
-    func register(event: SplitEventWithMetadata, task: any SplitEventTask) {}
+    func register(event: SplitEventWithMetadata, task: any SplitEventTask) {
+        /* Intentionally unimplemented */
+    }
 }
