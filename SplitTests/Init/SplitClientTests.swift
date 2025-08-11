@@ -70,6 +70,42 @@ class SplitClientTests: XCTestCase {
             XCTAssertNil(task.takeQueue())
         }
     }
+    
+    func testOnBgWithMetadata() {
+        for event in events {
+            client.on(event: event, executeWithMetadata: { metadata in
+                print("Metadata: \(metadata.data)")
+            })
+        }
+
+        for event in events {
+            guard let task = eventsManager.registeredEvents.first(where: { $0.key.type == event })?.value else {
+                XCTAssertTrue(false)
+                continue
+            }
+
+            XCTAssertEqual(true, task.runInBackground)
+            XCTAssertNil(task.takeQueue())
+        }
+    }
+    
+    func testOnMainWithMetadata() {
+        for event in events {
+            client.on(event: event, runInBackground: false) { metadata in
+                print("Metadata: \(metadata.data)")
+            }
+        }
+
+        for event in events {
+            guard let task = eventsManager.registeredEvents.first(where: { $0.key.type == event })?.value else {
+                XCTAssertTrue(false)
+                continue
+            }
+
+            XCTAssertEqual(false, task.runInBackground)
+            XCTAssertNil(task.takeQueue())
+        }
+    }
 
     func testOnQueue() {
         for event in events {

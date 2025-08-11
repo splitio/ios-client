@@ -34,10 +34,15 @@ public typealias SplitActionWithMetadata = (EventMetadata) -> Void
     @objc(getTreatmentsWithConfigForSplits:attributes:evaluationOptions:)
     func getTreatmentsWithConfig(splits: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult]
 
+    
+    // MARK: Events Listeners
     func on(event: SplitEvent, execute action: @escaping SplitAction)
-    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata)
     func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
+    
+    func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata)
+    func on(event: SplitEvent, runInBackground: Bool, executeWithMetadata: @escaping SplitActionWithMetadata)
+    func on(event: SplitEvent, queue: DispatchQueue, action: @escaping SplitActionWithMetadata)
 
     // MARK: Track feature
     func track(trafficType: String, eventType: String) -> Bool

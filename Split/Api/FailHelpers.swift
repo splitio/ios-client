@@ -66,7 +66,15 @@ class FailedClient: SplitClient {
     }
     
     func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {
-        
+        /* Intentionally unimplemented */
+    }
+    
+    func on(event: SplitEvent, runInBackground: Bool, executeWithMetadata: @escaping SplitActionWithMetadata) {
+        /* Intentionally unimplemented */
+    }
+    
+    func on(event: SplitEvent, queue: DispatchQueue, action: @escaping SplitActionWithMetadata) {
+        /* Intentionally unimplemented */
     }
 
     func track(trafficType: String, eventType: String) -> Bool {
