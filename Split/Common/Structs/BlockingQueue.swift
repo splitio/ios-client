@@ -39,7 +39,7 @@ class GenericBlockingQueue<Item> {
         var item: Item?
         // Checks if stopped before waiting
         try checkIfStopped()
-        self.semaphore.wait()
+        self.semaphore.wait(timeout: .now() + .milliseconds(100))
         try dispatchQueue.sync(flags: .barrier) {
             // Checks if thread was awaked by stop or interruption
             try checkIfStopped()

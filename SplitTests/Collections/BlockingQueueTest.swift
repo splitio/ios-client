@@ -201,5 +201,20 @@ class BlockingQueueTest: XCTestCase {
 
         wait(for: [endExp], timeout: 50)
     }
+
+    func testCallingTakeOnEmptyQueueThrowsNoElementAvailable() {
+        let endExp = XCTestExpectation()
+        let queue = DefaultInternalEventBlockingQueue()
+
+        do {
+            _ = try queue.take()
+        } catch BlockingQueueError.noElementAvailable {
+            endExp.fulfill()
+        } catch {
+            XCTFail()
+        }
+
+        self.wait(for: [endExp], timeout: 1)
+    }
 }
 
