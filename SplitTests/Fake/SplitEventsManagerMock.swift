@@ -52,13 +52,13 @@ class SplitEventsManagerMock: SplitEventsManager {
         }
     }
 
-    var registeredEvents = [SplitEvent: SplitEventTask]()
     func register(event: SplitEvent, task: SplitEventTask) {
-        registeredEvents[event] = task
+        register(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
     }
-    
-    func register(event: SplitEventWithMetadata, task: any SplitEventTask) {
-        registeredEvents[event.type] = task
+
+    var registeredEvents = [SplitEventWithMetadata: SplitEventTask]()
+    func register(event: SplitEventWithMetadata, task: SplitEventTask) {
+        registeredEvents[event] = task
     }
     
     func start() {
