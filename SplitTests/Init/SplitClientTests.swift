@@ -122,6 +122,21 @@ class SplitClientTests: XCTestCase {
             XCTAssertNotNil(task.takeQueue())
         }
     }
+            
+    func testOnQueueWithMetadata() {
+        for event in events {
+            client.on(event: event, queue: DispatchQueue(label: "queuemetadata1"), action: { _ in print("exec")})
+        }
+
+        for event in events {
+            guard let task = eventsManager.registeredEvents.first(where: { $0.key.type == event })?.value else {
+                XCTAssertTrue(false)
+                continue
+            }
+
+            XCTAssertNotNil(task.takeQueue())
+        }
+    }
     
     func testGetTreatmentWithEvaluationOptions() {
         testEvaluationOptionsPassedCorrectly(
