@@ -17,17 +17,13 @@ struct SplitInternalEventWithMetadata {
         self.type = type
         self.metadata = metadata
     }
-    
-    static func == (lhs: SplitInternalEventWithMetadata, rhs: SplitInternalEventWithMetadata) -> Bool {
-        return lhs.type == rhs.type
-    }
 }
 
 @objc public class EventMetadata: NSObject {
     var type: EventMetadataType
-    var data: String = ""
+    var data: [String] = []
     
-    init(type: EventMetadataType, data: String) {
+    init(type: EventMetadataType, data: [String] = []) {
         self.type = type
         self.data = data
     }

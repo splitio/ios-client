@@ -299,7 +299,7 @@ class SplitEventsManagerTest: XCTestCase {
     func testEventWithMetadata() {
          
         let taskExp = XCTestExpectation()
-        let data = "TEST_DATA_123456"
+        let data = ["TEST_DATA_123456"]
          
         // Build Task
         let metadata = EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: data)
