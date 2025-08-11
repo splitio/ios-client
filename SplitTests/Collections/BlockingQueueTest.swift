@@ -61,6 +61,8 @@ class BlockingQueueTest: XCTestCase {
                 do {
                     let event = try queue.take()
                     local.append(event)
+                } catch BlockingQueueError.noElementAvailable {
+                    continue
                 } catch {
                     endExp.fulfill()
                     interrupted = true
