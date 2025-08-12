@@ -10,6 +10,7 @@ import Foundation
 
 protocol SplitEventsManager: AnyObject {
     func register(event: SplitEvent, task: SplitEventTask)
+    func register(event: SplitEventWithMetadata, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
     func start()
     func stop()
@@ -23,7 +24,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
     private var subscriptions = [SplitEvent: [SplitEventTask]]()
     private var executionTimes: [String: Int]
-    private var triggered: [SplitInternalEvent]
+    private var triggered: [SplitInternalEventWithMetadata]
     private let processQueue: DispatchQueue
     private let dataAccessQueue: DispatchQueue
     private var isStarted: Bool
@@ -35,7 +36,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         self.isStarted = false
         self.sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
         self.readingRefreshTime = 300
-        self.triggered = [SplitInternalEvent]()
+        self.triggered = [SplitInternalEventWithMetadata]()
         self.eventsQueue = DefaultInternalEventBlockingQueue()
         self.executionTimes = [String: Int]()
         registerMaxAllowedExecutionTimesPerEvent()
@@ -49,17 +50,25 @@ class DefaultSplitEventsManager: SplitEventsManager {
         }
     }
 
-    func notifyInternalEvent(_ event: SplitInternalEvent) {
+    func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {
         processQueue.async { [weak self] in
             if let self = self {
-                Logger.v("Event \(event) notified")
+                Logger.v("Event \(event.type) notified")
                 self.eventsQueue.add(event)
             }
         }
     }
+    
+    func notifyInternalEvent(_ event: SplitInternalEvent) {
+        notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
+    }
 
     func register(event: SplitEvent, task: SplitEventTask) {
-        let eventName = event.toString()
+        register(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
+    }
+    
+    func register(event: SplitEventWithMetadata, task: SplitEventTask) {
+        let eventName = event.type.toString()
         processQueue.async { [weak self] in
             guard let self = self else { return }
             // If event is already triggered, execute the task
@@ -67,7 +76,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 self.executeTask(event: event, task: task)
                 return
             }
-            self.subscribe(task: task, to: event)
+            self.subscribe(task: task, to: event.type)
         }
     }
 
@@ -128,7 +137,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         return isRunning
     }
 
-    private func takeEvent() -> SplitInternalEvent? {
+    private func takeEvent() -> SplitInternalEventWithMetadata? {
         do {
             return try eventsQueue.take()
         } catch BlockingQueueError.hasBeenStopped {
@@ -146,38 +155,37 @@ class DefaultSplitEventsManager: SplitEventsManager {
             guard let event = takeEvent() else {
                 continue
             }
-            self.triggered.append(event)
-            switch event {
-            case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
-                if isTriggered(external: .sdkReady) {
-                    trigger(event: .sdkUpdated)
-                    continue
-                }
-                self.triggerSdkReadyIfNeeded()
+            triggered.append(event)
+            switch event.type {
+                case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
+                    if isTriggered(external: .sdkReady) {
+                        trigger(event: SplitEventWithMetadata(type: .sdkUpdated, metadata: event.metadata))
+                        continue
+                    }
+                    triggerSdkReadyIfNeeded()
 
-            case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache,
-                    .splitsLoadedFromCache, .attributesLoadedFromCache:
-                Logger.v("Event \(event) triggered")
-                if isTriggered(internal: .splitsLoadedFromCache),
-                   isTriggered(internal: .mySegmentsLoadedFromCache),
-                   isTriggered(internal: .myLargeSegmentsLoadedFromCache),
-                   isTriggered(internal: .attributesLoadedFromCache) {
-                    trigger(event: SplitEvent.sdkReadyFromCache)
-                }
-            case .splitKilledNotification:
-                if isTriggered(external: .sdkReady) {
-                    trigger(event: .sdkUpdated)
-                    continue
-                }
-            case .sdkReadyTimeoutReached:
-                if !isTriggered(external: .sdkReady) {
-                    trigger(event: SplitEvent.sdkReadyTimedOut)
-                }
+                case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache,
+                        .splitsLoadedFromCache, .attributesLoadedFromCache:
+                    Logger.v("Event \(event) triggered")
+                    if isTriggered(internal: .splitsLoadedFromCache),
+                       isTriggered(internal: .mySegmentsLoadedFromCache),
+                       isTriggered(internal: .myLargeSegmentsLoadedFromCache),
+                       isTriggered(internal: .attributesLoadedFromCache) {
+                        trigger(event: .sdkReadyFromCache)
+                    }
+                case .splitKilledNotification:
+                    if isTriggered(external: .sdkReady) {
+                        trigger(event: .sdkUpdated)
+                    }
+                case .sdkReadyTimeoutReached:
+                    if !isTriggered(external: .sdkReady) {
+                        trigger(event: .sdkReadyTimedOut)
+                    }
             }
         }
     }
 
-    // MARK: Helper functions.
+    // MARK: Helper functions
     func isTriggered(external event: SplitEvent) -> Bool {
         var triggered = false
         dataAccessQueue.sync {
@@ -201,9 +209,13 @@ class DefaultSplitEventsManager: SplitEventsManager {
             self.trigger(event: .sdkReady)
         }
     }
-
+    
     private func trigger(event: SplitEvent) {
-        let eventName = event.toString()
+        trigger(event: SplitEventWithMetadata(type: event, metadata: nil))
+    }
+    
+    private func trigger(event: SplitEventWithMetadata) {
+        let eventName = event.type.toString()
 
         // If executionTimes is zero, maximum executions has been reached
         if executionTimes(for: eventName) == 0 {
@@ -217,14 +229,18 @@ class DefaultSplitEventsManager: SplitEventsManager {
 
         Logger.d("Triggering SDK event \(eventName)")
         // If executionTimes is lower than zero, execute it without limitation
-        if let subscriptions = getSubscriptions(for: event) {
+        if let subscriptions = getSubscriptions(for: event.type) {
             for task in subscriptions {
                 executeTask(event: event, task: task)
             }
         }
     }
-
+    
     private func executeTask(event: SplitEvent, task: SplitEventTask) {
+        executeTask(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
+    }
+
+    private func executeTask(event: SplitEventWithMetadata, task: SplitEventTask) {
 
         let eventName = task.event.toString()
 
@@ -234,7 +250,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             let queue = task.takeQueue() ?? DispatchQueue.general
             queue.async {
                 TimeChecker.logInterval("Running \(eventName) in Background queue \(queue)")
-                task.run()
+                task.run(event.metadata)
             }
             return
         }
@@ -242,12 +258,16 @@ class DefaultSplitEventsManager: SplitEventsManager {
         DispatchQueue.main.async {
             TimeChecker.logInterval("Running event on main: \(eventName)")
             // UI Updates
-            task.run()
+            task.run(event.metadata)
         }
     }
-
+    
+    private func isTriggered(internal event: SplitInternalEventWithMetadata) -> Bool {
+        return triggered.filter { $0.type == event.type }.count > 0
+    }
+    
     private func isTriggered(internal event: SplitInternalEvent) -> Bool {
-        return triggered.filter { $0 == event }.count > 0
+        return isTriggered(internal: SplitInternalEventWithMetadata(event, metadata: nil))
     }
 
     // MARK: Safe Data Access

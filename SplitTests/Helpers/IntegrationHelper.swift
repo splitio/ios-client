@@ -209,24 +209,24 @@ class IntegrationHelper {
 
     static func describeEvent(_ event: SplitInternalEvent) -> String {
         switch event {
-        case .mySegmentsUpdated:
-            return "mySegmentsUpdated"
-        case .splitsUpdated:
-            return "splitsUpdated"
-        case .mySegmentsLoadedFromCache:
-            return "mySegmentsLoadedFromCache"
-        case .splitsLoadedFromCache:
-            return "splitsLoadedFromCache"
-        case .attributesLoadedFromCache:
-            return "attributesLoadedFromCache"
-        case .sdkReadyTimeoutReached:
-            return "sdkReadyTimeoutReached"
-        case .splitKilledNotification:
-            return "splitKilledNotification"
-        case .myLargeSegmentsUpdated:
-            return "myLargeSegmentsUpdated"
-        case .myLargeSegmentsLoadedFromCache:
-            return "myLargeSegmentsLoadedFromCache"
+            case .mySegmentsUpdated:
+                return "mySegmentsUpdated"
+            case .splitsUpdated:
+                return "splitsUpdated"
+            case .mySegmentsLoadedFromCache:
+                return "mySegmentsLoadedFromCache"
+            case .splitsLoadedFromCache:
+                return "splitsLoadedFromCache"
+            case .attributesLoadedFromCache:
+                return "attributesLoadedFromCache"
+            case .sdkReadyTimeoutReached:
+                return "sdkReadyTimeoutReached"
+            case .splitKilledNotification:
+                return "splitKilledNotification"
+            case .myLargeSegmentsUpdated:
+                return "myLargeSegmentsUpdated"
+            case .myLargeSegmentsLoadedFromCache:
+                return "myLargeSegmentsLoadedFromCache"
         }
     }
 

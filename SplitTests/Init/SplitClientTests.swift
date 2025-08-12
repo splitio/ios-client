@@ -45,7 +45,7 @@ class SplitClientTests: XCTestCase {
         }
 
         for event in events {
-            guard let task = eventsManager.registeredEvents[event] else {
+            guard let task = eventsManager.registeredEvents.first(where: { $0.key.type == event })?.value else {
                 XCTAssertTrue(false)
                 continue
             }
@@ -61,12 +61,48 @@ class SplitClientTests: XCTestCase {
         }
 
         for event in events {
-            guard let task = eventsManager.registeredEvents[event] else {
+            guard let task = eventsManager.registeredEvents.first(where: { $0.key.type == event })?.value else {
                 XCTAssertTrue(false)
                 continue
             }
 
             XCTAssertEqual(true, task.runInBackground)
+            XCTAssertNil(task.takeQueue())
+        }
+    }
+    
+    func testOnBgWithMetadata() {
+        for event in events {
+            client.on(event: event, executeWithMetadata: { metadata in
+                print("Metadata: \(metadata.data)")
+            })
+        }
+
+        for event in events {
+            guard let task = eventsManager.registeredEvents.first(where: { $0.key.type == event })?.value else {
+                XCTAssertTrue(false)
+                continue
+            }
+
+            XCTAssertEqual(true, task.runInBackground)
+            XCTAssertNil(task.takeQueue())
+        }
+    }
+    
+    func testOnMainWithMetadata() {
+        for event in events {
+            client.on(event: event, runInBackground: false) { metadata in
+                print("Metadata: \(metadata.data)")
+            }
+        }
+
+        for event in events {
+            guard let task = eventsManager.registeredEvents.first(where: { $0.key.type == event })?.value else {
+                XCTAssertTrue(false)
+                continue
+            }
+
+            XCTAssertEqual(false, task.runInBackground)
             XCTAssertNil(task.takeQueue())
         }
     }
@@ -77,12 +113,27 @@ class SplitClientTests: XCTestCase {
         }
 
         for event in events {
-            guard let task = eventsManager.registeredEvents[event] else {
+            guard let task = eventsManager.registeredEvents.first(where: { $0.key.type == event })?.value else {
                 XCTAssertTrue(false)
                 continue
             }
 
             XCTAssertEqual(true, task.runInBackground)
+            XCTAssertNotNil(task.takeQueue())
+        }
+    }
+            
+    func testOnQueueWithMetadata() {
+        for event in events {
+            client.on(event: event, queue: DispatchQueue(label: "queuemetadata1"), action: { _ in print("exec")})
+        }
+
+        for event in events {
+            guard let task = eventsManager.registeredEvents.first(where: { $0.key.type == event })?.value else {
+                XCTAssertTrue(false)
+                continue
+            }
+
             XCTAssertNotNil(task.takeQueue())
         }
     }

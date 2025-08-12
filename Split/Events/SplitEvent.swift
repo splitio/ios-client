@@ -7,6 +7,16 @@
 
 import Foundation
 
+@objcMembers public class SplitEventWithMetadata: NSObject {
+    let type: SplitEvent
+    let metadata: EventMetadata?
+    
+    @objc public init(type: SplitEvent, metadata: EventMetadata? = nil) {
+        self.type = type
+        self.metadata = metadata
+    }
+}
+
 @objc public enum SplitEvent: Int {
     case sdkReady
     case sdkReadyTimedOut
