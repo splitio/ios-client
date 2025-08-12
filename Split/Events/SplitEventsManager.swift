@@ -133,6 +133,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
             return try eventsQueue.take()
         } catch BlockingQueueError.hasBeenStopped {
             Logger.d("Events manager stoped")
+        } catch BlockingQueueError.noElementAvailable {
+            return nil
         } catch {
             Logger.d("Events manager take event has exit because \(error.localizedDescription)")
         }
@@ -142,7 +144,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
     private func processEvents() {
         while isRunning() {
             guard let event = takeEvent() else {
-                return
+                continue
             }
             self.triggered.append(event)
             switch event {
