@@ -29,10 +29,14 @@ class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
     func register(event: SplitEventWithMetadata, task: SplitEventTask) {
         
     }
-
-    var notifiedEvents = Set<String>()
+    
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        notifiedEvents.insert(IntegrationHelper.describeEvent(event))
+        notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
+    }
+    
+    var notifiedEvents: [SplitInternalEventWithMetadata] = []
+    func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {
+        notifiedEvents.append(event)
     }
 
     var startCalled = false

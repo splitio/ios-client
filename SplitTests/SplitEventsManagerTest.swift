@@ -302,7 +302,7 @@ class SplitEventsManagerTest: XCTestCase {
         let data = ["TEST_DATA_123456"]
          
         // Build Task
-        let metadata = EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: data)
+        let metadata = EventMetadata(type: .featureFlagsSyncError, data: data)
          
         let handler: SplitActionWithMetadata = { handlerMetadata in
             XCTAssertEqual(metadata.type, handlerMetadata.type)

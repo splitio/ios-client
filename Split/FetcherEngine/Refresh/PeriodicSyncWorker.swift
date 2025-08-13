@@ -130,10 +130,13 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
         Logger.i("Fetch from remote not implemented")
     }
 
-    func notifyUpdate(_ events: [SplitInternalEvent]) {
-        events.forEach {
-            eventsManager.notifyInternalEvent($0)
-        }
+    func notifyUpdate(_ event: SplitInternalEvent) {
+        let withMetadata = SplitInternalEventWithMetadata(event, metadata: nil)
+        notifyUpdate(withMetadata)
+    }
+    
+    func notifyUpdate(_ event: SplitInternalEventWithMetadata) {
+        eventsManager.notifyInternalEvent(event)
     }
 }
 
@@ -181,10 +184,18 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         let changeNumber = splitsStorage.changeNumber
         let rbChangeNumber: Int64 = ruleBasedSegmentsStorage.changeNumber
         guard let result = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber) else {
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
+            notifyUpdate(event)
             return
         }
+        
         if result.success, result.featureFlagsUpdated || result.rbsUpdated {
-            notifyUpdate([.splitsUpdated])
+            // Success
+            notifyUpdate(.splitsUpdated)
+        } else if !result.success {
+            // Fail
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
+            notifyUpdate(event)
         }
     }
 }
@@ -225,10 +236,17 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
             if result.success {
                 if  result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
-                    notifyUpdate([.mySegmentsUpdated])
+                    notifyUpdate(.mySegmentsUpdated)
                 }
+            } else {
+                // Fail
+                let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
+                notifyUpdate(event)
             }
         } catch {
+            // Fail
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
+            notifyUpdate(event)
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
         }
     }
