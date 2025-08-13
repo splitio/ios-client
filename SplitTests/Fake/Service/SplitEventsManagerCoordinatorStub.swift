@@ -11,19 +11,19 @@ import Foundation
 @testable import Split
 
 class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
-    
+
     var managers = [Key: SplitEventsManager]()
-    
+
     func add(_ manager: SplitEventsManager, forKey key: Key) {
         managers[key] = manager
     }
-    
+
     func remove(forKey key: Key) {
         managers[key] = nil
     }
-    
+
     func register(event: SplitEvent, task: SplitEventTask) {
-        
+
     }
     
     func register(event: SplitEventWithMetadata, task: SplitEventTask) {

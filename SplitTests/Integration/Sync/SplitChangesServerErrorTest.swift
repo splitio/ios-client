@@ -15,14 +15,14 @@ class SplitChangesServerErrorTest: XCTestCase {
     let kChangeNbInterval: Int64 = 86400
     var reqChangesIndex = 0
     var lastChangeNumber: Int64 = 0
-    
+
     let spExp = [
         XCTestExpectation(description: "upd 0"),
         XCTestExpectation(description: "error 1"),
         XCTestExpectation(description: "upd 2"),
         XCTestExpectation(description: "upd 3")
     ]
-    
+
     var serverUrl = "localhost"
     let impExp = XCTestExpectation(description: "impressions")
     var impHit: [ImpressionsTest]?
@@ -44,6 +44,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         splitConfig!.trafficType = "client"
         splitConfig!.streamingEnabled = false
         splitConfig!.serviceEndpoints = ServiceEndpoints.builder().set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesServerErrorTest"))
         
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
@@ -55,7 +56,6 @@ class SplitChangesServerErrorTest: XCTestCase {
         var treatments = [String]()
         let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
         
-        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesServerErrorTest"))
         _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig!).build()
         
@@ -103,7 +103,6 @@ class SplitChangesServerErrorTest: XCTestCase {
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         
         // Client config
-        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesServerErrorTest"))
         _ = builder.setHttpClient(httpClient)
         var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig!).build()
         let client = factory!.client
@@ -139,7 +138,6 @@ class SplitChangesServerErrorTest: XCTestCase {
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
         
         // Client config
-        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: "SplitChangesServerErrorTest"))
         _ = builder.setHttpClient(httpClient)
         var factory: SplitFactory? = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig!).build()
         let client = factory!.client
@@ -189,26 +187,26 @@ extension SplitChangesServerErrorTest {
                 let since = Int(self.lastChangeNumber)
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: since, till: since).utf8))
             }
-            
+
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
-            
+
             if request.isAuthEndpoint() {
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
             }
-            
+
             if request.isImpressionsEndpoint() {
                 return TestDispatcherResponse(code: 200)
             }
-            
+
             if request.isEventsEndpoint() {
                 return TestDispatcherResponse(code: 200)
             }
             return TestDispatcherResponse(code: 500)
         }
     }
-    
+
     private func buildStreamingHandler() -> TestStreamResponseBindingHandler {
         return { request in
             self.streamingBinding = TestStreamResponseBinding.createFor(request: request, code: 200)
