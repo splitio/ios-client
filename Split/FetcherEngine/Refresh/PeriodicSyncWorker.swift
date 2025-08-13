@@ -1,12 +1,10 @@
-//
 //  PeriodicSplitsSyncWorker.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 26-Sep-2020
-//
-//
 
 import Foundation
+
 protocol PeriodicTimer {
     func trigger()
     func stop()
@@ -60,8 +58,8 @@ class DefaultPeriodicTimer: PeriodicTimer {
 }
 
 protocol PeriodicSyncWorker {
-    //    typealias SyncCompletion = (Bool) -> Void
-    //    var completion: SyncCompletion? { get set }
+    // typealias SyncCompletion = (Bool) -> Void
+    // var completion: SyncCompletion? { get set }
     func start()
     func pause()
     func resume()
@@ -147,28 +145,14 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
     private let ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor
     private let syncHelper: SplitsSyncHelper
 
-    init(splitFetcher: HttpSplitFetcher,
-         splitsStorage: SplitsStorage,
-         generalInfoStorage: GeneralInfoStorage,
-         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
-         splitChangeProcessor: SplitChangeProcessor,
-         ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
-         timer: PeriodicTimer,
-         eventsManager: SplitEventsManager,
-         splitConfig: SplitClientConfig) {
-
+    init(splitFetcher: HttpSplitFetcher, splitsStorage: SplitsStorage, generalInfoStorage: GeneralInfoStorage, ruleBasedSegmentsStorage: RuleBasedSegmentsStorage, splitChangeProcessor: SplitChangeProcessor, ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor, timer: PeriodicTimer, eventsManager: SplitEventsManager, splitConfig: SplitClientConfig) {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.ruleBasedSegmentsChangeProcessor = ruleBasedSegmentsChangeProcessor
-        self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
-                                           splitsStorage: splitsStorage,
-                                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
-                                           splitChangeProcessor: splitChangeProcessor,
-                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor,
-                                           generalInfoStorage: generalInfoStorage,
-                                           splitConfig: splitConfig)
+        self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher, splitsStorage: splitsStorage, ruleBasedSegmentsStorage: ruleBasedSegmentsStorage, splitChangeProcessor: splitChangeProcessor, ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor, generalInfoStorage: generalInfoStorage, splitConfig: splitConfig)
+        
         super.init(timer: timer, eventsManager: eventsManager)
     }
 
