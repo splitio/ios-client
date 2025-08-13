@@ -143,6 +143,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             let rbChangeNumber = ruleBasedSegmentsStorage.changeNumber
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
             if result.success {
+                // Success
                 if !isSdkReadyTriggered() ||
                     result.featureFlagsUpdated {
                     notifyUpdate(.splitsUpdated)
@@ -150,12 +151,14 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                 resetBackoffCounter()
                 return true
             } else {
-                let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
+                // Fail
+                let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
                 notifyUpdate(eventWithMetadata)
             }
         } catch {
+            // Fail
             Logger.e("Error while fetching splits in method: \(error.localizedDescription)")
-            let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
+            let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
             notifyUpdate(eventWithMetadata)
             errorHandler?(error)
         }
@@ -224,18 +227,21 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                              clearBeforeUpdate: false,
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
+                // Success
                 if result.featureFlagsUpdated {
                     notifyUpdate(.splitsUpdated)
                 }
                 resetBackoffCounter()
                 return true
             } else {
-                let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
+                // Fail
+                let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
                 notifyUpdate(eventWithMetadata)
             }
         } catch {
+            // Fail
             Logger.e("Error while fetching splits in method \(#function): \(error.localizedDescription)")
-            let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
+            let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
             notifyUpdate(eventWithMetadata)
             errorHandler?(error)
         }
