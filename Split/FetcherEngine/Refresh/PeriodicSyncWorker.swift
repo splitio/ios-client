@@ -35,9 +35,8 @@ class DefaultPeriodicTimer: PeriodicTimer {
 
     func trigger() {
         if !isRunning.getAndSet(true) {
-            fetchTimer.schedule(deadline: .now() + .seconds(deadLineInSecs),
-                                repeating: .seconds(intervalInSecs))
-//            fetchTimer.resume()
+            fetchTimer.schedule(deadline: .now() + .seconds(deadLineInSecs), repeating: .seconds(intervalInSecs))
+            // fetchTimer.resume()
         }
     }
 
@@ -77,14 +76,12 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     private let eventsManager: SplitEventsManager
     private var isPaused: Atomic<Bool> = Atomic(false)
 
-    init(timer: PeriodicTimer,
-         eventsManager: SplitEventsManager) {
+    init(timer: PeriodicTimer, eventsManager: SplitEventsManager) {
         self.eventsManager = eventsManager
         self.fetchTimer = timer
         self.fetchTimer.handler { [weak self] in
-            guard let self = self else {
-                return
-            }
+            guard let self = self else { return }
+            
             if self.isPaused.value {
                 return
             }
@@ -181,7 +178,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         let changeNumber = splitsStorage.changeNumber
         let rbChangeNumber: Int64 = ruleBasedSegmentsStorage.changeNumber
         
-        // Try to Sync
+        // 1. Try to Sync
         guard let result = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber) else {
             // Fail
             let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
@@ -189,7 +186,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             return
         }
         
-        // Result
+        // 2. Process Result
         if result.success, result.featureFlagsUpdated || result.rbsUpdated {
             // Success
             notifyUpdate(.splitsUpdated)
@@ -209,20 +206,13 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let syncHelper: SegmentsSyncHelper
 
-    init(mySegmentsStorage: ByKeyMySegmentsStorage,
-         myLargeSegmentsStorage: ByKeyMySegmentsStorage,
-         telemetryProducer: TelemetryRuntimeProducer?,
-         timer: PeriodicTimer,
-         eventsManager: SplitEventsManager,
-         syncHelper: SegmentsSyncHelper) {
-
+    init(mySegmentsStorage: ByKeyMySegmentsStorage, myLargeSegmentsStorage: ByKeyMySegmentsStorage, telemetryProducer: TelemetryRuntimeProducer?, timer: PeriodicTimer, eventsManager: SplitEventsManager, syncHelper: SegmentsSyncHelper) {
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.telemetryProducer = telemetryProducer
         self.syncHelper = syncHelper
 
-        super.init(timer: timer,
-                   eventsManager: eventsManager)
+        super.init(timer: timer, eventsManager: eventsManager)
     }
 
     override func fetchFromRemote() {

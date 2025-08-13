@@ -32,9 +32,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     private var isRunning: Atomic<Bool> = Atomic(false)
     private let syncQueue = DispatchQueue.general
 
-    init(eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter) {
-
+    init(eventsManager: SplitEventsManager, reconnectBackoffCounter: ReconnectBackoffCounter) {
         self.eventsManager = eventsManager
         self.reconnectBackoffCounter = reconnectBackoffCounter
     }
@@ -65,6 +63,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 
     private func fetchFromRemoteLoop() throws {
         var success = false
+        
         while isRunning.value, !success {
             success = try fetchFromRemote()
             if !success {
@@ -73,7 +72,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
                 ThreadUtils.delay(seconds: retryTimeInSeconds)
             }
         }
-        self.isRunning.set(false)
+        isRunning.set(false)
         if let handler = completion {
             handler(success)
         }
@@ -133,19 +132,21 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                                            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                            generalInfoStorage: generalInfoStorage,
                                            splitConfig: splitConfig)
-        super.init(eventsManager: eventsManager,
-                   reconnectBackoffCounter: reconnectBackoffCounter)
+        super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() throws -> Bool {
         do {
             let changeNumber = splitsStorage.changeNumber
             let rbChangeNumber = ruleBasedSegmentsStorage.changeNumber
+            
+            // 1. Try to Sync
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
+            
+            // 2. Process Result
             if result.success {
                 // Success
-                if !isSdkReadyTriggered() ||
-                    result.featureFlagsUpdated {
+                if !isSdkReadyTriggered() || result.featureFlagsUpdated {
                     notifyUpdate(.splitsUpdated)
                 }
                 resetBackoffCounter()
@@ -203,11 +204,11 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                            generalInfoStorage: generalInfoStorage,
                                            splitConfig: splitConfig)
-        super.init(eventsManager: eventsManager,
-                   reconnectBackoffCounter: reconnectBackoffCounter)
+        super.init(eventsManager: eventsManager, reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
     override func fetchFromRemote() throws -> Bool {
+        
         let storedChangeNumber = splitsStorage.changeNumber
         let flagsChangeNumber = changeNumber.flags
         if let flagsChangeNumber, flagsChangeNumber <= storedChangeNumber {
@@ -221,16 +222,13 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
         }
 
         do {
-            let result = try syncHelper.sync(since: storedChangeNumber,
-                                             rbSince: storedRbChangeNumber,
-                                             till: flagsChangeNumber ?? rbsChangeNumber,
-                                             clearBeforeUpdate: false,
-                                             headers: ServiceConstants.controlNoCacheHeader)
+            // 1. Try to sync
+            let result = try syncHelper.sync(since: storedChangeNumber, rbSince: storedRbChangeNumber, till: flagsChangeNumber ?? rbsChangeNumber, clearBeforeUpdate: false, headers: ServiceConstants.controlNoCacheHeader)
+            
+            // 2. Process result
             if result.success {
                 // Success
-                if result.featureFlagsUpdated {
-                    notifyUpdate(.splitsUpdated)
-                }
+                if result.featureFlagsUpdated { notifyUpdate(.splitsUpdated) }
                 resetBackoffCounter()
                 return true
             } else {
