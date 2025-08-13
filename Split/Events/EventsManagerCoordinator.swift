@@ -21,15 +21,16 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
     private let queue = DispatchQueue(label: "split-event-manager-coordinator")
     private let eventsToHandle: Set<SplitInternalEvent> = Set(
         [.splitsLoadedFromCache,
-        .splitsUpdated,
-        .splitKilledNotification]
+         .splitsUpdated,
+         .splitKilledNotification,
+         .sdkError]
     )
     
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        notifyInternalEventWithMetadata(SplitInternalEventWithMetadata(event, metadata: nil))
+        notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
     }
 
-    func notifyInternalEventWithMetadata(_ event: SplitInternalEventWithMetadata) {
+    func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {
         if !eventsToHandle.contains(event.type) {
             return
         }
@@ -38,7 +39,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator {
 
             self.triggered.insert(event.type)
             self.managers.forEach { _, manager in
-                manager.notifyInternalEvent(event.type)
+                manager.notifyInternalEvent(event)
             }
         }
     }

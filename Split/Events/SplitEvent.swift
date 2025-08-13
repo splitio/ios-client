@@ -11,7 +11,7 @@ import Foundation
     let type: SplitEvent
     let metadata: EventMetadata?
     
-    @objc public init(type: SplitEvent, metadata: EventMetadata? = nil) {
+    @objc public init(_ type: SplitEvent, metadata: EventMetadata? = nil) {
         self.type = type
         self.metadata = metadata
     }

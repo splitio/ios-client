@@ -79,10 +79,12 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
         }
     }
 
-    func notifyUpdate(_ events: [SplitInternalEvent]) {
-        events.forEach {
-            eventsManager.notifyInternalEvent($0)
-        }
+    func notifyUpdate(_ event: SplitInternalEvent) {
+        notifyUpdate(SplitInternalEventWithMetadata(event, metadata: nil))
+    }
+    
+    func notifyUpdate(_ event: SplitInternalEventWithMetadata) {
+        eventsManager.notifyInternalEvent(event)
     }
 
     func isSdkReadyTriggered() -> Bool {
@@ -143,13 +145,18 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() ||
                     result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                    notifyUpdate(.splitsUpdated)
                 }
                 resetBackoffCounter()
                 return true
+            } else {
+                let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
+                notifyUpdate(eventWithMetadata)
             }
         } catch {
             Logger.e("Error while fetching splits in method: \(error.localizedDescription)")
+            let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
+            notifyUpdate(eventWithMetadata)
             errorHandler?(error)
         }
         return false
@@ -218,13 +225,18 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
                 if result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                    notifyUpdate(.splitsUpdated)
                 }
                 resetBackoffCounter()
                 return true
+            } else {
+                let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
+                notifyUpdate(eventWithMetadata)
             }
         } catch {
             Logger.e("Error while fetching splits in method \(#function): \(error.localizedDescription)")
+            let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
+            notifyUpdate(eventWithMetadata)
             errorHandler?(error)
         }
         Logger.d("Feature flag changes are not updated yet")

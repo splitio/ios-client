@@ -11,28 +11,32 @@ import Foundation
 @testable import Split
 
 class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
-
+    
     var managers = [Key: SplitEventsManager]()
-
+    
     func add(_ manager: SplitEventsManager, forKey key: Key) {
         managers[key] = manager
     }
-
+    
     func remove(forKey key: Key) {
         managers[key] = nil
     }
-
+    
     func register(event: SplitEvent, task: SplitEventTask) {
-
+        
     }
     
     func register(event: SplitEventWithMetadata, task: SplitEventTask) {
         
     }
-
-    var notifiedEvents = Set<String>()
+    
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        notifiedEvents.insert(IntegrationHelper.describeEvent(event))
+        notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
+    }
+    
+    var notifiedEvents: [SplitInternalEventWithMetadata] = []
+    func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {
+        notifiedEvents.append(event)
     }
 
     var startCalled = false

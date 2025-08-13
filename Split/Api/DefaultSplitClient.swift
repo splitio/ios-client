@@ -94,7 +94,7 @@ extension DefaultSplitClient {
             Logger.w("A handler was added for \(event.toString()) on the SDK, which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }
-        eventsManager.register(event: SplitEventWithMetadata(type: event, metadata: nil), task: task)
+        eventsManager.register(event: event, task: task)
     }
     
     // MARK: Listeners with Metadata

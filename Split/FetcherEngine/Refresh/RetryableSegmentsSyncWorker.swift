@@ -46,16 +46,23 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
             if result.success {
                 if !isSdkReadyTriggered() {
                     // Notifying both to trigger SDK Ready
-                    notifyUpdate([.mySegmentsUpdated])
-                    notifyUpdate([.myLargeSegmentsUpdated])
+                    notifyUpdate(.mySegmentsUpdated)
+                    notifyUpdate(.myLargeSegmentsUpdated)
                 } else if  result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
-                    notifyUpdate([.mySegmentsUpdated])
+                    notifyUpdate(.mySegmentsUpdated)
                 }
                 return true
+            } else {
+                // FAIL
+                let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .SEGMENTS_SYNC_ERROR, data: []))
+                notifyUpdate(event)
             }
         } catch {
+            // FAIL
             Logger.e("Error while fetching segments in method: \(error.localizedDescription)")
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .SEGMENTS_SYNC_ERROR, data: []))
+            notifyUpdate(event)
             errorHandler?(error)
         }
         return false
