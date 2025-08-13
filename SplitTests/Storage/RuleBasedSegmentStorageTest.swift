@@ -14,6 +14,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
     private var persistentStorageStub: PersistentRuleBasedSegmentsStorageStub!
     private var ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage!
+    private var noLoadedRbs: DefaultRuleBasedSegmentsStorage?
 
     override func setUp() {
         ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(
@@ -24,7 +25,24 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
     override func tearDown() {
         ruleBasedSegmentsStorage.clear()
+        noLoadedRbs?.clear()
         super.tearDown()
+    }
+    
+    func testLazyParsing() {
+        noLoadedRbs = DefaultRuleBasedSegmentsStorage(
+            persistentStorage: createPersistentStorageStub(isParsed: false)
+        )
+        
+        noLoadedRbs?.loadLocal()
+
+        XCTAssertNotNil(noLoadedRbs)
+        var segmentToCheck = noLoadedRbs!.getInMemorySegments().value(forKey: "segment_1")!
+        XCTAssertEqual(segmentToCheck.isParsed, false, "segment_1 shouldn't be parsed")
+        
+        _ = noLoadedRbs?.get(segmentName: "segment_2")
+        segmentToCheck = noLoadedRbs!.getInMemorySegments().value(forKey: "segment_2")!
+        XCTAssertEqual(segmentToCheck.isParsed, true, "segment_2 should be parsed")
     }
 
     func testInitialization() {
@@ -297,23 +315,23 @@ class RuleBasedSegmentStorageTest: XCTestCase {
     }
 
 
-    private func createPersistentStorageStub() -> PersistentRuleBasedSegmentsStorageStub {
-        let delegate = MockPersistentRuleBasedSegmentsStorage()
+    private func createPersistentStorageStub(isParsed: Bool = true) -> PersistentRuleBasedSegmentsStorageStub {
+        let delegate = MockPersistentRuleBasedSegmentsStorage(isParsed: isParsed)
         persistentStorageStub = PersistentRuleBasedSegmentsStorageStub(delegate: delegate)
         return persistentStorageStub
     }
 
-    private func createSegment(name: String, trafficType: String = "tt_default", status: Status = .active) -> RuleBasedSegment {
+    private func createSegment(name: String, trafficType: String = "tt_default", status: Status = .active, isParsed: Bool = true) -> RuleBasedSegment {
         let segment = RuleBasedSegment()
         segment.name = name
         segment.trafficTypeName = trafficType
         segment.status = status
         segment.changeNumber = Int64(Date.nowMillis())
-        segment.isParsed = true
+        segment.isParsed = isParsed
         return segment
     }
-    
-    private func createSegmentWithMatcher(_ name: String, _ matcher: MatcherType) -> RuleBasedSegment {
+
+    private func createSegmentWithMatcher(_ name: String, _ matcher: MatcherType, isParsed: Bool = true) -> RuleBasedSegment {
         let segment = RuleBasedSegment()
         segment.name = name
         segment.conditions = [Condition()]
@@ -323,18 +341,25 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         segment.trafficTypeName = "user"
         segment.status = .active
         segment.changeNumber = Int64(Date.nowMillis())
-        segment.isParsed = true
+        segment.isParsed = isParsed
         return segment
     }
 }
 
 private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage {
-    
-    private var segments = [
-        createSegment(name: "segment_1", trafficType: "tt_1"),
-        createSegment(name: "segment_2", trafficType: "tt_2"),
-        createSegment(name: "segment_3", trafficType: "tt_3")
-    ]
+
+    private let isParsed: Bool
+    var segments: [RuleBasedSegment] = []
+
+    init(isParsed: Bool = true) {
+        self.isParsed = isParsed
+        segments = [
+            createSegment(name: "segment_1", trafficType: "tt_1", isParsed: isParsed),
+            createSegment(name: "segment_2", trafficType: "tt_2", isParsed: isParsed),
+            createSegment(name: "segment_3", trafficType: "tt_3", isParsed: isParsed)
+        ]
+    }
+
     private var snapshotChangeNumber: Int64 = 123
 
     func getSnapshot() -> RuleBasedSegmentsSnapshot {
@@ -357,22 +382,30 @@ private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegment
         self.segments = segments
         self.snapshotChangeNumber = changeNumber
     }
+    
     var segmentsInUse: Int64 = 0
-    func getSegmentsInUse() -> Int64 {
-        return segmentsInUse
+    func getSegmentsInUse() -> Int64? {
+        segmentsInUse
     }
     
     func setSegmentsInUse(_ segmentsInUse: Int64) {
         self.segmentsInUse = segmentsInUse
     }
 
-    private static func createSegment(name: String, trafficType: String) -> RuleBasedSegment {
+    private func createSegment(name: String, trafficType: String, isParsed: Bool = true) -> RuleBasedSegment {
         let segment = RuleBasedSegment()
         segment.name = name
         segment.trafficTypeName = trafficType
         segment.status = .active
         segment.changeNumber = 123
-        segment.isParsed = true
+        segment.isParsed = isParsed
+        segment.json = """
+            {
+                "name": "\(name)",
+                "trafficTypeName": "\(trafficType)",
+                "status": "ACTIVE"
+            }
+         """
         return segment
     }
 }

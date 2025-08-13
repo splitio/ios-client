@@ -60,7 +60,7 @@ class GeneralInfoStorageMock: GeneralInfoStorage {
         lastProxyUpdateTimestamp = timestamp
     }
     
-    func getSegmentsInUse() -> Int64 {
+    func getSegmentsInUse() -> Int64? {
         segmentsInUse
     }
     

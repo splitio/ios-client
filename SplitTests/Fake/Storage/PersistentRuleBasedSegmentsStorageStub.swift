@@ -61,7 +61,7 @@ class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage
     }
     
     var segmentsInUse: Int64 = 0
-    func getSegmentsInUse() -> Int64 {
+    func getSegmentsInUse() -> Int64? {
         segmentsInUse
     }
     

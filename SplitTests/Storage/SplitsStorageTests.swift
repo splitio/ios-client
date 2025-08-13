@@ -19,6 +19,7 @@ class SplitsStorageTest: XCTestCase {
 
     var persistentStorage: PersistentSplitsStorageStub!
     var splitsStorage: SplitsStorage!
+    var noLoadedStorage: DefaultSplitsStorage?
 
     override func setUp() {
         persistentStorage = PersistentSplitsStorageStub()
@@ -35,6 +36,22 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertEqual(0, splits.count)
         XCTAssertEqual(-1,changeNumber)
         XCTAssertEqual(-1, updateTimestamp)
+    }
+    
+    func testLazyParsing() {
+        noLoadedStorage = DefaultSplitsStorage(
+            persistentSplitsStorage: createPersistentStorageStub(isParsed: false), flagSetsCache: FlagSetsCacheMock()
+        )
+        
+        noLoadedStorage?.loadLocal()
+
+        XCTAssertNotNil(noLoadedStorage)
+        var splitToCheck = noLoadedStorage!.getInMemorySplits().value(forKey: "split_1")!
+        XCTAssertEqual(splitToCheck.isCompletelyParsed, false, "Split_1 shouldn't be parsed")
+        
+        _ = noLoadedStorage?.get(name: "split_2")
+        splitToCheck = noLoadedStorage!.getInMemorySplits().value(forKey: "split_2")!
+        XCTAssertEqual(splitToCheck.isCompletelyParsed, true, "Split_2 should be parsed")
     }
 
     func testLoaded() {
@@ -396,5 +413,93 @@ class SplitsStorageTest: XCTestCase {
     private func unsupportedMatcherSplit() -> Split {
        return Split(name: "feature_flag_for_test", trafficType: "user",
                     status: Status.active, sets: [], json: SplitTestHelper.getUnsupportedMatcherSplitJson(sourceClass: self)!)
+    }
+    
+    fileprivate func createPersistentStorageStub(isParsed: Bool = true) -> PersistentSplitsStorageStub {
+        let delegate = MockPersistentSplitsSegmentsStorage(isParsed: isParsed)
+        return PersistentSplitsStorageStub(delegate: delegate)
+    }
+}
+
+private class MockPersistentSplitsSegmentsStorage: PersistentSplitsStorage {
+
+    private let isParsed: Bool
+    private let segmensInUse: Int64 = 0
+    var splits: [Split] = []
+
+    init(isParsed: Bool = true) {
+        self.isParsed = isParsed
+        splits = [
+            createSplit(name: "split_1", trafficType: "tt_1", parsed: isParsed),
+            createSplit(name: "split_2", trafficType: "tt_2", parsed: isParsed),
+            createSplit(name: "split_3", trafficType: "tt_3", parsed: isParsed)
+        ]
+    }
+
+    private var snapshotChangeNumber: Int64 = 123
+
+    func getSplitsSnapshot() -> SplitsSnapshot {
+        SplitsSnapshot(changeNumber: snapshotChangeNumber, splits: splits, updateTimestamp: 1200)
+    }
+
+    func update(split: Split) {
+        // No-op for the mock
+    }
+
+    func clear() {
+        // No-op for the mock
+    }
+
+    func getChangeNumber() -> Int64 {
+        return snapshotChangeNumber
+    }
+
+    func updateSnapshotData(splits: [Split], changeNumber: Int64) {
+        self.splits = splits
+        self.snapshotChangeNumber = changeNumber
+    }
+    
+    var segmentsInUse: Int64 = 0
+    func getSegmentsInUse() -> Int64? {
+        segmentsInUse
+    }
+    
+    func setSegmentsInUse(_ segmentsInUse: Int64) {
+        self.segmentsInUse = segmentsInUse
+    }
+
+    func update(splitChange: ProcessedSplitChange) {
+        // No-op for the mock
+    }
+    
+    func update(bySetsFilter: SplitFilter?) {
+        // No-op for the mock
+    }
+    
+    func update(segmentsInUse: Int64) {
+        // No-op for the mock
+    }
+    
+    func getBySetsFilter() -> SplitFilter? {
+        SplitFilter(type: .byName, values: [""])
+    }
+    
+    func getUpdateTimestamp() -> Int64 {
+        0
+    }
+    
+    func getAll() -> [Split] {
+        splits
+    }
+    
+    func delete(splitNames: [String]) {
+        // No-op for the mock
+    }
+    
+    private func createSplit(name: String, trafficType: String, status: Status = .active, parsed: Bool = false) -> Split {
+        let split = SplitTestHelper.newSplit(name: name, trafficType: trafficType)
+        split.status = status
+        split.isCompletelyParsed = parsed
+        return split
     }
 }

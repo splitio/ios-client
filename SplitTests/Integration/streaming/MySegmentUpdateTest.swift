@@ -21,27 +21,27 @@ class MySegmentUpdateTest: XCTestCase {
     var notificationTemplate: String!
     let kDataField = "[NOTIFICATION_DATA]"
     var msHit = 0
-
+    
     let kRefreshRate = 1
-
+    
     var mySegExp: XCTestExpectation!
-
+    
     var testFactory: TestSplitFactory!
     var queue = DispatchQueue(label: "pepe")
-
+    
     override func setUp() {
         hitCountByKey = [String: Int]()
         loadNotificationTemplate()
     }
-
+    
     func testMyLargeSegmentsUpdate() throws {
         try mySegmentsUpdateTest(type: .myLargeSegmentsUpdate)
     }
-
+    
     func testMySegmentsUpdate() throws {
         try mySegmentsUpdateTest(type: .mySegmentsUpdate)
     }
-
+    
     func mySegmentsUpdateTest(type: NotificationType) throws {
         let userKey = "key1"
         testFactory = TestSplitFactory(userKey: userKey)
@@ -51,25 +51,25 @@ class MySegmentUpdateTest: XCTestCase {
         let syncSpy = testFactory.synchronizerSpy
         let client = testFactory.client
         let db = testFactory.splitDatabase
-
+        
         let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
         var sdkUpdExp = XCTestExpectation(description: "SDK UPDATE Expectation")
-
+        
         client.on(event: SplitEvent.sdkReady) {
             sdkReadyExp.fulfill()
         }
-
+        
         client.on(event: SplitEvent.sdkUpdated) {
             sdkUpdExp.fulfill()
         }
-
+        
         // Wait for hitting my segments two times (sdk ready and full sync after streaming connection)
         wait(for: [sdkReadyExp, sseExp], timeout: 50)
-
+        
         streamingBinding?.push(message: ":keepalive")
-
+        
         wait(for: [mySegExp], timeout: 5)
-
+        
         // Unbounded fetch notification should trigger my segments
         // refresh on synchronizer
         // Set count to 0 to start counting hits
@@ -77,25 +77,25 @@ class MySegmentUpdateTest: XCTestCase {
         sdkUpdExp = XCTestExpectation()
         pushMessage(TestingData.unboundedNotification(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp], timeout: 5)
-
+        
         // Should not trigger any fetch to my segments because
         // this payload doesn't have "key1" enabled
-
+        
         Thread.sleep(forTimeInterval: 0.5)
         pushMessage(TestingData.escapedBoundedNotificationZlib(type: type, cn: mySegmentsCns[cnIndex()]))
-
+        
         // Pushed key list message. Key 1 should add a segment
         sdkUpdExp = XCTestExpectation()
-
+        
         Thread.sleep(forTimeInterval: 0.5)
         pushMessage(TestingData.escapedKeyListNotificationGzip(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp], timeout: 5)
-
+        
         sdkUpdExp = XCTestExpectation()
         Thread.sleep(forTimeInterval: 0.5)
         pushMessage(TestingData.segmentRemovalNotification(type: type, cn: mySegmentsCns[cnIndex()]))
         wait(for: [sdkUpdExp], timeout: 5)
-
+        
         Thread.sleep(forTimeInterval: 2.0)
         var segmentEntity: [String]!
         if type == .mySegmentsUpdate {
@@ -103,12 +103,12 @@ class MySegmentUpdateTest: XCTestCase {
         } else {
             segmentEntity = db.myLargeSegmentsDao.getBy(userKey: testFactory.userKey)?.segments.map { $0.name } ?? []
         }
-
+        
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual(1, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
         XCTAssertEqual(1, segmentEntity.filter { $0 == "new_segment_added" }.count)
         XCTAssertEqual(0, segmentEntity.filter { $0 == "segment1" }.count)
-
+        
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
             _ = semaphore.signal()
@@ -127,14 +127,14 @@ class MySegmentUpdateTest: XCTestCase {
         
         //MARK: Key part
         membershipsHit.expectedFulfillmentCount = 4
-
+        
         // 1. Configure dispatcher
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.url.absoluteString.contains("/splitChanges") {
                 let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitchanges_1", sourceClass: IntegrationHelper()) // send splitChanges with Segments
                 return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
             }
-
+            
             if request.url.absoluteString.contains("/memberships") {
                 segmentsHit.fulfill()
                 membershipsHit.fulfill()
@@ -142,13 +142,13 @@ class MySegmentUpdateTest: XCTestCase {
             }
             return TestDispatcherResponse(code: 200)
         }
-
+        
         // 2. Setup Factory, Network & Client
         let testFactory = TestSplitFactory(userKey: userKey)
         testFactory.createHttpClient(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
         try testFactory.buildSdk(polling: true)
         let client = testFactory.client
-
+        
         client.on(event: .sdkReady) {
             sdkReadyFired = true
             sdkReady.fulfill()
@@ -172,14 +172,14 @@ class MySegmentUpdateTest: XCTestCase {
         let sdkReady = XCTestExpectation(description: "SDK should be ready")
         let segmentsHit = XCTestExpectation(description: "/memberships should be hit at least once")
         var membershipsHit = 0
-
+        
         // 1. Configure dispatcher
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.url.absoluteString.contains("/splitChanges") {
                 let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // send splitChanges wtihout Segments
                 return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
             }
-
+            
             if request.url.absoluteString.contains("/memberships") {
                 segmentsHit.fulfill()
                 membershipsHit += 1
@@ -188,13 +188,13 @@ class MySegmentUpdateTest: XCTestCase {
             
             return TestDispatcherResponse(code: 200)
         }
-
+        
         // 2. Setup Factory, Network & Client
         let testFactory = TestSplitFactory(userKey: userKey)
         testFactory.createHttpClient(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
         try testFactory.buildSdk(polling: true)
         let client = testFactory.client
-
+        
         client.on(event: .sdkReady) {
             sdkReadyFired = true
             sdkReady.fulfill()
@@ -223,14 +223,14 @@ class MySegmentUpdateTest: XCTestCase {
         let cacheReadyExp = XCTestExpectation(description: "Cache should be ready")
         let segmentsHit = XCTestExpectation(description: "/memberships should be hit at least once")
         var membershipsHit = 0
-
+        
         // 1. Configure dispatcher
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.url.absoluteString.contains("/splitChanges") {
                 let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // send splitChanges wtihout Segments
                 return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
             }
-
+            
             if request.url.absoluteString.contains("/memberships") {
                 segmentsHit.fulfill()
                 membershipsHit += 1
@@ -239,7 +239,7 @@ class MySegmentUpdateTest: XCTestCase {
             
             return TestDispatcherResponse(code: 200)
         }
-
+        
         // 2. Setup Factory, Network & Client
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 1
@@ -253,10 +253,9 @@ class MySegmentUpdateTest: XCTestCase {
         splitConfig.eventsFirstPushWindow = 999
         splitConfig.impressionsMode = "DEBUG"
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: "localhost").set(eventsEndpoint: "localhost").build()
+            .set(sdkEndpoint: "localhost").set(eventsEndpoint: "localhost").build()
         
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.3")
         let savedSplit = SplitTestHelper.newSplitWithMatcherType("splits_segments", .allKeys)
         splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit)
         
@@ -308,23 +307,23 @@ class MySegmentUpdateTest: XCTestCase {
         let cacheReadyExp = XCTestExpectation(description: "Cache should be ready")
         let segmentsHit = XCTestExpectation(description: "/memberships should be hit at least once")
         var membershipsHit = 0
-
+        
         // 1. Configure dispatcher
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.url.absoluteString.contains("/splitChanges") {
                 let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // splitChanges wtih no Segments
                 return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
             }
-
+            
             if request.url.absoluteString.contains("/memberships") {
                 segmentsHit.fulfill()
                 membershipsHit += 1
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.mySegments(names: ["", ""]).utf8))
             }
             
             return TestDispatcherResponse(code: 200)
         }
-
+        
         // 2. Setup Factory, Network & Client
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 1
@@ -338,11 +337,11 @@ class MySegmentUpdateTest: XCTestCase {
         splitConfig.eventsFirstPushWindow = 999
         splitConfig.impressionsMode = "DEBUG"
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: "localhost").set(eventsEndpoint: "localhost").build()
+            .set(sdkEndpoint: "localhost").set(eventsEndpoint: "localhost").build()
         
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.3")
         splitDatabase.generalInfoDao.update(info: .segmentsInUse, longValue: 1)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.3")
         let savedSplit = SplitTestHelper.newSplitWithMatcherType("splits_segments", .inSegment)
         splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit)
         
@@ -393,13 +392,13 @@ class MySegmentUpdateTest: XCTestCase {
         var membershipsHit = 0
         
         var json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // no Segments
-
+        
         // 1. Configure dispatcher
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.url.absoluteString.contains("/splitChanges") {
                 return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
             }
-
+            
             if request.url.absoluteString.contains("/memberships") {
                 segmentsHit.fulfill()
                 membershipsHit += 1
@@ -408,7 +407,7 @@ class MySegmentUpdateTest: XCTestCase {
             
             return TestDispatcherResponse(code: 200)
         }
-
+        
         // 2. Setup Factory, Network & Client
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.featuresRefreshRate = 2
@@ -422,10 +421,9 @@ class MySegmentUpdateTest: XCTestCase {
         splitConfig.eventsFirstPushWindow = 999
         splitConfig.impressionsMode = "DEBUG"
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: "localhost").set(eventsEndpoint: "localhost").build()
+            .set(sdkEndpoint: "localhost").set(eventsEndpoint: "localhost").build()
         
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
-        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.3")
         
         let userKey = "test-user-key"
         let key: Key = Key(matchingKey: userKey, bucketingKey: nil)
@@ -457,7 +455,7 @@ class MySegmentUpdateTest: XCTestCase {
         // MARK: Key part
         var waitExp = XCTestExpectation(description: "Just waiting")
         waitExp.isInverted = true // Inverted expectation
-        wait(for: [waitExp], timeout: 10)
+        wait(for: [waitExp], timeout: 5)
         XCTAssertEqual(membershipsHit, 1, "After some time, if segments are not used, SDK shouldn't hit /memberships")
         
         // MARK: Key part 2
@@ -465,8 +463,87 @@ class MySegmentUpdateTest: XCTestCase {
         
         waitExp = XCTestExpectation(description: "Just waiting")
         waitExp.isInverted = true // Inverted expectation
-        wait(for: [waitExp], timeout: 15)
+        wait(for: [waitExp], timeout: 5)
         XCTAssertGreaterThan(membershipsHit, 2, "If new flags with segments arrive, the mechanism should be restarted and SDK should hit /memberships many times again")
+        
+        // Cleanup
+        if let client = client {
+            destroy(client)
+        }
+    }
+    
+    func testSDKReparsesDatabaseIfSegmentsInUseIsNull() throws {
+        
+        var sdkReadyFired = false
+        let sdkReady = XCTestExpectation(description: "SDK should be ready")
+        
+        var json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // no Segments
+
+        // 1. Configure dispatcher
+        let dispatcher: HttpClientTestDispatcher = { request in
+            if request.url.absoluteString.contains("/splitChanges") {
+                var json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // no Segments
+                return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
+            }
+
+            if request.url.absoluteString.contains("/memberships") {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            
+            return TestDispatcherResponse(code: 200)
+        }
+
+        // 2. Setup Factory, Network & Client
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 5
+        splitConfig.segmentsRefreshRate = 5
+        splitConfig.impressionRefreshRate = 30
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.eventsPerPush = 10
+        splitConfig.streamingEnabled = false
+        splitConfig.eventsQueueSize = 100
+        splitConfig.eventsPushRate = 999999
+        splitConfig.eventsFirstPushWindow = 999
+        splitConfig.impressionsMode = "DEBUG"
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
+        .set(sdkEndpoint: "localhost").set(eventsEndpoint: "localhost").build()
+        
+        // Mock data
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.3")
+        let savedSplit1 = SplitTestHelper.newSplitWithMatcherType("splits_segments1", .inSegment, parsed: false)
+        let savedSplit2 = SplitTestHelper.newSplitWithMatcherType("splits_segments2", .allKeys, parsed: false)
+        let savedSplit3 = SplitTestHelper.newSplitWithMatcherType("splits_segments3", .inSegment, parsed: false)
+        let savedSplit4 = SplitTestHelper.newSplitWithMatcherType("splits_segments4", .allKeys, parsed: false)
+        let savedSplit5 = SplitTestHelper.newSplitWithMatcherType("splits_segments5", .inSegment, parsed: false)
+        let savedSplit6 = SplitTestHelper.newSplitWithMatcherType("splits_segments6", .inLargeSegment, parsed: false)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit1)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit2)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit3)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit4)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit5)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit6)
+        
+        let userKey = "test-user-key"
+        let key: Key = Key(matchingKey: userKey, bucketingKey: nil)
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        let builder = DefaultSplitFactoryBuilder()
+        
+        _ = builder.setTestDatabase(splitDatabase)
+        _ = builder.setHttpClient(httpClient)
+        var factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
+        let client = factory?.client
+        
+        client?.on(event: .sdkReady) {
+            sdkReadyFired = true
+            sdkReady.fulfill()
+        }
+        wait(for: [sdkReady], timeout: 4)
+        
+        // MARK: Key part
+        XCTAssertEqual(splitDatabase.generalInfoDao.longValue(info: .segmentsInUse), 4)
         
         // Cleanup
         if let client = client {

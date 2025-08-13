@@ -116,4 +116,9 @@ class SplitsStorageStub: SplitsStorage {
     func update(bySetsFilter: SplitFilter?) {
         updateBySetsFilterCount+=1
     }
+    
+    var forceReparsingCalled = false
+    func forceParsing() {
+        forceReparsingCalled = true
+    }
 }
