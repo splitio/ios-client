@@ -159,7 +159,7 @@ class SplitChangesServerErrorTest: XCTestCase {
     }
     
     // MARK: Getting malformed flags from server
-    func testResponseFlagsParserror() throws {
+    func testResponseFlagsParseError() throws {
         
         // Networking setup
         let dispatcher: HttpClientTestDispatcher = { request in
