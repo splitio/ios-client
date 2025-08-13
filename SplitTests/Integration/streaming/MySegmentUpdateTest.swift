@@ -257,7 +257,7 @@ class MySegmentUpdateTest: XCTestCase {
         
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test")
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.3")
-        let savedSplit = SplitTestHelper.newSplitWithMatcherType("splits_with_segments", .inSegment)
+        let savedSplit = SplitTestHelper.newSplitWithMatcherType("splits_with_segments", .allKeys)
         splitDatabase.splitDao.syncInsertOrUpdate(split: savedSplit)
         
         let userKey = "test-user-key"
@@ -290,7 +290,7 @@ class MySegmentUpdateTest: XCTestCase {
         // MARK: Key part
         let waitExp = XCTestExpectation(description: "Just waiting")
         waitExp.isInverted = true // Inverted expectation
-        wait(for: [waitExp], timeout: 10)
+        wait(for: [waitExp], timeout: 6)
         
         XCTAssertEqual(membershipsHit, 1, "After 15 seconds it should hit /memberships just once")
         
