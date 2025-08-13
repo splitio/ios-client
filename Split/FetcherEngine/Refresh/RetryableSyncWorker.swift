@@ -36,12 +36,11 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
 
     func start() {
         syncQueue.async { [weak self] in
-            guard let self = self else { return }
-            if self.isRunning.value {
-                return
-            }
+            guard let self = self, self.isRunning.value else { return }
+            
             self.isRunning.set(true)
             self.reconnectBackoffCounter.resetCounter()
+            
             do {
                 try self.fetchFromRemoteLoop()
             } catch {
