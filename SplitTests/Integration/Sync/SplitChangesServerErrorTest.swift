@@ -153,7 +153,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         
         // Test
         wait(for: [sdkError], timeout: 5)
-        XCTAssertEqual(errorType, EventMetadataType.featureFlagsSyncError)
+        XCTAssertEqual(errorType, .featureFlagsSyncError)
         
         cleanup(client, &factory)
     }
@@ -191,7 +191,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         
         // Test
         wait(for: [sdkError], timeout: 5)
-        XCTAssertEqual(errorType, EventMetadataType.featureFlagsSyncError)
+        XCTAssertEqual(errorType, .featureFlagsSyncError)
         
         cleanup(client, &factory)
     }
@@ -229,7 +229,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         
         // Test
         wait(for: [sdkError], timeout: 5)
-        XCTAssertEqual(errorType,.segmentsSyncError)
+        XCTAssertEqual(errorType, .segmentsSyncError)
         
         cleanup(client, &factory)
     }
