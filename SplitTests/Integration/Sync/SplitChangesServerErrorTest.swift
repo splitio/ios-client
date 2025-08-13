@@ -91,7 +91,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         // Networking setup
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("splitchanges_int_test"))) // Valid Splits
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("splitchanges_int_test"))) // OK Splits
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 500) // Error for Segments
@@ -129,7 +129,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         // Networking setup
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.isMySegmentsEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(self.updatedSegments(index: 4).utf8)) // Valid for Segments
+                return TestDispatcherResponse(code: 200, data: Data(self.updatedSegments(index: 4).utf8)) // OK Segments
             }
             return TestDispatcherResponse(code: 500) // Error for Splits
         }
@@ -164,12 +164,12 @@ class SplitChangesServerErrorTest: XCTestCase {
         // Networking setup
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.isMySegmentsEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(self.updatedSegments(index: 4).utf8)) // Valid for Segments
+                return TestDispatcherResponse(code: 200, data: Data(self.updatedSegments(index: 4).utf8)) // OK for Segments
             }
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("matchers"))) // Valid Splits, but wrong JSON
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("matchers"))) // OK for Splits, but bad JSON
             }
-            return TestDispatcherResponse(code: 500) // Error for Splits
+            return TestDispatcherResponse(code: 500)
         }
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
@@ -197,17 +197,17 @@ class SplitChangesServerErrorTest: XCTestCase {
     }
     
     // MARK: Getting malformed segments from server
-    func testResponseSegmentsParserror() throws {
+    func testResponseSegmentsParseError() throws {
         
         // Networking setup
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.isMySegmentsEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data("".utf8)) // Valid response for Segments, but bad JSON
+                return TestDispatcherResponse(code: 200, data: Data("".utf8)) // OK for Segments, but bad JSON
             }
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("splitchanges_int_test"))) // Valid Splits
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("splitchanges_int_test"))) // OK Splits
             }
-            return TestDispatcherResponse(code: 500) // Error for Splits
+            return TestDispatcherResponse(code: 500)
         }
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())

@@ -62,9 +62,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
     
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        if event == .sdkError {
-            print("")
-        }
         notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
     }
     
@@ -183,10 +180,8 @@ class DefaultSplitEventsManager: SplitEventsManager {
                         trigger(event: .sdkReadyTimedOut)
                     }
                 case .sdkError:
-                    if !isTriggered(external: .sdkReady) {
-                        let eventWithMetadata = SplitEventWithMetadata(.sdkError, metadata: event.metadata)
-                        trigger(event: eventWithMetadata)
-                    }
+                    let eventWithMetadata = SplitEventWithMetadata(.sdkError, metadata: event.metadata)
+                    trigger(event: eventWithMetadata)
             }
         }
     }
