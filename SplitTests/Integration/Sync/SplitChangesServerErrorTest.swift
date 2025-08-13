@@ -91,7 +91,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         // Networking setup
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile())) // Valid Splits
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("splitchanges_int_test"))) // Valid Splits
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 500) // Error for Segments
@@ -157,13 +157,89 @@ class SplitChangesServerErrorTest: XCTestCase {
         
         cleanup(client, &factory)
     }
+    
+    // MARK: Getting malformed flags from server
+    func testResponseFlagsParserror() throws {
+        
+        // Networking setup
+        let dispatcher: HttpClientTestDispatcher = { request in
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(self.updatedSegments(index: 4).utf8)) // Valid for Segments
+            }
+            if request.isSplitEndpoint() {
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("matchers"))) // Valid Splits, but wrong JSON
+            }
+            return TestDispatcherResponse(code: 500) // Error for Splits
+        }
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        
+        // Client config
+        _ = builder.setHttpClient(httpClient)
+        var factory: SplitFactory? = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig!).build()
+        let client = factory!.client
+        
+        let sdkError = XCTestExpectation(description: "SDK ERROR Expectation")
+        var errorType: EventMetadataType?
+        
+        // Listener
+        client.on(event: .sdkError) { error in
+            errorType = error.type
+            sdkError.fulfill()
+        }
+        
+        // Test
+        wait(for: [sdkError], timeout: 5)
+        XCTAssertEqual(errorType, EventMetadataType.FEATURE_FLAGS_SYNC_ERROR)
+        
+        cleanup(client, &factory)
+    }
+    
+    // MARK: Getting malformed segments from server
+    func testResponseSegmentsParserror() throws {
+        
+        // Networking setup
+        let dispatcher: HttpClientTestDispatcher = { request in
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data("".utf8)) // Valid response for Segments, but bad JSON
+            }
+            if request.isSplitEndpoint() {
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("splitchanges_int_test"))) // Valid Splits
+            }
+            return TestDispatcherResponse(code: 500) // Error for Splits
+        }
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
+        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        
+        // Client config
+        _ = builder.setHttpClient(httpClient)
+        var factory: SplitFactory? = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig!).build()
+        let client = factory!.client
+        
+        let sdkError = XCTestExpectation(description: "SDK ERROR Expectation")
+        var errorType: EventMetadataType?
+        
+        // Listener
+        client.on(event: .sdkError) { error in
+            errorType = error.type
+            sdkError.fulfill()
+        }
+        
+        // Test
+        wait(for: [sdkError], timeout: 5)
+        XCTAssertEqual(errorType, EventMetadataType.SEGMENTS_SYNC_ERROR)
+        
+        cleanup(client, &factory)
+    }
 }
 
 // MARK: Test Helpers
 extension SplitChangesServerErrorTest {
     
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
-        let respData = responseSplitChanges()
+        let respData = responseSplitChanges("splitchanges_int_test")
         var responses = [TestDispatcherResponse]()
         responses.append(TestDispatcherResponse(code: 200, data: Data(try! Json.encodeToJson(
             TargetingRulesChange(featureFlags: respData[0], ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))).utf8)))
@@ -214,11 +290,11 @@ extension SplitChangesServerErrorTest {
         }
     }
 
-    private func responseSplitChanges() -> [SplitChange] {
+    private func responseSplitChanges(_ filename: String) -> [SplitChange] {
         var changes = [SplitChange]()
 
         for i in 0..<2 {
-            let c = loadSplitsChangeFile()!
+            let c = loadSplitsChangeFile(filename)!
             var prevChangeNumber = c.since
             c.since = prevChangeNumber + kChangeNbInterval
             c.till = c.since
@@ -251,8 +327,8 @@ extension SplitChangesServerErrorTest {
         return json
     }
 
-    private func loadSplitsChangeFile() -> SplitChange? {
-        FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_int_test")
+    private func loadSplitsChangeFile(_ filename: String) -> SplitChange? {
+        FileHelper.loadSplitChangeFile(sourceClass: self, fileName: filename)
     }
 
     private func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
