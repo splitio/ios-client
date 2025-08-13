@@ -119,7 +119,7 @@ class DefaultSplitsStorage: SplitsStorage {
     func getCount() -> Int {
         return inMemorySplits.count
     }
-
+    
     private func processUpdated(splits: [Split], active: Bool) -> Bool {
         var cachedSplits = inMemorySplits.all
         var cachedTrafficTypes = trafficTypes.all

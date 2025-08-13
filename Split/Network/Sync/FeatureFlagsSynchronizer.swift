@@ -87,7 +87,8 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             let start = Date.nowMillis()
             self.filterSplitsInCache()
             
-            // Part of /memberships hits optimization
+            // MARK: Important. This should be called before loadLocal()
+            // MARK: Part of /memberships hits optimization
             if self.storageContainer.generalInfoStorage.getSegmentsInUse() == nil {
                 splitsStorage.forceParsing()
                 ruleBasedSegmentsStorage.forceParsing()
