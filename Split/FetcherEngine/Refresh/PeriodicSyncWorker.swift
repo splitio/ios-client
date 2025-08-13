@@ -39,8 +39,7 @@ class DefaultPeriodicTimer: PeriodicTimer {
     }
 
     func stop() {
-        // Not suspending the timer to avoid crashes
-        isRunning.set(false)
+        isRunning.set(false) // Not suspending the timer to avoid crashes
     }
 
     func destroy() {
@@ -77,12 +76,10 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     init(timer: PeriodicTimer, eventsManager: SplitEventsManager) {
         self.eventsManager = eventsManager
         self.fetchTimer = timer
+        
         self.fetchTimer.handler { [weak self] in
-            guard let self = self else { return }
-            
-            if self.isPaused.value {
-                return
-            }
+            guard let self = self, self.isPaused.value else { return }
+
             self.fetchQueue.async {
                 self.fetchFromRemote()
             }
@@ -203,8 +200,10 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         if !isSdkReadyFired() { return } // Polling should be done once sdk ready is fired in initial sync
 
         do {
+            // 1. Try to sync
             let result = try syncHelper.sync(msTill: mySegmentsStorage.changeNumber, mlsTill: myLargeSegmentsStorage.changeNumber, headers: nil)
             
+            // 2. Process result
             if result.success {
                 // Success
                 if  result.msUpdated || result.mlsUpdated {
