@@ -62,9 +62,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
     }
     
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        if event == .sdkError {
-            print("")
-        }
         notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
     }
     
