@@ -184,19 +184,17 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         let changeNumber = splitsStorage.changeNumber
         let rbChangeNumber: Int64 = ruleBasedSegmentsStorage.changeNumber
         guard let result = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber) else {
-            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .SEGMENTS_SYNC_ERROR, data: []))
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
             notifyUpdate(event)
             return
         }
         
         if result.success, result.featureFlagsUpdated || result.rbsUpdated {
-            // SUCCESS
+            // Success
             notifyUpdate(.splitsUpdated)
         } else if !result.success {
-            // FAIL
-            var event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .SEGMENTS_SYNC_ERROR, data: []))
-            notifyUpdate(event)
-            event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .FEATURE_FLAGS_SYNC_ERROR, data: []))
+            // Fail
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
             notifyUpdate(event)
         }
     }
@@ -241,13 +239,13 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                     notifyUpdate(.mySegmentsUpdated)
                 }
             } else {
-                // FAIL
-                let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .SEGMENTS_SYNC_ERROR, data: []))
+                // Fail
+                let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
                 notifyUpdate(event)
             }
         } catch {
-            // FAIL
-            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .SEGMENTS_SYNC_ERROR, data: []))
+            // Fail
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
             notifyUpdate(event)
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
         }

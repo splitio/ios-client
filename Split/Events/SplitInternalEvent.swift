@@ -30,14 +30,14 @@ struct SplitInternalEventWithMetadata {
 }
 
 enum EventMetadataType: Int {
-    case FEATURE_FLAGS_SYNC_ERROR
-    case SEGMENTS_SYNC_ERROR
+    case featureFlagsSyncError
+    case segmentsSyncError
     
     public func toString() -> String {
         switch self {
-            case .FEATURE_FLAGS_SYNC_ERROR:
+            case .featureFlagsSyncError:
                 return "FEATURE_FLAGS_SYNC_ERROR"
-            case .SEGMENTS_SYNC_ERROR:
+            case .segmentsSyncError:
                 return "SEGMENTS_SYNC_ERROR"
         }
     }

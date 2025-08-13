@@ -96,7 +96,7 @@ class SplitChangesServerErrorTest: XCTestCase {
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 500) // Error for Segments
             }
-            return TestDispatcherResponse(code: 500)
+            return TestDispatcherResponse(code: 200)
         }
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
@@ -118,7 +118,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         
         // Test
         wait(for: [sdkError], timeout: 5)
-        XCTAssertEqual(errorType, EventMetadataType.SEGMENTS_SYNC_ERROR)
+        XCTAssertEqual(errorType, .segmentsSyncError)
         
         cleanup(client, &factory)
     }
@@ -153,13 +153,13 @@ class SplitChangesServerErrorTest: XCTestCase {
         
         // Test
         wait(for: [sdkError], timeout: 5)
-        XCTAssertEqual(errorType, EventMetadataType.FEATURE_FLAGS_SYNC_ERROR)
+        XCTAssertEqual(errorType, EventMetadataType.featureFlagsSyncError)
         
         cleanup(client, &factory)
     }
     
     // MARK: Getting malformed flags from server
-    func testResponseFlagsParserror() throws {
+    func testResponseFlagsParseError() throws {
         
         // Networking setup
         let dispatcher: HttpClientTestDispatcher = { request in
@@ -169,7 +169,7 @@ class SplitChangesServerErrorTest: XCTestCase {
             if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("matchers"))) // OK for Splits, but bad JSON
             }
-            return TestDispatcherResponse(code: 500)
+            return TestDispatcherResponse(code: 200)
         }
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
@@ -191,7 +191,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         
         // Test
         wait(for: [sdkError], timeout: 5)
-        XCTAssertEqual(errorType, EventMetadataType.FEATURE_FLAGS_SYNC_ERROR)
+        XCTAssertEqual(errorType, EventMetadataType.featureFlagsSyncError)
         
         cleanup(client, &factory)
     }
@@ -229,7 +229,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         
         // Test
         wait(for: [sdkError], timeout: 5)
-        XCTAssertEqual(errorType, EventMetadataType.SEGMENTS_SYNC_ERROR)
+        XCTAssertEqual(errorType,.segmentsSyncError)
         
         cleanup(client, &factory)
     }
