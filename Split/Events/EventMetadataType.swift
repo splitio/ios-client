@@ -6,6 +6,7 @@ import Foundation
     public var type: EventMetadataType
     public var data: [String]? = []
 
+    
     init(type: EventMetadataType, data: [String]?) {
         self.type = type
         self.data = data
