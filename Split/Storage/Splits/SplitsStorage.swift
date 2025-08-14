@@ -36,7 +36,6 @@ class DefaultSplitsStorage: SplitsStorage {
     private var inMemorySplits: SynchronizedDictionary<String, Split>
     private var trafficTypes: SynchronizedDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
-    private var inMemorySplits: ConcurrentDictionary<String, Split>
     internal var segmentsInUse: Int64 = 0
     
     private(set) var changeNumber: Int64 = -1
