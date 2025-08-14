@@ -1,3 +1,7 @@
+3.3.2: (Aug 12, 2025)
+- Fixed issue in BlockingQueue implementation that caused hangs due to a race condition.
+- Replaced data structure for in memory flags to prevent deadlocks in high concurrency scenarios.
+
 3.3.1: (Aug 1, 2025)
 - Fixed issue in preload of rule based segments in memory storage.
 
