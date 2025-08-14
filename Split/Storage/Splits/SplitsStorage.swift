@@ -252,7 +252,7 @@ class DefaultSplitsStorage: SplitsStorage {
     }
     
     #if DEBUG
-    func getInMemorySplits() -> ConcurrentDictionary<String, Split>  {
+    func getInMemorySplits() -> SynchronizedDictionary<String, Split>  {
         inMemorySplits
     }
     #endif
