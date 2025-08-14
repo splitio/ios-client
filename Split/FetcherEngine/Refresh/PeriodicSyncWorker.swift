@@ -78,7 +78,11 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
         self.fetchTimer = timer
         
         self.fetchTimer.handler { [weak self] in
-            guard let self = self, self.isPaused.value else { return }
+            guard let self = self else { return }
+            
+            if !self.isPaused.value {
+                self.isPaused.set(true)
+            }
 
             self.fetchQueue.async {
                 self.fetchFromRemote()
