@@ -47,4 +47,8 @@ class EmptyMySegmentsStorage: MySegmentsStorage {
 
     func clear() {
     }
+    
+    func isUsingSegments() -> Bool {
+        false
+    }
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol ByKeyMySegmentsStorage {
+protocol ByKeyMySegmentsStorage: SegmentsChecker {
     var changeNumber: Int64 { get }
     func loadLocal()
     func getAll() -> Set<String>
@@ -16,6 +16,7 @@ protocol ByKeyMySegmentsStorage {
     func getCount() -> Int
 }
 
+// One instance per client
 class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
 
     private let mySegmentsStorage: MySegmentsStorage
@@ -47,5 +48,10 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
 
     func getCount() -> Int {
         return mySegmentsStorage.getCount(forKey: userKey)
+    }
+     
+    // MARK: For Network Traffic Optimization
+    func isUsingSegments() -> Bool {
+        mySegmentsStorage.isUsingSegments()
     }
 }

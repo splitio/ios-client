@@ -21,6 +21,8 @@ class SplitsStorageStub: SplitsStorage {
     var splitsFilterQueryString: String = ""
 
     var flagsSpec: String = ""
+    
+    var segmentsInUse: Int64 = 0
 
     var loadLocalCalled = false
     var clearCalledTimes = 0
@@ -113,5 +115,10 @@ class SplitsStorageStub: SplitsStorage {
     var updateBySetsFilterCount = 0
     func update(bySetsFilter: SplitFilter?) {
         updateBySetsFilterCount+=1
+    }
+    
+    var forceReparsingCalled = false
+    func forceParsing() {
+        forceReparsingCalled = true
     }
 }

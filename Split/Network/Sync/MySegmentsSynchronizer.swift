@@ -19,6 +19,7 @@ protocol MySegmentsSynchronizer {
     func destroy()
 }
 
+// One instance per client
 class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
 
     private let mySegmentsStorage: ByKeyMySegmentsStorage
@@ -98,6 +99,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
         mySegmentsSyncWorker.start()
     }
 
+    // Used for streaming
     func forceMySegmentsSync(changeNumbers: SegmentsChangeNumber, delay: Int64) {
         if isDestroyed.value {
             return
@@ -147,12 +149,6 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
            changeNumbers.msChangeNumber <= mySegmentsStorage.changeNumber,
            changeNumbers.mlsChangeNumber <= myLargeSegmentsStorage.changeNumber {
             return
-        }
-
-        syncChangeNumbers?.mutate {
-            if $0.msChangeNumber <= changeNumbers.msChangeNumber,
-               changeNumbers.mlsChangeNumber <= changeNumbers.mlsChangeNumber {
-            }
         }
 
         if timerManager?.isScheduled(timer: .syncSegments) ?? false {

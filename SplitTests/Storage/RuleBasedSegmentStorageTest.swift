@@ -14,6 +14,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
     private var persistentStorageStub: PersistentRuleBasedSegmentsStorageStub!
     private var ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage!
+    private var noLoadedRbs: DefaultRuleBasedSegmentsStorage?
 
     override func setUp() {
         ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(
@@ -24,7 +25,24 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
     override func tearDown() {
         ruleBasedSegmentsStorage.clear()
+        noLoadedRbs?.clear()
         super.tearDown()
+    }
+    
+    func testLazyParsing() {
+        noLoadedRbs = DefaultRuleBasedSegmentsStorage(
+            persistentStorage: createPersistentStorageStub(isParsed: false)
+        )
+        
+        noLoadedRbs?.loadLocal()
+
+        XCTAssertNotNil(noLoadedRbs)
+        var segmentToCheck = noLoadedRbs!.getInMemorySegments().value(forKey: "segment_1")!
+        XCTAssertEqual(segmentToCheck.isParsed, false, "segment_1 shouldn't be parsed")
+        
+        _ = noLoadedRbs?.get(segmentName: "segment_2")
+        segmentToCheck = noLoadedRbs!.getInMemorySegments().value(forKey: "segment_2")!
+        XCTAssertEqual(segmentToCheck.isParsed, true, "segment_2 should be parsed")
     }
 
     func testInitialization() {
@@ -275,30 +293,73 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
         XCTAssertTrue(persistentStorageStub.clearCalled)
     }
+    
+    func testSegmentsInUseCount() {
+        let segment1 = createSegmentWithMatcher("segment", .between)
+        let segment2 = createSegmentWithMatcher("segment2", .inSegment)
+        let segment3 = createSegmentWithMatcher("segment3", .inLargeSegment)
+        let segment4 = createSegmentWithMatcher("segment4", .inSegment)
+        let segment5 = createSegmentWithMatcher("segment5", .endsWith)
 
-    private func createPersistentStorageStub() -> PersistentRuleBasedSegmentsStorageStub {
-        let delegate = MockPersistentRuleBasedSegmentsStorage()
+        // 1. Counter should be 3 (ignore the other matcherTypes)
+        _ = ruleBasedSegmentsStorage.update(toAdd: Set([segment1, segment2, segment3, segment4, segment5]), toRemove: [], changeNumber: 123)
+        XCTAssertEqual(ruleBasedSegmentsStorage.segmentsInUse, 3)
+        
+        // 2
+        segment1.status = .archived // Archive of Segments with other matcherTypes should be ignored..
+        segment2.status = .archived // ..and known Segments being archived should decrease the counter
+        segment3.status = .archived
+        _ = ruleBasedSegmentsStorage.update(toAdd: Set([]), toRemove: [segment1, segment2, segment3], changeNumber: 1230)
+        
+        XCTAssertEqual(ruleBasedSegmentsStorage.segmentsInUse, 1)
+    }
+
+
+    private func createPersistentStorageStub(isParsed: Bool = true) -> PersistentRuleBasedSegmentsStorageStub {
+        let delegate = MockPersistentRuleBasedSegmentsStorage(isParsed: isParsed)
         persistentStorageStub = PersistentRuleBasedSegmentsStorageStub(delegate: delegate)
         return persistentStorageStub
     }
 
-    private func createSegment(name: String, trafficType: String = "tt_default", status: Status = .active) -> RuleBasedSegment {
+    private func createSegment(name: String, trafficType: String = "tt_default", status: Status = .active, isParsed: Bool = true) -> RuleBasedSegment {
         let segment = RuleBasedSegment()
         segment.name = name
         segment.trafficTypeName = trafficType
         segment.status = status
         segment.changeNumber = Int64(Date.nowMillis())
-        segment.isParsed = true
+        segment.isParsed = isParsed
+        return segment
+    }
+
+    private func createSegmentWithMatcher(_ name: String, _ matcher: MatcherType, isParsed: Bool = true) -> RuleBasedSegment {
+        let segment = RuleBasedSegment()
+        segment.name = name
+        segment.conditions = [Condition()]
+        segment.conditions![0].matcherGroup = MatcherGroup()
+        segment.conditions![0].matcherGroup?.matchers = [Matcher()]
+        segment.conditions![0].matcherGroup?.matchers![0].matcherType = matcher
+        segment.trafficTypeName = "user"
+        segment.status = .active
+        segment.changeNumber = Int64(Date.nowMillis())
+        segment.isParsed = isParsed
         return segment
     }
 }
 
 private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage {
-    private var segments = [
-        createSegment(name: "segment_1", trafficType: "tt_1"),
-        createSegment(name: "segment_2", trafficType: "tt_2"),
-        createSegment(name: "segment_3", trafficType: "tt_3")
-    ]
+
+    private let isParsed: Bool
+    var segments: [RuleBasedSegment] = []
+
+    init(isParsed: Bool = true) {
+        self.isParsed = isParsed
+        segments = [
+            createSegment(name: "segment_1", trafficType: "tt_1", isParsed: isParsed),
+            createSegment(name: "segment_2", trafficType: "tt_2", isParsed: isParsed),
+            createSegment(name: "segment_3", trafficType: "tt_3", isParsed: isParsed)
+        ]
+    }
+
     private var snapshotChangeNumber: Int64 = 123
 
     func getSnapshot() -> RuleBasedSegmentsSnapshot {
@@ -321,14 +382,30 @@ private class MockPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegment
         self.segments = segments
         self.snapshotChangeNumber = changeNumber
     }
+    
+    var segmentsInUse: Int64 = 0
+    func getSegmentsInUse() -> Int64? {
+        segmentsInUse
+    }
+    
+    func setSegmentsInUse(_ segmentsInUse: Int64) {
+        self.segmentsInUse = segmentsInUse
+    }
 
-    private static func createSegment(name: String, trafficType: String) -> RuleBasedSegment {
+    private func createSegment(name: String, trafficType: String, isParsed: Bool = true) -> RuleBasedSegment {
         let segment = RuleBasedSegment()
         segment.name = name
         segment.trafficTypeName = trafficType
         segment.status = .active
         segment.changeNumber = 123
-        segment.isParsed = true
+        segment.isParsed = isParsed
+        segment.json = """
+            {
+                "name": "\(name)",
+                "trafficTypeName": "\(trafficType)",
+                "status": "ACTIVE"
+            }
+         """
         return segment
     }
 }
