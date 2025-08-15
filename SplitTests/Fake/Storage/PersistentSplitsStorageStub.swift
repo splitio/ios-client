@@ -33,6 +33,16 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var updateFlagsSpecCalled = false
     var splits = [String: Split]()
     var lastBySetSplitFilter: SplitFilter?
+    
+    private let delegate: PersistentSplitsStorage?
+
+    init(delegate: PersistentSplitsStorage?) {
+        self.delegate = delegate
+    }
+
+    convenience init() {
+        self.init(delegate: nil)
+    }
 
     func update(splitChange: ProcessedSplitChange) {
         processedSplitChange = splitChange
@@ -47,7 +57,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     }
 
     func getSplitsSnapshot() -> SplitsSnapshot {
-        return snapshot
+        return delegate?.getSplitsSnapshot() ?? snapshot
     }
 
     func getAll() -> [Split] {
@@ -62,6 +72,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     func clear() {
         clearCalled = true
+        delegate?.clear()
     }
 
     func close() {
@@ -91,6 +102,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     var segmentsInUse: Int64 = 0
     func update(segmentsInUse: Int64) {
         self.segmentsInUse = segmentsInUse
+        delegate?.update(segmentsInUse: segmentsInUse)
     }
     
     func getSegmentsInUse() -> Int64? {
