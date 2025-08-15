@@ -25,7 +25,7 @@ class BlockingQueueTest: XCTestCase {
             while true {
                 do {
                     let event = try queue.take()
-                    local.append(event)
+                    local.append(event.type)
                     if local.count == 4 {
                         endExp.fulfill()
                     }
@@ -34,9 +34,9 @@ class BlockingQueueTest: XCTestCase {
             }
         }
         globalQ.asyncAfter(deadline: .now() + 1) {
-            queue.add(SplitInternalEvent.mySegmentsLoadedFromCache)
+            queue.add(.mySegmentsLoadedFromCache)
             globalQ.asyncAfter(deadline: .now() + 1) {
-                queue.add(SplitInternalEvent.splitsLoadedFromCache)
+                queue.add(.splitsLoadedFromCache)
             }
         }
 
@@ -60,7 +60,7 @@ class BlockingQueueTest: XCTestCase {
             while true {
                 do {
                     let event = try queue.take()
-                    local.append(event)
+                    local.append(event.type)
                 } catch BlockingQueueError.noElementAvailable {
                     continue
                 } catch {
@@ -107,8 +107,8 @@ class BlockingQueueTest: XCTestCase {
             for _ in 0..<50000 {
                 do {
                     let event = try queue.take()
-                    local.append(event)
-                    print("Took: \(event)")
+                    local.append(event.type)
+                    print("Took: \(event.type)")
                 } catch {
                 }
             }
@@ -119,8 +119,8 @@ class BlockingQueueTest: XCTestCase {
             for _ in 0..<50000 {
                 do {
                     let event = try queue.take()
-                    local.append(event)
-                    print("Took QA1: \(event)")
+                    local.append(event.type)
+                    print("Took QA1: \(event.type)")
                 } catch {
                     print("\n\n\nERROR!!!!: \(error) \n\n\n")
                 }
@@ -131,9 +131,9 @@ class BlockingQueueTest: XCTestCase {
             for _ in 0..<50000 {
                 do {
                     let event = try queue.take()
-                    local.append(event)
+                    local.append(event.type)
                     Thread.sleep(forTimeInterval: 0.3)
-                    print("Took QA2: \(event)")
+                    print("Took QA2: \(event.type)")
                 } catch {
                 }
             }
@@ -144,8 +144,8 @@ class BlockingQueueTest: XCTestCase {
                 do {
                     Thread.sleep(forTimeInterval: 0.5)
                     let event = try queue.take()
-                    local.append(event)
-                    print("Took QA3: \(event)")
+                    local.append(event.type)
+                    print("Took QA3: \(event.type)")
                 } catch {
                 }
             }
@@ -153,7 +153,7 @@ class BlockingQueueTest: XCTestCase {
 
         qu1.async {
             for _ in 1..<100000 {
-                queue.add(SplitInternalEvent.splitsUpdated)
+                queue.add(.splitsUpdated)
                 print("qu1 add")
                 Thread.sleep(forTimeInterval: 0.2)
             }
@@ -162,7 +162,7 @@ class BlockingQueueTest: XCTestCase {
         qu2.async {
             for _ in 1..<10000 {
                 print("qu2 add")
-                queue.add(SplitInternalEvent.sdkReadyTimeoutReached)
+                queue.add(.sdkReadyTimeoutReached)
                 Thread.sleep(forTimeInterval: 0.5)
             }
         }
@@ -170,7 +170,7 @@ class BlockingQueueTest: XCTestCase {
         qu3.async {
             for _ in 1..<10000 {
                 print("qu3 add")
-                queue.add(SplitInternalEvent.splitsUpdated)
+                queue.add(.splitsUpdated)
                 Thread.sleep(forTimeInterval: 0.8)
             }
         }
@@ -178,7 +178,7 @@ class BlockingQueueTest: XCTestCase {
         qu4.async {
             for _ in 1..<10000 {
                 print("qu4 add")
-                queue.add(SplitInternalEvent.mySegmentsUpdated)
+                queue.add(.mySegmentsUpdated)
                 sleep(1)
             }
         }

@@ -20,27 +20,35 @@ class SplitEventsManagerStub: SplitEventsManager {
     var stopCalled = false
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        switch event {
-        case .mySegmentsLoadedFromCache:
-            mySegmentsLoadedEventFiredCount+=1
-            if let exp = mySegmentsLoadedEventExp {
-                exp.fulfill()
-            }
-        case .splitsLoadedFromCache:
-            splitsLoadedEventFiredCount+=1
+        notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
+    }
+    
+    func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {
+        switch event.type {
+            case .mySegmentsLoadedFromCache:
+                mySegmentsLoadedEventFiredCount+=1
+                if let exp = mySegmentsLoadedEventExp {
+                    exp.fulfill()
+                }
+            case .splitsLoadedFromCache:
+                splitsLoadedEventFiredCount+=1
 
-        case .splitKilledNotification:
-            splitsKilledEventFiredCount+=1
+            case .splitKilledNotification:
+                splitsKilledEventFiredCount+=1
 
-        case .splitsUpdated:
-            splitsUpdatedEventFiredCount+=1
-        default:
-            print("internal event fired: \(event)")
+            case .splitsUpdated:
+                splitsUpdatedEventFiredCount+=1
+            default:
+                print("internal event fired: \(event)")
         }
     }
 
-    var registeredEvents = [SplitEvent: SplitEventTask]()
     func register(event: SplitEvent, task: SplitEventTask) {
+        register(event: SplitEventWithMetadata(event, metadata: nil), task: task)
+    }
+
+    var registeredEvents = [SplitEventWithMetadata: SplitEventTask]()
+    func register(event: SplitEventWithMetadata, task: SplitEventTask) {
         registeredEvents[event] = task
     }
 

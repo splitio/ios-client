@@ -1,12 +1,10 @@
-//
 //  PeriodicSplitsSyncWorker.swift
 //  Split
 //
 //  Created by Javier Avrudsky on 26-Sep-2020
-//
-//
 
 import Foundation
+
 protocol PeriodicTimer {
     func trigger()
     func stop()
@@ -35,15 +33,13 @@ class DefaultPeriodicTimer: PeriodicTimer {
 
     func trigger() {
         if !isRunning.getAndSet(true) {
-            fetchTimer.schedule(deadline: .now() + .seconds(deadLineInSecs),
-                                repeating: .seconds(intervalInSecs))
-//            fetchTimer.resume()
+            fetchTimer.schedule(deadline: .now() + .seconds(deadLineInSecs), repeating: .seconds(intervalInSecs))
+            // fetchTimer.resume()
         }
     }
 
     func stop() {
-        // Not suspending the timer to avoid crashes
-        isRunning.set(false)
+        isRunning.set(false) // Not suspending the timer to avoid crashes
     }
 
     func destroy() {
@@ -61,8 +57,8 @@ class DefaultPeriodicTimer: PeriodicTimer {
 }
 
 protocol PeriodicSyncWorker {
-    //    typealias SyncCompletion = (Bool) -> Void
-    //    var completion: SyncCompletion? { get set }
+    // typealias SyncCompletion = (Bool) -> Void
+    // var completion: SyncCompletion? { get set }
     func start()
     func pause()
     func resume()
@@ -77,17 +73,17 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     private let eventsManager: SplitEventsManager
     private var isPaused: Atomic<Bool> = Atomic(false)
 
-    init(timer: PeriodicTimer,
-         eventsManager: SplitEventsManager) {
+    init(timer: PeriodicTimer, eventsManager: SplitEventsManager) {
         self.eventsManager = eventsManager
         self.fetchTimer = timer
+        
         self.fetchTimer.handler { [weak self] in
-            guard let self = self else {
-                return
+            guard let self = self else { return }
+            
+            if !self.isPaused.value {
+                self.isPaused.set(true)
             }
-            if self.isPaused.value {
-                return
-            }
+
             self.fetchQueue.async {
                 self.fetchFromRemote()
             }
@@ -130,13 +126,17 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
         Logger.i("Fetch from remote not implemented")
     }
 
-    func notifyUpdate(_ events: [SplitInternalEvent]) {
-        events.forEach {
-            eventsManager.notifyInternalEvent($0)
-        }
+    func notifyUpdate(_ event: SplitInternalEvent) {
+        let withMetadata = SplitInternalEventWithMetadata(event, metadata: nil)
+        notifyUpdate(withMetadata)
+    }
+    
+    func notifyUpdate(_ event: SplitInternalEventWithMetadata) {
+        eventsManager.notifyInternalEvent(event)
     }
 }
 
+// MARK: Sync Splits (Targeting Rules)
 class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
 
     private let splitFetcher: HttpSplitFetcher
@@ -146,49 +146,44 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
     private let ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor
     private let syncHelper: SplitsSyncHelper
 
-    init(splitFetcher: HttpSplitFetcher,
-         splitsStorage: SplitsStorage,
-         generalInfoStorage: GeneralInfoStorage,
-         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage,
-         splitChangeProcessor: SplitChangeProcessor,
-         ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
-         timer: PeriodicTimer,
-         eventsManager: SplitEventsManager,
-         splitConfig: SplitClientConfig) {
-
+    init(splitFetcher: HttpSplitFetcher, splitsStorage: SplitsStorage, generalInfoStorage: GeneralInfoStorage, ruleBasedSegmentsStorage: RuleBasedSegmentsStorage, splitChangeProcessor: SplitChangeProcessor, ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor, timer: PeriodicTimer, eventsManager: SplitEventsManager, splitConfig: SplitClientConfig) {
         self.splitFetcher = splitFetcher
         self.splitsStorage = splitsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
         self.splitChangeProcessor = splitChangeProcessor
         self.ruleBasedSegmentsChangeProcessor = ruleBasedSegmentsChangeProcessor
-        self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
-                                           splitsStorage: splitsStorage,
-                                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
-                                           splitChangeProcessor: splitChangeProcessor,
-                                           ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor,
-                                           generalInfoStorage: generalInfoStorage,
-                                           splitConfig: splitConfig)
-        super.init(timer: timer,
-                   eventsManager: eventsManager)
+        self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher, splitsStorage: splitsStorage, ruleBasedSegmentsStorage: ruleBasedSegmentsStorage, splitChangeProcessor: splitChangeProcessor, ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor, generalInfoStorage: generalInfoStorage, splitConfig: splitConfig)
+        
+        super.init(timer: timer, eventsManager: eventsManager)
     }
 
     override func fetchFromRemote() {
-        // Polling should be done once sdk ready is fired in initial sync
-        if !isSdkReadyFired() {
-            return
-        }
+        if !isSdkReadyFired() { return } // Polling should be done once sdk ready is fired in initial sync
 
         let changeNumber = splitsStorage.changeNumber
         let rbChangeNumber: Int64 = ruleBasedSegmentsStorage.changeNumber
+        
+        // 1. Try to Sync
         guard let result = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber) else {
+            // Fail
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
+            notifyUpdate(event)
             return
         }
+        
+        // 2. Process Result
         if result.success, result.featureFlagsUpdated || result.rbsUpdated {
-            notifyUpdate([.splitsUpdated])
+            // Success
+            notifyUpdate(.splitsUpdated)
+        } else if !result.success {
+            // Fail
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
+            notifyUpdate(event)
         }
     }
 }
 
+// MARK: Sync Segments
 class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
 
     private let mySegmentsStorage: ByKeyMySegmentsStorage
@@ -196,20 +191,13 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let syncHelper: SegmentsSyncHelper
 
-    init(mySegmentsStorage: ByKeyMySegmentsStorage,
-         myLargeSegmentsStorage: ByKeyMySegmentsStorage,
-         telemetryProducer: TelemetryRuntimeProducer?,
-         timer: PeriodicTimer,
-         eventsManager: SplitEventsManager,
-         syncHelper: SegmentsSyncHelper) {
-
+    init(mySegmentsStorage: ByKeyMySegmentsStorage, myLargeSegmentsStorage: ByKeyMySegmentsStorage, telemetryProducer: TelemetryRuntimeProducer?, timer: PeriodicTimer, eventsManager: SplitEventsManager, syncHelper: SegmentsSyncHelper) {
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.telemetryProducer = telemetryProducer
         self.syncHelper = syncHelper
 
-        super.init(timer: timer,
-                   eventsManager: eventsManager)
+        super.init(timer: timer, eventsManager: eventsManager)
     }
 
     override func fetchFromRemote() {
@@ -220,17 +208,25 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         }
 
         do {
-            let result = try syncHelper.sync(msTill: mySegmentsStorage.changeNumber,
-                                             mlsTill: myLargeSegmentsStorage.changeNumber,
-                                             headers: nil)
+            // 1. Try to sync
+            let result = try syncHelper.sync(msTill: mySegmentsStorage.changeNumber, mlsTill: myLargeSegmentsStorage.changeNumber, headers: nil)
+            
+            // 2. Process result
             if result.success {
+                // Success
                 if  result.msUpdated || result.mlsUpdated {
-                    // For now is not necessary specify which entity was updated
-                    notifyUpdate([.mySegmentsUpdated])
+                    notifyUpdate(.mySegmentsUpdated)
                 }
+            } else {
+                // Fail
+                let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
+                notifyUpdate(event)
             }
         } catch {
+            // Fail
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
+            notifyUpdate(event)
         }
     }
 }

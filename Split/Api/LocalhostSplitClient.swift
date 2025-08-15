@@ -146,6 +146,18 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
             eventsManager.register(event: event, task: task)
         }
     }
+    
+    public func on(event: SplitEvent, executeWithMetadata: @escaping SplitActionWithMetadata) {
+        /* Intentionally unimplemented */
+    }
+    
+    public func on(event: SplitEvent, runInBackground: Bool, executeWithMetadata: @escaping SplitActionWithMetadata) {
+        /* Intentionally unimplemented */
+    }
+    
+    public func on(event: SplitEvent, queue: DispatchQueue, action: @escaping SplitActionWithMetadata) {
+        /* Intentionally unimplemented */
+    }
 
     public func track(trafficType: String, eventType: String) -> Bool {
         return true

@@ -25,10 +25,18 @@ class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
     func register(event: SplitEvent, task: SplitEventTask) {
 
     }
-
-    var notifiedEvents = Set<String>()
+    
+    func register(event: SplitEventWithMetadata, task: SplitEventTask) {
+        
+    }
+    
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        notifiedEvents.insert(IntegrationHelper.describeEvent(event))
+        notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
+    }
+    
+    var notifiedEvents: [SplitInternalEventWithMetadata] = []
+    func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {
+        notifiedEvents.append(event)
     }
 
     var startCalled = false
