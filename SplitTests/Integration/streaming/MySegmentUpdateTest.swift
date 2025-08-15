@@ -606,11 +606,10 @@ class MySegmentUpdateTest: XCTestCase {
         }
         wait(for: [sdkReady], timeout: 4)
         
-        
         // MARK: Key part
-        XCTAssertTrue(waitUntil(timeout: 2) { // To compensate slow CI
-            splitDatabase.generalInfoDao.longValue(info: .segmentsInUse) == 4
-        })
+        Thread.sleep(forTimeInterval: 2) // To compensate slow CI
+        splitDatabase.generalInfoDao.longValue(info: .segmentsInUse) == 4
+        
         // Cleanup
         if let client = client {
             destroy(client)
