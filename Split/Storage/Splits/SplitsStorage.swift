@@ -67,6 +67,7 @@ class DefaultSplitsStorage: SplitsStorage {
         if split.isCompletelyParsed != true { // Parse if necessary (lazy parsing)
             let parsedSplit = parseSplit(split)
             inMemorySplits.setValue(parsedSplit, forKey: lowercasedName)
+            return parsedSplit
         }
         
         return split
