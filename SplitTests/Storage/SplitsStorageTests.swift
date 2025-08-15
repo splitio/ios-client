@@ -328,8 +328,10 @@ class SplitsStorageTest: XCTestCase {
         // 1. Check Segments count is in 0
         XCTAssertEqual(splitsStorage.segmentsInUse, 0)
         
+        let splitNotUsingSegments = newSplit(name: "added")
+        
         // 2. Add 6 Splits (1 not using Segments)
-        var processedChange = ProcessedSplitChange(activeSplits: [split, split2, split3, split4, newSplit(name: "added"), split5],
+        var processedChange = ProcessedSplitChange(activeSplits: [split, split2, split3, split4, splitNotUsingSegments, split5],
                                                    archivedSplits: [],
                                                    changeNumber: 999, updateTimestamp: 888)
 
@@ -346,11 +348,12 @@ class SplitsStorageTest: XCTestCase {
         _ = splitsStorage.update(splitChange: processedChange)
         XCTAssertEqual(splitsStorage.segmentsInUse, 6) // So, count should be 6
         
-        // 4. Remove 2
+        // 4. Remove 3 (one not using segments)
         split2.status = .archived
         split.status = .archived
+        splitNotUsingSegments.status = .archived
         processedChange = ProcessedSplitChange(activeSplits: [],
-                                               archivedSplits: [split2, split],
+                                               archivedSplits: [split2, split, splitNotUsingSegments],
                                                changeNumber: 99999, updateTimestamp: 88888)
         
         _ = splitsStorage.update(splitChange: processedChange)

@@ -243,12 +243,14 @@ class DefaultSplitsStorage: SplitsStorage {
     func updateSegmentsCount(split: Split) { // Keep count of Flags with Segments (used to optimize "/memberships" hits)
         guard let splitName = split.name else { return }
         
-        if inMemorySplits.value(forKey: splitName) == nil, StorageHelper.usesSegments(split.conditions ?? []) {
-            if split.status == .active { // If new Split and active
+        if inMemorySplits.value(forKey: splitName) == nil, split.status == .active { // If new Split and active
+            if StorageHelper.usesSegments(split.conditions ?? []) {
                 segmentsInUse += 1
             }
         } else if inMemorySplits.value(forKey: splitName) != nil && split.status != .active { // If known Split and archived
-            segmentsInUse -= 1
+            if StorageHelper.usesSegments(split.conditions ?? []) {
+                segmentsInUse -= 1
+            }
         }
     }
     
