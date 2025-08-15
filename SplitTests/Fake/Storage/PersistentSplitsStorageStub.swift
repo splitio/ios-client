@@ -21,6 +21,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     var getAllCalled = false
     var updateCalled = false
+    var getSegmentsInUseCalled = false
     var deleteCalled = false
     var clearCalled = false
     var closeCalled = false
@@ -85,5 +86,15 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     func getBySetsFilter() -> SplitFilter? {
         getBySetsFilterCalled = false
         return nil
+    }
+    
+    var segmentsInUse: Int64 = 0
+    func update(segmentsInUse: Int64) {
+        self.segmentsInUse = segmentsInUse
+    }
+    
+    func getSegmentsInUse() -> Int64? {
+        getSegmentsInUseCalled = true
+        return segmentsInUse
     }
 }

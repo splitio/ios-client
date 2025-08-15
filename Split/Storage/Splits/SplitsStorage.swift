@@ -15,6 +15,7 @@ protocol SyncSplitsStorage: RolloutDefinitionsCache {
 protocol SplitsStorage: SyncSplitsStorage {
     var changeNumber: Int64 { get }
     var updateTimestamp: Int64 { get }
+    var segmentsInUse: Int64 { get }
 
     func loadLocal()
     func get(name: String) -> Split?
@@ -34,7 +35,8 @@ class DefaultSplitsStorage: SplitsStorage {
     private var inMemorySplits: SynchronizedDictionary<String, Split>
     private var trafficTypes: SynchronizedDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
-
+    internal var segmentsInUse: Int64 = 0
+    
     private(set) var changeNumber: Int64 = -1
     private(set) var updateTimestamp: Int64 = -1
 
@@ -47,6 +49,11 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func loadLocal() {
+        
+        // Ensure count of Flags with Segments (for optimization feature)
+        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
+        defer { persistentStorage.update(segmentsInUse: segmentsInUse) }
+        
         let snapshot = persistentStorage.getSplitsSnapshot()
         let active = snapshot.splits.filter { $0.status == .active }
         let archived = snapshot.splits.filter { $0.status == .archived }
@@ -89,12 +96,20 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func update(splitChange: ProcessedSplitChange) -> Bool {
+        
+        // Ensure count of Flags with Segments (for optimization feature)
+        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
+        defer { persistentStorage.update(segmentsInUse: segmentsInUse) }
+        
+        // Process
         let updated = processUpdated(splits: splitChange.activeSplits, active: true)
         let removed = processUpdated(splits: splitChange.archivedSplits, active: false)
 
+        // Update
         changeNumber = splitChange.changeNumber
         updateTimestamp = splitChange.updateTimestamp
         persistentStorage.update(splitChange: splitChange)
+
         return updated || removed
     }
 
@@ -130,6 +145,7 @@ class DefaultSplitsStorage: SplitsStorage {
         var splitsRemoved = false
 
         for split in splits {
+
             guard let splitName = split.name?.lowercased()  else {
                 Logger.e("Invalid feature flag name received while updating feature flags")
                 continue
@@ -146,9 +162,18 @@ class DefaultSplitsStorage: SplitsStorage {
                 // Split to remove not in memory, do nothing
                 continue
             }
+            
+            // Keep count of Flags with Segments (used to optimize "/memberships" endpoint hits)
+            if StorageHelper.usesSegments(split.conditions ?? []) {
+                if inMemorySplits.value(forKey: splitName) == nil && active { // If new Split and active
+                    segmentsInUse += 1
+                } else if inMemorySplits.value(forKey: splitName) != nil && !active { // If known Split and archived
+                    segmentsInUse -= 1
+                }
+            }
 
             if loadedSplit != nil, let oldTrafficType = loadedSplit?.trafficTypeName {
-                // Must decreated old traffic type count if a feature flag is updated or removed
+                // Must decrease old traffic type count if a feature flag is updated or removed
                 let count = cachedTrafficTypes[oldTrafficType] ?? 0
                 if count > 1 {
                     cachedTrafficTypes[oldTrafficType] = count - 1

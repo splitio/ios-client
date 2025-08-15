@@ -12,10 +12,12 @@ protocol PersistentSplitsStorage {
     func update(splitChange: ProcessedSplitChange)
     func update(split: Split)
     func update(bySetsFilter: SplitFilter?)
+    func update(segmentsInUse: Int64)
     func getBySetsFilter() -> SplitFilter?
     func getSplitsSnapshot() -> SplitsSnapshot
     func getChangeNumber() -> Int64
     func getUpdateTimestamp() -> Int64
+    func getSegmentsInUse() -> Int64?
     func getAll() -> [Split]
     func delete(splitNames: [String])
     func clear()
@@ -49,6 +51,10 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
     func update(flagsSpec: String) {
         generalInfoDao.update(info: .flagsSpec, stringValue: flagsSpec)
     }
+    
+    func update(segmentsInUse: Int64) {
+        generalInfoDao.update(info: .segmentsInUse, longValue: segmentsInUse)
+    }
 
     func getFilterQueryString() -> String {
         return generalInfoDao.stringValue(info: .splitsFilterQueryString) ?? ""
@@ -56,6 +62,10 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
 
     func getFlagsSpec() -> String {
         return generalInfoDao.stringValue(info: .flagsSpec) ?? ""
+    }
+    
+    func getSegmentsInUse() -> Int64? {
+        generalInfoDao.longValue(info: .segmentsInUse)
     }
 
     func update(bySetsFilter filter: SplitFilter?) {
