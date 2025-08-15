@@ -91,7 +91,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         // Networking setup
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges.utf8)) // OK Splits
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("splitchanges_int_test"))) // OK Splits
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 500) // Error for Segments
