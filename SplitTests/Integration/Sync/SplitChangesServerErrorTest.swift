@@ -31,8 +31,8 @@ class SplitChangesServerErrorTest: XCTestCase {
     var httpClient: HttpClient!
     var streamingBinding: TestStreamResponseBinding?
     var splitConfig: SplitClientConfig?
-    let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_f"
-    let key: Key = Key(matchingKey: "CUSTOMER_ID", bucketingKey: nil)
+    var apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3_f"
+    var key: Key = Key(matchingKey: "CUSTOMER_ID", bucketingKey: nil)
     let builder = DefaultSplitFactoryBuilder()
     
     override func setUp() {
@@ -91,7 +91,7 @@ class SplitChangesServerErrorTest: XCTestCase {
         // Networking setup
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.isSplitEndpoint() {
-                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("splitchanges_int_test"))) // OK Splits
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges.utf8)) // OK Splits
             }
             if request.isMySegmentsEndpoint() {
                 return TestDispatcherResponse(code: 500) // Error for Segments
