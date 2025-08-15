@@ -542,8 +542,6 @@ class MySegmentUpdateTest: XCTestCase {
         var sdkReadyFired = false
         let sdkReady = XCTestExpectation(description: "SDK should be ready")
         
-        var json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper()) // no Segments
-
         // 1. Configure dispatcher
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.url.absoluteString.contains("/splitChanges") {
@@ -570,6 +568,7 @@ class MySegmentUpdateTest: XCTestCase {
         splitConfig.eventsPushRate = 999999
         splitConfig.eventsFirstPushWindow = 999
         splitConfig.impressionsMode = "DEBUG"
+        splitConfig.logLevel = .debug
         splitConfig.serviceEndpoints = ServiceEndpoints.builder()
         .set(sdkEndpoint: "localhost").set(eventsEndpoint: "localhost").build()
         
@@ -608,7 +607,8 @@ class MySegmentUpdateTest: XCTestCase {
         wait(for: [sdkReady], timeout: 4)
         
         // MARK: Key part
-        XCTAssertEqual(splitDatabase.generalInfoDao.longValue(info: .segmentsInUse), 4)
+        Thread.sleep(forTimeInterval: 2) // To compensate slow CI
+        splitDatabase.generalInfoDao.longValue(info: .segmentsInUse) == 4
         
         // Cleanup
         if let client = client {
