@@ -246,9 +246,9 @@ class DefaultSplitsStorage: SplitsStorage {
         if inMemorySplits.value(forKey: splitName) == nil, StorageHelper.usesSegments(split.conditions ?? []) {
             if split.status == .active { // If new Split and active
                 segmentsInUse += 1
-            } else if inMemorySplits.value(forKey: splitName) != nil && split.status != .active { // If known Split and archived
-                segmentsInUse -= 1
             }
+        } else if inMemorySplits.value(forKey: splitName) != nil && split.status != .active { // If known Split and archived
+            segmentsInUse -= 1
         }
     }
     

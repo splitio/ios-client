@@ -347,6 +347,8 @@ class SplitsStorageTest: XCTestCase {
         XCTAssertEqual(splitsStorage.segmentsInUse, 6) // So, count should be 6
         
         // 4. Remove 2
+        split2.status = .archived
+        split.status = .archived
         processedChange = ProcessedSplitChange(activeSplits: [],
                                                archivedSplits: [split2, split],
                                                changeNumber: 99999, updateTimestamp: 88888)
