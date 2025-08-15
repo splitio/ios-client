@@ -354,6 +354,7 @@
 		59FB7C3C2203795F00ECC96A /* LocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */; };
 		59FB7C3E22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */; };
 		5B0162682E4A9C7A0009D3B7 /* SplitEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0162672E4A9C5D0009D3B7 /* SplitEventsTests.swift */; };
+		5B26B0D72E4F70A00025AAB7 /* StorageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */; };
 		5B279CF92E340FC600B73A36 /* splitschanges_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */; };
 		5B343EAD2E26E93B006BEBE7 /* StorageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */; };
 		5B48D8172DEA2CED00351925 /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
@@ -4251,7 +4252,7 @@
 				59F4AA9B24FE93E300A1C69A /* NotificationManagerKeeper.swift in Sources */,
 				95C1600D27D28CF4008562E3 /* PersistentAttributesStorage.swift in Sources */,
 				95726075262F548500350CCA /* SplitBgSynchronizer.swift in Sources */,
-				5B343EAE2E26E93B006BEBE7 /* StorageHelper.swift in Sources */,
+				5B26B0D72E4F70A00025AAB7 /* StorageHelper.swift in Sources */,
 				95C1600B27D28CB8008562E3 /* OneKeyPersistentAttributesStorage.swift in Sources */,
 				5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */,
 				9519A91127D6935700278AEC /* ByKeyAttributesStorage.swift in Sources */,
