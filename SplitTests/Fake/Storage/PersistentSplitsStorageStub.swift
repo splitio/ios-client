@@ -105,7 +105,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
         delegate?.update(segmentsInUse: segmentsInUse)
     }
     
-    func getSegmentsInUse() -> Int64? {
+    func getSegmentsInUse() -> Int64 {
         getSegmentsInUseCalled = true
         return segmentsInUse
     }

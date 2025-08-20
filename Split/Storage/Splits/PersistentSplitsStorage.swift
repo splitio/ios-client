@@ -17,7 +17,7 @@ protocol PersistentSplitsStorage {
     func getSplitsSnapshot() -> SplitsSnapshot
     func getChangeNumber() -> Int64
     func getUpdateTimestamp() -> Int64
-    func getSegmentsInUse() -> Int64?
+    func getSegmentsInUse() -> Int64
     func getAll() -> [Split]
     func delete(splitNames: [String])
     func clear()
@@ -31,6 +31,7 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
     init(database: SplitDatabase) {
         self.splitDao = database.splitDao
         self.generalInfoDao = database.generalInfoDao
+        setInitialValues()
     }
 
     func update(splitChange: ProcessedSplitChange) {
@@ -38,7 +39,6 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
         splitDao.delete(splitChange.archivedSplits.compactMap { return $0.name })
         generalInfoDao.update(info: .splitsChangeNumber, longValue: splitChange.changeNumber)
         generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: splitChange.updateTimestamp)
-        generalInfoDao.update(info: .segmentsInUse, longValue: -1)
     }
 
     func update(split: Split) {
@@ -65,8 +65,8 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
         return generalInfoDao.stringValue(info: .flagsSpec) ?? ""
     }
     
-    func getSegmentsInUse() -> Int64? {
-        generalInfoDao.longValue(info: .segmentsInUse)
+    func getSegmentsInUse() -> Int64 {
+        generalInfoDao.longValue(info: .segmentsInUse) ?? 0
     }
 
     func update(bySetsFilter filter: SplitFilter?) {
@@ -122,5 +122,11 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
     func clear() {
         generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
         splitDao.deleteAll()
+    }
+    
+    private func setInitialValues() {
+        if generalInfoDao.longValue(info: .segmentsInUse) == nil {
+            generalInfoDao.update(info: .segmentsInUse, longValue: -1)
+        }
     }
 }

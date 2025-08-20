@@ -50,7 +50,6 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func loadLocal() {
-        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
         let snapshot = persistentStorage.getSplitsSnapshot()
         let active = snapshot.splits.filter { $0.status == .active }
         let archived = snapshot.splits.filter { $0.status == .archived }
@@ -127,6 +126,8 @@ class DefaultSplitsStorage: SplitsStorage {
         var splitsUpdated = false
         var splitsRemoved = false
 
+        segmentsInUse = persistentStorage.getSegmentsInUse()
+        
         for split in splits {
 
             guard let splitName = split.name?.lowercased()  else {
@@ -146,8 +147,8 @@ class DefaultSplitsStorage: SplitsStorage {
                 continue
             }
             
-           // Smart Pausing optimization
-           // updateSegmentsCount(split: split)
+            // Smart Pausing optimization
+            updateSegmentsCount(split: split)
 
             if loadedSplit != nil, let oldTrafficType = loadedSplit?.trafficTypeName {
                 // Must decrease old traffic type count if a feature flag is updated or removed
@@ -174,7 +175,7 @@ class DefaultSplitsStorage: SplitsStorage {
         }
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
-        persistentStorage.update(segmentsInUse: segmentsInUse) // Ensure count of Flags with Segments (for optimization feature)
+        persistentStorage.update(segmentsInUse: segmentsInUse >= 0 ? segmentsInUse : 0) // Ensure count of Flags with Segments (for optimization feature)
         
         return splitsUpdated || splitsRemoved
     }
@@ -195,7 +196,6 @@ class DefaultSplitsStorage: SplitsStorage {
         } else if isUnsupportedMatcher(split: split) {
             split.conditions = [SplitHelper.createDefaultCondition()]
         }
-        print("--- PARSING SPLIT")
         return split
     }
 

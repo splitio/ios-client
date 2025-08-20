@@ -34,7 +34,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     }
 
     func loadLocal() {
-        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
+        segmentsInUse = persistentStorage.getSegmentsInUse()
         let snapshot = persistentStorage.getSnapshot()
         let active = snapshot.segments.filter { $0.status == .active }
         let archived = snapshot.segments.filter { $0.status == .archived }
@@ -68,7 +68,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool {
         
-        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
+        segmentsInUse = persistentStorage.getSegmentsInUse()
         self.changeNumber = changeNumber
         
         // Process
@@ -77,8 +77,8 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
         // Update persistent storage
         persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
-        persistentStorage.setSegmentsInUse(segmentsInUse)
-
+        persistentStorage.setSegmentsInUse(segmentsInUse >= 0 ? segmentsInUse : 0)
+        
         return addResult || removeResult
     }
 
@@ -115,7 +115,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     }
     
     func forceParsing() {
-        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
+        segmentsInUse = 0
         let activeSegments = persistentStorage.getSnapshot().segments.filter { $0.status == .active }
         
         for i in 0..<activeSegments.count {
