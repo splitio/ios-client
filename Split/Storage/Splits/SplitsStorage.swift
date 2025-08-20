@@ -36,6 +36,7 @@ class DefaultSplitsStorage: SplitsStorage {
     private var inMemorySplits: SynchronizedDictionary<String, Split>
     private var trafficTypes: SynchronizedDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
+    private let queue = DispatchQueue(label: "split-splitsStorage-segmentsCounter")
     internal var segmentsInUse: Int64 = 0
     
     private(set) var changeNumber: Int64 = -1
@@ -243,13 +244,17 @@ class DefaultSplitsStorage: SplitsStorage {
     func updateSegmentsCount(split: Split) { // Keep count of Flags with Segments (used to optimize "/memberships" hits)
         guard let splitName = split.name else { return }
         
-        if inMemorySplits.value(forKey: splitName) == nil, split.status == .active { // If new Split and active
-            if StorageHelper.usesSegments(split.conditions ?? []) {
-                segmentsInUse += 1
-            }
-        } else if inMemorySplits.value(forKey: splitName) != nil && split.status != .active { // If known Split and archived
-            if StorageHelper.usesSegments(split.conditions ?? []) {
-                segmentsInUse -= 1
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            
+            if inMemorySplits.value(forKey: splitName) == nil, split.status == .active { // If new Split and active
+                if StorageHelper.usesSegments(split.conditions ?? []) {
+                    segmentsInUse += 1
+                }
+            } else if inMemorySplits.value(forKey: splitName) != nil && split.status != .active { // If known Split and archived
+                if StorageHelper.usesSegments(split.conditions ?? []) {
+                    segmentsInUse -= 1
+                }
             }
         }
     }

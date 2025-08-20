@@ -23,6 +23,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     private var persistentStorage: PersistentRuleBasedSegmentsStorage
     private var inMemorySegments: ConcurrentDictionary<String, RuleBasedSegment>
+    private let queue = DispatchQueue(label: "split-rbsStorage-segmentsCounter")
 
     private(set) var changeNumber: Int64 = -1
     
@@ -136,10 +137,13 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     }
     
     fileprivate func updateSegmentsCount(_ segment: RuleBasedSegment) {
-        if let segmentName = segment.name?.lowercased(), segment.status == .active, inMemorySegments.value(forKey: segmentName) == nil, StorageHelper.usesSegments(segment.conditions) {
-            segmentsInUse += 1
-        } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil, segment.status != .active, StorageHelper.usesSegments(segment.conditions) {
-            segmentsInUse -= 1
+        queue.async { [weak self] in
+            guard let self = self else { return }
+            if let segmentName = segment.name?.lowercased(), segment.status == .active, inMemorySegments.value(forKey: segmentName) == nil, StorageHelper.usesSegments(segment.conditions) {
+                segmentsInUse += 1
+            } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil, segment.status != .active, StorageHelper.usesSegments(segment.conditions) {
+                segmentsInUse -= 1
+            }
         }
     }
     
