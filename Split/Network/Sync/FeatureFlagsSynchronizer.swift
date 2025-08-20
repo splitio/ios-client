@@ -73,8 +73,6 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     }
 
     func load() {
-
-        let start = Date.nowMillis()
         
         if isDestroyed.value {
             return
@@ -88,12 +86,11 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             
             // MARK: Important. This should be called before loadLocal()
             // MARK: Part of /memberships hits optimization
-//            if self.storageContainer.generalInfoStorage.getSegmentsInUse() == nil {
-//                splitsStorage.forceParsing()
-//                ruleBasedSegmentsStorage.forceParsing()
-//                print("::: FORCE PARSED")
-//            }
-            TimeChecker.logInterval("::: Time for force parsing", startTime: start)
+            if self.storageContainer.generalInfoStorage.getSegmentsInUse() == nil {
+                splitsStorage.forceParsing()
+                ruleBasedSegmentsStorage.forceParsing()
+                print("::: FORCE PARSED")
+            }
             
             // Load local
             splitsStorage.loadLocal()
@@ -105,10 +102,8 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
             Logger.v("Notifying Splits loaded from cache")
-            TimeChecker.logInterval("Time for ready from cache process", startTime: start)
             TimeChecker.logInterval("Time until feature flags process ended")
         }
-        TimeChecker.logInterval("::: Time for storages loading", startTime: start)
     }
 
     func synchronize() {

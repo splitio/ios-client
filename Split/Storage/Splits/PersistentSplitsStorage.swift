@@ -38,6 +38,7 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
         splitDao.delete(splitChange.archivedSplits.compactMap { return $0.name })
         generalInfoDao.update(info: .splitsChangeNumber, longValue: splitChange.changeNumber)
         generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: splitChange.updateTimestamp)
+        generalInfoDao.update(info: .segmentsInUse, longValue: -1)
     }
 
     func update(split: Split) {

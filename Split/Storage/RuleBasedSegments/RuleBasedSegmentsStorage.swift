@@ -87,7 +87,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         
         for segment in toAdd {
             if let segmentName = segment.name?.lowercased() {
-                //updateSegmentsCount(segment)
+                updateSegmentsCount(segment)
                 inMemorySegments.setValue(segment, forKey: segmentName)
                 result = true
             }
@@ -100,7 +100,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         
         for segment in toRemove {
             if let segmentName = segment.name?.lowercased(), inMemorySegments.value(forKey: segmentName) != nil {
-                //updateSegmentsCount(segment)
+                updateSegmentsCount(segment)
                 inMemorySegments.removeValue(forKey: segmentName)
                 result = true
             }
