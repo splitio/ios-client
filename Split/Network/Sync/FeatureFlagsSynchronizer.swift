@@ -92,7 +92,9 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             if self.storageContainer.generalInfoStorage.getSegmentsInUse() == nil {
                 splitsStorage.forceParsing()
                 ruleBasedSegmentsStorage.forceParsing()
+                print("::: FORCE PARSED")
             }
+            TimeChecker.logInterval("Time for force parsing", startTime: start)
             
             // Load local
             splitsStorage.loadLocal()

@@ -146,8 +146,8 @@ class DefaultSplitsStorage: SplitsStorage {
                 continue
             }
             
-            // Smart Pausing optimization
-            updateSegmentsCount(split: split)
+           // Smart Pausing optimization
+           // updateSegmentsCount(split: split)
 
             if loadedSplit != nil, let oldTrafficType = loadedSplit?.trafficTypeName {
                 // Must decrease old traffic type count if a feature flag is updated or removed
