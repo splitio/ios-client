@@ -122,6 +122,8 @@ class DefaultSplitsStorage: SplitsStorage {
     }
     
     private func processUpdated(splits: [Split], active: Bool) -> Bool {
+        let start = Date.nowMillis()
+        
         var cachedSplits = inMemorySplits.all
         var cachedTrafficTypes = trafficTypes.all
         var splitsUpdated = false
@@ -175,6 +177,9 @@ class DefaultSplitsStorage: SplitsStorage {
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
         persistentStorage.update(segmentsInUse: segmentsInUse) // Ensure count of Flags with Segments (for optimization feature)
+        
+        TimeChecker.logInterval("::: Time for updating flags", startTime: start)
+        
         return splitsUpdated || splitsRemoved
     }
 
@@ -194,6 +199,7 @@ class DefaultSplitsStorage: SplitsStorage {
         } else if isUnsupportedMatcher(split: split) {
             split.conditions = [SplitHelper.createDefaultCondition()]
         }
+        print("--- PARSING SPLIT")
         return split
     }
 
@@ -238,6 +244,7 @@ class DefaultSplitsStorage: SplitsStorage {
         }
         
         persistentStorage.update(segmentsInUse: segmentsInUse)
+        print("--- FORCE PARSING SPLIT")
     }
     
     func updateSegmentsCount(split: Split) { // Keep count of Flags with Segments (used to optimize "/memberships" hits)
@@ -252,6 +259,8 @@ class DefaultSplitsStorage: SplitsStorage {
                 segmentsInUse -= 1
             }
         }
+        
+        print("--- UPDATE SEGMENTS COUNT")
     }
     
     #if DEBUG

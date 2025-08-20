@@ -74,6 +74,8 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
 
     func load() {
 
+        let start = Date.nowMillis()
+        
         if isDestroyed.value {
             return
         }
@@ -81,20 +83,17 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
         let splitsStorage = storageContainer.splitsStorage
         let ruleBasedSegmentsStorage = storageContainer.ruleBasedSegmentsStorage
         
-        DispatchQueue.general.async { [weak self] in
-            guard let self = self else { return }
-            
-            let start = Date.nowMillis()
+        DispatchQueue.general.async {
             self.filterSplitsInCache()
             
             // MARK: Important. This should be called before loadLocal()
             // MARK: Part of /memberships hits optimization
-            if self.storageContainer.generalInfoStorage.getSegmentsInUse() == nil {
-                splitsStorage.forceParsing()
-                ruleBasedSegmentsStorage.forceParsing()
-                print("::: FORCE PARSED")
-            }
-            TimeChecker.logInterval("Time for force parsing", startTime: start)
+//            if self.storageContainer.generalInfoStorage.getSegmentsInUse() == nil {
+//                splitsStorage.forceParsing()
+//                ruleBasedSegmentsStorage.forceParsing()
+//                print("::: FORCE PARSED")
+//            }
+            TimeChecker.logInterval("::: Time for force parsing", startTime: start)
             
             // Load local
             splitsStorage.loadLocal()
@@ -109,6 +108,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             TimeChecker.logInterval("Time for ready from cache process", startTime: start)
             TimeChecker.logInterval("Time until feature flags process ended")
         }
+        TimeChecker.logInterval("::: Time for storages loading", startTime: start)
     }
 
     func synchronize() {
