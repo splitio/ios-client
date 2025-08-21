@@ -101,22 +101,22 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
 
     /// Process a targeting rule update notification and return true if successful
     private func processTargetingRuleUpdate(notification: TargetingRuleUpdateNotification,
-                                            payload: String,
-                                            compressionType: CompressionType,
-                                            previousChangeNumber: Int64) -> Bool {
+                                           payload: String,
+                                           compressionType: CompressionType,
+                                           previousChangeNumber: Int64) -> Bool {
 
         switch notification.type {
         case .splitUpdate:
             return processSplitUpdate(payload: payload,
-                                      compressionType: compressionType,
-                                      previousChangeNumber: previousChangeNumber,
-                                      changeNumber: notification.changeNumber)
+                                     compressionType: compressionType,
+                                     previousChangeNumber: previousChangeNumber,
+                                     changeNumber: notification.changeNumber)
 
         case .ruleBasedSegmentUpdate:
             return processRuleBasedSegmentUpdate(payload: payload,
-                                                 compressionType: compressionType,
-                                                 previousChangeNumber: previousChangeNumber,
-                                                 changeNumber: notification.changeNumber)
+                                               compressionType: compressionType,
+                                               previousChangeNumber: previousChangeNumber,
+                                               changeNumber: notification.changeNumber)
 
         default:
             return false
@@ -125,9 +125,9 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
 
     /// Process a split update notification
     private func processSplitUpdate(payload: String,
-                                    compressionType: CompressionType,
-                                    previousChangeNumber: Int64,
-                                    changeNumber: Int64) -> Bool {
+                                   compressionType: CompressionType,
+                                   previousChangeNumber: Int64,
+                                   changeNumber: Int64) -> Bool {
         do {
             let split = try self.payloadDecoder.decode(
                 payload: payload,
@@ -157,9 +157,9 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
 
     /// Process a rule-based segment update notification
     private func processRuleBasedSegmentUpdate(payload: String,
-                                               compressionType: CompressionType,
-                                               previousChangeNumber: Int64,
-                                               changeNumber: Int64) -> Bool {
+                                             compressionType: CompressionType,
+                                             previousChangeNumber: Int64,
+                                             changeNumber: Int64) -> Bool {
         do {
             let rbs = try self.ruleBasedSegmentsPayloadDecoder.decode(
                 payload: payload,
@@ -174,8 +174,8 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
             let processedChange = ruleBasedSegmentsChangeProcessor.process(change)
 
             if self.ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd,
-                                                    toRemove: processedChange.toRemove,
-                                                    changeNumber: processedChange.changeNumber) {
+                                                  toRemove: processedChange.toRemove,
+                                                  changeNumber: processedChange.changeNumber) {
                 self.synchronizer.notifyFeatureFlagsUpdated()
             }
 
