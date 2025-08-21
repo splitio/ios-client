@@ -90,8 +90,10 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             // MARK: Important. This should be called before loadLocal()
             // MARK: Part of /memberships hits optimization
             if self.storageContainer.generalInfoStorage.getSegmentsInUse() == nil {
+                Logger.v("Force Parsing DB")
                 splitsStorage.forceParsing()
                 ruleBasedSegmentsStorage.forceParsing()
+                TimeChecker.logInterval("Time for Force Parsing", startTime: start)
             }
             
             // Load local
