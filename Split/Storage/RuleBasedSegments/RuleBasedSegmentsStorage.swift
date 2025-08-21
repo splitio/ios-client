@@ -68,6 +68,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool {
         
+        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
         self.changeNumber = changeNumber
         
         // Process

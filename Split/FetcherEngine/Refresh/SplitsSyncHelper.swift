@@ -208,7 +208,7 @@ class SplitsSyncHelper {
             }
             
             let processedChange = ruleBasedSegmentsChangeProcessor.process(targetingRulesChange.ruleBasedSegments)
-            ruleBasedSegmentsStorage.segmentsInUse = splitsStorage.getSegmentsInUse()
+            //ruleBasedSegmentsStorage.segmentsInUse = splitsStorage.getSegmentsInUse()
             if ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd, toRemove: processedChange.toRemove, changeNumber: processedChange.changeNumber) {
                 rbsUpdated = true
             }

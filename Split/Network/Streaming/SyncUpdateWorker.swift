@@ -172,7 +172,6 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
             Logger.v("RBS update received: \(change)")
 
             let processedChange = ruleBasedSegmentsChangeProcessor.process(change)
-
             if self.ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd,
                                                   toRemove: processedChange.toRemove,
                                                   changeNumber: processedChange.changeNumber) {

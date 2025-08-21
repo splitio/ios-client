@@ -693,7 +693,6 @@ class MySegmentUpdateTest: XCTestCase {
 
         wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 15)
 
-
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual(4, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)
         XCTAssertEqual(4, syncSpy.forceMySegmentsSyncCount[userKeyM] ?? 0)
