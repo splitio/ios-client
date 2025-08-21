@@ -88,8 +88,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             
             // MARK: Important. This should be called before loadLocal()
             // MARK: Part of /memberships hits optimization
-            let segments = self.storageContainer.generalInfoStorage.getSegmentsInUse()
-            if segments == -1 {
+            if storageContainer.generalInfoStorage.getSegmentsInUse() == -1 {
                 splitsStorage.forceParsing()
                 ruleBasedSegmentsStorage.forceParsing()
             }
@@ -100,9 +99,9 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             
             // Events & Logs
             if splitsStorage.getAll().count > 0 {
-                self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
+                splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
             }
-            self.broadcasterChannel.push(event: .splitLoadedFromCache)
+            broadcasterChannel.push(event: .splitLoadedFromCache)
             Logger.v("Notifying Splits loaded from cache")
             TimeChecker.logInterval("Time until feature flags process ended")
         }

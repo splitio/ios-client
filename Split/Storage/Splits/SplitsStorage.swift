@@ -50,6 +50,7 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func loadLocal() {
+        segmentsInUse = persistentStorage.getSegmentsInUse()
         let snapshot = persistentStorage.getSplitsSnapshot()
         let active = snapshot.splits.filter { $0.status == .active }
         let archived = snapshot.splits.filter { $0.status == .archived }
@@ -125,8 +126,6 @@ class DefaultSplitsStorage: SplitsStorage {
         var cachedTrafficTypes = trafficTypes.all
         var splitsUpdated = false
         var splitsRemoved = false
-
-        segmentsInUse = persistentStorage.getSegmentsInUse()
         
         for split in splits {
 
@@ -242,7 +241,7 @@ class DefaultSplitsStorage: SplitsStorage {
         persistentStorage.update(segmentsInUse: segmentsInUse)
     }
     
-    //@inline(__always)
+    @inline(__always)
     func updateSegmentsCount(split: Split) { // Keep count of Flags with Segments (used to optimize "/memberships" hits)
         guard let splitName = split.name else { return }
         
