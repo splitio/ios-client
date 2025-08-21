@@ -27,7 +27,7 @@ class SplitsSyncHelper {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SyncSplitsStorage
-    private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
+    private var ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     private let splitChangeProcessor: SplitChangeProcessor
     private let ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor
     private let splitConfig: SplitClientConfig
@@ -202,11 +202,13 @@ class SplitsSyncHelper {
                 ruleBasedSegmentsStorage.clear()
             }
             firstFetch = false
+            
             if splitsStorage.update(splitChange: splitChangeProcessor.process(targetingRulesChange.featureFlags)) {
                 featureFlagsUpdated = true
             }
             
             let processedChange = ruleBasedSegmentsChangeProcessor.process(targetingRulesChange.ruleBasedSegments)
+            ruleBasedSegmentsStorage.segmentsInUse = splitsStorage.getSegmentsInUse()
             if ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd, toRemove: processedChange.toRemove, changeNumber: processedChange.changeNumber) {
                 rbsUpdated = true
             }

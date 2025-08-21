@@ -10,7 +10,7 @@ import Foundation
 
 protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
     var changeNumber: Int64 { get }
-    var segmentsInUse: Int64 { get }
+    var segmentsInUse: Int64 { get set }
 
     func get(segmentName: String) -> RuleBasedSegment?
     func contains(segmentNames: Set<String>) -> Bool
@@ -26,7 +26,7 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     private(set) var changeNumber: Int64 = -1
     
-    internal var segmentsInUse: Int64 = 0
+    var segmentsInUse: Int64 = 0
 
     init(persistentStorage: PersistentRuleBasedSegmentsStorage) {
         self.persistentStorage = persistentStorage
@@ -68,7 +68,6 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool {
         
-        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
         self.changeNumber = changeNumber
         
         // Process

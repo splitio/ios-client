@@ -10,6 +10,7 @@ import Foundation
 
 protocol SyncSplitsStorage: RolloutDefinitionsCache {
     func update(splitChange: ProcessedSplitChange) -> Bool
+    func getSegmentsInUse() -> Int64
 }
 
 protocol SplitsStorage: SyncSplitsStorage {
@@ -28,6 +29,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func getCount() -> Int
     func destroy()
     func forceParsing()
+    func getSegmentsInUse() -> Int64
 }
 
 class DefaultSplitsStorage: SplitsStorage {
@@ -36,7 +38,7 @@ class DefaultSplitsStorage: SplitsStorage {
     private var inMemorySplits: SynchronizedDictionary<String, Split>
     private var trafficTypes: SynchronizedDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
-    internal var segmentsInUse: Int64 = 0
+    var segmentsInUse: Int64 = 0
     
     private(set) var changeNumber: Int64 = -1
     private(set) var updateTimestamp: Int64 = -1
@@ -119,6 +121,10 @@ class DefaultSplitsStorage: SplitsStorage {
 
     func getCount() -> Int {
         return inMemorySplits.count
+    }
+    
+    func getSegmentsInUse() -> Int64 {
+        segmentsInUse
     }
     
     private func processUpdated(splits: [Split], active: Bool) -> Bool {
@@ -276,6 +282,10 @@ class BackgroundSyncSplitsStorage: SyncSplitsStorage {
 
     func clear() {
         persistentStorage.clear()
+    }
+    
+    func getSegmentsInUse() -> Int64 {
+        persistentStorage.getSegmentsInUse() ?? 0
     }
 }
 

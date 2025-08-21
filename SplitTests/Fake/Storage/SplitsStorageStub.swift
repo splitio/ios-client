@@ -73,6 +73,10 @@ class SplitsStorageStub: SplitsStorage {
         updateSplitChangeCalled = true
         return splitsWereUpdated
     }
+    
+    func getSegmentsInUse() -> Int64 {
+        segmentsInUse
+    }
 
     var updateFlagsSpecCalled = false
     func update(flagsSpec: String) {
