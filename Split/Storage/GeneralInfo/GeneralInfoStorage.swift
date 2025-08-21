@@ -26,6 +26,8 @@ protocol GeneralInfoStorage {
 class DefaultGeneralInfoStorage: GeneralInfoStorage {
 
     private let generalInfoDao: GeneralInfoDao
+    private var segmentsInUse: Int64? = nil
+    private var queue: DispatchQueue = DispatchQueue(label: "io.split.DefaultGeneralInfoStorage")
 
     init(generalInfoDao: GeneralInfoDao) {
         self.generalInfoDao = generalInfoDao
@@ -84,10 +86,18 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
     }
     
     func getSegmentsInUse() -> Int64? {
-        generalInfoDao.longValue(info: .segmentsInUse)
+        queue.sync { [weak self] in
+            if self?.segmentsInUse == nil {
+                self?.segmentsInUse = self?.generalInfoDao.longValue(info: .segmentsInUse)
+            }
+            return self?.segmentsInUse
+        }
     }
 
     func setSegmentsInUse(_ count: Int64) {
-        generalInfoDao.update(info: .segmentsInUse, longValue: count)
+        self.segmentsInUse = count
+        queue.async(flags: .barrier) { [weak self] in
+            self?.generalInfoDao.update(info: .segmentsInUse, longValue: count)
+        }
     }
 }
