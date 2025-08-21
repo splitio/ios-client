@@ -33,7 +33,7 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher {
         let effectiveSpec = spec ?? Spec.flagsSpec
 
         restClient.getSplitChanges(since: since, rbSince: rbSince, till: till, headers: headers, spec: effectiveSpec) { result in
-            TimeChecker.logInterval("Time to fetch targeting rules", startTime: startTime)
+            TimeChecker.logInterval("SDK_READY Time to fetch targeting rules", startTime: startTime)
             requestResult = result
             semaphore.signal()
         }
