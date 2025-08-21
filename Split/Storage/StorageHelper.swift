@@ -3,7 +3,7 @@
 // ⚠️ Don't change to struct. This enum without cases is used as a namespace, and forbids accidental instantiation
 enum StorageHelper {
 
-    //@inline(__always)
+    @inline(__always)
     static func usesSegments(_ conditions: [Condition]?) -> Bool {
         guard let conditions = conditions else { return false }
         

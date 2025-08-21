@@ -72,11 +72,9 @@ class DefaultSyncManager: SyncManager {
     }
 
     private func loadData() {
-        let start = Date.nowMillis()
         synchronizer.loadSplitsFromCache()
         synchronizer.loadMySegmentsFromCache()
         synchronizer.loadAttributesFromCache()
-        TimeChecker.logInterval("::: Time for load Data", startTime: start)
     }
 
     private func startSync() {

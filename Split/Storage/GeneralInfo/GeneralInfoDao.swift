@@ -68,11 +68,9 @@ class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
             guard let self = self else {
                 return
             }
-            let start2 = Date.nowMillis()
             if let infoValue = self.get(for: info) {
                 value = infoValue.longValue
             }
-            TimeChecker.logInterval("  >>>  Getting SQLite \(info.rawValue)", startTime: start2)
         }
         return value
     }

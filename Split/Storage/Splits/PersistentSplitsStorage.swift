@@ -31,7 +31,6 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
     init(database: SplitDatabase) {
         self.splitDao = database.splitDao
         self.generalInfoDao = database.generalInfoDao
-        setInitialValues()
     }
 
     func update(splitChange: ProcessedSplitChange) {
@@ -122,11 +121,5 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
     func clear() {
         generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
         splitDao.deleteAll()
-    }
-    
-    private func setInitialValues() {
-        if generalInfoDao.longValue(info: .segmentsInUse) == nil {
-            generalInfoDao.update(info: .segmentsInUse, longValue: -1)
-        }
     }
 }

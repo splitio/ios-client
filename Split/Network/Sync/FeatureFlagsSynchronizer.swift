@@ -73,7 +73,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
     }
 
     func load() {
-        
+
         if isDestroyed.value {
             return
         }
