@@ -130,11 +130,13 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         persistentStorage.setSegmentsInUse(segmentsInUse)
     }
     
+    //@inline(__always)
     fileprivate func parseSegment(_ segment: RuleBasedSegment) -> RuleBasedSegment? {
         guard let parsedSegment = try? Json.decodeFrom(json: segment.json, to: RuleBasedSegment.self) else { return nil }
         return parsedSegment
     }
     
+    //@inline(__always)
     fileprivate func updateSegmentsCount(_ segment: RuleBasedSegment) {
         if let segmentName = segment.name?.lowercased(), segment.status == .active, inMemorySegments.value(forKey: segmentName) == nil, StorageHelper.usesSegments(segment.conditions) {
             segmentsInUse += 1

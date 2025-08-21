@@ -92,7 +92,6 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             if segments == -1 {
                 splitsStorage.forceParsing()
                 ruleBasedSegmentsStorage.forceParsing()
-                print("::: FORCE PARSED \(segments)")
             }
             
             // Load local

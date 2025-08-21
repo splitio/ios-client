@@ -242,6 +242,7 @@ class DefaultSplitsStorage: SplitsStorage {
         persistentStorage.update(segmentsInUse: segmentsInUse)
     }
     
+    //@inline(__always)
     func updateSegmentsCount(split: Split) { // Keep count of Flags with Segments (used to optimize "/memberships" hits)
         guard let splitName = split.name else { return }
         
