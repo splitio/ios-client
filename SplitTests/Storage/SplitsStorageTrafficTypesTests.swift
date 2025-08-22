@@ -14,7 +14,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
     
     var splitsStorage: SplitsStorage!
     var flagSetsCache: FlagSetsCacheMock!
-    var generalInfoStorage: GeneralInfoStorageMock!
+    var generalInfoStorage = GeneralInfoStorageMock()
 
     override func setUp() {
         

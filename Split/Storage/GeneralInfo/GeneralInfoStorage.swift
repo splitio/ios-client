@@ -89,7 +89,7 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
     
     func getSegmentsInUse() -> Int64? {
         queue.sync {
-            if segmentsInUse == nil {
+            if segmentsInUse == nil { // This happens just on start
                 segmentsInUse = generalInfoDao.longValue(info: .segmentsInUse)
             }
         }
