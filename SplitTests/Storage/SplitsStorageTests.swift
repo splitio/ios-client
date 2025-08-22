@@ -20,7 +20,7 @@ class SplitsStorageTest: XCTestCase {
     var persistentStorage: PersistentSplitsStorageStub!
     var splitsStorage: SplitsStorage!
     var noLoadedStorage: DefaultSplitsStorage?
-    var generalInfoStorage: GeneralInfoStorageMock!
+    var generalInfoStorage = GeneralInfoStorageMock()
 
     override func setUp() {
         persistentStorage = PersistentSplitsStorageStub()
