@@ -97,7 +97,6 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
     }
 
     func setSegmentsInUse(_ count: Int64) {
-        print(" ****       \(count)")
         segmentsInUse = count
         queue.async { [weak self] in
             self?.generalInfoDao.update(info: .segmentsInUse, longValue: count)
