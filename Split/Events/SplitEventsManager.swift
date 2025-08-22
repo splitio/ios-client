@@ -148,7 +148,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
             self.triggered.append(event)
             switch event {
             case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
-                print("*********** EVENT !! **************\n\(event)\n*********** EVENT !! **************")
                 if isTriggered(external: .sdkReady) {
                     trigger(event: .sdkUpdated)
                     continue
