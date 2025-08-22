@@ -60,7 +60,8 @@ class SplitSdkUpdatePollingTest: XCTestCase {
                 } else if index == self.spExp.count {
                     self.spExp[index - 1].fulfill()
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999999, till: 99999999).utf8))
+                let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper())
+                return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
             }
 
             if request.isMySegmentsEndpoint() {
@@ -76,7 +77,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
                     json = IntegrationHelper.buildSegments(regular: mySegments)
                     return TestDispatcherResponse(code: 200, data: Data(json.utf8))
                 }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.mySegments(names: ["", ""]).utf8))
             }
 
             if request.isAuthEndpoint() {
@@ -93,7 +94,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
                 return TestDispatcherResponse(code: 200)
             }
 
-            return TestDispatcherResponse(code: 500)
+            return TestDispatcherResponse(code: 200)
         }
     }
 
@@ -223,8 +224,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         splitConfig.trafficType = trafficType
         splitConfig.streamingEnabled = false
         splitConfig.logLevel = .verbose
-        splitConfig.serviceEndpoints = ServiceEndpoints.builder()
-        .set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
+        splitConfig.serviceEndpoints = ServiceEndpoints.builder().set(sdkEndpoint: serverUrl).set(eventsEndpoint: serverUrl).build()
 
         let key: Key = Key(matchingKey: kMatchingKey, bucketingKey: nil)
         let builder = DefaultSplitFactoryBuilder()
@@ -234,27 +234,18 @@ class SplitSdkUpdatePollingTest: XCTestCase {
 
         let client = factory!.client
 
-        var sdkReadyFired = false
-        var sdkUpdatedFired = false
-
-        client.on(event: SplitEvent.sdkReady) {
-            sdkReadyFired = true
+        client.on(event: .sdkReady) {
             sdkReady.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkUpdated) {
-            sdkUpdatedFired = true
+        client.on(event: .sdkUpdated) {
             sdkUpdate.fulfill()
         }
 
-        wait(for: [sdkReady, sdkUpdate], timeout: 30)
+        wait(for: [sdkReady, sdkUpdate], timeout: 10)
 
         // wait for sdk update
         ThreadUtils.delay(seconds: 1.0)
-
-        XCTAssertTrue(sdkReadyFired)
-        XCTAssertTrue(sdkUpdatedFired)
-
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {

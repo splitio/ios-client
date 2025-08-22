@@ -1,4 +1,3 @@
-//
 //  MySegmentUpdateTest.swift
 //  SplitTests
 //
@@ -450,9 +449,9 @@ class MySegmentUpdateTest: XCTestCase {
     func testSdkRestartMembershipsSyncIfNewFlag() throws {
         
         var sdkReadyFired = false
-        var cacheReadyFired = true
         let sdkReady = XCTestExpectation(description: "SDK should be ready")
         let cacheReadyExp = XCTestExpectation(description: "Cache should be ready")
+        let sdkUpdateExp = XCTestExpectation(description: "SDK Should fire updated")
         let segmentsHit = XCTestExpectation(description: "/memberships should be hit at least once")
         var membershipsHit = 0
         
@@ -510,7 +509,10 @@ class MySegmentUpdateTest: XCTestCase {
         
         client?.on(event: .sdkReadyFromCache) {
             cacheReadyExp.fulfill()
-            cacheReadyFired = true
+        }
+        
+        client?.on(event: .sdkUpdated) {
+            sdkUpdateExp.fulfill()
         }
         
         wait(for: [segmentsHit], timeout: 3)
@@ -529,7 +531,7 @@ class MySegmentUpdateTest: XCTestCase {
         
         waitExp = XCTestExpectation(description: "Just waiting")
         waitExp.isInverted = true // Inverted expectation
-        wait(for: [waitExp], timeout: 5)
+        wait(for: [waitExp, sdkUpdateExp], timeout: 5)
         XCTAssertGreaterThan(membershipsHit, 2, "If new flags with segments arrive, the mechanism should be restarted and SDK should hit /memberships many times again")
         
         // Cleanup

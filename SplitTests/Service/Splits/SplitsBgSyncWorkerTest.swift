@@ -19,7 +19,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
     var splitChangeProcessor: SplitChangeProcessorStub!
     var ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessorStub!
     var splitsSyncWorker: BackgroundSyncWorker!
-    var generalInfoStorage: GeneralInfoStorageMock!
+    var generalInfoStorage = GeneralInfoStorageMock()
 
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
