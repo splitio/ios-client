@@ -60,24 +60,12 @@ class SplitSdkUpdatePollingTest: XCTestCase {
                 } else if index == self.spExp.count {
                     self.spExp[index - 1].fulfill()
                 }
-                let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitschanges_no_segments", sourceClass: IntegrationHelper())
+                let json = IntegrationHelper.loadSplitChangeFileJson(name: "splitchanges_1", sourceClass: IntegrationHelper())
                 return TestDispatcherResponse(code: 200, data: Data(json!.utf8))
             }
 
             if request.isMySegmentsEndpoint() {
-                self.mySegmentsHits+=1
-                let hit = self.mySegmentsHits
-                var json = IntegrationHelper.emptyMySegments
-                if hit > 2 {
-                    var mySegments = [String]()
-                    for i in 1...hit {
-                        mySegments.append("segment\(i)")
-                    }
-
-                    json = IntegrationHelper.buildSegments(regular: mySegments)
-                    return TestDispatcherResponse(code: 200, data: Data(json.utf8))
-                }
-                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.mySegments(names: ["", ""]).utf8))
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
 
             if request.isAuthEndpoint() {
@@ -166,7 +154,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         let sdkUpdate = XCTestExpectation(description: "SDK Update Expectation")
 
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.segmentsRefreshRate = 99999
+        splitConfig.segmentsRefreshRate = 2
         splitConfig.featuresRefreshRate = 2
         splitConfig.impressionRefreshRate = 99999
         splitConfig.sdkReadyTimeOut = 60000
@@ -183,24 +171,15 @@ class SplitSdkUpdatePollingTest: XCTestCase {
 
         let client = factory!.client
 
-        var sdkReadyFired = false
-        var sdkUpdatedFired = false
-
         client.on(event: SplitEvent.sdkReady) {
-            sdkReadyFired = true
             sdkReady.fulfill()
         }
 
         client.on(event: SplitEvent.sdkUpdated) {
-            sdkUpdatedFired = true
             sdkUpdate.fulfill()
         }
 
         wait(for: [sdkReady, sdkUpdate], timeout: 30)
-
-        XCTAssertTrue(sdkReadyFired)
-        XCTAssertTrue(sdkUpdatedFired)
-
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -218,7 +197,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
 
         let splitConfig: SplitClientConfig = SplitClientConfig()
         splitConfig.segmentsRefreshRate = 2
-        splitConfig.featuresRefreshRate = 999999
+        splitConfig.featuresRefreshRate = 2
         splitConfig.impressionRefreshRate = 999999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType

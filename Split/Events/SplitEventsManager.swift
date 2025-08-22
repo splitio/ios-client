@@ -148,7 +148,9 @@ class DefaultSplitEventsManager: SplitEventsManager {
             self.triggered.append(event)
             switch event {
             case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
+                print("                    EVENT !! **************\n\(event)\n              EVENT !! **************")
                 if isTriggered(external: .sdkReady) {
+                    print("                    SDK UPDATED          ")
                     trigger(event: .sdkUpdated)
                     continue
                 }
@@ -197,6 +199,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
             if !isTriggered(external: .sdkReadyFromCache) {
                 self.trigger(event: .sdkReadyFromCache)
             }
+            print("    --------- *** TRIGGER READy")
             self.trigger(event: .sdkReady)
         }
     }
