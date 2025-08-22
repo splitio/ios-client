@@ -26,7 +26,7 @@ protocol GeneralInfoStorage {
 class DefaultGeneralInfoStorage: GeneralInfoStorage {
 
     private let generalInfoDao: GeneralInfoDao
-    private var queue = DispatchQueue(label: "io.split.DefaultGeneralInfoStorage")
+    private var queue = DispatchQueue(label: "io.split.DefaultGeneralInfoStorage", qos: .userInitiated)
     
     // Part of Smart Pausing Optimization Feature
     private var segmentsInUse: Int64? = nil
