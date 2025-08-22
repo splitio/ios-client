@@ -57,7 +57,8 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
          splitChangeProcessor: SplitChangeProcessor,
          ruleBasedSegmentsChangeProcessor: RuleBasedSegmentChangeProcessor,
          cacheExpiration: Int64,
-         splitConfig: SplitClientConfig) {
+         splitConfig: SplitClientConfig,
+         generalInfoStorage: GeneralInfoStorage) {
 
         self.persistenSplitsStorage = persistentSplitsStorage
         self.persistentRuleBasedSegmentsStorage = persistentRuleBasedSegmentsStorage
@@ -66,7 +67,7 @@ class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
         self.cacheExpiration = cacheExpiration
         self.syncHelper = SplitsSyncHelper(splitFetcher: splitFetcher,
                                            splitsStorage: BackgroundSyncSplitsStorage(persistentSplitsStorage: persistentSplitsStorage),
-                                           ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage(persistentStorage: persistentRuleBasedSegmentsStorage),
+                                           ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage(persistentStorage: persistentRuleBasedSegmentsStorage, generalInfoStorage: generalInfoStorage),
                                            splitChangeProcessor: splitChangeProcessor,
                                            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentsChangeProcessor,
                                            generalInfoStorage: nil, // Pass nil to disable proxy handling for background sync

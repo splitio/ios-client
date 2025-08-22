@@ -10,7 +10,7 @@ class GeneralInfoStorageMock: GeneralInfoStorage {
     var flagsSpec = ""
     var ruleBasedSegmentsChangeNumber: Int64 = -1
     var lastProxyUpdateTimestamp: Int64 = 0
-    var segmentsInUse: Int64 = 0
+    var segmentsInUse: Int64? = nil
 
     func getUpdateTimestamp() -> Int64 {
         return updateTimestamp

@@ -1,4 +1,3 @@
-//
 //  MySegmentUpdateTest.swift
 //  SplitTests
 //
@@ -450,9 +449,9 @@ class MySegmentUpdateTest: XCTestCase {
     func testSdkRestartMembershipsSyncIfNewFlag() throws {
         
         var sdkReadyFired = false
-        var cacheReadyFired = true
         let sdkReady = XCTestExpectation(description: "SDK should be ready")
         let cacheReadyExp = XCTestExpectation(description: "Cache should be ready")
+        let sdkUpdateExp = XCTestExpectation(description: "SDK Should fire updated")
         let segmentsHit = XCTestExpectation(description: "/memberships should be hit at least once")
         var membershipsHit = 0
         
@@ -467,6 +466,7 @@ class MySegmentUpdateTest: XCTestCase {
             if request.url.absoluteString.contains("/memberships") {
                 segmentsHit.fulfill()
                 membershipsHit += 1
+                print("HITTING MEMBERSHIPS")
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
             
@@ -509,7 +509,10 @@ class MySegmentUpdateTest: XCTestCase {
         
         client?.on(event: .sdkReadyFromCache) {
             cacheReadyExp.fulfill()
-            cacheReadyFired = true
+        }
+        
+        client?.on(event: .sdkUpdated) {
+            sdkUpdateExp.fulfill()
         }
         
         wait(for: [segmentsHit], timeout: 3)
@@ -528,7 +531,7 @@ class MySegmentUpdateTest: XCTestCase {
         
         waitExp = XCTestExpectation(description: "Just waiting")
         waitExp.isInverted = true // Inverted expectation
-        wait(for: [waitExp], timeout: 5)
+        wait(for: [waitExp, sdkUpdateExp], timeout: 5)
         XCTAssertGreaterThan(membershipsHit, 2, "If new flags with segments arrive, the mechanism should be restarted and SDK should hit /memberships many times again")
         
         // Cleanup
@@ -692,7 +695,6 @@ class MySegmentUpdateTest: XCTestCase {
         pushMessage(TestingData.escapedBoundedNotificationMalformed(type: type, cn: mySegmentsCns[cnIndex()]))
 
         wait(for: [sdkUpdExp, sdkUpdMExp], timeout: 15)
-
 
         // Hits are not asserted because tests will fail if expectations are not fulfilled
         XCTAssertEqual(4, syncSpy.forceMySegmentsSyncCount[userKey] ?? 0)

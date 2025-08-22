@@ -103,7 +103,8 @@ struct SplitDatabaseHelper {
         let flagSetsCache: FlagSetsCache =
         DefaultFlagSetsCache(setsInFilter: splitClientConfig.bySetsFilter()?.values.asSet())
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
-        let splitsStorage = openSplitsStorage(database: splitDatabase, flagSetsCache: flagSetsCache)
+        let generalInfoStorage = openGeneralInfoStorage(database: splitDatabase)
+        let splitsStorage = openSplitsStorage(database: splitDatabase, flagSetsCache: flagSetsCache, generalInfoStorage: generalInfoStorage)
 
         let persistentImpressionsStorage = openPersistentImpressionsStorage(database: splitDatabase)
         let impressionsStorage = openImpressionsStorage(persistentStorage: persistentImpressionsStorage)
@@ -111,8 +112,6 @@ struct SplitDatabaseHelper {
 
         let persistentEventsStorage = openPersistentEventsStorage(database: splitDatabase)
         let eventsStorage = openEventsStorage(persistentStorage: persistentEventsStorage)
-        
-        let generalInfoStorage = openGeneralInfoStorage(database: splitDatabase)
 
         let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase, generalInfoStorage: generalInfoStorage)
         let myLargeSegmentsStorage = openMyLargeSegmentsStorage(database: splitDatabase, generalInfoStorage: generalInfoStorage)
@@ -133,7 +132,7 @@ struct SplitDatabaseHelper {
             generalInfoStorage: generalInfoStorage)
 
         let ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(
-            persistentStorage: persistentRuleBasedSegmentsStorage)
+            persistentStorage: persistentRuleBasedSegmentsStorage, generalInfoStorage: generalInfoStorage)
 
         return SplitStorageContainer(splitDatabase: splitDatabase,
                                      splitsStorage: splitsStorage,
@@ -175,9 +174,9 @@ struct SplitDatabaseHelper {
     }
 
     static func openSplitsStorage(database: SplitDatabase,
-                                  flagSetsCache: FlagSetsCache) -> SplitsStorage {
+                                  flagSetsCache: FlagSetsCache, generalInfoStorage: GeneralInfoStorage) -> SplitsStorage {
         return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database),
-                                    flagSetsCache: flagSetsCache)
+                                    flagSetsCache: flagSetsCache, GeneralInfoStorage: generalInfoStorage)
     }
 
     static func openPersistentMySegmentsStorage(database: SplitDatabase) -> PersistentMySegmentsStorage {

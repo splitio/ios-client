@@ -20,11 +20,12 @@ class SplitsStorageTest: XCTestCase {
     var persistentStorage: PersistentSplitsStorageStub!
     var splitsStorage: SplitsStorage!
     var noLoadedStorage: DefaultSplitsStorage?
+    var generalInfoStorage = GeneralInfoStorageMock()
 
     override func setUp() {
         persistentStorage = PersistentSplitsStorageStub()
         flagSetsCache = FlagSetsCacheMock()
-        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache)
+        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache, GeneralInfoStorage: generalInfoStorage)
     }
 
     func testNoLocalLoaded() {
@@ -39,9 +40,7 @@ class SplitsStorageTest: XCTestCase {
     }
     
     func testLazyParsing() {
-        noLoadedStorage = DefaultSplitsStorage(
-            persistentSplitsStorage: createPersistentStorageStub(isParsed: false), flagSetsCache: FlagSetsCacheMock()
-        )
+        noLoadedStorage = DefaultSplitsStorage(persistentSplitsStorage: createPersistentStorageStub(isParsed: false), flagSetsCache: FlagSetsCacheMock(), GeneralInfoStorage: generalInfoStorage)
         
         noLoadedStorage?.loadLocal()
 
@@ -279,14 +278,12 @@ class SplitsStorageTest: XCTestCase {
 
         let flagSetsCache = FlagSetsCacheMock()
         flagSetsCache.setsInFilter = ["set1", "set2", "set3"]
-        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache)
-        persistentStorage.snapshot = getTestSnapshot(count: 3,
-                                                     sets: [
-                                                        ["set1", "set2"],
-                                                        ["set1"],
-                                                        ["set3"]
-                                                     ]
-        )
+        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache, GeneralInfoStorage: GeneralInfoStorageMock())
+        persistentStorage.snapshot = getTestSnapshot(count: 3, sets: [
+                                                                       ["set1", "set2"],
+                                                                       ["set1"],
+                                                                       ["set3"]
+                                                                     ])
 
         splitsStorage.loadLocal()
 
@@ -326,7 +323,7 @@ class SplitsStorageTest: XCTestCase {
         splitsStorage.loadLocal()
 
         // 1. Check Segments count is in 0
-        XCTAssertEqual(splitsStorage.segmentsInUse, 0)
+        XCTAssertEqual(generalInfoStorage.getSegmentsInUse(), 0)
         
         let splitNotUsingSegments = newSplit(name: "added")
         
@@ -336,9 +333,8 @@ class SplitsStorageTest: XCTestCase {
                                                    changeNumber: 999, updateTimestamp: 888)
 
         _ = splitsStorage.update(splitChange: processedChange)
-        XCTAssertEqual(splitsStorage.segmentsInUse, 5) // One should have been ignored, so 5
+        XCTAssertEqual(generalInfoStorage.getSegmentsInUse(), 5) // One should have been ignored, so 5
         XCTAssertTrue(persistentStorage.updateCalled)
-        XCTAssertTrue(persistentStorage.getSegmentsInUseCalled)
         
         // 3. Add 2 previously added (should be ignored by the counter), and a new one
         processedChange = ProcessedSplitChange(activeSplits: [split, split2, split6],
@@ -346,7 +342,7 @@ class SplitsStorageTest: XCTestCase {
                                                changeNumber: 9999, updateTimestamp: 8888)
         
         _ = splitsStorage.update(splitChange: processedChange)
-        XCTAssertEqual(splitsStorage.segmentsInUse, 6) // So, count should be 6
+        XCTAssertEqual(generalInfoStorage.getSegmentsInUse(), 6) // So, count should be 6
         
         // 4. Remove 3 (one not using segments)
         split2.status = .archived
@@ -357,7 +353,7 @@ class SplitsStorageTest: XCTestCase {
                                                changeNumber: 99999, updateTimestamp: 88888)
         
         _ = splitsStorage.update(splitChange: processedChange)
-        XCTAssertEqual(splitsStorage.segmentsInUse, 4) // So, count should be 4
+        XCTAssertEqual(generalInfoStorage.getSegmentsInUse(), 4) // So, count should be 4
     }
 
     func testUnsupportedMatcherHasDefaultCondition() {

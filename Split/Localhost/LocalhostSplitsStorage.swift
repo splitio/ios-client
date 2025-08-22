@@ -9,12 +9,11 @@
 import Foundation
 
 class LocalhostSplitsStorage: SplitsStorage {
-
     var changeNumber: Int64 = -1
     var updateTimestamp: Int64 = 1
     var splitsFilterQueryString: String = ""
     var flagsSpec: String = ""
-    internal var segmentsInUse: Int64 = 0
+    var segmentsInUse: Int64 = 0
 
     private let inMemorySplits = ConcurrentDictionary<String, Split>()
 
@@ -47,6 +46,10 @@ class LocalhostSplitsStorage: SplitsStorage {
         inMemorySplits.removeAll()
         inMemorySplits.setValues(values)
         return true
+    }
+    
+    func getSegmentsInUse() -> Int64 {
+        segmentsInUse
     }
 
     func update(filterQueryString: String) {

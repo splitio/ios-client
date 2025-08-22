@@ -18,6 +18,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     var splitsSyncWorker: RetryableSyncWorkerStub!
     var periodicSplitsSyncWorker: PeriodicSyncWorkerStub!
     var persistentSplitsStorage: PersistentSplitsStorageStub!
+    var database: SplitDatabase!
 
     var splitsStorage: SplitsStorageStub!
     var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
@@ -35,8 +36,8 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     override func setUp() {
         synchronizer = buildSynchronizer()
     }
-
-    func buildSynchronizer(syncEnabled: Bool = true, splitFilters: [SplitFilter]? = nil) -> FeatureFlagsSynchronizer {
+    
+    func buildSynchronizer(syncEnabled: Bool = true, splitFilters: [SplitFilter]? = nil, generalInfoStorage: GeneralInfoStorageMock? = nil, Database: SplitDatabase? = nil) -> FeatureFlagsSynchronizer {
 
         eventsManager = SplitEventsManagerStub()
         persistentSplitsStorage = PersistentSplitsStorageStub()
@@ -49,13 +50,22 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         splitsStorage = SplitsStorageStub()
         ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
         broadcasterChannel = SyncEventBroadcasterStub()
-        generalInfoStorage = GeneralInfoStorageMock()
+        
+        if generalInfoStorage == nil {
+            self.generalInfoStorage = GeneralInfoStorageMock()
+        }
+        
+        if Database == nil {
+            self.database = TestingHelper.createTestDatabase(name: "pepe")
+        }
+        
         telemetryStorageStub = TelemetryStorageStub()
         _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                changeNumber: 100, updateTimestamp: 100))
-        generalInfoStorage.setFlagSpec(flagsSpec: "1.2")
+        
+        self.generalInfoStorage.setFlagSpec(flagsSpec: "1.2")
 
-        let storageContainer = SplitStorageContainer(splitDatabase: TestingHelper.createTestDatabase(name: "pepe"),
+        let storageContainer = SplitStorageContainer(splitDatabase: database,
                                                      splitsStorage: splitsStorage,
                                                      persistentSplitsStorage: persistentSplitsStorage,
                                                      impressionsStorage: ImpressionsStorageStub(),
@@ -71,7 +81,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                      flagSetsCache: FlagSetsCacheMock(),
                                                      persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
                                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
-                                                     generalInfoStorage: generalInfoStorage,
+                                                     generalInfoStorage: self.generalInfoStorage,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
 
@@ -266,6 +276,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         ThreadUtils.delay(seconds: 0.5)
 
         XCTAssertTrue(persistentSplitsStorage.clearCalled)
+        XCTAssertTrue(persistentSplitsStorage.clearCalled)
         XCTAssertEqual(1, broadcasterChannel.pushedEvents.filter { $0 == .splitLoadedFromCache }.count)
     }
 
@@ -339,5 +350,16 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         XCTAssertTrue(sw1.stopCalled)
         XCTAssertTrue(sw2.stopCalled)
         XCTAssertEqual(0, updateWorkerCatalog.count)
+    }
+    
+    func testForceParcing() {
+        var generalInfoStorage = GeneralInfoStorageMock()
+        
+        synchronizer = buildSynchronizer(generalInfoStorage: GeneralInfoStorageMock()) // SegmentsInUse = nil, changeNumber = 100
+        synchronizer.load()
+        
+        ThreadUtils.delay(seconds: 2)
+        
+        XCTAssertTrue(splitsStorage.forceReparsingCalled)
     }
 }

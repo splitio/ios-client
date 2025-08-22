@@ -15,11 +15,10 @@ class RuleBasedSegmentStorageTest: XCTestCase {
     private var persistentStorageStub: PersistentRuleBasedSegmentsStorageStub!
     private var ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage!
     private var noLoadedRbs: DefaultRuleBasedSegmentsStorage?
+    private var generalInfoStorage = GeneralInfoStorageMock()
 
     override func setUp() {
-        ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(
-            persistentStorage: createPersistentStorageStub()
-        )
+        ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(persistentStorage: createPersistentStorageStub(), generalInfoStorage: generalInfoStorage)
         ruleBasedSegmentsStorage.loadLocal()
     }
 
@@ -30,9 +29,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
     }
     
     func testLazyParsing() {
-        noLoadedRbs = DefaultRuleBasedSegmentsStorage(
-            persistentStorage: createPersistentStorageStub(isParsed: false)
-        )
+        noLoadedRbs = DefaultRuleBasedSegmentsStorage(persistentStorage: createPersistentStorageStub(isParsed: false), generalInfoStorage: generalInfoStorage)
         
         noLoadedRbs?.loadLocal()
 
@@ -71,7 +68,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         let customMock = MockPersistentRuleBasedSegmentsStorage()
         let persistentStorageStub = PersistentRuleBasedSegmentsStorageStub(delegate: customMock)
         let storage = DefaultRuleBasedSegmentsStorage(
-            persistentStorage: persistentStorageStub
+            persistentStorage: persistentStorageStub, generalInfoStorage: generalInfoStorage
         )
         storage.loadLocal()
 
@@ -110,9 +107,8 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         )
 
         persistentStorageStub = PersistentRuleBasedSegmentsStorageStub(delegate: customMock)
-        let storage = DefaultRuleBasedSegmentsStorage(
-            persistentStorage: persistentStorageStub
-        )
+        let storage = DefaultRuleBasedSegmentsStorage(persistentStorage: persistentStorageStub, generalInfoStorage: generalInfoStorage)
+        
         storage.loadLocal()
 
         // Verify only active segments are loaded
@@ -303,7 +299,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
 
         // 1. Counter should be 3 (ignore the other matcherTypes)
         _ = ruleBasedSegmentsStorage.update(toAdd: Set([segment1, segment2, segment3, segment4, segment5]), toRemove: [], changeNumber: 123)
-        XCTAssertEqual(ruleBasedSegmentsStorage.segmentsInUse, 3)
+        XCTAssertEqual(generalInfoStorage.getSegmentsInUse(), 3)
         
         // 2
         segment1.status = .archived // Archive of Segments with other matcherTypes should be ignored..
@@ -311,7 +307,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
         segment3.status = .archived
         _ = ruleBasedSegmentsStorage.update(toAdd: Set([]), toRemove: [segment1, segment2, segment3], changeNumber: 1230)
         
-        XCTAssertEqual(ruleBasedSegmentsStorage.segmentsInUse, 1)
+        XCTAssertEqual(generalInfoStorage.getSegmentsInUse(), 1)
     }
 
 

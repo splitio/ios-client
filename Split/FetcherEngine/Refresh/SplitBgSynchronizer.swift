@@ -198,7 +198,8 @@ struct BackgroundSyncExecutor {
                                                            splitChangeProcessor: changeProcessor,
                                                            ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                            cacheExpiration: cacheExpiration,
-                                                           splitConfig: SplitClientConfig())
+                                                           splitConfig: SplitClientConfig(),
+                                                           generalInfoStorage: generalInfoStorage)
 
         let impressionsRecorder
             = DefaultHttpImpressionsRecorder(restClient: restClient,
