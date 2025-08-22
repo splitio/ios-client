@@ -19,6 +19,7 @@ class SplitsBgSyncWorkerTest: XCTestCase {
     var splitChangeProcessor: SplitChangeProcessorStub!
     var ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessorStub!
     var splitsSyncWorker: BackgroundSyncWorker!
+    var generalInfoStorage: GeneralInfoStorageMock!
 
     override func setUp() {
         splitFetcher = HttpSplitFetcherStub()
@@ -38,7 +39,8 @@ class SplitsBgSyncWorkerTest: XCTestCase {
                                                       splitChangeProcessor: splitChangeProcessor,
                                                       ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                       cacheExpiration: 100,
-                                                      splitConfig: SplitClientConfig())
+                                                      splitConfig: SplitClientConfig(),
+                                                      generalInfoStorage: generalInfoStorage)
 
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitFetcher.splitChanges = [TargetingRulesChange(featureFlags: change)]
@@ -57,7 +59,8 @@ class SplitsBgSyncWorkerTest: XCTestCase {
                                                       splitChangeProcessor: splitChangeProcessor,
                                                       ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                       cacheExpiration: 100,
-                                                      splitConfig: SplitClientConfig())
+                                                      splitConfig: SplitClientConfig(),
+                                                      generalInfoStorage: generalInfoStorage)
 
         splitFetcher.httpError = HttpError.clientRelated(code: -1, internalCode: -1)
 
@@ -76,8 +79,9 @@ class SplitsBgSyncWorkerTest: XCTestCase {
                                                       splitChangeProcessor: splitChangeProcessor,
                                                       ruleBasedSegmentsChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                       cacheExpiration: 2000,
-                                                      splitConfig: SplitClientConfig())
-
+                                                      splitConfig: SplitClientConfig(),
+                                                      generalInfoStorage: generalInfoStorage)
+        
         let change = SplitChange(splits: [], since: 200, till: 200)
         splitStorage.updateTimestamp = Int64(Date().timeIntervalSince1970) - Int64(expiration / 2) // Non Expired cache
         splitFetcher.splitChanges = [TargetingRulesChange(featureFlags: change)]

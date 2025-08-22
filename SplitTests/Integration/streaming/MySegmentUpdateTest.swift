@@ -467,6 +467,7 @@ class MySegmentUpdateTest: XCTestCase {
             if request.url.absoluteString.contains("/memberships") {
                 segmentsHit.fulfill()
                 membershipsHit += 1
+                print("HITTING MEMBERSHIPS")
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
             

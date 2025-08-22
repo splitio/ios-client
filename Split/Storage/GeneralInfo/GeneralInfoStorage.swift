@@ -88,13 +88,16 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
     }
     
     func getSegmentsInUse() -> Int64? {
-        queue.async { [weak self] in
-            self?.segmentsInUse = self?.generalInfoDao.longValue(info: .segmentsInUse)
+        queue.sync {
+            if segmentsInUse == nil {
+                segmentsInUse = generalInfoDao.longValue(info: .segmentsInUse)
+            }
         }
         return segmentsInUse
     }
 
     func setSegmentsInUse(_ count: Int64) {
+        print(" ****       \(count)")
         segmentsInUse = count
         queue.async { [weak self] in
             self?.generalInfoDao.update(info: .segmentsInUse, longValue: count)

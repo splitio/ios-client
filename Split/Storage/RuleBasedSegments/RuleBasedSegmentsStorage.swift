@@ -10,7 +10,6 @@ import Foundation
 
 protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
     var changeNumber: Int64 { get }
-    var segmentsInUse: Int64 { get set }
 
     func get(segmentName: String) -> RuleBasedSegment?
     func contains(segmentNames: Set<String>) -> Bool
@@ -22,28 +21,28 @@ protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
 class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     private var persistentStorage: PersistentRuleBasedSegmentsStorage
+    private var generalInfoStorage: GeneralInfoStorage
     private var inMemorySegments: ConcurrentDictionary<String, RuleBasedSegment>
 
     private(set) var changeNumber: Int64 = -1
-    
-    var segmentsInUse: Int64 = 0
 
-    init(persistentStorage: PersistentRuleBasedSegmentsStorage) {
+    init(persistentStorage: PersistentRuleBasedSegmentsStorage, generalInfoStorage: GeneralInfoStorage) {
         self.persistentStorage = persistentStorage
         self.inMemorySegments = ConcurrentDictionary()
+        self.generalInfoStorage = generalInfoStorage
     }
 
     func loadLocal() {
-        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
+        var segmentsInUse: Int64 = generalInfoStorage.getSegmentsInUse() ?? 0
         let snapshot = persistentStorage.getSnapshot()
         let active = snapshot.segments.filter { $0.status == .active }
         let archived = snapshot.segments.filter { $0.status == .archived }
 
-        _ = processToAdd(Set(active))
-        _ = processToRemove(Set(archived))
+        _ = processToAdd(Set(active), &segmentsInUse)
+        _ = processToRemove(Set(archived), &segmentsInUse)
 
         changeNumber = snapshot.changeNumber
-        persistentStorage.setSegmentsInUse(segmentsInUse)
+        generalInfoStorage.setSegmentsInUse(segmentsInUse)
     }
 
     func get(segmentName: String) -> RuleBasedSegment? {
@@ -68,39 +67,40 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
 
     func update(toAdd: Set<RuleBasedSegment>, toRemove: Set<RuleBasedSegment>, changeNumber: Int64) -> Bool {
         
-        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
+        var segmentsInUse = generalInfoStorage.getSegmentsInUse() ?? 0
         self.changeNumber = changeNumber
         
         // Process
-        let addResult = processToAdd(toAdd)
-        let removeResult = processToRemove(toRemove)
+        let addResult = processToAdd(toAdd, &segmentsInUse)
+        let removeResult = processToRemove(toRemove, &segmentsInUse)
 
         // Update persistent storage
         persistentStorage.update(toAdd: toAdd, toRemove: toRemove, changeNumber: changeNumber)
-        persistentStorage.setSegmentsInUse(segmentsInUse)
+        generalInfoStorage.setSegmentsInUse(segmentsInUse)
 
         return addResult || removeResult
     }
 
-    private func processToAdd(_ toAdd: Set<RuleBasedSegment>) -> Bool { // Process segments to add
+    private func processToAdd(_ toAdd: Set<RuleBasedSegment>, _ segmentsInUse: inout Int64) -> Bool { // Process segments to add
         var result = false
         
         for segment in toAdd {
             if let segmentName = segment.name?.lowercased() {
-                updateSegmentsCount(segment)
+                segmentsInUse += updateSegmentsCount(segment)
                 inMemorySegments.setValue(segment, forKey: segmentName)
                 result = true
             }
         }
+        
         return result
     }
     
-    private func processToRemove(_ toRemove: Set<RuleBasedSegment>) -> Bool { // Process segments to remove
+    private func processToRemove(_ toRemove: Set<RuleBasedSegment>, _ segmentsInUse: inout Int64) -> Bool { // Process segments to remove
         var result = false
         
         for segment in toRemove {
             if let segmentName = segment.name?.lowercased(), inMemorySegments.value(forKey: segmentName) != nil {
-                updateSegmentsCount(segment)
+                segmentsInUse += updateSegmentsCount(segment)
                 inMemorySegments.removeValue(forKey: segmentName)
                 result = true
             }
@@ -115,19 +115,19 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
     }
     
     func forceParsing() {
-        segmentsInUse = persistentStorage.getSegmentsInUse() ?? 0
+        var segmentsInUse = generalInfoStorage.getSegmentsInUse() ?? 0
         let activeSegments = persistentStorage.getSnapshot().segments.filter { $0.status == .active }
         
         for i in 0..<activeSegments.count {
             guard let segmentName = activeSegments[i].name else { continue }
             
             if let parsedSegment = parseSegment(activeSegments[i]) { // Parse it
-                updateSegmentsCount(parsedSegment)
+                segmentsInUse += updateSegmentsCount(parsedSegment)
                 inMemorySegments.setValue(parsedSegment, forKey: segmentName)
             }
         }
         
-        persistentStorage.setSegmentsInUse(segmentsInUse)
+        generalInfoStorage.setSegmentsInUse(segmentsInUse)
     }
     
     fileprivate func parseSegment(_ segment: RuleBasedSegment) -> RuleBasedSegment? {
@@ -135,12 +135,16 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         return parsedSegment
     }
     
-    fileprivate func updateSegmentsCount(_ segment: RuleBasedSegment) {
+    fileprivate func updateSegmentsCount(_ segment: RuleBasedSegment) -> Int64 {
+        var segmentsInUse: Int64 = 0
+        
         if let segmentName = segment.name?.lowercased(), segment.status == .active, inMemorySegments.value(forKey: segmentName) == nil, StorageHelper.usesSegments(segment.conditions) {
             segmentsInUse += 1
         } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil, segment.status != .active, StorageHelper.usesSegments(segment.conditions) {
             segmentsInUse -= 1
         }
+        
+        return segmentsInUse
     }
     
     #if DEBUG
