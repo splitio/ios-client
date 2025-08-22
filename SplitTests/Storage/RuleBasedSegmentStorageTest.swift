@@ -15,7 +15,7 @@ class RuleBasedSegmentStorageTest: XCTestCase {
     private var persistentStorageStub: PersistentRuleBasedSegmentsStorageStub!
     private var ruleBasedSegmentsStorage: DefaultRuleBasedSegmentsStorage!
     private var noLoadedRbs: DefaultRuleBasedSegmentsStorage?
-    private var generalInfoStorage: GeneralInfoStorageMock!
+    private var generalInfoStorage = GeneralInfoStorageMock()
 
     override func setUp() {
         ruleBasedSegmentsStorage = DefaultRuleBasedSegmentsStorage(persistentStorage: createPersistentStorageStub(), generalInfoStorage: generalInfoStorage)
