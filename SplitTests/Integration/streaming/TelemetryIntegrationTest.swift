@@ -169,7 +169,7 @@ class TelemetryIntegrationTest: XCTestCase {
         XCTAssertEqual(2, statsItem?.impressionsQueued)
 
         XCTAssertEqual(0, statsItem?.segmentCount)
-        XCTAssertEqual(33, statsItem?.splitCount)
+        XCTAssertEqual(35, statsItem?.splitCount)
 
         XCTAssertTrue(statsItem?.httpLatencies?.splits?.count ?? 0 > 0)
         XCTAssertTrue(statsItem?.httpLatencies?.mySegments?.count ?? 0 > 0)

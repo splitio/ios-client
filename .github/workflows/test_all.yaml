@@ -27,6 +27,7 @@ jobs:
           SplitiOSUnit_2,
           SplitiOSUnit_3,
           SplitiOSUnit_4,
+          SplitiOSUnit_5,
           SemVer,
           SplitPushManagerUT,
           SplitStreamingUT
