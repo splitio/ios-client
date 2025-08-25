@@ -358,6 +358,7 @@
 		5B343EAE2E26E93B006BEBE7 /* StorageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */; };
 		5B48D8172DEA2CED00351925 /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */; };
+		5BD75F832E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */; };
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
@@ -1563,6 +1564,7 @@
 		5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitschanges_no_segments.json; sourceTree = "<group>"; };
 		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
+		5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit_5.xctestplan; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
@@ -2140,6 +2142,7 @@
 				95DF58EB2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan */,
 				95DF58F72BEC5432009220B8 /* SplitiOSUnit_3.xctestplan */,
 				95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */,
+				5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */,
 				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
@@ -3972,6 +3975,7 @@
 				590DF9CA213DAC9D0082B94F /* splits.json in Resources */,
 				592C6AEA211CBBB0002D120C /* regex.csv in Resources */,
 				5959C46E2278D9AD0064F968 /* segment_conta_condition.json in Resources */,
+				5BD75F832E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan in Resources */,
 				59C493052167E3B400F5F774 /* murmur3-sample-double-treatment-users.csv in Resources */,
 				95F7BC082C1CE84500C5F2E4 /* rsa_2048_cert.pem.der in Resources */,
 				C5977C322BF4031A003E293A /* split_changes_semver.json in Resources */,

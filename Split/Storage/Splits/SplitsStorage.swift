@@ -68,6 +68,8 @@ class DefaultSplitsStorage: SplitsStorage {
             let parsedSplit = parseSplit(split)
             inMemorySplits.setValue(parsedSplit, forKey: lowercasedName)
             return parsedSplit
+        } else if isUnsupportedMatcher(split: split) {
+            split.conditions = [SplitHelper.createDefaultCondition()]
         }
         
         return split
