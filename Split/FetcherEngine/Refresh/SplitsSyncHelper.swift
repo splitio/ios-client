@@ -167,6 +167,7 @@ class SplitsSyncHelper {
                           rbsUpdated: false)
     }
 
+    // MARK: Synchronization Core
     func fetchUntil(since: Int64,
                     rbSince: Int64?,
                     till: Int64? = nil,
@@ -203,10 +204,12 @@ class SplitsSyncHelper {
             }
             firstFetch = false
             
+            // MARK: Splits Sync
             if splitsStorage.update(splitChange: splitChangeProcessor.process(targetingRulesChange.featureFlags)) {
                 featureFlagsUpdated = true
             }
             
+            // MARK: RBS Sync
             let processedChange = ruleBasedSegmentsChangeProcessor.process(targetingRulesChange.ruleBasedSegments)
             if ruleBasedSegmentsStorage.update(toAdd: processedChange.toAdd, toRemove: processedChange.toRemove, changeNumber: processedChange.changeNumber) {
                 rbsUpdated = true
