@@ -359,6 +359,8 @@
 		5B48D8172DEA2CED00351925 /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */; };
 		5BD75F832E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */; };
+		5BD75FB02E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */; };
+		5BD75FB12E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */; };
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
@@ -1565,6 +1567,7 @@
 		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
 		5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit_5.xctestplan; sourceTree = "<group>"; };
+		5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatments.swift; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
@@ -2303,6 +2306,7 @@
 		3B6DEE8E20EA6AE00067435E /* Engine */ = {
 			isa = PBXGroup;
 			children = (
+				5BD75FAE2E5DF0CA00F9EFBD /* FallbackTreatments */,
 				3B6DEE8F20EA6AE00067435E /* Constants */,
 				3B6DEE9220EA6AE00067435E /* EvaluatorError.swift */,
 				3B6DEE9320EA6AE00067435E /* Evaluator.swift */,
@@ -3195,6 +3199,14 @@
 				599EA5802266719C006CBA89 /* YamlLocalhostSplitsParser.swift */,
 			);
 			path = Localhost;
+			sourceTree = "<group>";
+		};
+		5BD75FAE2E5DF0CA00F9EFBD /* FallbackTreatments */ = {
+			isa = PBXGroup;
+			children = (
+				5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */,
+			);
+			path = FallbackTreatments;
 			sourceTree = "<group>";
 		};
 		95118EE9281AC80400782F33 /* UserConsent */ = {
@@ -4292,6 +4304,7 @@
 				59B2042924F42DE80092F2E9 /* SseNotificationProcessor.swift in Sources */,
 				3B6DEF6D20EA6AE50067435E /* MatchesStringMatcher.swift in Sources */,
 				3B6DEF3420EA6AE50067435E /* Splitter.swift in Sources */,
+				5BD75FB02E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */,
 				C5977C2A2BF2BF50003E293A /* LessThanOrEqualToSemverMatcher.swift in Sources */,
 				9524EFFE2C666C5700ECBF7B /* AllSegmentsChange.swift in Sources */,
 				9500D9C52C5D99CE00383593 /* MySegmentEntity.swift in Sources */,
@@ -5042,6 +5055,7 @@
 				95B02D6028D0BDC20030EC8B /* MatchesStringMatcher.swift in Sources */,
 				952FA1312A31DCE400264AB5 /* SplitComponentCatalog.swift in Sources */,
 				95B02D6128D0BDC20030EC8B /* PartOfSetMatcher.swift in Sources */,
+				5BD75FB12E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */,
 				95B02D6228D0BDC20030EC8B /* StartWithMatcher.swift in Sources */,
 				95880CFB2AEFF177000498A0 /* FlagSetsValidator.swift in Sources */,
 				95B02D6328D0BDC20030EC8B /* Whitelist.swift in Sources */,
