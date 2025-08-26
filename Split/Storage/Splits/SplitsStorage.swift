@@ -244,14 +244,25 @@ class DefaultSplitsStorage: SplitsStorage {
     }
     
     func updateSegmentsCount(split: Split) -> Int64 { // Keep count of Flags with Segments (used to optimize "/memberships" hits)
-        guard let splitName = split.name else { return 0 }
+        guard let splitName = split.name?.lowercased() else { return 0 }
         
         if inMemorySplits.value(forKey: splitName) == nil, split.status == .active { // If new Split and active
             if StorageHelper.usesSegments(split.conditions ?? []) {
+                print(" ***** ADDING \(splitName)")
                 return 1
             }
-        } else if inMemorySplits.value(forKey: splitName) != nil && split.status != .active { // If known Split and archived
+        }
+        
+//        if inMemorySplits.value(forKey: splitName) != nil, split.status == .active { // If new Split and active
+//            if StorageHelper.usesSegments(split.conditions ?? []) {
+//                print(" ***** ADDING \(splitName)")
+//                return 1
+//            }
+//        }
+        
+        if inMemorySplits.value(forKey: splitName) != nil && split.status == .archived { // If known Split and archived
             if StorageHelper.usesSegments(split.conditions ?? []) {
+                print(" ***** REMOVING \(splitName)")
                 return -1
             }
         }
