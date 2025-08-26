@@ -255,7 +255,7 @@ class DefaultSplitsStorage: SplitsStorage {
             }
         }
         
-//        if inMemorySplits.value(forKey: splitName) != nil, split.status == .active { // If new Split and active
+//        if inMemorySplits.value(forKey: splitName) != nil, split.status == .active { // If KNOWN Split and active
 //            if StorageHelper.usesSegments(split.conditions ?? []) {
 //                print(" ***** ADDING \(splitName)")
 //                return 1
