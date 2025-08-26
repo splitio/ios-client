@@ -250,21 +250,32 @@ class DefaultSplitsStorage: SplitsStorage {
         
         if inMemorySplits.value(forKey: splitName) == nil, split.status == .active { // If new Split and active
             if StorageHelper.usesSegments(split.conditions ?? []) {
-                print(" ***** ADDING \(splitName)")
+                print(" ***** ADDING NEW \(splitName)")
                 return 1
             }
         }
         
-//        if inMemorySplits.value(forKey: splitName) != nil, split.status == .active { // If KNOWN Split and active
-//            if StorageHelper.usesSegments(split.conditions ?? []) {
-//                print(" ***** ADDING \(splitName)")
-//                return 1
-//            }
-//        }
+        if inMemorySplits.value(forKey: splitName) != nil, split.status == .active { // If know Split NOW using Segments
+            if StorageHelper.usesSegments(split.conditions ?? []) {
+
+                // Check if previously had segments
+                let previousSplit = persistentStorage.getSplitsSnapshot().splits.first { $0.name?.lowercased() == splitName }
+                if !StorageHelper.usesSegments(previousSplit?.conditions ?? []) {
+                    print(" ***** ADDING KNOWN \(splitName)")
+                    return 1
+                }
+            } else {
+                let previousSplit = persistentStorage.getSplitsSnapshot().splits.first { $0.name?.lowercased() == splitName }
+                if !StorageHelper.usesSegments(previousSplit?.conditions ?? []) {
+                    print(" ***** REMOVING KNOWN \(splitName)")
+                    return -1
+                }
+            }
+        }
         
         if inMemorySplits.value(forKey: splitName) != nil && split.status == .archived { // If known Split and archived
             if StorageHelper.usesSegments(split.conditions ?? []) {
-                print(" ***** REMOVING \(splitName)")
+                print(" ***** REMOVING KNOWN \(splitName)")
                 return -1
             }
         }
