@@ -93,7 +93,7 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
                 segmentsInUse = generalInfoDao.longValue(info: .segmentsInUse)
             }
         }
-        print("    -----------  \(segmentsInUse ?? 0) SEGMENTS FOUND IN USE")
+        print("    -----------  \(segmentsInUse) SEGMENTS FOUND IN USE")
         return segmentsInUse
     }
 
