@@ -359,8 +359,6 @@
 		5B48D8172DEA2CED00351925 /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */; };
 		5BD75F832E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */; };
-		5BD75FAB2E5D232300F9EFBD /* FallbackTreatment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAA2E5D231700F9EFBD /* FallbackTreatment.swift */; };
-		5BD75FAC2E5D232300F9EFBD /* FallbackTreatment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAA2E5D231700F9EFBD /* FallbackTreatment.swift */; };
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
@@ -1567,7 +1565,6 @@
 		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
 		5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit_5.xctestplan; sourceTree = "<group>"; };
-		5BD75FAA2E5D231700F9EFBD /* FallbackTreatment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatment.swift; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
@@ -2306,7 +2303,6 @@
 		3B6DEE8E20EA6AE00067435E /* Engine */ = {
 			isa = PBXGroup;
 			children = (
-				5BD75FA92E5D230B00F9EFBD /* Fallback Treatment */,
 				3B6DEE8F20EA6AE00067435E /* Constants */,
 				3B6DEE9220EA6AE00067435E /* EvaluatorError.swift */,
 				3B6DEE9320EA6AE00067435E /* Evaluator.swift */,
@@ -3199,14 +3195,6 @@
 				599EA5802266719C006CBA89 /* YamlLocalhostSplitsParser.swift */,
 			);
 			path = Localhost;
-			sourceTree = "<group>";
-		};
-		5BD75FA92E5D230B00F9EFBD /* Fallback Treatment */ = {
-			isa = PBXGroup;
-			children = (
-				5BD75FAA2E5D231700F9EFBD /* FallbackTreatment.swift */,
-			);
-			path = "Fallback Treatment";
 			sourceTree = "<group>";
 		};
 		95118EE9281AC80400782F33 /* UserConsent */ = {
@@ -4140,7 +4128,6 @@
 				3B6DEF8120EA6AE50067435E /* DataResult.swift in Sources */,
 				59F4AAD4251A7F4700A1C69A /* SplitApiFacade.swift in Sources */,
 				3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */,
-				5BD75FAB2E5D232300F9EFBD /* FallbackTreatment.swift in Sources */,
 				9519A91C27D942FF00278AEC /* Synchronizer.swift in Sources */,
 				957E674C25E48753006F5B19 /* Bundle+Finder.swift in Sources */,
 				95F3F09525AE1F3800084AF8 /* ServiceConstants.swift in Sources */,
@@ -5008,7 +4995,6 @@
 				C5977C622BF7D4D9003E293A /* LessThanOrEqualToSemverMatcher.swift in Sources */,
 				958FD8A32C51321A00E5609B /* FileUtil.swift in Sources */,
 				95B02D3C28D0BDC20030EC8B /* UniqueKeysRecorder.swift in Sources */,
-				5BD75FAC2E5D232300F9EFBD /* FallbackTreatment.swift in Sources */,
 				95B02D3D28D0BDC20030EC8B /* EventsRecorderWorker.swift in Sources */,
 				95B02D3E28D0BDC20030EC8B /* TelemetryStatsRecorderWorker.swift in Sources */,
 				95B02D3F28D0BDC20030EC8B /* TelemetryConfigRecorderWorker.swift in Sources */,
