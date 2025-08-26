@@ -10,7 +10,7 @@ public struct FallbackTreatment: Equatable, Hashable {
     init(_ treatment: String, config: String? = nil) {
         self.treatment = treatment
         self.config = config
-        self.label = "fallback treatment" // Constant alongisde the other impression labels (e.g.:  "fallback treatment - CONTROL" )
+        self.label = "fallback - " // Constant alongisde the other impression labels (e.g.:  "fallback - CONTROL" )
     }
 }
 
