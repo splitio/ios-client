@@ -216,11 +216,8 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
         // Polling should be done once sdk ready is fired in initial sync, and if there are Segments in use.
         // Both storages read the same value so we can use any of them (using myLargeSegmentsStorage).
         if !isSdkReadyFired() || !(myLargeSegmentsStorage.isUsingSegments()) {
-            print(" *** NOT CHECKING SEGMENTS")
             return
         }
-        
-        print(" *** CHECKING SEGMENTS")
 
         do {
             let result = try syncHelper.sync(msTill: mySegmentsStorage.changeNumber,

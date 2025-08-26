@@ -89,11 +89,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             
             // MARK: Important. This should be called before loadLocal()
             // MARK: Part of /memberships hits optimization
-            
-            let changeNumber = storageContainer.persistentSplitsStorage.getChangeNumber()
-            let segmentsInUse = storageContainer.generalInfoStorage.getSegmentsInUse()
-            
-            if segmentsInUse == nil && changeNumber > -1 {
+            if storageContainer.generalInfoStorage.getSegmentsInUse() == nil && storageContainer.persistentSplitsStorage.getChangeNumber() > -1 {
                 Logger.v("Force Parsing flags")
                 splitsStorage.forceParsing()
                 ruleBasedSegmentsStorage.forceParsing()

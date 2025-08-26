@@ -240,45 +240,39 @@ class DefaultSplitsStorage: SplitsStorage {
             }
         }
         
-        print(" **          FORCE PARSING")
-        
         generalInfoStorage.setSegmentsInUse(segmentsInUse)
     }
     
     func updateSegmentsCount(split: Split) -> Int64 { // Keep count of Flags with Segments (used to optimize "/memberships" hits)
         guard let splitName = split.name?.lowercased() else { return 0 }
         
-        if inMemorySplits.value(forKey: splitName) == nil, split.status == .active { // If new Split and active
+        // 1. New Split using Segments
+        if inMemorySplits.value(forKey: splitName) == nil, split.status == .active {
             if StorageHelper.usesSegments(split.conditions ?? []) {
-                print(" ***** ADDING NEW \(splitName)")
                 return 1
             }
         }
         
-        if inMemorySplits.value(forKey: splitName) != nil, split.status == .active { // If know Split NOW using Segments
+        // 2. Known Split
+        if inMemorySplits.value(forKey: splitName) != nil, split.status == .active {
+            let previousState = persistentStorage.getSplitsSnapshot().splits.first { $0.name?.lowercased() == splitName }
             if StorageHelper.usesSegments(split.conditions ?? []) {
 
-                // Check if previously had segments
-                let previousSplit = persistentStorage.getSplitsSnapshot().splits.first { $0.name?.lowercased() == splitName }
-                    print(" ***** REPARSING ADD JUST \(splitName)")
-                if !StorageHelper.usesSegments(previousSplit?.conditions ?? []) {
-                    print(" ***** ADDING KNOWN \(splitName)")
+                // Previously not using Segments?
+                if StorageHelper.usesSegments(previousState?.conditions ?? []) == false {
                     return 1
                 }
             } else {
-                let previousSplit = persistentStorage.getSplitsSnapshot().splits.first { $0.name?.lowercased() == splitName }
-                
-                    print(" ***** REPARSING REMOVE JUST \(splitName)")
-                if !StorageHelper.usesSegments(previousSplit?.conditions ?? []) {
-                    print(" ***** REMOVING KNOWN \(splitName)")
+                // Not using Segments but previously yes?
+                if StorageHelper.usesSegments(previousState?.conditions ?? []) == true {
                     return -1
                 }
             }
         }
         
-        if inMemorySplits.value(forKey: splitName) != nil && split.status == .archived { // If known Split and archived
+        // 3. Known Split just archived
+        if inMemorySplits.value(forKey: splitName) != nil && split.status == .archived {
             if StorageHelper.usesSegments(split.conditions ?? []) {
-                print(" ***** REMOVING KNOWN \(splitName)")
                 return -1
             }
         }
