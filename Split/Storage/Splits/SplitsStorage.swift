@@ -260,12 +260,15 @@ class DefaultSplitsStorage: SplitsStorage {
 
                 // Check if previously had segments
                 let previousSplit = persistentStorage.getSplitsSnapshot().splits.first { $0.name?.lowercased() == splitName }
+                    print(" ***** REPARSING ADD JUST \(splitName)")
                 if !StorageHelper.usesSegments(previousSplit?.conditions ?? []) {
                     print(" ***** ADDING KNOWN \(splitName)")
                     return 1
                 }
             } else {
                 let previousSplit = persistentStorage.getSplitsSnapshot().splits.first { $0.name?.lowercased() == splitName }
+                
+                    print(" ***** REPARSING REMOVE JUST \(splitName)")
                 if !StorageHelper.usesSegments(previousSplit?.conditions ?? []) {
                     print(" ***** REMOVING KNOWN \(splitName)")
                     return -1
