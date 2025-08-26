@@ -240,6 +240,8 @@ class DefaultSplitsStorage: SplitsStorage {
             }
         }
         
+        print(" **          FORCE PARSING")
+        
         generalInfoStorage.setSegmentsInUse(segmentsInUse)
     }
     
