@@ -91,8 +91,9 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             // MARK: Part of /memberships hits optimization
             
             let changeNumber = storageContainer.persistentSplitsStorage.getChangeNumber()
+            let segmentsInUse = storageContainer.generalInfoStorage.getSegmentsInUse()
             
-            if storageContainer.generalInfoStorage.getSegmentsInUse() == nil && changeNumber > -1 {
+            if segmentsInUse == nil && changeNumber > -1 {
                 Logger.v("Force Parsing flags")
                 splitsStorage.forceParsing()
                 ruleBasedSegmentsStorage.forceParsing()

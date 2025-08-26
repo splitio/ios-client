@@ -92,8 +92,8 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
             if segmentsInUse == nil { // This happens just on start
                 segmentsInUse = generalInfoDao.longValue(info: .segmentsInUse)
             }
+            return segmentsInUse
         }
-        return segmentsInUse
     }
 
     func setSegmentsInUse(_ count: Int64) {
