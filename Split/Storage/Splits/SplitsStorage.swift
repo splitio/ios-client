@@ -245,33 +245,33 @@ class DefaultSplitsStorage: SplitsStorage {
     
     func updateSegmentsCount(split: Split) -> Int64 { // Keep count of Flags with Segments (used to optimize "/memberships" hits)
         guard let splitName = split.name?.lowercased() else { return 0 }
+        let inMemorySplit = inMemorySplits.value(forKey: splitName)
         
         // 1. New Split using Segments
-        if inMemorySplits.value(forKey: splitName) == nil, split.status == .active {
+        if inMemorySplit == nil, split.status == .active {
             if StorageHelper.usesSegments(split.conditions ?? []) {
                 return 1
             }
         }
         
         // 2. Known Split
-        if inMemorySplits.value(forKey: splitName) != nil, split.status == .active {
-            let previousState = persistentStorage.getSplitsSnapshot().splits.first { $0.name?.lowercased() == splitName }
+        if inMemorySplit != nil, split.status == .active {
             if StorageHelper.usesSegments(split.conditions ?? []) {
 
                 // Previously not using Segments?
-                if StorageHelper.usesSegments(previousState?.conditions ?? []) == false {
+                if StorageHelper.usesSegments(inMemorySplit?.conditions ?? []) == false {
                     return 1
                 }
             } else {
                 // Not using Segments but previously yes?
-                if StorageHelper.usesSegments(previousState?.conditions ?? []) == true {
+                if StorageHelper.usesSegments(inMemorySplit?.conditions ?? []) {
                     return -1
                 }
             }
         }
         
         // 3. Known Split just archived
-        if inMemorySplits.value(forKey: splitName) != nil && split.status == .archived {
+        if inMemorySplit != nil && split.status == .archived {
             if StorageHelper.usesSegments(split.conditions ?? []) {
                 return -1
             }

@@ -89,7 +89,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             
             // MARK: Important. This should be called before loadLocal()
             // MARK: Part of /memberships hits optimization
-            if storageContainer.generalInfoStorage.getSegmentsInUse() == nil && storageContainer.persistentSplitsStorage.getChangeNumber() > -1 {
+            if shouldForceParse() {
                 Logger.v("Force Parsing flags")
                 splitsStorage.forceParsing()
                 ruleBasedSegmentsStorage.forceParsing()
@@ -247,5 +247,9 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             return String(splitName.prefix(upTo: range.lowerBound))
         }
         return nil
+    }
+    
+    private func shouldForceParse() -> Bool {
+        storageContainer.generalInfoStorage.getSegmentsInUse() == nil && storageContainer.generalInfoStorage.getSplitsChangeNumber() > -1
     }
 }
