@@ -37,7 +37,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         synchronizer = buildSynchronizer()
     }
     
-    func buildSynchronizer(syncEnabled: Bool = true, splitFilters: [SplitFilter]? = nil, generalInfoStorage: GeneralInfoStorageMock? = nil, Database: SplitDatabase? = nil) -> FeatureFlagsSynchronizer {
+    func buildSynchronizer(syncEnabled: Bool = true, splitFilters: [SplitFilter]? = nil, splitsStorage: SplitsStorageStub? = nil, generalInfoStorage: GeneralInfoStorageMock? = nil, Database: SplitDatabase? = nil, withChangeNumber: Int64 = 100) -> FeatureFlagsSynchronizer {
 
         eventsManager = SplitEventsManagerStub()
         persistentSplitsStorage = PersistentSplitsStorageStub()
@@ -47,26 +47,22 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
         syncWorkerFactory = SyncWorkerFactoryStub()
         syncWorkerFactory.splitsSyncWorker = splitsSyncWorker
         syncWorkerFactory.periodicSplitsSyncWorker = periodicSplitsSyncWorker
-        splitsStorage = SplitsStorageStub()
         ruleBasedSegmentsStorage = RuleBasedSegmentsStorageStub()
         broadcasterChannel = SyncEventBroadcasterStub()
         
-        if generalInfoStorage == nil {
-            self.generalInfoStorage = GeneralInfoStorageMock()
-        }
+        self.splitsStorage = splitsStorage ?? SplitsStorageStub()
+        self.generalInfoStorage = generalInfoStorage ?? GeneralInfoStorageMock()
+        self.database = Database ?? TestingHelper.createTestDatabase(name: "pepe")
         
-        if Database == nil {
-            self.database = TestingHelper.createTestDatabase(name: "pepe")
-        }
-        
+        persistentSplitsStorage.changeNumber = withChangeNumber
         telemetryStorageStub = TelemetryStorageStub()
-        _ = splitsStorage.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
-                                                               changeNumber: 100, updateTimestamp: 100))
+        _ = self.splitsStorage!.update(splitChange: ProcessedSplitChange(activeSplits: [], archivedSplits: [],
+                                                               changeNumber: withChangeNumber, updateTimestamp: 100))
         
         self.generalInfoStorage.setFlagSpec(flagsSpec: "1.2")
 
         let storageContainer = SplitStorageContainer(splitDatabase: database,
-                                                     splitsStorage: splitsStorage,
+                                                     splitsStorage: self.splitsStorage!,
                                                      persistentSplitsStorage: persistentSplitsStorage,
                                                      impressionsStorage: ImpressionsStorageStub(),
                                                      persistentImpressionsStorage: PersistentImpressionsStorageStub(),
@@ -81,7 +77,7 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                      flagSetsCache: FlagSetsCacheMock(),
                                                      persistentHashedImpressionsStorage: PersistentHashedImpressionStorageMock(),
                                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
-                                                     generalInfoStorage: self.generalInfoStorage,
+                                                     generalInfoStorage: self.generalInfoStorage!,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
                                                      persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
 
@@ -353,10 +349,13 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
     }
     
     func testForceParcing() {
-        var generalInfoStorage = GeneralInfoStorageMock()
+        let splitsStorage = SplitsStorageStub()
+        let generalInfoStorage = GeneralInfoStorageMock()
+        splitsStorage.changeNumber = 100
+        generalInfoStorage.setSplitsChangeNumber(changeNumber: 100)
         
-        synchronizer = buildSynchronizer(generalInfoStorage: GeneralInfoStorageMock()) // SegmentsInUse = nil, changeNumber = 100
-        synchronizer.load()
+        let synchronizer2 = buildSynchronizer(splitsStorage: splitsStorage, generalInfoStorage: generalInfoStorage, withChangeNumber: 100) // SegmentsInUse = nil, changeNumber = 100
+        synchronizer2.load()
         
         ThreadUtils.delay(seconds: 2)
         
