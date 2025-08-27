@@ -1,6 +1,8 @@
 //  Created by Martin Cardozo on 25/08/2025
 
-public struct FallbackTreatment: Equatable, Hashable {
+import Foundation
+
+@objc public class FallbackTreatment: NSObject {
     
     let treatment: String
     let config: String?
@@ -13,7 +15,7 @@ public struct FallbackTreatment: Equatable, Hashable {
     }
 }
 
-public struct FallbackConfig: Equatable, Hashable {
+@objc public class FallbackConfig: NSObject {
     
     let global: FallbackTreatment? // Default treatment for all
     let byFlag: [String: FallbackTreatment] // Fallback treatment per flag
