@@ -4,24 +4,32 @@ import Foundation
 
 @objc public class FallbackTreatment: NSObject {
     
-    let treatment: String
-    let config: String?
-    let label: String
+    @objc public let treatment: String
+    @objc public let config: String?
+    @objc public let label: String
     
-    init(_ treatment: String, config: String? = nil) {
+    @objc public init(_ treatment: String, config: String? = nil) {
         self.treatment = treatment
         self.config = config
         self.label = "fallback - " // Constant alongisde the other impression labels (e.g.:  "fallback treatment - CONTROL" )
     }
+    
+    override public var description: String {
+        return "{\treatment: \(treatment),\nconfig: \(String(describing: config)),\nlabel: \(label)\n}"
+    }
 }
 
 @objc public class FallbackConfig: NSObject {
+     
+    @objc public let global: FallbackTreatment? // Default treatment for all
+    @objc public let byFlag: [String: FallbackTreatment] // Fallback treatment per flag
     
-    let global: FallbackTreatment? // Default treatment for all
-    let byFlag: [String: FallbackTreatment] // Fallback treatment per flag
-    
-    init(global: FallbackTreatment? = nil, byFlag: [String: FallbackTreatment] = [:]) {
+    @objc public init(global: FallbackTreatment? = nil, byFlag: [String: FallbackTreatment] = [:]) {
         self.global = global
         self.byFlag = byFlag
+    }
+    
+    override public var description: String {
+        return "{\nglobal: \(String(describing: global))\nbyFlag: \(byFlag)\n}"
     }
 }
