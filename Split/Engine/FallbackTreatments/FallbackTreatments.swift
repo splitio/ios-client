@@ -11,7 +11,7 @@ import Foundation
     @objc public init(_ treatment: String, config: String? = nil) {
         self.treatment = treatment
         self.config = config
-        self.label = "fallback - " // Constant alongisde the other impression labels (e.g.:  "fallback treatment - CONTROL" )
+        self.label = "fallback - " // Constant alongisde the other impression labels (e.g.:  "fallback - CONTROL" )
     }
     
     override public var description: String {
