@@ -130,18 +130,43 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         generalInfoStorage.setSegmentsInUse(segmentsInUse)
     }
     
-    fileprivate func parseSegment(_ segment: RuleBasedSegment) -> RuleBasedSegment? {
+    private func parseSegment(_ segment: RuleBasedSegment) -> RuleBasedSegment? {
         guard let parsedSegment = try? Json.decodeFrom(json: segment.json, to: RuleBasedSegment.self) else { return nil }
         return parsedSegment
     }
     
-    fileprivate func updateSegmentsCount(_ segment: RuleBasedSegment) -> Int64 {
+    private func updateSegmentsCount(_ segment: RuleBasedSegment) -> Int64 {
         var segmentsInUse: Int64 = 0
+        let segmentName = segment.name?.lowercased() ?? ""
+        let inMemorySegment = inMemorySegments.value(forKey: segmentName)
         
-        if let segmentName = segment.name?.lowercased(), segment.status == .active, inMemorySegments.value(forKey: segmentName) == nil, StorageHelper.usesSegments(segment.conditions) {
+        // 1. New Segment
+        if inMemorySegment == nil, segment.status == .active, StorageHelper.usesSegments(segment.conditions) {
             segmentsInUse += 1
-        } else if inMemorySegments.value(forKey: segment.name?.lowercased() ?? "") != nil, segment.status != .active, StorageHelper.usesSegments(segment.conditions) {
-            segmentsInUse -= 1
+        }
+        
+        // 2. Known Segment
+        if inMemorySegment != nil, segment.status == .active {
+           
+            if StorageHelper.usesSegments(segment.conditions ?? []) {
+
+                // Previously not using Segments?
+                if StorageHelper.usesSegments(inMemorySegment?.conditions ?? []) == false {
+                    return 1
+                }
+            } else {
+                // Not using Segments but previously yes?
+                if StorageHelper.usesSegments(inMemorySegment?.conditions ?? []) {
+                    return -1
+                }
+            }
+        }
+        
+        // 3. Known segment just archived
+        if inMemorySegment != nil, segment.status == .archived {
+            if StorageHelper.usesSegments(segment.conditions ?? []) {
+                return -1
+            }
         }
         
         return segmentsInUse
