@@ -318,23 +318,26 @@ class SplitsStorageTest: XCTestCase {
         let split4 = SplitTestHelper.newSplitWithMatcherType("split4", .inLargeSegment)
         let split5 = SplitTestHelper.newSplitWithMatcherType("split5", .inLargeSegment)
         let split6 = SplitTestHelper.newSplitWithMatcherType("split6", .inLargeSegment)
+    
+        let splitNotUsingSegments = newSplit(name: "added")
+        let splitsToAdd = [split, split2, split3, split4, splitNotUsingSegments, split5]
         
-        persistentStorage.snapshot = getTestSnapshot()
+        persistentStorage.snapshot = SplitsSnapshot(changeNumber: dummyChangeNumber, splits: [], updateTimestamp: dummyUpdateTimestamp)
         splitsStorage.loadLocal()
 
         // 1. Check Segments count is in 0
         XCTAssertEqual(generalInfoStorage.getSegmentsInUse(), 0)
         
-        let splitNotUsingSegments = newSplit(name: "added")
         
         // 2. Add 6 Splits (1 not using Segments)
-        var processedChange = ProcessedSplitChange(activeSplits: [split, split2, split3, split4, splitNotUsingSegments, split5],
+        var processedChange = ProcessedSplitChange(activeSplits: splitsToAdd,
                                                    archivedSplits: [],
                                                    changeNumber: 999, updateTimestamp: 888)
 
         _ = splitsStorage.update(splitChange: processedChange)
         XCTAssertEqual(generalInfoStorage.getSegmentsInUse(), 5) // One should have been ignored, so 5
         XCTAssertTrue(persistentStorage.updateCalled)
+        persistentStorage.snapshot = SplitsSnapshot(changeNumber: dummyChangeNumber, splits: splitsToAdd, updateTimestamp: dummyUpdateTimestamp)
         
         // 3. Add 2 previously added (should be ignored by the counter), and a new one
         processedChange = ProcessedSplitChange(activeSplits: [split, split2, split6],

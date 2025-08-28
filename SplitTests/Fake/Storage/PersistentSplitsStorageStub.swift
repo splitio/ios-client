@@ -45,13 +45,14 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     func update(splitChange: ProcessedSplitChange) {
         processedSplitChange = splitChange
+        changeNumber = splitChange.changeNumber
         updateCalled = true
     }
 
     func update(split: Split) {
         updateSplitCalled  = true
         splits[split.name ?? ""] = split
-        snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: splits.values.compactMap { $0 },
+        snapshot = SplitsSnapshot(changeNumber: changeNumber, splits: splits.values.compactMap { $0 },
                                   updateTimestamp: snapshot.updateTimestamp)
     }
 
