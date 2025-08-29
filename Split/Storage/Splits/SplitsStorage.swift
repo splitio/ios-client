@@ -26,6 +26,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func isValidTrafficType(name: String) -> Bool
     func getCount() -> Int
     func destroy()
+    func forceParsing()
 }
 
 class DefaultSplitsStorage: SplitsStorage {
@@ -34,16 +35,19 @@ class DefaultSplitsStorage: SplitsStorage {
     private var inMemorySplits: SynchronizedDictionary<String, Split>
     private var trafficTypes: SynchronizedDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
-
+    private let generalInfoStorage: GeneralInfoStorage
+    
     private(set) var changeNumber: Int64 = -1
     private(set) var updateTimestamp: Int64 = -1
 
     init(persistentSplitsStorage: PersistentSplitsStorage,
-         flagSetsCache: FlagSetsCache) {
+         flagSetsCache: FlagSetsCache,
+         GeneralInfoStorage: GeneralInfoStorage) {
         self.persistentStorage = persistentSplitsStorage
         self.inMemorySplits = SynchronizedDictionary()
         self.trafficTypes = SynchronizedDictionary()
         self.flagSetsCache = flagSetsCache
+        self.generalInfoStorage = GeneralInfoStorage
     }
 
     func loadLocal() {
@@ -58,24 +62,16 @@ class DefaultSplitsStorage: SplitsStorage {
 
     func get(name: String) -> Split? {
         let lowercasedName = name.lowercased()
+        guard let split = inMemorySplits.value(forKey: lowercasedName) else { return nil }
         
-        guard let split = inMemorySplits.value(forKey: lowercasedName) else {
-            return nil
-        }
-        if !split.isCompletelyParsed {
-            if let parsed = try? Json.decodeFrom(json: split.json, to: Split.self) {
-                if isUnsupportedMatcher(split: parsed) {
-                    parsed.conditions = [SplitHelper.createDefaultCondition()]
-                }
-
-                parsed.isCompletelyParsed = true
-                inMemorySplits.setValue(parsed, forKey: lowercasedName)
-                return parsed
-            }
-            return nil
+        if split.isCompletelyParsed != true { // Parse if necessary (lazy parsing)
+            let parsedSplit = parseSplit(split)
+            inMemorySplits.setValue(parsedSplit, forKey: lowercasedName)
+            return parsedSplit
         } else if isUnsupportedMatcher(split: split) {
             split.conditions = [SplitHelper.createDefaultCondition()]
         }
+        
         return split
     }
 
@@ -89,12 +85,16 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func update(splitChange: ProcessedSplitChange) -> Bool {
+        
+        // Process
         let updated = processUpdated(splits: splitChange.activeSplits, active: true)
         let removed = processUpdated(splits: splitChange.archivedSplits, active: false)
 
+        // Update
         changeNumber = splitChange.changeNumber
         updateTimestamp = splitChange.updateTimestamp
         persistentStorage.update(splitChange: splitChange)
+
         return updated || removed
     }
 
@@ -122,14 +122,16 @@ class DefaultSplitsStorage: SplitsStorage {
     func getCount() -> Int {
         return inMemorySplits.count
     }
-
+    
     private func processUpdated(splits: [Split], active: Bool) -> Bool {
         var cachedSplits = inMemorySplits.all
         var cachedTrafficTypes = trafficTypes.all
         var splitsUpdated = false
         var splitsRemoved = false
+        var segmentsInUse: Int64 = generalInfoStorage.getSegmentsInUse() ?? 0
 
         for split in splits {
+
             guard let splitName = split.name?.lowercased()  else {
                 Logger.e("Invalid feature flag name received while updating feature flags")
                 continue
@@ -146,9 +148,12 @@ class DefaultSplitsStorage: SplitsStorage {
                 // Split to remove not in memory, do nothing
                 continue
             }
+            
+            // Smart Pausing optimization
+            segmentsInUse += updateSegmentsCount(split: split)
 
             if loadedSplit != nil, let oldTrafficType = loadedSplit?.trafficTypeName {
-                // Must decreated old traffic type count if a feature flag is updated or removed
+                // Must decrease old traffic type count if a feature flag is updated or removed
                 let count = cachedTrafficTypes[oldTrafficType] ?? 0
                 if count > 1 {
                     cachedTrafficTypes[oldTrafficType] = count - 1
@@ -172,11 +177,27 @@ class DefaultSplitsStorage: SplitsStorage {
         }
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
+        generalInfoStorage.setSegmentsInUse(segmentsInUse) // Ensure count of Flags with Segments (for optimization feature)
         return splitsUpdated || splitsRemoved
     }
 
     func destroy() {
         inMemorySplits.removeAll()
+    }
+    
+    @discardableResult private func parseSplit(_ split: Split) -> Split { // Lazy parsing feature
+        if !split.isCompletelyParsed {
+            if let parsed = try? Json.decodeFrom(json: split.json, to: Split.self) {
+                if isUnsupportedMatcher(split: parsed) {
+                    parsed.conditions = [SplitHelper.createDefaultCondition()]
+                }
+                parsed.isCompletelyParsed = true
+                return parsed
+            }
+        } else if isUnsupportedMatcher(split: split) {
+            split.conditions = [SplitHelper.createDefaultCondition()]
+        }
+        return split
     }
 
     private func isUnsupportedMatcher(split: Split?) -> Bool {
@@ -205,6 +226,65 @@ class DefaultSplitsStorage: SplitsStorage {
 
         return result
     }
+    
+    func forceParsing() { // Parse all Splits
+        var segmentsInUse: Int64 = 0
+        let activeSplits = persistentStorage.getSplitsSnapshot().splits.filter( { $0.status == .active } )
+        
+        if activeSplits.count > 0 {
+            for i in 0...activeSplits.count-1 {
+                guard let splitName = activeSplits[i].name else { continue }
+                let parsedSplit = parseSplit(activeSplits[i])
+                segmentsInUse += updateSegmentsCount(split: parsedSplit)
+                inMemorySplits.setValue(parsedSplit, forKey: splitName)
+            }
+        }
+        
+        generalInfoStorage.setSegmentsInUse(segmentsInUse)
+    }
+    
+    func updateSegmentsCount(split: Split) -> Int64 { // Keep count of Flags with Segments (used to optimize "/memberships" hits)
+        guard let splitName = split.name?.lowercased() else { return 0 }
+        let inMemorySplit = inMemorySplits.value(forKey: splitName)
+        
+        // 1. New Split using Segments
+        if inMemorySplit == nil, split.status == .active {
+            if StorageHelper.usesSegments(split.conditions ?? []) {
+                return 1
+            }
+        }
+        
+        // 2. Known Split
+        if inMemorySplit != nil, split.status == .active {
+            if StorageHelper.usesSegments(split.conditions ?? []) {
+
+                // Previously not using Segments?
+                if StorageHelper.usesSegments(inMemorySplit?.conditions ?? []) == false {
+                    return 1
+                }
+            } else {
+                // Not using Segments but previously yes?
+                if StorageHelper.usesSegments(inMemorySplit?.conditions ?? []) {
+                    return -1
+                }
+            }
+        }
+        
+        // 3. Known Split just archived
+        if inMemorySplit != nil && split.status == .archived {
+            if StorageHelper.usesSegments(split.conditions ?? []) {
+                return -1
+            }
+        }
+        
+        return 0
+    }
+    
+    #if DEBUG
+    func getInMemorySplits() -> SynchronizedDictionary<String, Split>  {
+        inMemorySplits
+    }
+    #endif
 }
 
 class BackgroundSyncSplitsStorage: SyncSplitsStorage {

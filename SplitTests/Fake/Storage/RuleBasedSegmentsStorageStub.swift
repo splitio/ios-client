@@ -13,6 +13,8 @@ class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
 
     var segments = [String: RuleBasedSegment]()
     var changeNumber: Int64 = -1
+    
+    var segmentsInUse: Int64 = 0
 
     var getCalled = false
     var containsCalled = false
@@ -73,5 +75,10 @@ class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
 
     func loadLocal() {
         loadLocalCalled = true
+    }
+    
+    var forcedReparse: Bool = false
+    func forceParsing() {
+        forcedReparse = true
     }
 }

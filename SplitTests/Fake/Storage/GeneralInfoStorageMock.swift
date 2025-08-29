@@ -2,13 +2,16 @@ import Foundation
 @testable import Split
 
 class GeneralInfoStorageMock: GeneralInfoStorage {
+    
     let queue = DispatchQueue(label: "test", target: .global())
     var updateTimestamp: Int64 = 0
     var rolloutCacheLastClearTimestamp: Int64 = 0
     var splitsFilterQueryString: String = ""
     var flagsSpec = ""
     var ruleBasedSegmentsChangeNumber: Int64 = -1
+    var splitsChangeNumber: Int64 = -1
     var lastProxyUpdateTimestamp: Int64 = 0
+    var segmentsInUse: Int64? = nil
 
     func getUpdateTimestamp() -> Int64 {
         return updateTimestamp
@@ -49,6 +52,14 @@ class GeneralInfoStorageMock: GeneralInfoStorage {
     func setRuleBasedSegmentsChangeNumber(changeNumber: Int64) {
         ruleBasedSegmentsChangeNumber = changeNumber
     }
+    
+    func getSplitsChangeNumber() -> Int64 {
+        return splitsChangeNumber
+    }
+    
+    func setSplitsChangeNumber(changeNumber: Int64) {
+        splitsChangeNumber = changeNumber
+    }
 
     func getLastProxyUpdateTimestamp() -> Int64 {
         return lastProxyUpdateTimestamp
@@ -56,5 +67,13 @@ class GeneralInfoStorageMock: GeneralInfoStorage {
 
     func setLastProxyUpdateTimestamp(_ timestamp: Int64) {
         lastProxyUpdateTimestamp = timestamp
+    }
+    
+    func getSegmentsInUse() -> Int64? {
+        segmentsInUse
+    }
+    
+    func setSegmentsInUse(_ count: Int64) {
+        segmentsInUse = count
     }
 }

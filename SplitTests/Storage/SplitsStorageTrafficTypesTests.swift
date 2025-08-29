@@ -14,6 +14,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
     
     var splitsStorage: SplitsStorage!
     var flagSetsCache: FlagSetsCacheMock!
+    var generalInfoStorage = GeneralInfoStorageMock()
 
     override func setUp() {
         
@@ -26,7 +27,7 @@ class SplitsStorageTrafficTypesTests: XCTestCase {
         flagSetsCache = FlagSetsCacheMock()
 
         persistent.snapshot = SplitsSnapshot(changeNumber: 1, splits: splits, updateTimestamp: 100)
-        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistent, flagSetsCache: flagSetsCache)
+        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistent, flagSetsCache: flagSetsCache, GeneralInfoStorage: generalInfoStorage)
         splitsStorage.loadLocal()
     }
 

@@ -10,6 +10,10 @@ protocol GeneralInfoStorage {
     func getFlagSpec() -> String
     func setFlagSpec(flagsSpec: String)
     
+    // Splits methods
+    func getSplitsChangeNumber() -> Int64
+    func setSplitsChangeNumber(changeNumber: Int64)
+    
     // Rule based segments methods
     func getRuleBasedSegmentsChangeNumber() -> Int64
     func setRuleBasedSegmentsChangeNumber(changeNumber: Int64)
@@ -17,11 +21,19 @@ protocol GeneralInfoStorage {
     // Proxy handling methods
     func getLastProxyUpdateTimestamp() -> Int64
     func setLastProxyUpdateTimestamp(_ timestamp: Int64)
+    
+    // Segments in use (for /memberships optimization)
+    func getSegmentsInUse() -> Int64?
+    func setSegmentsInUse(_ count: Int64)
 }
 
 class DefaultGeneralInfoStorage: GeneralInfoStorage {
 
     private let generalInfoDao: GeneralInfoDao
+    private var queue = DispatchQueue(label: "io.split.DefaultGeneralInfoStorage")
+    
+    // Part of Smart Pausing Optimization Feature
+    private var segmentsInUse: Int64? = nil
 
     init(generalInfoDao: GeneralInfoDao) {
         self.generalInfoDao = generalInfoDao
@@ -70,6 +82,14 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
     func setRuleBasedSegmentsChangeNumber(changeNumber: Int64) {
         generalInfoDao.update(info: .ruleBasedSegmentsChangeNumber, longValue: changeNumber)
     }
+    
+    func getSplitsChangeNumber() -> Int64 {
+        return generalInfoDao.longValue(info: .splitsChangeNumber) ?? -1
+    }
+    
+    func setSplitsChangeNumber(changeNumber: Int64) {
+        generalInfoDao.update(info: .splitsChangeNumber, longValue: changeNumber)
+    }
 
     func getLastProxyUpdateTimestamp() -> Int64 {
         return generalInfoDao.longValue(info: .lastProxyUpdateTimestamp) ?? 0
@@ -77,5 +97,19 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage {
 
     func setLastProxyUpdateTimestamp(_ timestamp: Int64) {
         generalInfoDao.update(info: .lastProxyUpdateTimestamp, longValue: timestamp)
+    }
+    
+    func getSegmentsInUse() -> Int64? {
+        queue.sync {
+            if segmentsInUse == nil { // This happens just on start
+                segmentsInUse = generalInfoDao.longValue(info: .segmentsInUse)
+            }
+            return segmentsInUse
+        }
+    }
+
+    func setSegmentsInUse(_ count: Int64) {
+        segmentsInUse = count
+        generalInfoDao.update(info: .segmentsInUse, longValue: count)
     }
 }

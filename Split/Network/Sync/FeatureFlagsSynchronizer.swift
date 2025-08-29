@@ -78,13 +78,29 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             return
         }
 
-        let splitsStorage = self.storageContainer.splitsStorage
+        let splitsStorage = storageContainer.splitsStorage
         let ruleBasedSegmentsStorage = storageContainer.ruleBasedSegmentsStorage
-        DispatchQueue.general.async {
+        
+        DispatchQueue.general.async { [weak self] in
+            guard let self = self else { return }
+            
             let start = Date.nowMillis()
             self.filterSplitsInCache()
+            
+            // MARK: Important. This should be called before loadLocal()
+            // MARK: Part of /memberships hits optimization
+            if shouldForceParse() {
+                Logger.v("Force Parsing flags")
+                splitsStorage.forceParsing()
+                ruleBasedSegmentsStorage.forceParsing()
+                TimeChecker.logInterval("Time for Force Parsing", startTime: start)
+            }
+            
+            // Load local
             splitsStorage.loadLocal()
             ruleBasedSegmentsStorage.loadLocal()
+            
+            // Events & Logs
             if splitsStorage.getAll().count > 0 {
                 self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
             }
@@ -231,5 +247,9 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
             return String(splitName.prefix(upTo: range.lowerBound))
         }
         return nil
+    }
+    
+    private func shouldForceParse() -> Bool {
+        storageContainer.generalInfoStorage.getSegmentsInUse() == nil && storageContainer.generalInfoStorage.getSplitsChangeNumber() > -1
     }
 }

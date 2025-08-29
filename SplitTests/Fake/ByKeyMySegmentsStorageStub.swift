@@ -16,6 +16,7 @@ class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
     var updatedSegments: [String]?
     var loadLocalCalled = false
     var clearCalled = false
+    var isUsingSegmentsCalled = false
     var updateExpectation: XCTestExpectation?
     var clearExpectation: XCTestExpectation?
     var getCountCalledCount = 0
@@ -51,5 +52,9 @@ class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
     func getCount() -> Int {
         getCountCalledCount+=1
         return segments.count
+    }
+    
+    func isUsingSegments() -> Bool {
+        segments.count != 0
     }
 }

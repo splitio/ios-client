@@ -102,7 +102,6 @@ class DefaultSplitEventsManager: SplitEventsManager {
                 self.eventsQueue.stop()
                 self.eventsQueue.stop()
             }
-
         }
     }
 
@@ -182,7 +181,7 @@ class DefaultSplitEventsManager: SplitEventsManager {
         var triggered = false
         dataAccessQueue.sync {
             if let times = executionTimes[event.toString()] {
-                triggered =  (times == 0)
+                triggered = (times == 0)
             } else {
                 triggered = false
             }

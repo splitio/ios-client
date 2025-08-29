@@ -67,7 +67,7 @@ class TestSplitFactory: SplitFactory {
         self.httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
-    func buildSdk() throws {
+    func buildSdk(polling: Bool = false) throws {
 
         guard let httpClient = self.httpClient else {
             print("HTTP client is null. Fix!!")
@@ -200,6 +200,8 @@ class TestSplitFactory: SplitFactory {
                                                              rolloutCacheConfiguration: splitConfig.rolloutCacheConfiguration ?? RolloutCacheConfiguration.builder().build(),
                                                              storages: storageContainer.splitsStorage, storageContainer.mySegmentsStorage, storageContainer.myLargeSegmentsStorage)
 
+        if polling { splitConfig.streamingEnabled = false }
+        
         clientManager = DefaultClientManager(config: splitConfig,
                                              key: key,
                                              splitManager: manager,

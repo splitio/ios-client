@@ -112,7 +112,6 @@ class TelemetryIntegrationTest: XCTestCase {
         splitConfig.telemetryRefreshRate = 99999
         splitConfig.impressionRefreshRate = 99999
         splitConfig.eventsPushRate = 99999
-        //splitConfig.isDebugModeEnabled = true
 
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -127,11 +126,11 @@ class TelemetryIntegrationTest: XCTestCase {
 
         let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             IntegrationHelper.tlog("TIMEOUT")
         }
 
@@ -170,7 +169,7 @@ class TelemetryIntegrationTest: XCTestCase {
         XCTAssertEqual(2, statsItem?.impressionsQueued)
 
         XCTAssertEqual(0, statsItem?.segmentCount)
-        XCTAssertEqual(33, statsItem?.splitCount)
+        XCTAssertEqual(35, statsItem?.splitCount)
 
         XCTAssertTrue(statsItem?.httpLatencies?.splits?.count ?? 0 > 0)
         XCTAssertTrue(statsItem?.httpLatencies?.mySegments?.count ?? 0 > 0)

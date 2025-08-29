@@ -54,6 +54,15 @@ class GeneralInfoDaoTest: XCTestCase {
         XCTAssertEqual(1, v1)
         XCTAssertEqual(2, v2)
     }
+    
+    func testCreateUpdateSegmentsInUse() {
+        let data: Int64 = 13
+        
+        generalInfoDao.update(info: .segmentsInUse, longValue: data)
+        let segmentsInUse = generalInfoDao.longValue(info: .segmentsInUse)
+        
+        XCTAssertEqual(data, segmentsInUse)
+    }
 
     override func tearDown() {
     }
