@@ -1,3 +1,6 @@
+3.3.3: (ago. 29, 2025)
+- - Updated polling logic to stop and restart memberships data synchronization when not currently used in flags or rule based segments.
+
 3.3.2: (Aug 12, 2025)
 - Fixed issue in BlockingQueue implementation that caused hangs due to a race condition.
 - Replaced data structure for in memory flags to prevent deadlocks in high concurrency scenarios.
