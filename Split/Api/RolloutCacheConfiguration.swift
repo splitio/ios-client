@@ -9,6 +9,8 @@ import Foundation
         self.expirationDays = expirationDays
         self.clearOnInit = clearOnInit
     }
+    
+    let fallback = FallbackTreatment(treatment: "on", config: "")
 
     /// Provides a builder for RolloutCacheConfiguration.
     @objc(builder)
