@@ -1,13 +1,24 @@
 //  Created by Martin Cardozo on 26/08/2025
 
-struct FallbackSanitizer {
+import Foundation
+
+@objc public final class FallbackSanitizer: NSObject {
     
-    enum FallbackDiscardReason: String {
-        case flagName = "Invalid flag name (max 100 chars, no spaces)"
-        case treatment = "Invalid treatment (max 100 chars)"
+    @objc enum FallbackDiscardReason: Int {
+        case flagName
+        case treatment
+        
+        public func toString() -> String {
+            switch self {
+                case .flagName:
+                    return "Invalid flag name (max 100 chars, no spaces)"
+                case .treatment:
+                    return "Invalid treatment (max 100 chars)"
+                }
+        }
     }
     
-    static func sanitize(_ config: FallbackConfig) -> FallbackConfig {
+    @objc public static func sanitize(_ config: FallbackConfig) -> FallbackConfig {
         
         // MARK: Global
         let sanitizedGlobal: FallbackTreatment?

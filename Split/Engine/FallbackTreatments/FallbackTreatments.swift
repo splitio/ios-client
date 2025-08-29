@@ -1,37 +1,64 @@
 //  Created by Martin Cardozo on 25/08/2025
 
-// MARK: 1. Main Data Structure
-public struct FallbackTreatment: Equatable, Hashable {
+import Foundation
+
+/// A class that represents a fallback treatment configuration for feature flags.
+/// 
+/// This class is used to define fallback treatments that will be used at
+/// factory level or flag level.
+@objc public class FallbackTreatment: NSObject {
     
-    let treatment: String
-    let config: String?
-    let label: String
+    @objc public let treatment: String
+    @objc public let config: String?
+    @objc public let label: String
     
-    init(_ treatment: String, config: String? = nil) {
+    /// Initializes a new FallbackTreatment instance.
+    /// - Parameters:
+    ///   - treatment: The treatment String to use as fallback.
+    ///   - config: Optional dynamic configuration String for the treatment.
+    @objc(initWithTreatment:config:)
+    public init(treatment: String, config: String? = nil) {
         self.treatment = treatment
         self.config = config
-        self.label = "fallback - " // Constant alongisde the other impression labels (e.g.:  "fallback - CONTROL" )
+        self.label = "fallback - " // Constant alongside the other impression labels (e.g.:  "fallback - CONTROL")
+    }
+   
+    override public var description: String {
+        return "{\ntreatment: \(treatment),\nconfig: \(String(describing: config)),\nlabel: \(label)\n}"
     }
 }
 
-// MARK: 2. Data Structures Package
-public struct FallbackConfig: Equatable, Hashable {
+/// A class that holds Fallback configurations.
+///
+/// This class can define both a global fallback treatment and specific fallback treatments
+/// for individual feature flags.
+@objc public final class FallbackConfig: NSObject {
     
-    let global: FallbackTreatment? // Default treatment for all
-    let byFlag: [String: FallbackTreatment] // Fallback treatment per flag
+    @objc public let global: FallbackTreatment?
+    @objc public let byFlag: [String: FallbackTreatment]
     
-    init(global: FallbackTreatment? = nil, byFlag: [String: FallbackTreatment] = [:]) {
+    /// Initializes a new FallbackConfig instance.
+    /// - Parameters:
+    ///   - global: The global fallback treatment that will be used instead of "control".
+    ///   - byFlag: A dictionary of flag names to their specific fallback treatments.
+    @objc public init(global: FallbackTreatment? = nil, byFlag: [String: FallbackTreatment] = [:]) {
         self.global = global
         self.byFlag = byFlag
     }
+    
+    override public var description: String {
+        return "{\nglobal: \(String(describing: global))\nbyFlag: \(byFlag)\n}"
+    }
 }
 
-// MARK: 3. Builder (where sanitation happens)
-public struct FallbackTreatmentsConfig: Equatable, Hashable {
+// MARK: Builder (where sanitation happens)
+@objc public final class FallbackTreatmentsConfig: NSObject {
     
     let configByFactory: FallbackConfig?
     
     static func builder() -> Builder { Builder() }
+    
+    @objc private override init() {}
     
     struct Builder {
         
