@@ -54,24 +54,29 @@ import Foundation
 // MARK: Builder (where sanitation happens)
 @objc public final class FallbackTreatmentsConfig: NSObject {
     
-    let configByFactory: FallbackConfig?
+    @objc public let byFactory: FallbackConfig?
     
-    static func builder() -> Builder { Builder() }
+    @objc private init(byFactory: FallbackConfig?) {
+        self.byFactory = byFactory
+        super.init()
+    }
     
-    @objc private override init() {}
+    @objc public static func builder() -> Builder {
+        Builder()
+    }
     
-    struct Builder {
+    @objc public final class Builder: NSObject {
         
-        private var configByFactory: FallbackConfig?
+        private var byFactory: FallbackConfig?
         
-        func byFactory(_ config: FallbackConfig) -> Builder {
-            var builder = self
-            builder.configByFactory = FallbackSanitizer.sanitize(config)
+        @objc public func byFactory(_ config: FallbackConfig) -> Builder {
+            let builder = self
+            builder.byFactory = FallbackSanitizer.sanitize(config)
             return builder
         }
         
-        func build() -> FallbackTreatmentsConfig {
-            FallbackTreatmentsConfig(configByFactory: configByFactory)
+        @objc public func build() -> FallbackTreatmentsConfig {
+            FallbackTreatmentsConfig(byFactory: byFactory)
         }
     }
 }
