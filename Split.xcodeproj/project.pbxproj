@@ -363,6 +363,8 @@
 		5BD75FB12E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */; };
 		5BD75FB32E5DF15800F9EFBD /* FallbackSanitizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */; };
 		5BD75FB42E5DF15800F9EFBD /* FallbackSanitizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */; };
+		5BD767402E64B6F800F9EFBD /* FallbackTreatmentsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD7673F2E64B6EA00F9EFBD /* FallbackTreatmentsCalculator.swift */; };
+		5BD767412E64B6F800F9EFBD /* FallbackTreatmentsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD7673F2E64B6EA00F9EFBD /* FallbackTreatmentsCalculator.swift */; };
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
@@ -1571,6 +1573,7 @@
 		5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit_5.xctestplan; sourceTree = "<group>"; };
 		5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatments.swift; sourceTree = "<group>"; };
 		5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackSanitizer.swift; sourceTree = "<group>"; };
+		5BD7673F2E64B6EA00F9EFBD /* FallbackTreatmentsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsCalculator.swift; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
@@ -3212,6 +3215,7 @@
 		5BD75FAE2E5DF0CA00F9EFBD /* FallbackTreatments */ = {
 			isa = PBXGroup;
 			children = (
+				5BD7673F2E64B6EA00F9EFBD /* FallbackTreatmentsCalculator.swift */,
 				5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */,
 				5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */,
 			);
@@ -4386,6 +4390,7 @@
 				9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */,
 				5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */,
 				952FA12B2A2E593900264AB5 /* SplitComponentCatalog.swift in Sources */,
+				5BD767402E64B6F800F9EFBD /* FallbackTreatmentsCalculator.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
 				955428D6256810D300331356 /* ImpressionDao.swift in Sources */,
 				950B7417268F4716005FD649 /* ImpressionsMode.swift in Sources */,
@@ -5054,6 +5059,7 @@
 				95B02D5528D0BDC20030EC8B /* ContainsAnyOfSetMatcher.swift in Sources */,
 				95B02D5628D0BDC20030EC8B /* ContainsStringMatcher.swift in Sources */,
 				956A7E18297043280080D53C /* UserConsentManager.swift in Sources */,
+				5BD767412E64B6F800F9EFBD /* FallbackTreatmentsCalculator.swift in Sources */,
 				95B02D5728D0BDC20030EC8B /* DateTime.swift in Sources */,
 				95B02D5828D0BDC20030EC8B /* DependencyMatcher.swift in Sources */,
 				95B02D5928D0BDC20030EC8B /* EndsWithMatcher.swift in Sources */,
