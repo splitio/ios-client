@@ -4,6 +4,10 @@ import Foundation
 
 @objc public final class FallbackSanitizer: NSObject {
     
+    // "123.abc", "abc123" allowed
+    // "abc.123" not allowed
+    private static let regex = try? NSRegularExpression(pattern: "^[0-9]+[.a-zA-Z0-9_-]*$|^[a-zA-Z]+[a-zA-Z0-9_-]*$")
+    
     @objc enum FallbackDiscardReason: Int {
         case flagName
         case treatment
@@ -52,6 +56,14 @@ import Foundation
     }
     
     private static func isValidTreatment(_ t: FallbackTreatment) -> Bool {
-        t.treatment.count <= 100
+        
+        // Length constraint
+        if t.treatment.count > 100 {
+            return false
+        }
+        
+        // Regxep (content constraint)
+        let range = NSRange(t.treatment.startIndex..<t.treatment.endIndex, in: t.treatment)
+        return regex?.firstMatch(in: t.treatment, range: range)?.range == range
     }
 }
