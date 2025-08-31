@@ -29,7 +29,7 @@ import Foundation
     ///   - config: Optional dynamic configuration String for the treatment.
     ///   - label: Label used
     @objc(initWithTreatment:config:label:)
-    internal init(_ treatment: String, config: String? = nil, label: String? = nil) {
+    internal init(treatment: String, config: String? = nil, label: String? = nil) {
       self.treatment = treatment
       self.config = config
       self.label = label
