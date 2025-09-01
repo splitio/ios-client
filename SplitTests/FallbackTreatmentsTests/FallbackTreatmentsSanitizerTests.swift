@@ -67,4 +67,9 @@ class FallbackSanitizerTests: XCTestCase {
         XCTAssertNil(sanitized.byFlag["invalid flag"])
         XCTAssertNil(sanitized.byFlag["anotherFlag"])
     }
+    
+    func testTreatmentsDescription() {
+        let fallbackTreatment = FallbackTreatment(treatment: "FLAG1_TREATMENT", config: "my_config")
+        XCTAssertEqual(fallbackTreatment.description, "{\ntreatment: FLAG1_TREATMENT,\nconfig: Optional(\"my_config\"),\nlabel: fallback - \n}")
+    }
 }
