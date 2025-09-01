@@ -18,7 +18,7 @@ protocol FallbackTreatmentsCalculator {
         super.init()
     }
 
-    // Returns fallback for name if exists; control otherwise
+    // Returns fallback for Split if exists; "control" otherwise
     @objc(resolveWithFlagName:label:)
     public func resolve(flagName: String, label: String?) -> FallbackTreatment {
         if let treatment = byFactoryFallbacks.byFlag[flagName] {
@@ -29,7 +29,7 @@ protocol FallbackTreatmentsCalculator {
             return copyWithLabel(factoryFallback, label: label)
         }
 
-        return FallbackTreatment(control, config: nil, label: resolveLabel(label))
+        return FallbackTreatment(treatment: control, config: nil, label: resolveLabel(label))
     }
 
     private func resolveLabel(_ label: String?) -> String? {
@@ -38,6 +38,6 @@ protocol FallbackTreatmentsCalculator {
     }
 
     private func copyWithLabel(_ fallback: FallbackTreatment, label: String?) -> FallbackTreatment {
-        FallbackTreatment(fallback.treatment, config: fallback.config, label: resolveLabel(label))
+        FallbackTreatment(treatment: fallback.treatment, config: fallback.config, label: resolveLabel(label))
     }
 }
