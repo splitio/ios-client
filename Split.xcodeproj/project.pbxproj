@@ -367,6 +367,8 @@
 		5BD767412E64B6F800F9EFBD /* FallbackTreatmentsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD7673F2E64B6EA00F9EFBD /* FallbackTreatmentsCalculator.swift */; };
 		5BD7674B2E64C38A00F9EFBD /* FallbackTreatmentsCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767492E64C38A00F9EFBD /* FallbackTreatmentsCalculatorTests.swift */; };
 		5BD767552E65E73400F9EFBD /* FallbackTreatmentsSanitizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767542E65E73400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */; };
+		5BD7675B2E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767582E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift */; };
+		5BD7675C2E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767592E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */; };
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
@@ -1578,6 +1580,8 @@
 		5BD7673F2E64B6EA00F9EFBD /* FallbackTreatmentsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsCalculator.swift; sourceTree = "<group>"; };
 		5BD767492E64C38A00F9EFBD /* FallbackTreatmentsCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsCalculatorTests.swift; sourceTree = "<group>"; };
 		5BD767542E65E73400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsSanitizerTests.swift; sourceTree = "<group>"; };
+		5BD767582E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsCalculatorTests.swift; sourceTree = "<group>"; };
+		5BD767592E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsSanitizerTests.swift; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
@@ -2167,6 +2171,7 @@
 				95B02E1028D222100030EC8B /* SplitMacOSTests */,
 				3B6DEE5B20EA6A4E0067435E /* Products */,
 				590DF9962125F6900082B94F /* Frameworks */,
+				5BD767572E65E95000F9EFBD /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2909,7 +2914,7 @@
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
 			isa = PBXGroup;
 			children = (
-				5BD767562E65E74600F9EFBD /* FallbackTreatmentsTests */,
+				5BD7675A2E65E9A400F9EFBD /* FallbackTreatmentsTests */,
 				C539CAE52D947D2A0050C732 /* Common */,
 				5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */,
 				C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */,
@@ -3222,12 +3227,20 @@
 			path = FallbackTreatments;
 			sourceTree = "<group>";
 		};
-		5BD7674D2E64C3C600F9EFBD /* FallbackTreatmentsTests */ = {
+		5BD767572E65E95000F9EFBD /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
 				5BD767492E64C38A00F9EFBD /* FallbackTreatmentsCalculatorTests.swift */,
-				5BD7674A2E64C38A00F9EFBD /* FallbackTreatmentsSanitizerTests.swift */,
 				5BD767542E65E73400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
+		5BD7675A2E65E9A400F9EFBD /* FallbackTreatmentsTests */ = {
+			isa = PBXGroup;
+			children = (
+				5BD767582E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift */,
+				5BD767592E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */,
 			);
 			path = FallbackTreatmentsTests;
 			sourceTree = "<group>";
@@ -4582,7 +4595,6 @@
 				954F9B072570309400140B81 /* SplitDaoTest.swift in Sources */,
 				95F20F4A27EB533000B5B30A /* TreatmentManagerTest.swift in Sources */,
 				5BD7674B2E64C38A00F9EFBD /* FallbackTreatmentsCalculatorTests.swift in Sources */,
-				5BD7674C2E64C38A00F9EFBD /* FallbackTreatmentsSanitizerTests.swift in Sources */,
 				59F4AAA324FFCD5000A1C69A /* SyncEventBroadcasterStub.swift in Sources */,
 				C5E967622D395DAA00112DAC /* RolloutCacheManagerTest.swift in Sources */,
 				95ABF4C029314D3D006ED016 /* ImpressionsStorageTest.swift in Sources */,
@@ -4706,6 +4718,8 @@
 				5921ED422538EA39000D6C8B /* StreamingIntegrationHelper.swift in Sources */,
 				5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */,
 				599EA57F2266708D006CBA89 /* LocalhostYamlParserTest.swift in Sources */,
+				5BD7675B2E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift in Sources */,
+				5BD7675C2E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift in Sources */,
 				594F5F5A253CFC2D00A945B4 /* StreamingControlTest.swift in Sources */,
 				59ED408C24EAF86000EF7B09 /* TimersManagerMock.swift in Sources */,
 				95DFD13B2608FFF600776E0A /* SplitSdkUpdatePollingTest.swift in Sources */,
