@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -363,6 +363,7 @@
 		5BD75FB12E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */; };
 		5BD75FB32E5DF15800F9EFBD /* FallbackSanitizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */; };
 		5BD75FB42E5DF15800F9EFBD /* FallbackSanitizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */; };
+		5BD767552E65E73400F9EFBD /* FallbackTreatmentsSanitizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767542E65E73400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */; };
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
@@ -1571,6 +1572,7 @@
 		5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit_5.xctestplan; sourceTree = "<group>"; };
 		5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatments.swift; sourceTree = "<group>"; };
 		5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackSanitizer.swift; sourceTree = "<group>"; };
+		5BD767542E65E73400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsSanitizerTests.swift; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
@@ -2061,10 +2063,6 @@
 		C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutDefinitionsCache.swift; sourceTree = "<group>"; };
 		C5E967612D395DAA00112DAC /* RolloutCacheManagerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolloutCacheManagerTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		5BD7673B2E64B2EF00F9EFBD /* FallbackTreamentsTests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = FallbackTreamentsTests; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		3B6DEE5620EA6A4E0067435E /* Frameworks */ = {
@@ -2906,7 +2904,7 @@
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
 			isa = PBXGroup;
 			children = (
-				5BD7673B2E64B2EF00F9EFBD /* FallbackTreamentsTests */,
+				5BD767562E65E74600F9EFBD /* FallbackTreatmentsTests */,
 				C539CAE52D947D2A0050C732 /* Common */,
 				5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */,
 				C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */,
@@ -3216,6 +3214,14 @@
 				5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */,
 			);
 			path = FallbackTreatments;
+			sourceTree = "<group>";
+		};
+		5BD767562E65E74600F9EFBD /* FallbackTreatmentsTests */ = {
+			isa = PBXGroup;
+			children = (
+				5BD767542E65E73400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */,
+			);
+			path = FallbackTreatmentsTests;
 			sourceTree = "<group>";
 		};
 		95118EE9281AC80400782F33 /* UserConsent */ = {
@@ -3844,9 +3850,6 @@
 			);
 			dependencies = (
 				592C6AAC211B6C99002D120C /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				5BD7673B2E64B2EF00F9EFBD /* FallbackTreamentsTests */,
 			);
 			name = SplitTests;
 			packageProductDependencies = (
@@ -4721,6 +4724,7 @@
 				595AD21324E1849500A7B750 /* JwtParserStub.swift in Sources */,
 				9500D9DA2C62789800383593 /* MyLargeSegmentsStorageTests.swift in Sources */,
 				59F4AAAC2508FD0D00A1C69A /* PushNotificationManagerStub.swift in Sources */,
+				5BD767552E65E73400F9EFBD /* FallbackTreatmentsSanitizerTests.swift in Sources */,
 				5905D4F3255C587F006DA3B1 /* SplitsStorageTests.swift in Sources */,
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				9500D9922C56F9BA00383593 /* HostDomainFilterTests.swift in Sources */,
