@@ -53,7 +53,8 @@ import Foundation
     /// - Parameters:
     ///   - global: The global fallback treatment that will be used instead of "control".
     ///   - byFlag: A dictionary of flag names to their specific fallback treatments.
-    @objc public init(global: FallbackTreatment? = nil, byFlag: [String: FallbackTreatment] = [:]) {
+    @objc(initWithGlobal:byFlag:)
+    public init(global: FallbackTreatment? = nil, byFlag: [String: FallbackTreatment] = [:]) {
         self.global = global
         self.byFlag = byFlag
     }
