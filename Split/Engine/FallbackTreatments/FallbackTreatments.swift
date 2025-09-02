@@ -24,7 +24,7 @@ import Foundation
     }
    
     override public var description: String {
-        return "{\ntreatment: \(treatment),\nconfig: \(String(describing: config)),\nlabel: \(label)\n}"
+        "{\ntreatment: \(treatment),\nconfig: \(String(describing: config)),\nlabel: \(label)\n}"
     }
 }
 
@@ -48,19 +48,20 @@ import Foundation
     }
     
     override public var description: String {
-        return "{\nglobal: \(String(describing: global))\nbyFlag: \(byFlag)\n}"
+        "{\nglobal: \(String(describing: global))\nbyFlag: \(byFlag)\n}"
     }
 }
 
 // MARK: Builder (where sanitation happens)
 @objc public final class FallbackTreatmentsConfig: NSObject {
     
-    @objc public let byFactory: FallbackConfig?
+    @objc public let global: FallbackTreatment?
+    @objc public let byFlag: [String: FallbackTreatment]
     
-    @objc private init(byFactory: FallbackConfig?) {
-        self.byFactory = byFactory
-        super.init()
-    }
+    private init(global: FallbackTreatment? = nil, byFlag: [String: FallbackTreatment] = [:]) {
+        self.global = global
+        self.byFlag = byFlag
+     }
     
     @objc public static func builder() -> Builder {
         Builder()
@@ -68,16 +69,50 @@ import Foundation
     
     @objc public final class Builder: NSObject {
         
-        private var byFactory: FallbackConfig?
+        private var global: FallbackTreatment? = nil
+        private var byFlag: [String: FallbackTreatment] = [:]
         
-        @objc public func byFactory(_ config: FallbackConfig) -> Builder {
-            let builder = self
-            builder.byFactory = FallbackSanitizer.sanitize(config)
-            return builder
+        func global(_ treatment: FallbackTreatment) -> Builder {
+            guard let sanitizedGlobal = FallbackSanitizer.sanitize(treatment: treatment) else { return self }
+
+            if global != nil {
+                Logger.w("Fallback treatments - You had previously set a global fallback. The new value will replace it")
+            }
+
+            global = sanitizedGlobal
+            return self
         }
         
-        @objc public func build() -> FallbackTreatmentsConfig {
-            FallbackTreatmentsConfig(byFactory: byFactory)
+        func byFlag(_ byFlagFallbacks: [String: FallbackTreatment]) -> Builder {
+            
+            // Warn if you're overriding an already configured flag
+            for key in byFlagFallbacks.keys where byFlag.keys.contains(key) {
+                Logger.w("Duplicate fallback for flag '\(key)'. Overriding existing value.")
+            }
+            
+            // Merge
+            var merged = byFlag
+            for (k, v) in byFlagFallbacks {
+                merged[k] = v
+            }
+            
+            // Sanitize final map
+            byFlag = FallbackSanitizer.sanitize(byFlagFallbacks: merged)
+            return self
+        }
+        
+        // Convenience String only methods
+        func global(_ treatment: String) -> Builder {
+            return global(FallbackTreatment(treatment: treatment))
+        }
+        
+        func byFlag(_ byFlagFallbacks: [String: String]) -> Builder {
+            let mapped = byFlagFallbacks.mapValues { FallbackTreatment(treatment: $0) }
+            return byFlag(mapped)
+        }
+        
+        func build() -> FallbackTreatmentsConfig {
+            FallbackTreatmentsConfig(global: global, byFlag: byFlag)
         }
     }
 }
