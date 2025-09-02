@@ -13,7 +13,7 @@ class FallbackSanitizerTests: XCTestCase {
         XCTAssertEqual(sanitizedTreatment?.treatment, "GLOBAL_DEFAULT")
         
         // Non existent flag
-        var sanitizedFlagsTreatment = FallbackSanitizer.sanitize(byFlagFallbacks: ["flag" : FallbackTreatment(treatment: "FLAG1_TREATMENT")])
+        let sanitizedFlagsTreatment = FallbackSanitizer.sanitize(byFlagFallbacks: ["flag" : FallbackTreatment(treatment: "FLAG1_TREATMENT")])
         XCTAssertNil(sanitizedFlagsTreatment["flOg"]?.treatment)
         
         // Name with spaces

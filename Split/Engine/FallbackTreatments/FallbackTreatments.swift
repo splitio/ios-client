@@ -84,7 +84,7 @@ import Foundation
         private var global: FallbackTreatment? = nil
         private var byFlag: [String: FallbackTreatment] = [:]
         
-        func global(_ treatment: FallbackTreatment) -> Builder {
+        @objc public func global(treatment: FallbackTreatment) -> Builder {
             guard let sanitizedGlobal = FallbackSanitizer.sanitize(treatment: treatment) else { return self }
 
             if global != nil {
@@ -95,7 +95,7 @@ import Foundation
             return self
         }
         
-        func byFlag(_ byFlagFallbacks: [String: FallbackTreatment]) -> Builder {
+        @objc public func byFlag(byFlagFallbacks: [String: FallbackTreatment]) -> Builder {
             
             // Warn if you're overriding an already configured flag
             for key in byFlagFallbacks.keys where byFlag.keys.contains(key) {
@@ -114,16 +114,16 @@ import Foundation
         }
         
         // Convenience String only methods
-        func global(_ treatment: String) -> Builder {
-            return global(FallbackTreatment(treatment: treatment))
+        @objc public func global(stringTreatment: String) -> Builder {
+            global(treatment: FallbackTreatment(treatment: stringTreatment))
         }
         
-        func byFlag(_ byFlagFallbacks: [String: String]) -> Builder {
-            let mapped = byFlagFallbacks.mapValues { FallbackTreatment(treatment: $0) }
-            return byFlag(mapped)
+        @objc public func byFlag(byFlagStringFallbacks: [String: String]) -> Builder {
+            let mapped = byFlagStringFallbacks.mapValues { FallbackTreatment(treatment: $0) }
+            return byFlag(byFlagFallbacks: mapped)
         }
         
-        func build() -> FallbackTreatmentsConfig {
+       @objc public func build() -> FallbackTreatmentsConfig {
             FallbackTreatmentsConfig(global: global, byFlag: byFlag)
         }
     }
