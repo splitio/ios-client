@@ -24,7 +24,7 @@ import Foundation
     }
     
     // MARK: Sanitize Global treatment
-    @objc public static func sanitize(treatment: FallbackTreatment) -> FallbackTreatment? {
+    public static func sanitize(treatment: FallbackTreatment) -> FallbackTreatment? {
         if !isValidTreatment(treatment)  {
             Logger.e("Fallback treatments - Discarded fallback: \(FallbackDiscardReason.treatment.rawValue)")
             return nil
