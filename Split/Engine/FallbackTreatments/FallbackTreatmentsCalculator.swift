@@ -12,14 +12,13 @@ protocol FallbackTreatmentsCalculator {
     private let control = SplitConstants.control
     private let byFactoryFallbacks: FallbackConfig
 
-    @objc(initWithFactory:)
-    public init(factory: FallbackConfig) {
+    @objc public init(factory: FallbackConfig) {
         self.byFactoryFallbacks = factory
         super.init()
     }
 
     // Returns fallback for Split if exists; "control" otherwise
-    @objc(resolveWithFlagName:label:)
+    @objc(resolve:label:)
     public func resolve(flagName: String, label: String?) -> FallbackTreatment {
         if let treatment = byFactoryFallbacks.byFlag[flagName] {
             return copyWithLabel(treatment, label: label)
