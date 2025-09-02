@@ -97,6 +97,8 @@ public class SplitClientConfig: NSObject {
     }
 
     @objc public var serviceEndpoints = ServiceEndpoints.builder().build()
+    
+    @objc public var fallbackTreatments = FallbackTreatmentsConfig.builder().build()
 
     ///
     /// Enables debug messages in console.
