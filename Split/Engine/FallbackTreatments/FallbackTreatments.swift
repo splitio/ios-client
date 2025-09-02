@@ -84,7 +84,13 @@ import Foundation
         private var global: FallbackTreatment? = nil
         private var byFlag: [String: FallbackTreatment] = [:]
         
-        @objc public func global(treatment: FallbackTreatment) -> Builder {
+        @objc public func build() -> FallbackTreatmentsConfig {
+             FallbackTreatmentsConfig(global: global, byFlag: byFlag)
+        }
+        
+        // MARK: Global
+        @objc(global:)
+        public func global(_ treatment: FallbackTreatment) -> Builder {
             guard let sanitizedGlobal = FallbackSanitizer.sanitize(treatment: treatment) else { return self }
 
             if global != nil {
@@ -95,7 +101,9 @@ import Foundation
             return self
         }
         
-        @objc public func byFlag(byFlagFallbacks: [String: FallbackTreatment]) -> Builder {
+        // MARK: By Flag
+        @objc(byFlag:)
+        public func byFlag(_ byFlagFallbacks: [String: FallbackTreatment]) -> Builder {
             
             // Warn if you're overriding an already configured flag
             for key in byFlagFallbacks.keys where byFlag.keys.contains(key) {
@@ -113,18 +121,14 @@ import Foundation
             return self
         }
         
-        // Convenience String only methods
-        @objc public func global(stringTreatment: String) -> Builder {
-            global(treatment: FallbackTreatment(treatment: stringTreatment))
+        // MARK: Convenience String only methods
+        @objc(globalWithString:) public func global(_ treatment: String) -> Builder {
+            global(FallbackTreatment(treatment: treatment))
         }
         
-        @objc public func byFlag(byFlagStringFallbacks: [String: String]) -> Builder {
-            let mapped = byFlagStringFallbacks.mapValues { FallbackTreatment(treatment: $0) }
-            return byFlag(byFlagFallbacks: mapped)
-        }
-        
-       @objc public func build() -> FallbackTreatmentsConfig {
-            FallbackTreatmentsConfig(global: global, byFlag: byFlag)
+        @objc(byFlagWithString:) public func byFlag(_ byFlagFallbacks: [String: String]) -> Builder {
+            let mapped = byFlagFallbacks.mapValues { FallbackTreatment(treatment: $0) }
+            return byFlag(mapped)
         }
     }
 }
