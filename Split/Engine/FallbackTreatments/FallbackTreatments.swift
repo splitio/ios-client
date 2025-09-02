@@ -10,7 +10,7 @@ import Foundation
     
     @objc public let treatment: String
     @objc public let config: String?
-    @objc public let label: String
+    @objc public let label: String?
     
     /// Initializes a new FallbackTreatment instance.
     /// - Parameters:
@@ -20,11 +20,23 @@ import Foundation
     public init(treatment: String, config: String? = nil) {
         self.treatment = treatment
         self.config = config
-        self.label = "fallback - " // Constant alongside the other impression labels (e.g.:  "fallback - CONTROL")
+        self.label = nil
+    }
+    
+    /// Initializes a new FallbackTreatment instance.
+    /// - Parameters:
+    ///   - treatment: The treatment String to use as fallback.
+    ///   - config: Optional dynamic configuration String for the treatment.
+    ///   - label: Label used
+    @objc(initWithTreatment:config:label:)
+    internal init(treatment: String, config: String? = nil, label: String? = nil) {
+      self.treatment = treatment
+      self.config = config
+      self.label = label
     }
    
     override public var description: String {
-        "{\ntreatment: \(treatment),\nconfig: \(String(describing: config)),\nlabel: \(label)\n}"
+        "{\ntreatment: \(treatment),\nconfig: \(String(describing: config)),\nlabel: \(String(describing: label))\n}"
     }
 }
 
