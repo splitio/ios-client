@@ -2,8 +2,7 @@
 //  Evaluator.swift
 //  Split
 //
-//  Created by Natalia  Stele on 11/14/17.
-//
+//  Created by Natalia  Stele on 11/14/17
 
 import Foundation
 // swiftlint:disable function_body_length
@@ -14,8 +13,7 @@ struct EvaluationResult {
     var configuration: String?
     var impressionsDisabled: Bool
 
-    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil,
-         impressionsDisabled: Bool = false) {
+    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil, impressionsDisabled: Bool = false) {
         self.treatment = treatment
         self.label = label
         self.changeNumber = changeNumber
@@ -47,8 +45,7 @@ struct EvalContext {
 }
 
 protocol Evaluator {
-    func evalTreatment(matchingKey: String, bucketingKey: String?,
-                       splitName: String, attributes: [String: Any]?) throws -> EvaluationResult
+    func evalTreatment(matchingKey: String, bucketingKey: String?, splitName: String, attributes: [String: Any]?) throws -> EvaluationResult
 }
 
 class DefaultEvaluator: Evaluator {
@@ -72,8 +69,8 @@ class DefaultEvaluator: Evaluator {
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
     }
 
-    func evalTreatment(matchingKey: String, bucketingKey: String?,
-                       splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
+    // MARK: Eval
+    func evalTreatment(matchingKey: String, bucketingKey: String?, splitName: String, attributes: [String: Any]?) throws -> EvaluationResult {
 
         // 1. Guarantee Split exists & is active
         guard let split = splitsStorage.get(name: splitName), split.status != .archived else {
