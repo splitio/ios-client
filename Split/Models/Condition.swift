@@ -10,10 +10,10 @@ import Foundation
 
 class Condition: NSObject, Codable {
 
-    var conditionType: ConditionType?
-    var matcherGroup: MatcherGroup?
-    var partitions: [Partition]?
-    var label: String?
+    var conditionType: ConditionType? = nil
+    var matcherGroup: MatcherGroup? = nil
+    var partitions: [Partition]? = nil
+    var label: String? = nil
 
     enum CodingKeys: String, CodingKey {
         case conditionType
