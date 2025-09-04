@@ -23,12 +23,6 @@ import Foundation
         self.label = nil
     }
     
-    /// Initializes a new FallbackTreatment instance.
-    /// - Parameters:
-    ///   - treatment: The treatment String to use as fallback.
-    ///   - config: Optional dynamic configuration String for the treatment.
-    ///   - label: Label used
-    @objc(initWithTreatment:config:label:)
     internal init(treatment: String, config: String? = nil, label: String? = nil) {
       self.treatment = treatment
       self.config = config
