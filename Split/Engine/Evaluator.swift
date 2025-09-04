@@ -61,15 +61,19 @@ class DefaultEvaluator: Evaluator {
     private let mySegmentsStorage: MySegmentsStorage
     private let myLargeSegmentsStorage: MySegmentsStorage?
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
+    
+    private let fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
 
     init(splitsStorage: SplitsStorage,
          mySegmentsStorage: MySegmentsStorage,
          myLargeSegmentsStorage: MySegmentsStorage? = nil,
-         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil) {
+         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil,
+         fallbackTreatmentsCalculator: FallbackTreatmentsCalculator) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.ruleBasedSegmentsStorage = ruleBasedSegmentsStorage
+        self.fallbackTreatmentsCalculator = fallbackTreatmentsCalculator
     }
 
     func evalTreatment(matchingKey: String, bucketingKey: String?,
@@ -78,12 +82,12 @@ class DefaultEvaluator: Evaluator {
         // 1. Guarantee Split exists & is active
         guard let split = splitsStorage.get(name: splitName), split.status != .archived else {
             Logger.w("The feature flag definition for '\(splitName)' has not been found")
-            return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.splitNotFound)
+            return EvaluationResult(treatment: fallbackTreatmentsCalculator.resolve(flagName: splitName, label: ImpressionsConstants.splitNotFound).treatment, label: ImpressionsConstants.splitNotFound)
         }
         
         // 2. Guarantee is not killed
         let changeNumber = split.changeNumber ?? -1
-        let defaultTreatment = split.defaultTreatment ?? SplitConstants.control
+        let defaultTreatment = split.defaultTreatment ?? fallbackTreatmentsCalculator.resolve(flagName: splitName, label: ImpressionsConstants.splitNotFound).treatment
         guard let killed = split.killed, !killed else {
             return EvaluationResult(treatment: defaultTreatment, label: ImpressionsConstants.killed, changeNumber: changeNumber,
                                     configuration: split.configurations?[defaultTreatment], impressionsDisabled: split.isImpressionsDisabled())
@@ -113,7 +117,7 @@ class DefaultEvaluator: Evaluator {
         guard let conditions: [Condition] = split.conditions,
             let trafficAllocationSeed = split.trafficAllocationSeed,
             let seed = split.seed else {
-                return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.exception)
+                return EvaluationResult(treatment: fallbackTreatmentsCalculator.resolve(flagName: splitName, label: ImpressionsConstants.exception).treatment, label: ImpressionsConstants.exception)
         }
 
         do {
@@ -155,7 +159,7 @@ class DefaultEvaluator: Evaluator {
             return result
         } catch EvaluatorError.matcherNotFound {
             Logger.e("The matcher has not been found")
-            return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.matcherNotFound,
+            return EvaluationResult(treatment: fallbackTreatmentsCalculator.resolve(flagName: splitName, label: ImpressionsConstants.matcherNotFound).treatment, label: ImpressionsConstants.matcherNotFound,
                                     changeNumber: changeNumber, impressionsDisabled: split.isImpressionsDisabled())
         }
     }
