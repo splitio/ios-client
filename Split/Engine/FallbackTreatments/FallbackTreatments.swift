@@ -6,7 +6,7 @@ import Foundation
 /// 
 /// This class is used to define fallback treatments that will be used at
 /// factory level or flag level.
-@objc public class FallbackTreatment: NSObject {
+@objc public final class FallbackTreatment: NSObject {
     
     @objc public let treatment: String
     @objc public let config: String?
@@ -23,12 +23,6 @@ import Foundation
         self.label = nil
     }
     
-    /// Initializes a new FallbackTreatment instance.
-    /// - Parameters:
-    ///   - treatment: The treatment String to use as fallback.
-    ///   - config: Optional dynamic configuration String for the treatment.
-    ///   - label: Label used
-    @objc(initWithTreatment:config:label:)
     internal init(treatment: String, config: String? = nil, label: String? = nil) {
       self.treatment = treatment
       self.config = config
@@ -37,30 +31,6 @@ import Foundation
    
     override public var description: String {
         "{\ntreatment: \(treatment),\nconfig: \(String(describing: config)),\nlabel: \(String(describing: label))\n}"
-    }
-}
-
-/// A class that holds Fallback configurations.
-///
-/// This class can define both a global fallback treatment and specific fallback treatments
-/// for individual feature flags.
-@objc public final class FallbackConfig: NSObject {
-    
-    @objc public let global: FallbackTreatment?
-    @objc public let byFlag: [String: FallbackTreatment]
-    
-    /// Initializes a new FallbackConfig instance.
-    /// - Parameters:
-    ///   - global: The global fallback treatment that will be used instead of "control".
-    ///   - byFlag: A dictionary of flag names to their specific fallback treatments.
-    @objc(initWithGlobal:byFlag:)
-    public init(global: FallbackTreatment? = nil, byFlag: [String: FallbackTreatment] = [:]) {
-        self.global = global
-        self.byFlag = byFlag
-    }
-    
-    override public var description: String {
-        "{\nglobal: \(String(describing: global))\nbyFlag: \(byFlag)\n}"
     }
 }
 

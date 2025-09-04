@@ -10,9 +10,9 @@ protocol FallbackTreatmentsCalculator {
 
     private let labelPrefix = "fallback - "
     private let control = SplitConstants.control
-    private let byFactoryFallbacks: FallbackConfig
+    private let byFactoryFallbacks: FallbackTreatmentsConfig
 
-    @objc public init(factory: FallbackConfig) {
+    @objc public init(factory: FallbackTreatmentsConfig) {
         self.byFactoryFallbacks = factory
         super.init()
     }

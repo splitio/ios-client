@@ -2,14 +2,14 @@
 
 import Foundation
 
-@objc public final class FallbackSanitizer: NSObject {
+final class FallbackSanitizer: NSObject {
     
     // Allowed: "123.abc", "abc123"
     // Not allowed: "abc.123"
     private static let regexPattern = "^[0-9]+[.a-zA-Z0-9_-]*$|^[a-zA-Z]+[a-zA-Z0-9_-]*$"
     private static let regex = try? NSRegularExpression(pattern: regexPattern)
     
-    @objc enum FallbackDiscardReason: Int {
+    enum FallbackDiscardReason: Int {
         case flagName
         case treatment
         
@@ -24,7 +24,7 @@ import Foundation
     }
     
     // MARK: Sanitize Global treatment
-    public static func sanitize(treatment: FallbackTreatment) -> FallbackTreatment? {
+    static func sanitize(treatment: FallbackTreatment) -> FallbackTreatment? {
         if !isValidTreatment(treatment)  {
             Logger.e("Fallback treatments - Discarded fallback: \(FallbackDiscardReason.treatment.rawValue)")
             return nil
