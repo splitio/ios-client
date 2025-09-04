@@ -23,6 +23,7 @@ class DefaultTreatmentManager: TreatmentManager {
     private let flagSetsCache: FlagSetsCache
     private let flagSetsValidator: FlagSetsValidator
     private let propertyValidator: PropertyValidator
+    private let fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
 
     private var isDestroyed = false
 
@@ -37,7 +38,8 @@ class DefaultTreatmentManager: TreatmentManager {
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
          validationLogger: ValidationMessageLogger,
-         propertyValidator: PropertyValidator) {
+         propertyValidator: PropertyValidator,
+         fallbackTreatmentsCalculator: FallbackTreatmentsCalculator) {
 
         self.key = key
         self.splitConfig = splitConfig
@@ -52,6 +54,7 @@ class DefaultTreatmentManager: TreatmentManager {
         self.splitValidator = splitValidator
         self.validationLogger = validationLogger
         self.propertyValidator = propertyValidator
+        self.fallbackTreatmentsCalculator = fallbackTreatmentsCalculator
     }
 
     func getTreatmentWithConfig(_ splitName: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions? = nil) -> SplitResult {

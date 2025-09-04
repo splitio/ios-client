@@ -36,6 +36,8 @@ class DefaultClientManager: SplitClientManager {
     private let byKeyRegistry: ByKeyRegistry
     private let mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory
     private let propertyValidator: PropertyValidator
+    private let fallbackTreatmentCalculator: FallbackTreatmentCalculator
+    
     weak var splitFactory: SplitFactory?
 
     init(config: SplitClientConfig,
@@ -75,6 +77,8 @@ class DefaultClientManager: SplitClientManager {
         self.eventsTracker = eventsTracker
         self.propertyValidator = propertyValidator
         self.splitFactory = factory
+        
+        self.fallbackTreatmentCalculator = DefaultFallbackTreatmentsCalculator(factory: config.fallbackTreatments)
 
         defaultClient = createClient(forKey: key)
 
@@ -145,8 +149,7 @@ class DefaultClientManager: SplitClientManager {
     private func createClient(forKey key: Key) -> SplitClient {
 
         let eventsManager = DefaultSplitEventsManager(config: config)
-        let treatmentManager = buildTreatmentManager(key: key,
-                                                     eventsManager: eventsManager)
+        let treatmentManager = buildTreatmentManager(key: key, eventsManager: eventsManager)
 
         let client = buildClient(key: key,
                                  treatmentManager: treatmentManager,
@@ -164,23 +167,22 @@ class DefaultClientManager: SplitClientManager {
         return client
     }
 
-    private func buildTreatmentManager(key: Key,
-                                       eventsManager: SplitEventsManager) -> TreatmentManager {
+    private func buildTreatmentManager(key: Key, eventsManager: SplitEventsManager) -> TreatmentManager {
         let validationLogger = DefaultValidationMessageLogger()
 
-        return DefaultTreatmentManager(
-            evaluator: evaluator,
-            key: key,
-            splitConfig: config,
-            eventsManager: eventsManager,
-            impressionLogger: synchronizer,
-            telemetryProducer: storageContainer.telemetryStorage,
-            storageContainer: storageContainer,
-            flagSetsValidator: DefaultFlagSetsValidator(telemetryProducer: storageContainer.telemetryStorage),
-            keyValidator: DefaultKeyValidator(),
-            splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
-            validationLogger: validationLogger,
-            propertyValidator: propertyValidator)
+        return DefaultTreatmentManager(evaluator: evaluator,
+                                       key: key,
+                                       splitConfig: config,
+                                       eventsManager: eventsManager,
+                                       impressionLogger: synchronizer,
+                                       telemetryProducer: storageContainer.telemetryStorage,
+                                       storageContainer: storageContainer,
+                                       flagSetsValidator: DefaultFlagSetsValidator(telemetryProducer: storageContainer.telemetryStorage),
+                                       keyValidator: DefaultKeyValidator(),
+                                       splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
+                                       validationLogger: validationLogger,
+                                       propertyValidator: propertyValidator,
+                                       fallbackTreatmentsCalculator: )
     }
 
     private func addToByKeyRegistry(key: Key,
