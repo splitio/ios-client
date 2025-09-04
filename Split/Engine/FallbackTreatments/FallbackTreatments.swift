@@ -27,27 +27,3 @@ import Foundation
         return "{\ntreatment: \(treatment),\nconfig: \(String(describing: config)),\nlabel: \(label)\n}"
     }
 }
-
-/// A class that holds Fallback configurations.
-///
-/// This class can define both a global fallback treatment and specific fallback treatments
-/// for individual feature flags.
-@objc public class FallbackConfig: NSObject {
-    
-    @objc public let global: FallbackTreatment?
-    @objc public let byFlag: [String: FallbackTreatment]
-    
-    /// Initializes a new FallbackConfig instance.
-    /// - Parameters:
-    ///   - global: The global fallback treatment that will be used instead of "control".
-    ///   - byFlag: A dictionary of flag names to their specific fallback treatments.
-    @objc(initWithGlobal:byFlag:)
-    public init(global: FallbackTreatment? = nil, byFlag: [String: FallbackTreatment] = [:]) {
-        self.global = global
-        self.byFlag = byFlag
-    }
-    
-    override public var description: String {
-        return "{\nglobal: \(String(describing: global))\nbyFlag: \(byFlag)\n}"
-    }
-}
