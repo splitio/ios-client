@@ -1,48 +1,7 @@
-//
-//  Evaluator.swift
-//  Split
-//
 //  Created by Natalia  Stele on 11/14/17
 
 import Foundation
 // swiftlint:disable function_body_length
-struct EvaluationResult {
-    var treatment: String
-    var label: String
-    var changeNumber: Int64?
-    var configuration: String?
-    var impressionsDisabled: Bool
-
-    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil, impressionsDisabled: Bool = false) {
-        self.treatment = treatment
-        self.label = label
-        self.changeNumber = changeNumber
-        self.configuration = configuration
-        self.impressionsDisabled = impressionsDisabled
-    }
-}
-
-struct EvalValues {
-    let matchValue: Any?
-    let matchingKey: String
-    let bucketingKey: String?
-    let attributes: [String: Any]?
-
-    init(matchValue: Any?, matchingKey: String, bucketingKey: String? = nil, attributes: [String: Any]? = nil) {
-        self.matchValue = matchValue
-        self.matchingKey = matchingKey
-        self.bucketingKey = bucketingKey
-        self.attributes = attributes
-    }
-}
-
-// Components needed
-struct EvalContext {
-    let evaluator: Evaluator?
-    let mySegmentsStorage: MySegmentsStorage?
-    let myLargeSegmentsStorage: MySegmentsStorage?
-    let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
-}
 
 protocol Evaluator {
     func evalTreatment(matchingKey: String, bucketingKey: String?, splitName: String, attributes: [String: Any]?) throws -> EvaluationResult
@@ -59,10 +18,7 @@ class DefaultEvaluator: Evaluator {
     private let myLargeSegmentsStorage: MySegmentsStorage?
     private let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
 
-    init(splitsStorage: SplitsStorage,
-         mySegmentsStorage: MySegmentsStorage,
-         myLargeSegmentsStorage: MySegmentsStorage? = nil,
-         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil) {
+    init(splitsStorage: SplitsStorage, mySegmentsStorage: MySegmentsStorage, myLargeSegmentsStorage: MySegmentsStorage? = nil, ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
@@ -158,10 +114,7 @@ class DefaultEvaluator: Evaluator {
     }
 
     private func getContext() -> EvalContext {
-        return EvalContext(evaluator: self,
-                           mySegmentsStorage: mySegmentsStorage,
-                           myLargeSegmentsStorage: myLargeSegmentsStorage,
-                           ruleBasedSegmentsStorage: ruleBasedSegmentsStorage)
+        EvalContext(evaluator: self, mySegmentsStorage: mySegmentsStorage, myLargeSegmentsStorage: myLargeSegmentsStorage, ruleBasedSegmentsStorage: ruleBasedSegmentsStorage)
     }
 
     private func selectBucketKey(matchingKey: String, bucketingKey: String?) -> String {
@@ -178,6 +131,44 @@ class DefaultEvaluator: Evaluator {
 
 private extension Split {
     func isImpressionsDisabled() -> Bool {
-        return self.impressionsDisabled ?? false
+        impressionsDisabled ?? false
     }
+}
+
+// MARK: Components needed
+struct EvaluationResult {
+    var treatment: String
+    var label: String
+    var changeNumber: Int64?
+    var configuration: String?
+    var impressionsDisabled: Bool
+
+    init(treatment: String, label: String, changeNumber: Int64? = nil, configuration: String? = nil, impressionsDisabled: Bool = false) {
+        self.treatment = treatment
+        self.label = label
+        self.changeNumber = changeNumber
+        self.configuration = configuration
+        self.impressionsDisabled = impressionsDisabled
+    }
+}
+
+struct EvalValues {
+    let matchValue: Any?
+    let matchingKey: String
+    let bucketingKey: String?
+    let attributes: [String: Any]?
+
+    init(matchValue: Any?, matchingKey: String, bucketingKey: String? = nil, attributes: [String: Any]? = nil) {
+        self.matchValue = matchValue
+        self.matchingKey = matchingKey
+        self.bucketingKey = bucketingKey
+        self.attributes = attributes
+    }
+}
+
+struct EvalContext {
+    let evaluator: Evaluator?
+    let mySegmentsStorage: MySegmentsStorage?
+    let myLargeSegmentsStorage: MySegmentsStorage?
+    let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage?
 }
