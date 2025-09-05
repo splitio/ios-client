@@ -22,6 +22,7 @@ class DefaultTreatmentManager: TreatmentManager {
     private let flagSetsCache: FlagSetsCache
     private let flagSetsValidator: FlagSetsValidator
     private let propertyValidator: PropertyValidator
+    private let fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
 
     private var isDestroyed = false
 
@@ -36,7 +37,8 @@ class DefaultTreatmentManager: TreatmentManager {
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
          validationLogger: ValidationMessageLogger,
-         propertyValidator: PropertyValidator) {
+         propertyValidator: PropertyValidator,
+         fallbackTreatmentsCalculator: FallbackTreatmentsCalculator) {
 
         self.key = key
         self.splitConfig = splitConfig
@@ -51,6 +53,7 @@ class DefaultTreatmentManager: TreatmentManager {
         self.splitValidator = splitValidator
         self.validationLogger = validationLogger
         self.propertyValidator = propertyValidator
+        self.fallbackTreatmentsCalculator = fallbackTreatmentsCalculator
     }
 
     func getTreatmentWithConfig(_ splitName: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions? = nil) -> SplitResult {
@@ -178,7 +181,7 @@ extension DefaultTreatmentManager {
         let controlResults: () -> [String: SplitResult] = {
             return splits.filter { !$0.isEmpty() }.reduce([String: SplitResult]()) { results, splitName in
                 var res = results
-                res[splitName] = SplitResult(treatment: SplitConstants.control)
+                res[splitName] = SplitResult(treatment: self.fallbackTreatmentsCalculator.resolve(flagName: splitName, label: nil).treatment)
                 return res
             }
         }
@@ -216,26 +219,26 @@ extension DefaultTreatmentManager {
                                                  validationTag: String) -> SplitResult {
 
         if checkAndLogIfDestroyed(logTag: validationTag) {
-            return SplitResult(treatment: SplitConstants.control)
+            return SplitResult(treatment: fallbackTreatmentsCalculator.resolve(flagName: splitName, label: nil).treatment)
         }
 
         if shouldValidate, let errorInfo = keyValidator.validate(matchingKey: key.matchingKey,
                                                                  bucketingKey: key.bucketingKey) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-            return SplitResult(treatment: SplitConstants.control)
+            return SplitResult(treatment: fallbackTreatmentsCalculator.resolve(flagName: splitName, label: nil).treatment)
         }
 
         if let errorInfo = splitValidator.validate(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
-                return SplitResult(treatment: SplitConstants.control)
+                return SplitResult(treatment: fallbackTreatmentsCalculator.resolve(flagName: splitName, label: nil).treatment)
             }
         }
 
         if let errorInfo = splitValidator.validateSplit(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {
-                return SplitResult(treatment: SplitConstants.control)
+                return SplitResult(treatment: fallbackTreatmentsCalculator.resolve(flagName: splitName, label: nil).treatment)
             }
         }
 
@@ -251,10 +254,10 @@ extension DefaultTreatmentManager {
                           evaluationOptions: evaluationOptions)
             return SplitResult(treatment: result.treatment, config: result.configuration)
         } catch {
-            logImpression(label: ImpressionsConstants.exception, treatment: SplitConstants.control,
+            logImpression(label: ImpressionsConstants.exception, treatment: fallbackTreatmentsCalculator.resolve(flagName: splitName, label: nil).treatment,
                           splitName: trimmedSplitName, attributes: mergedAttributes, impressionsDisabled: false,
                           validationTag: validationTag, evaluationOptions: evaluationOptions)
-            return SplitResult(treatment: SplitConstants.control)
+            return SplitResult(treatment: fallbackTreatmentsCalculator.resolve(flagName: splitName, label: nil).treatment)
         }
     }
 
@@ -267,7 +270,7 @@ extension DefaultTreatmentManager {
         if !isSdkReady() {
             validationLogger.w(message: sdkNoReadyMessage(splitName: splitName), tag: validationTag)
             telemetryProducer?.recordNonReadyUsage()
-            return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.notReady)
+            return EvaluationResult(treatment: fallbackTreatmentsCalculator.resolve(flagName: splitName, label: ImpressionsConstants.notReady).treatment, label: ImpressionsConstants.notReady)
         }
         return try evaluator.evalTreatment(matchingKey: key.matchingKey,
                                            bucketingKey: key.bucketingKey,

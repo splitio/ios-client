@@ -6,12 +6,11 @@ import XCTest
 final class DefaultFallbackTreatmentsCalculatorTests: XCTestCase {
 
     func testResolveReturnsByFlagFallback() {
-        let treatment = FallbackTreatment(treatment: "t1")
-        let config = FallbackConfig(
-            global: FallbackTreatment(treatment: "global"),
-            byFlag: ["flag1": treatment]
-        )
-        let calculator = DefaultFallbackTreatmentsCalculator(factory: config)
+        let config = FallbackTreatmentsConfig.Builder()
+            .global(FallbackTreatment(treatment: "global"))
+            .byFlag(["flag1": FallbackTreatment(treatment: "t1")])
+            .build()
+        let calculator = DefaultFallbackTreatmentsCalculator(fallbacksConfig: config)
 
         let result = calculator.resolve(flagName: "flag1", label: "testLabel")
         XCTAssertEqual(result.treatment, "t1")
@@ -19,12 +18,10 @@ final class DefaultFallbackTreatmentsCalculatorTests: XCTestCase {
     }
 
     func testResolveReturnsGlobalFallbackIfFlagMissing() {
-        let global = FallbackTreatment(treatment: "global")
-        let config = FallbackConfig(
-            global: global,
-            byFlag: [:]
-        )
-        let calculator = DefaultFallbackTreatmentsCalculator(factory: config)
+        let config = FallbackTreatmentsConfig.Builder()
+            .global(FallbackTreatment(treatment: "global"))
+            .build()
+        let calculator = DefaultFallbackTreatmentsCalculator(fallbacksConfig: config)
 
         let result = calculator.resolve(flagName: "unknownFlag", label: "testLabel")
         XCTAssertEqual(result.treatment, "global")
@@ -32,11 +29,9 @@ final class DefaultFallbackTreatmentsCalculatorTests: XCTestCase {
     }
 
     func testResolveReturnsControlIfNoFallbacks() {
-        let config = FallbackConfig(
-            global: nil,
-            byFlag: [:]
-        )
-        let calculator = DefaultFallbackTreatmentsCalculator(factory: config)
+        let config = FallbackTreatmentsConfig.Builder()
+            .build()
+        let calculator = DefaultFallbackTreatmentsCalculator(fallbacksConfig: config)
 
         let result = calculator.resolve(flagName: "anyFlag", label: "testLabel")
         XCTAssertEqual(result.treatment, SplitConstants.control)
@@ -44,12 +39,10 @@ final class DefaultFallbackTreatmentsCalculatorTests: XCTestCase {
     }
 
     func testResolveWithNilLabel() {
-        let treatment = FallbackTreatment(treatment: "t1")
-        let config = FallbackConfig(
-            global: nil,
-            byFlag: ["flag1": treatment]
-        )
-        let calculator = DefaultFallbackTreatmentsCalculator(factory: config)
+        let config = FallbackTreatmentsConfig.Builder()
+            .byFlag(["flag1":FallbackTreatment(treatment: "t1")])
+            .build()
+        let calculator = DefaultFallbackTreatmentsCalculator(fallbacksConfig: config)
 
         let result = calculator.resolve(flagName: "flag1", label: nil)
         XCTAssertEqual(result.treatment, "t1")
