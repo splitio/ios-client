@@ -18,7 +18,7 @@ class DefaultFallbackTreatmentsCalculator: NSObject, FallbackTreatmentsCalculato
     }
 
     // Returns fallback for Split if exists; "control" otherwise
-    public func resolve(flagName: String, label: String?) -> FallbackTreatment {
+    func resolve(flagName: String, label: String?) -> FallbackTreatment {
         
         if let flagTreatment = fallbacks.byFlag[flagName] {
             return copyWithLabel(flagTreatment, label: resolveLabel(label))
