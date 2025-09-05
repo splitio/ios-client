@@ -361,6 +361,12 @@
 		5BD75F832E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */; };
 		5BD75FB02E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */; };
 		5BD75FB12E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */; };
+		5BD75FB32E5DF15800F9EFBD /* FallbackSanitizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */; };
+		5BD75FB42E5DF15800F9EFBD /* FallbackSanitizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */; };
+		5BD767402E64B6F800F9EFBD /* FallbackTreatmentsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD7673F2E64B6EA00F9EFBD /* FallbackTreatmentsCalculator.swift */; };
+		5BD767412E64B6F800F9EFBD /* FallbackTreatmentsCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD7673F2E64B6EA00F9EFBD /* FallbackTreatmentsCalculator.swift */; };
+		5BD7675B2E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767582E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift */; };
+		5BD7675C2E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767592E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */; };
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
@@ -1568,6 +1574,10 @@
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
 		5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit_5.xctestplan; sourceTree = "<group>"; };
 		5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatments.swift; sourceTree = "<group>"; };
+		5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackSanitizer.swift; sourceTree = "<group>"; };
+		5BD7673F2E64B6EA00F9EFBD /* FallbackTreatmentsCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsCalculator.swift; sourceTree = "<group>"; };
+		5BD767582E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsCalculatorTests.swift; sourceTree = "<group>"; };
+		5BD767592E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsSanitizerTests.swift; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
@@ -2899,6 +2909,7 @@
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
 			isa = PBXGroup;
 			children = (
+				5BD7675A2E65E9A400F9EFBD /* FallbackTreatmentsTests */,
 				C539CAE52D947D2A0050C732 /* Common */,
 				5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */,
 				C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */,
@@ -3204,9 +3215,20 @@
 		5BD75FAE2E5DF0CA00F9EFBD /* FallbackTreatments */ = {
 			isa = PBXGroup;
 			children = (
+				5BD7673F2E64B6EA00F9EFBD /* FallbackTreatmentsCalculator.swift */,
+				5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */,
 				5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */,
 			);
 			path = FallbackTreatments;
+			sourceTree = "<group>";
+		};
+		5BD7675A2E65E9A400F9EFBD /* FallbackTreatmentsTests */ = {
+			isa = PBXGroup;
+			children = (
+				5BD767582E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift */,
+				5BD767592E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */,
+			);
+			path = FallbackTreatmentsTests;
 			sourceTree = "<group>";
 		};
 		95118EE9281AC80400782F33 /* UserConsent */ = {
@@ -4133,6 +4155,7 @@
 				C539CAC02D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift in Sources */,
 				C539CAC12D88C7410050C732 /* RuleBasedSegmentsStorage.swift in Sources */,
 				3B6DEF6120EA6AE50067435E /* ContainsAllOfSetMatcher.swift in Sources */,
+				5BD75FB32E5DF15800F9EFBD /* FallbackSanitizer.swift in Sources */,
 				C539CADA2D8B5AF00050C732 /* ProcessedRuleBasedSegmentChange.swift in Sources */,
 				3B6DEF7320EA6AE50067435E /* Json.swift in Sources */,
 				5905D4EF255B3E7D006DA3B1 /* SplitsSnapshot.swift in Sources */,
@@ -4373,6 +4396,7 @@
 				9595911126DFFF87009E7944 /* CompressionUtil.swift in Sources */,
 				5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */,
 				952FA12B2A2E593900264AB5 /* SplitComponentCatalog.swift in Sources */,
+				5BD767402E64B6F800F9EFBD /* FallbackTreatmentsCalculator.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
 				955428D6256810D300331356 /* ImpressionDao.swift in Sources */,
 				950B7417268F4716005FD649 /* ImpressionsMode.swift in Sources */,
@@ -4679,6 +4703,8 @@
 				5921ED422538EA39000D6C8B /* StreamingIntegrationHelper.swift in Sources */,
 				5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */,
 				599EA57F2266708D006CBA89 /* LocalhostYamlParserTest.swift in Sources */,
+				5BD7675B2E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift in Sources */,
+				5BD7675C2E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift in Sources */,
 				594F5F5A253CFC2D00A945B4 /* StreamingControlTest.swift in Sources */,
 				59ED408C24EAF86000EF7B09 /* TimersManagerMock.swift in Sources */,
 				95DFD13B2608FFF600776E0A /* SplitSdkUpdatePollingTest.swift in Sources */,
@@ -5041,6 +5067,7 @@
 				95B02D5528D0BDC20030EC8B /* ContainsAnyOfSetMatcher.swift in Sources */,
 				95B02D5628D0BDC20030EC8B /* ContainsStringMatcher.swift in Sources */,
 				956A7E18297043280080D53C /* UserConsentManager.swift in Sources */,
+				5BD767412E64B6F800F9EFBD /* FallbackTreatmentsCalculator.swift in Sources */,
 				95B02D5728D0BDC20030EC8B /* DateTime.swift in Sources */,
 				95B02D5828D0BDC20030EC8B /* DependencyMatcher.swift in Sources */,
 				95B02D5928D0BDC20030EC8B /* EndsWithMatcher.swift in Sources */,
@@ -5048,6 +5075,7 @@
 				95B02D5B28D0BDC20030EC8B /* EqualToMatcher.swift in Sources */,
 				95B02D5C28D0BDC20030EC8B /* EqualToSetMatcher.swift in Sources */,
 				95B02D5D28D0BDC20030EC8B /* GreaterThanOrEqualToMatcher.swift in Sources */,
+				5BD75FB42E5DF15800F9EFBD /* FallbackSanitizer.swift in Sources */,
 				95B02D5E28D0BDC20030EC8B /* InSegmentMatcher.swift in Sources */,
 				95F7BBC32C077D7800C5F2E4 /* UniqueKey.swift in Sources */,
 				C5977C5F2BF7D4D1003E293A /* EqualToSemverMatcher.swift in Sources */,
