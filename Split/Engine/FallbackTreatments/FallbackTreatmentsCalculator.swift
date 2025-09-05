@@ -10,20 +10,20 @@ class DefaultFallbackTreatmentsCalculator: NSObject, FallbackTreatmentsCalculato
 
     private let labelPrefix = "fallback - "
     private let control = SplitConstants.control
-    private let byFactoryFallbacks: FallbackTreatmentsConfig
+    private let fallbacksConfig: FallbackTreatmentsConfig
 
-    init(factory: FallbackTreatmentsConfig) {
-        self.byFactoryFallbacks = factory
+    init(fallbacksConfig: FallbackTreatmentsConfig) {
+        self.fallbacksConfig = fallbacksConfig
         super.init()
     }
 
     // Returns fallback for Split if exists; "control" otherwise
     func resolve(flagName: String, label: String?) -> FallbackTreatment {
-        if let treatment = byFactoryFallbacks.byFlag[flagName] {
+        if let treatment = fallbacksConfig.byFlag[flagName] {
             return copyWithLabel(treatment, label: label)
         }
 
-        if let factoryFallback = byFactoryFallbacks.global {
+        if let factoryFallback = fallbacksConfig.global {
             return copyWithLabel(factoryFallback, label: label)
         }
 
