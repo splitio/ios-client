@@ -6,20 +6,19 @@ protocol FallbackTreatmentsCalculator {
     func resolve(flagName: String, label: String?) -> FallbackTreatment
 }
 
-@objc public class DefaultFallbackTreatmentsCalculator: NSObject, FallbackTreatmentsCalculator {
+class DefaultFallbackTreatmentsCalculator: NSObject, FallbackTreatmentsCalculator {
 
     private let labelPrefix = "fallback - "
     private let control = SplitConstants.control
     private let byFactoryFallbacks: FallbackTreatmentsConfig
 
-    @objc public init(factory: FallbackTreatmentsConfig) {
+    init(factory: FallbackTreatmentsConfig) {
         self.byFactoryFallbacks = factory
         super.init()
     }
 
     // Returns fallback for Split if exists; "control" otherwise
-    @objc(resolve:label:)
-    public func resolve(flagName: String, label: String?) -> FallbackTreatment {
+    func resolve(flagName: String, label: String?) -> FallbackTreatment {
         if let treatment = byFactoryFallbacks.byFlag[flagName] {
             return copyWithLabel(treatment, label: label)
         }
