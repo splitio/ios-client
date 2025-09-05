@@ -23,8 +23,10 @@ class LocalhostClientManager: SplitClientManager {
 
     private var eventsManagerCoordinator: SplitEventsManagerCoordinator
     private var synchronizer: FeatureFlagsSynchronizer
+    private var fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
 
     private let defaultKey: Key
+    private let evaluator: Evaluator
     private let splitsStorage: SplitsStorage
     private let splitManager: SplitManager
     weak var splitFactory: SplitFactory?
@@ -44,6 +46,13 @@ class LocalhostClientManager: SplitClientManager {
         self.eventsManagerCoordinator = eventsManagerCoordinator
         self.splitsStorage = splitsStorage
         self.splitFactory = factory
+        
+        fallbackTreatmentsCalculator = DefaultFallbackTreatmentsCalculator(fallbacksConfig: config.fallbackTreatments)
+        evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
+                                          mySegmentsStorage: EmptyMySegmentsStorage(),
+                                          myLargeSegmentsStorage: EmptyMySegmentsStorage(),
+                                          ruleBasedSegmentsStorage: nil,
+                                          fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculator(fallbacksConfig: config.fallbackTreatments))
 
         defaultClient = client(forKey: key)
 
@@ -71,18 +80,12 @@ class LocalhostClientManager: SplitClientManager {
         }
     }
 
-    private func client(forKey key: Key, eventsManager: SplitEventsManager? = nil) -> SplitClient {
+    private func client(forKey key: Key,
+                        eventsManager: SplitEventsManager? = nil) -> SplitClient {
 
         if let group = clients.value(forKey: key.matchingKey) {
             return group.client
         }
-
-        
-        let evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
-                                          mySegmentsStorage: EmptyMySegmentsStorage(),
-                                          myLargeSegmentsStorage: EmptyMySegmentsStorage(),
-                                          ruleBasedSegmentsStorage: nil,
-                                          fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculator(fallbacksConfig: config.fallbackTreatments))
         
         let newEventsManager = eventsManager ?? DefaultSplitEventsManager(config: config)
         let newClient = LocalhostSplitClient(key: key,
