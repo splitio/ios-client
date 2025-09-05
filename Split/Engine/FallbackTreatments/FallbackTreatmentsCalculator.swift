@@ -12,7 +12,7 @@ protocol FallbackTreatmentsCalculator {
     private let control = SplitConstants.control
     private let fallbacks: FallbackTreatmentsConfig
 
-    @objc public init(fallbacksConfig: FallbackTreatmentsConfig) {
+    init(fallbacksConfig: FallbackTreatmentsConfig) {
         fallbacks = fallbacksConfig
         super.init()
     }
