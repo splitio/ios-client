@@ -22,6 +22,7 @@ class DefaultClientManager: SplitClientManager {
     private var storageContainer: SplitStorageContainer
     private let config: SplitClientConfig
     private let apiFacade: SplitApiFacade
+    private let evaluator: Evaluator
 
     private var eventsManagerCoordinator: SplitEventsManagerCoordinator
     private var synchronizer: Synchronizer
@@ -35,6 +36,7 @@ class DefaultClientManager: SplitClientManager {
     private let byKeyRegistry: ByKeyRegistry
     private let mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory
     private let propertyValidator: PropertyValidator
+    private let fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
     
     weak var splitFactory: SplitFactory?
 
@@ -71,6 +73,13 @@ class DefaultClientManager: SplitClientManager {
         self.eventsTracker = eventsTracker
         self.propertyValidator = propertyValidator
         self.splitFactory = factory
+        
+        fallbackTreatmentsCalculator = DefaultFallbackTreatmentsCalculator(fallbacksConfig: config.fallbackTreatments)
+        evaluator = DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
+                                     mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                     myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
+                                     ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
+                                     fallbackTreatmentsCalculator: fallbackTreatmentsCalculator)
         
         defaultClient = createClient(forKey: key)
 
@@ -162,12 +171,6 @@ class DefaultClientManager: SplitClientManager {
 
     private func buildTreatmentManager(key: Key, eventsManager: SplitEventsManager) -> TreatmentManager {
         let validationLogger = DefaultValidationMessageLogger()
-        let fallbackTreatmentCalculator = DefaultFallbackTreatmentsCalculator(fallbacksConfig: config.fallbackTreatments)
-        let evaluator = DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
-                                          mySegmentsStorage: storageContainer.mySegmentsStorage,
-                                          myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
-                                          ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
-                                          fallbackTreatmentsCalculator: fallbackTreatmentCalculator)
 
         return DefaultTreatmentManager(evaluator: evaluator,
                                        key: key,
@@ -181,7 +184,7 @@ class DefaultClientManager: SplitClientManager {
                                        splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
                                        validationLogger: validationLogger,
                                        propertyValidator: propertyValidator,
-                                       fallbackTreatmentsCalculator: fallbackTreatmentCalculator)
+                                       fallbackTreatmentsCalculator: fallbackTreatmentsCalculator)
     }
 
     private func addToByKeyRegistry(key: Key,
