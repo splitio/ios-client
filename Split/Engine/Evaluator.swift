@@ -20,7 +20,7 @@ class DefaultEvaluator: Evaluator {
     
     private let fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
 
-    init(splitsStorage: SplitsStorage, mySegmentsStorage: MySegmentsStorage, myLargeSegmentsStorage: MySegmentsStorage? = nil, ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil) {
+    init(splitsStorage: SplitsStorage, mySegmentsStorage: MySegmentsStorage, myLargeSegmentsStorage: MySegmentsStorage? = nil, ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil, fallbackTreatmentsCalculator: FallbackTreatmentsCalculator) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
