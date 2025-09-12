@@ -30,7 +30,7 @@ import Foundation
     }
    
     override public var description: String {
-        "{\ntreatment: \(treatment),\nconfig: \(String(describing: config)),\nlabel: \(String(describing: label))\n}"
+        "{\ntreatment: \(treatment),\nconfig: \(String(describing: config))}"
     }
 }
 

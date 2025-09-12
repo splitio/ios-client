@@ -237,9 +237,6 @@ extension DefaultTreatmentManager {
 
         if let errorInfo = splitValidator.validateSplit(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-            if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {
-                return controlSplit(splitName)
-            }
         }
 
         let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -248,6 +245,9 @@ extension DefaultTreatmentManager {
             let result = try evaluateIfReady(splitName: trimmedSplitName,
                                              attributes: mergedAttributes,
                                              validationTag: validationTag)
+            if result.label.contains(ImpressionsConstants.splitNotFound) {
+                return SplitResult(treatment: result.treatment, config: result.configuration)
+            }
             logImpression(label: result.label, changeNumber: result.changeNumber,
                           treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes,
                           impressionsDisabled: result.impressionsDisabled, validationTag: validationTag,
@@ -261,17 +261,24 @@ extension DefaultTreatmentManager {
             return SplitResult(treatment: finalTreatment.treatment, config: finalTreatment.config)
         }
     }
-
+    
     private func sdkNoReadyMessage(splitName: String) -> String {
         return "The SDK is not ready, results may be incorrect for feature flag \(splitName)."
-                           + "Make sure to wait for SDK readiness before using this method"
+        + "Make sure to wait for SDK readiness before using this method"
     }
 
     private func evaluateIfReady(splitName: String, attributes: [String: Any]?, validationTag: String) throws -> EvaluationResult {
         if !isSdkReady() {
+            if let errorInfo = splitValidator.validateSplit(name: splitName) {
+                validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+                if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {
+                    return controlTreatment(splitName, label: ImpressionsConstants.notReady)
+                }
+            }
+            
             validationLogger.w(message: sdkNoReadyMessage(splitName: splitName), tag: validationTag)
             telemetryProducer?.recordNonReadyUsage()
-            return controlTreatment(splitName)
+            return controlTreatment(splitName, label: ImpressionsConstants.notReady)
         }
         return try evaluator.evalTreatment(matchingKey: key.matchingKey,
                                            bucketingKey: key.bucketingKey,
@@ -338,7 +345,7 @@ extension DefaultTreatmentManager {
 
     private func isSdkReady() -> Bool {
         return eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache) ||
-            eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady)
+        eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady)
     }
 
     private func checkAndLogIfDestroyed(logTag: String) -> Bool {
@@ -368,9 +375,11 @@ extension DefaultTreatmentManager {
         }
         return Stopwatch.now()
     }
-    
-    // MARK: Fallback Treatments
-    // MARK: We pass the treatment through one last filter, where it can be overriden by some Fallback Treatment
+}
+
+// MARK: Fallback Treatments
+extension DefaultTreatmentManager {
+    // We pass the treatment through one last filters, where it can be overriden by some Fallback Treatment
     private func controlTreatment(_ flagName: String, label: String? = nil) -> EvaluationResult {
         let finalTreatment = fallbackTreatmentsCalculator.resolve(flagName: flagName, label: label)
         return EvaluationResult(treatment: finalTreatment.treatment, label: finalTreatment.label ?? "", configuration: finalTreatment.config)

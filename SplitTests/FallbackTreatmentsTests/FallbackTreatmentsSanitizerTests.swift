@@ -43,6 +43,6 @@ class FallbackSanitizerTests: XCTestCase {
     
     func testDescription() {
         let fallbackTreatment = FallbackTreatment(treatment: "FLAG1_TREATMENT", config: "my_config")
-        XCTAssertEqual(fallbackTreatment.description, "{\ntreatment: FLAG1_TREATMENT,\nconfig: Optional(\"my_config\"),\nlabel: fallback - \n}")
+        XCTAssertEqual(fallbackTreatment.description, "{\ntreatment: FLAG1_TREATMENT,\nconfig: Optional(\"my_config\")}")
     }
 }

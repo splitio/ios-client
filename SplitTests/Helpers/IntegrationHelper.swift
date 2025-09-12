@@ -234,3 +234,71 @@ class IntegrationHelper {
         return String("11F17550-01EA-45").dataBytes!
     }
 }
+    
+// MARK: Simplest SDK Factory
+// Use this two methods to quickly setup a Factory for testing. While it has an "empty"
+// behavior, it mets the mininum conditions to trigger SDK_READY.
+extension IntegrationHelper {
+    
+    func simplestFactory() -> SplitFactoryBuilder { // Initialize a working Factory ready to hook custom keys
+        
+        ///  let factory = IntegrationHelper().simplestFactory()
+        ///    .setApiKey(IntegrationHelper.dummyApiKey)
+        ///    .setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
+        ///    .setConfig(SplitConfig())
+        ///    .build()
+        ///  let client = factory!.client
+        
+        let builder = DefaultSplitFactoryBuilder()
+        builder.setHttpClient(buildSimplestHttpClient())
+        builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
+        return builder
+    }
+    
+    func simplestFactoryWithDummyKeys() -> SplitFactoryBuilder { // Initialize a working Factory in one line
+        
+        ///  let factory = IntegrationHelper().simplestFactoryWithDummyKeys().setConfig(SplitConfig()).build()
+        ///  let client = factory!.client
+        
+        simplestFactory()
+            .setApiKey(IntegrationHelper.dummyApiKey)
+            .setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
+    }
+    
+    private func buildSimplestHttpClient() -> HttpClient {
+        DefaultHttpClient(session: HttpSessionMock(), requestManager: buildSimplestReqManager())
+    }
+    
+    private func buildSimplestReqManager() -> HttpRequestManagerTestDispatcher {
+        HttpRequestManagerTestDispatcher(dispatcher: IntegrationHelper().buildSimplestTestDispatcher(), streamingHandler: IntegrationHelper().buildSimplestStreamingHandler())
+    }
+    
+    private func buildSimplestStreamingHandler() -> TestStreamResponseBindingHandler {
+        { request in TestStreamResponseBinding.createFor(request: request, code: 200) }
+    }
+    
+    private func buildSimplestTestDispatcher() -> HttpClientTestDispatcher {
+        return { request in
+            if request.isSplitEndpoint() {
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSampleSplitsChange()))
+            }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            if request.isImpressionsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+            return TestDispatcherResponse(code: 200)
+        }
+    }
+    
+    private func loadSampleSplitsChange() -> TargetingRulesChange? {
+        if let file = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json"), let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            return change
+        }
+        return nil
+    }
+}
