@@ -35,7 +35,8 @@ class EvaluatorTests: XCTestCase {
                                              myLargeSegmentsStorage: myLargeSegmentsStorage)
             evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
                                          mySegmentsStorage: mySegmentsStorage,
-                                         myLargeSegmentsStorage: EmptyMySegmentsStorage())
+                                         myLargeSegmentsStorage: EmptyMySegmentsStorage(),
+                                         fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculatorStub())
         }
     }
     
@@ -452,7 +453,8 @@ class EvaluatorTests: XCTestCase {
                                          myLargeSegmentsStorage: myLargeSegmentsStorage)
         evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
                                      mySegmentsStorage: mySegmentsStorage,
-                                     myLargeSegmentsStorage: myLargeSegmentsStorage)
+                                     myLargeSegmentsStorage: myLargeSegmentsStorage,
+                                     fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculatorStub())
         return evaluator
     }
     
@@ -473,7 +475,8 @@ class EvaluatorTests: XCTestCase {
                                          myLargeSegmentsStorage: myLargeSegmentsStorage)
         evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
                                      mySegmentsStorage: mySegmentsStorage,
-                                     myLargeSegmentsStorage: myLargeSegmentsStorage)
+                                     myLargeSegmentsStorage: myLargeSegmentsStorage,
+                                     fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculatorStub())
         return evaluator
     }
     

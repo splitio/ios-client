@@ -4,7 +4,6 @@
 //
 //  Created by Javier L. Avrudsky on 05/07/2019.
 //  Copyright © 2019 Split. All rights reserved.
-//
 
 import Foundation
 
@@ -23,6 +22,7 @@ class DefaultTreatmentManager: TreatmentManager {
     private let flagSetsCache: FlagSetsCache
     private let flagSetsValidator: FlagSetsValidator
     private let propertyValidator: PropertyValidator
+    private let fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
 
     private var isDestroyed = false
 
@@ -37,7 +37,8 @@ class DefaultTreatmentManager: TreatmentManager {
          keyValidator: KeyValidator,
          splitValidator: SplitValidator,
          validationLogger: ValidationMessageLogger,
-         propertyValidator: PropertyValidator) {
+         propertyValidator: PropertyValidator,
+         fallbackTreatmentsCalculator: FallbackTreatmentsCalculator) {
 
         self.key = key
         self.splitConfig = splitConfig
@@ -52,6 +53,7 @@ class DefaultTreatmentManager: TreatmentManager {
         self.splitValidator = splitValidator
         self.validationLogger = validationLogger
         self.propertyValidator = propertyValidator
+        self.fallbackTreatmentsCalculator = fallbackTreatmentsCalculator
     }
 
     func getTreatmentWithConfig(_ splitName: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions? = nil) -> SplitResult {
@@ -164,10 +166,9 @@ extension DefaultTreatmentManager {
 extension DefaultTreatmentManager {
 
     private func featureFlagsFromSets(_ sets: [String], validationTag: String) -> [String] {
-        let validatedSets = flagSetsValidator.validateOnEvaluation(
-            sets,
-            calledFrom: validationTag,
-            setsInFilter: splitConfig.bySetsFilter()?.values ?? [])
+        let validatedSets = flagSetsValidator.validateOnEvaluation(sets,
+                                                                   calledFrom: validationTag,
+                                                                   setsInFilter: splitConfig.bySetsFilter()?.values ?? [])
         return flagSetsCache.getFeatureFlagNames(forFlagSets: validatedSets)
     }
 
@@ -180,7 +181,7 @@ extension DefaultTreatmentManager {
         let controlResults: () -> [String: SplitResult] = {
             return splits.filter { !$0.isEmpty() }.reduce([String: SplitResult]()) { results, splitName in
                 var res = results
-                res[splitName] = SplitResult(treatment: SplitConstants.control)
+                res[splitName] = self.controlSplit(splitName)
                 return res
             }
         }
@@ -218,26 +219,26 @@ extension DefaultTreatmentManager {
                                                  validationTag: String) -> SplitResult {
 
         if checkAndLogIfDestroyed(logTag: validationTag) {
-            return SplitResult(treatment: SplitConstants.control)
+            return controlSplit(splitName)
         }
 
         if shouldValidate, let errorInfo = keyValidator.validate(matchingKey: key.matchingKey,
                                                                  bucketingKey: key.bucketingKey) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-            return SplitResult(treatment: SplitConstants.control)
+            return controlSplit(splitName)
         }
 
         if let errorInfo = splitValidator.validate(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
-                return SplitResult(treatment: SplitConstants.control)
+                return controlSplit(splitName)
             }
         }
 
         if let errorInfo = splitValidator.validateSplit(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {
-                return SplitResult(treatment: SplitConstants.control)
+                return controlSplit(splitName)
             }
         }
 
@@ -253,10 +254,11 @@ extension DefaultTreatmentManager {
                           evaluationOptions: evaluationOptions)
             return SplitResult(treatment: result.treatment, config: result.configuration)
         } catch {
-            logImpression(label: ImpressionsConstants.exception, treatment: SplitConstants.control,
+            let finalTreatment = fallbackTreatmentsCalculator.resolve(flagName: splitName, label: nil)
+            logImpression(label: ImpressionsConstants.exception, treatment: finalTreatment.treatment,
                           splitName: trimmedSplitName, attributes: mergedAttributes, impressionsDisabled: false,
                           validationTag: validationTag, evaluationOptions: evaluationOptions)
-            return SplitResult(treatment: SplitConstants.control)
+            return SplitResult(treatment: finalTreatment.treatment, config: finalTreatment.config)
         }
     }
 
@@ -265,13 +267,11 @@ extension DefaultTreatmentManager {
                            + "Make sure to wait for SDK readiness before using this method"
     }
 
-    private func evaluateIfReady(splitName: String,
-                                 attributes: [String: Any]?,
-                                 validationTag: String) throws -> EvaluationResult {
+    private func evaluateIfReady(splitName: String, attributes: [String: Any]?, validationTag: String) throws -> EvaluationResult {
         if !isSdkReady() {
             validationLogger.w(message: sdkNoReadyMessage(splitName: splitName), tag: validationTag)
             telemetryProducer?.recordNonReadyUsage()
-            return EvaluationResult(treatment: SplitConstants.control, label: ImpressionsConstants.notReady)
+            return controlTreatment(splitName)
         }
         return try evaluator.evalTreatment(matchingKey: key.matchingKey,
                                            bucketingKey: key.bucketingKey,
@@ -367,5 +367,17 @@ extension DefaultTreatmentManager {
             return 0
         }
         return Stopwatch.now()
+    }
+    
+    // MARK: Fallback Treatments
+    // MARK: We pass the treatment through one last filter, where it can be overriden by some Fallback Treatment
+    private func controlTreatment(_ flagName: String, label: String? = nil) -> EvaluationResult {
+        let finalTreatment = fallbackTreatmentsCalculator.resolve(flagName: flagName, label: label)
+        return EvaluationResult(treatment: finalTreatment.treatment, label: finalTreatment.label ?? "", configuration: finalTreatment.config)
+    }
+    
+    private func controlSplit(_ flagName: String) -> SplitResult {
+        let finalTreatment = fallbackTreatmentsCalculator.resolve(flagName: flagName, label: nil)
+        return SplitResult(treatment: finalTreatment.treatment, config: finalTreatment.config)
     }
 }

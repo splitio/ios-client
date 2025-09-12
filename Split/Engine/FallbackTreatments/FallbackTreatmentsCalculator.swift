@@ -10,24 +10,25 @@ class DefaultFallbackTreatmentsCalculator: NSObject, FallbackTreatmentsCalculato
 
     private let labelPrefix = "fallback - "
     private let control = SplitConstants.control
-    private let fallbacksConfig: FallbackTreatmentsConfig
+    private let fallbacks: FallbackTreatmentsConfig
 
     init(fallbacksConfig: FallbackTreatmentsConfig) {
-        self.fallbacksConfig = fallbacksConfig
+        fallbacks = fallbacksConfig
         super.init()
     }
 
     // Returns fallback for Split if exists; "control" otherwise
     func resolve(flagName: String, label: String?) -> FallbackTreatment {
-        if let treatment = fallbacksConfig.byFlag[flagName] {
-            return copyWithLabel(treatment, label: label)
+        
+        if let flagTreatment = fallbacks.byFlag[flagName] {
+            return copyWithLabel(flagTreatment, label: resolveLabel(label))
         }
 
-        if let factoryFallback = fallbacksConfig.global {
-            return copyWithLabel(factoryFallback, label: label)
+        if let clientFallback = fallbacks.global {
+            return copyWithLabel(clientFallback, label: resolveLabel(label))
         }
 
-        return FallbackTreatment(treatment: control, config: nil, label: resolveLabel(label))
+        return FallbackTreatment(treatment: control, config: nil, label: label)
     }
 
     private func resolveLabel(_ label: String?) -> String? {
@@ -36,6 +37,6 @@ class DefaultFallbackTreatmentsCalculator: NSObject, FallbackTreatmentsCalculato
     }
 
     private func copyWithLabel(_ fallback: FallbackTreatment, label: String?) -> FallbackTreatment {
-        FallbackTreatment(treatment: fallback.treatment, config: fallback.config, label: resolveLabel(label))
+        FallbackTreatment(treatment: fallback.treatment, config: fallback.config, label: label)
     }
 }
