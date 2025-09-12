@@ -164,20 +164,20 @@ extension DefaultTreatmentManager {
 
 // MARK: Treatment manager
 extension DefaultTreatmentManager {
-
+    
     private func featureFlagsFromSets(_ sets: [String], validationTag: String) -> [String] {
         let validatedSets = flagSetsValidator.validateOnEvaluation(sets,
                                                                    calledFrom: validationTag,
                                                                    setsInFilter: splitConfig.bySetsFilter()?.values ?? [])
         return flagSetsCache.getFeatureFlagNames(forFlagSets: validatedSets)
     }
-
+    
     private func getTreatmentsWithConfigNoMetrics(splits: [String],
                                                   attributes: [String: Any]?,
                                                   evaluationOptions: EvaluationOptions? = nil,
                                                   validationTag: String) -> [String: SplitResult] {
         var results = [String: SplitResult]()
-
+        
         let controlResults: () -> [String: SplitResult] = {
             return splits.filter { !$0.isEmpty() }.reduce([String: SplitResult]()) { results, splitName in
                 var res = results
@@ -185,17 +185,17 @@ extension DefaultTreatmentManager {
                 return res
             }
         }
-
+        
         if checkAndLogIfDestroyed(logTag: validationTag) {
             return controlResults()
         }
-
+        
         if let errorInfo = keyValidator.validate(matchingKey: key.matchingKey,
                                                  bucketingKey: key.bucketingKey) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             return controlResults()
         }
-
+        
         if splits.count > 0 {
             let mergedAttributes = mergeAttributes(attributes: attributes)
             let splitsNoDuplicated = Set(splits.filter { !$0.isEmpty() }.map { $0 })
@@ -211,43 +211,43 @@ extension DefaultTreatmentManager {
         }
         return results
     }
-
+    
     private func getTreatmentWithConfigNoMetrics(splitName: String,
                                                  shouldValidate: Bool = true,
                                                  attributes: [String: Any]?,
                                                  evaluationOptions: EvaluationOptions? = nil,
                                                  validationTag: String) -> SplitResult {
-
+        
         if checkAndLogIfDestroyed(logTag: validationTag) {
             return controlSplit(splitName)
         }
-
+        
         if shouldValidate, let errorInfo = keyValidator.validate(matchingKey: key.matchingKey,
                                                                  bucketingKey: key.bucketingKey) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             return controlSplit(splitName)
         }
-
+        
         if let errorInfo = splitValidator.validate(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
                 return controlSplit(splitName)
             }
         }
-
+        
         if let errorInfo = splitValidator.validateSplit(name: splitName) {
             validationLogger.log(errorInfo: errorInfo, tag: validationTag)
-            if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {
-                return controlSplit(splitName)
-            }
         }
-
+        
         let trimmedSplitName = splitName.trimmingCharacters(in: .whitespacesAndNewlines)
         let mergedAttributes = mergeAttributes(attributes: attributes)
         do {
             let result = try evaluateIfReady(splitName: trimmedSplitName,
                                              attributes: mergedAttributes,
                                              validationTag: validationTag)
+            if result.label.contains(ImpressionsConstants.splitNotFound) {
+                return SplitResult(treatment: result.treatment, config: result.configuration)
+            }
             logImpression(label: result.label, changeNumber: result.changeNumber,
                           treatment: result.treatment, splitName: trimmedSplitName, attributes: mergedAttributes,
                           impressionsDisabled: result.impressionsDisabled, validationTag: validationTag,
@@ -261,32 +261,39 @@ extension DefaultTreatmentManager {
             return SplitResult(treatment: finalTreatment.treatment, config: finalTreatment.config)
         }
     }
-
+    
     private func sdkNoReadyMessage(splitName: String) -> String {
         return "The SDK is not ready, results may be incorrect for feature flag \(splitName)."
-                           + "Make sure to wait for SDK readiness before using this method"
+        + "Make sure to wait for SDK readiness before using this method"
     }
-
+    
     private func evaluateIfReady(splitName: String, attributes: [String: Any]?, validationTag: String) throws -> EvaluationResult {
         if !isSdkReady() {
+            if let errorInfo = splitValidator.validateSplit(name: splitName) {
+                validationLogger.log(errorInfo: errorInfo, tag: validationTag)
+                if errorInfo.isError || errorInfo.hasWarning(.nonExistingSplit) {
+                    return controlTreatment(splitName, label: ImpressionsConstants.notReady)
+                }
+            }
+            
             validationLogger.w(message: sdkNoReadyMessage(splitName: splitName), tag: validationTag)
             telemetryProducer?.recordNonReadyUsage()
-            return controlTreatment(splitName)
+            return controlTreatment(splitName, label: ImpressionsConstants.notReady)
         }
         return try evaluator.evalTreatment(matchingKey: key.matchingKey,
                                            bucketingKey: key.bucketingKey,
                                            splitName: splitName,
                                            attributes: attributes)
     }
-
+    
     private func logImpression(label: String, changeNumber: Int64? = nil,
                                treatment: String, splitName: String, attributes: [String: Any]? = nil,
                                impressionsDisabled: Bool,
                                validationTag: String,
                                evaluationOptions: EvaluationOptions? = nil) {
-
+        
         let propertiesJson = serializeProperties(evaluationOptions?.properties, validationTag: validationTag)
-
+        
         let keyImpression = KeyImpression(featureName: splitName,
                                           keyName: key.matchingKey,
                                           bucketingKey: key.bucketingKey,
@@ -297,36 +304,36 @@ extension DefaultTreatmentManager {
                                           properties: propertiesJson)
         impressionLogger.pushImpression(
             impression: DecoratedImpression(impression: keyImpression, impressionsDisabled: impressionsDisabled))
-
+        
         if let externalImpressionHandler = splitConfig.impressionListener {
             let impression = keyImpression.toImpression()
             impression.attributes = attributes
             externalImpressionHandler(impression)
         }
     }
-
+    
     private func serializeProperties(_ properties: [String: Any]?, validationTag: String) -> String? {
         // nil or empty properties are skipped
         guard let properties = properties, !properties.isEmpty else {
             return nil
         }
-
+        
         // Validate properties using PropertyValidator
         let validationResult = propertyValidator.validate(
             properties: properties,
             initialSizeInBytes: 0,
             validationTag: validationTag
         )
-
+        
         if !validationResult.isValid {
             validationLogger.e(message: "Properties validation failed: \(validationResult.errorMessage ?? "Unknown error")", tag: validationTag)
             return nil
         }
-
+        
         if validationResult.validatedProperties == nil || validationResult.validatedProperties?.isEmpty == true {
             return nil
         }
-
+        
         do {
             let data = try JSONSerialization.data(withJSONObject: validationResult.validatedProperties ?? [:], options: [])
             return String(data: data, encoding: .utf8)
@@ -335,42 +342,44 @@ extension DefaultTreatmentManager {
             return nil
         }
     }
-
+    
     private func isSdkReady() -> Bool {
         return eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReadyFromCache) ||
-            eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady)
+        eventsManager.eventAlreadyTriggered(event: SplitEvent.sdkReady)
     }
-
+    
     private func checkAndLogIfDestroyed(logTag: String) -> Bool {
         if isDestroyed {
             validationLogger.e(message: "Client has already been destroyed - no calls possible", tag: logTag)
         }
         return isDestroyed
     }
-
+    
     private func mergeAttributes(attributes: [String: Any]?) -> [String: Any]? {
         let storedAttributes = attributesStorage.getAll(forKey: key.matchingKey)
-
+        
         if storedAttributes.count == 0 {
             return attributes
         }
-
+        
         guard let attributes = attributes else {
             return storedAttributes
         }
-
+        
         return attributes.merging(storedAttributes) { (current, _) in current }
     }
-
+    
     private func startTime() -> Int64 {
         if telemetryProducer == nil {
             return 0
         }
         return Stopwatch.now()
     }
-    
-    // MARK: Fallback Treatments
-    // MARK: We pass the treatment through one last filter, where it can be overriden by some Fallback Treatment
+}
+
+// MARK: Fallback Treatments
+extension DefaultTreatmentManager {
+    // We pass the treatment through one last filters, where it can be overriden by some Fallback Treatment
     private func controlTreatment(_ flagName: String, label: String? = nil) -> EvaluationResult {
         let finalTreatment = fallbackTreatmentsCalculator.resolve(flagName: flagName, label: label)
         return EvaluationResult(treatment: finalTreatment.treatment, label: finalTreatment.label ?? "", configuration: finalTreatment.config)

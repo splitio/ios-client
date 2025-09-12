@@ -35,7 +35,7 @@ final class DefaultFallbackTreatmentsCalculatorTests: XCTestCase {
 
         let result = calculator.resolve(flagName: "anyFlag", label: "testLabel")
         XCTAssertEqual(result.treatment, SplitConstants.control)
-        XCTAssertEqual(result.label, "fallback - testLabel")
+        XCTAssertEqual(result.label, "testLabel")
     }
 
     func testResolveWithNilLabel() {

@@ -368,6 +368,7 @@
 		5BD7675B2E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767582E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift */; };
 		5BD7675C2E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767592E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */; };
 		5BD767A82E6A04AE00F9EFBD /* FallbackTreatmentsCalculatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767A72E6A04A600F9EFBD /* FallbackTreatmentsCalculatorStub.swift */; };
+		5BD767AA2E6F90DB00F9EFBD /* FallbackTreatmentsE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD767A92E6F90D400F9EFBD /* FallbackTreatmentsE2ETests.swift */; };
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
@@ -1580,6 +1581,7 @@
 		5BD767582E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsCalculatorTests.swift; sourceTree = "<group>"; };
 		5BD767592E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsSanitizerTests.swift; sourceTree = "<group>"; };
 		5BD767A72E6A04A600F9EFBD /* FallbackTreatmentsCalculatorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsCalculatorStub.swift; sourceTree = "<group>"; };
+		5BD767A92E6F90D400F9EFBD /* FallbackTreatmentsE2ETests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatmentsE2ETests.swift; sourceTree = "<group>"; };
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
@@ -3227,6 +3229,7 @@
 		5BD7675A2E65E9A400F9EFBD /* FallbackTreatmentsTests */ = {
 			isa = PBXGroup;
 			children = (
+				5BD767A92E6F90D400F9EFBD /* FallbackTreatmentsE2ETests.swift */,
 				5BD767A72E6A04A600F9EFBD /* FallbackTreatmentsCalculatorStub.swift */,
 				5BD767582E65E9A400F9EFBD /* FallbackTreatmentsCalculatorTests.swift */,
 				5BD767592E65E9A400F9EFBD /* FallbackTreatmentsSanitizerTests.swift */,
@@ -4805,6 +4808,7 @@
 				956D17CD260D1B700037F575 /* ChangesCheckerMock.swift in Sources */,
 				5959C47C228050750064F968 /* SplitFactoryStub.swift in Sources */,
 				9573FB26273C50D400086DDE /* EvaluatorStub.swift in Sources */,
+				5BD767AA2E6F90DB00F9EFBD /* FallbackTreatmentsE2ETests.swift in Sources */,
 				5921ED3325379AA3000D6C8B /* ReachabilityMock.swift in Sources */,
 				95649FBA2603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift in Sources */,
 				95CED04A2B4D7903005E3C34 /* LocalhostSplitsStorageTests.swift in Sources */,
