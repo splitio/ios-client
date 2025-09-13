@@ -4,7 +4,6 @@
 //
 //  Created by Javier L. Avrudsky on 01/10/2019.
 //  Copyright © 2019 Split. All rights reserved.
-//
 
 import Foundation
 @testable import Split
@@ -15,24 +14,16 @@ class IntegrationHelper {
         ServiceEndpoints.builder().set(sdkEndpoint: mockEndPoint).set(eventsEndpoint: mockEndPoint).build()
     }
 
-    static var dummyApiKey: String {
-        "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
-    }
+    static var dummyApiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
 
-    static var dummyFolderName: String {
-        "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
-    }
+    static var dummyFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
 
-    static var dummyUserKey: String {
-        "CUSTOMER_ID"
-    }
+    static var dummyUserKey = "CUSTOMER_ID"
 
-    static var mockEndPoint: String {
-        "http://localhost:8080"
-    }
+    static var mockEndPoint = "http://localhost:8080"
 
     static var emptyMySegments: String {
-        """
+          """
           {
           \"ms\": {
                       \"k\": []
@@ -44,9 +35,7 @@ class IntegrationHelper {
           """
     }
 
-    static var emptySplitChanges: String {
-        "{\"ff\": {\"d\":[], \"s\": 9567456937865, \"t\": 9567456937869 }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": -1 }}"
-    }
+    static var emptySplitChanges = "{\"ff\": {\"d\":[], \"s\": 9567456937865, \"t\": 9567456937869 }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": -1 }}"
 
     static func emptySplitChanges(since: Int, till: Int) -> String {
         "{\"ff\": {\"d\":[], \"s\": \(since), \"t\": \(till) }, \"rbs\": {\"d\":[], \"s\": \(since), \"t\": \(till) }}"
@@ -201,38 +190,36 @@ class IntegrationHelper {
 
     static func ably40012Error() -> String {
         """
-            id:cf74eb42-f687-48e4-ad18-af2125110aac
-            event:error
-            data:{ "code": 40012,  "statusCode":400,  "message": "Invalid client id"}
-            """
+        id:cf74eb42-f687-48e4-ad18-af2125110aac
+        event:error
+        data:{ "code": 40012,  "statusCode":400,  "message": "Invalid client id"}
+        """
     }
 
     static func describeEvent(_ event: SplitInternalEvent) -> String {
         switch event {
-        case .mySegmentsUpdated:
-            return "mySegmentsUpdated"
-        case .splitsUpdated:
-            return "splitsUpdated"
-        case .mySegmentsLoadedFromCache:
-            return "mySegmentsLoadedFromCache"
-        case .splitsLoadedFromCache:
-            return "splitsLoadedFromCache"
-        case .attributesLoadedFromCache:
-            return "attributesLoadedFromCache"
-        case .sdkReadyTimeoutReached:
-            return "sdkReadyTimeoutReached"
-        case .splitKilledNotification:
-            return "splitKilledNotification"
-        case .myLargeSegmentsUpdated:
-            return "myLargeSegmentsUpdated"
-        case .myLargeSegmentsLoadedFromCache:
-            return "myLargeSegmentsLoadedFromCache"
+            case .mySegmentsUpdated:
+                return "mySegmentsUpdated"
+            case .splitsUpdated:
+                return "splitsUpdated"
+            case .mySegmentsLoadedFromCache:
+                return "mySegmentsLoadedFromCache"
+            case .splitsLoadedFromCache:
+                return "splitsLoadedFromCache"
+            case .attributesLoadedFromCache:
+                return "attributesLoadedFromCache"
+            case .sdkReadyTimeoutReached:
+                return "sdkReadyTimeoutReached"
+            case .splitKilledNotification:
+                return "splitKilledNotification"
+            case .myLargeSegmentsUpdated:
+                return "myLargeSegmentsUpdated"
+            case .myLargeSegmentsLoadedFromCache:
+                return "myLargeSegmentsLoadedFromCache"
         }
     }
 
-    static var dummyCipherKey: Data {
-        return String("11F17550-01EA-45").dataBytes!
-    }
+    static var dummyCipherKey = String("11F17550-01EA-45").dataBytes!
 }
     
 // MARK: Simplest SDK Factory
