@@ -85,8 +85,8 @@ class FallbackTreatmentsE2ETests: XCTestCase {
         let client2 = factory!.client(key: Key(matchingKey: "key2"))
         
         // Eval before ready
-        let treatment3 = client.getTreatment("non_existent_flag")  // From splitchanges_1.json
-        let treatment4 = client.getTreatment("non_existent_flag2") // From splitchanges_1.json
+        let treatment3 = client.getTreatment("non_existent_flag")
+        let treatment4 = client.getTreatment("non_existent_flag2")
         XCTAssertEqual(treatment3, fallbackTreatment)
         XCTAssertEqual(treatment4, "control")
         
@@ -191,7 +191,6 @@ class FallbackTreatmentsE2ETests: XCTestCase {
         
         // Client setup
         let config = SplitClientConfig()
-//        config.logLevel = .verbose
         config.fallbackTreatments = fallbackConfiguration
         var impressionsLabels: [String] = []
         config.impressionListener = { impression in

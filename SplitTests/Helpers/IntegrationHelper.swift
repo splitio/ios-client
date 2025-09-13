@@ -12,27 +12,27 @@ import Foundation
 class IntegrationHelper {
 
     static var mockServiceEndpoint: ServiceEndpoints {
-        return ServiceEndpoints.builder().set(sdkEndpoint: mockEndPoint).set(eventsEndpoint: mockEndPoint).build()
+        ServiceEndpoints.builder().set(sdkEndpoint: mockEndPoint).set(eventsEndpoint: mockEndPoint).build()
     }
 
     static var dummyApiKey: String {
-        return "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+        "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
     }
 
     static var dummyFolderName: String {
-        return "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
+        "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
     }
 
     static var dummyUserKey: String {
-        return "CUSTOMER_ID"
+        "CUSTOMER_ID"
     }
 
     static var mockEndPoint: String {
-        return "http://localhost:8080"
+        "http://localhost:8080"
     }
 
     static var emptyMySegments: String {
-        return """
+        """
           {
           \"ms\": {
                       \"k\": []
@@ -45,11 +45,11 @@ class IntegrationHelper {
     }
 
     static var emptySplitChanges: String {
-        return "{\"ff\": {\"d\":[], \"s\": 9567456937865, \"t\": 9567456937869 }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": -1 }}"
+        "{\"ff\": {\"d\":[], \"s\": 9567456937865, \"t\": 9567456937869 }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": -1 }}"
     }
 
     static func emptySplitChanges(since: Int, till: Int) -> String {
-        return "{\"ff\": {\"d\":[], \"s\": \(since), \"t\": \(till) }, \"rbs\": {\"d\":[], \"s\": \(since), \"t\": \(till) }}"
+        "{\"ff\": {\"d\":[], \"s\": \(since), \"t\": \(till) }, \"rbs\": {\"d\":[], \"s\": \(since), \"t\": \(till) }}"
     }
 
 
@@ -79,7 +79,7 @@ class IntegrationHelper {
     }
 
     static func dummyImpressions() -> String {
-        return """
+        """
         [{\"testName\": \"test1\", \"keyImpressions\":[
         {
         \"feature\": \"test1\",
@@ -94,7 +94,7 @@ class IntegrationHelper {
     }
 
     static func dummyReducedImpressions() -> String {
-        return """
+        """
         [{\"f\": \"test1\", \"i\":[
         {
         \"b\": \"bkey\",
@@ -109,23 +109,23 @@ class IntegrationHelper {
     }
 
     static func buildImpressionKey(impression: Impression) -> String {
-        return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
+        buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
     }
 
     static func buildImpressionKey(impression: KeyImpression) -> String {
-        return buildImpressionKey(key: impression.keyName, splitName: impression.featureName!, treatment: impression.treatment)
+        buildImpressionKey(key: impression.keyName, splitName: impression.featureName!, treatment: impression.treatment)
     }
 
     static func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {
-        return "(\(key)_\(splitName)_\(treatment)"
+        "(\(key)_\(splitName)_\(treatment)"
     }
 
     static func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
-        return try Json.decodeFrom(json: content, to: [ImpressionsTest].self)
+        try Json.decodeFrom(json: content, to: [ImpressionsTest].self)
     }
 
     static func buildEventsFromJson(content: String) throws -> [EventDTO] {
-        return try Json.dynamicDecodeFrom(json: content, to: [EventDTO].self)
+        try Json.dynamicDecodeFrom(json: content, to: [EventDTO].self)
     }
 
     static func getTrackEventBy(value: Double, trackHits: [String]) -> EventDTO? {
@@ -147,7 +147,7 @@ class IntegrationHelper {
 
 
     static func dummySseResponse(delay: Int = 0) -> String {
-        return """
+        """
         {
         \"pushEnabled\": true,
         \"connDelay\": \(delay),
@@ -157,7 +157,7 @@ class IntegrationHelper {
     }
 
     static func sseDisabledResponse() -> String {
-        return """
+        """
         {
         \"pushEnabled\": false
         }
@@ -173,7 +173,7 @@ class IntegrationHelper {
     }
 
     static func mySegments(names: [String]) -> String {
-        return TestingHelper.newAllSegmentsChangeJson(ms: names)
+        TestingHelper.newAllSegmentsChangeJson(ms: names)
     }
 
     static func tlog(_ message: String) {
@@ -181,7 +181,7 @@ class IntegrationHelper {
     }
 
     static func enabledTelemetry() -> TelemetryConfigHelper {
-        return TelemetryConfigHelperStub(enabled: true)
+        TelemetryConfigHelperStub(enabled: true)
     }
 
     static func loadSplitChangeFile(name fileName: String) -> SplitChange? {
@@ -200,7 +200,7 @@ class IntegrationHelper {
     }
 
     static func ably40012Error() -> String {
-        return """
+        """
             id:cf74eb42-f687-48e4-ad18-af2125110aac
             event:error
             data:{ "code": 40012,  "statusCode":400,  "message": "Invalid client id"}
@@ -236,8 +236,8 @@ class IntegrationHelper {
 }
     
 // MARK: Simplest SDK Factory
-// Use this two methods to quickly setup a Factory for testing. While it has an "empty"
-// behavior, it mets the mininum conditions to trigger SDK_READY.
+// Use this two methods to quickly setup a Factory for testing.
+// It mets the mininum conditions to trigger SDK_READY, and comes with flags.
 extension IntegrationHelper {
     
     func simplestFactory() -> SplitFactoryBuilder { // Initialize a working Factory ready to hook custom keys
