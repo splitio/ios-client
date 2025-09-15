@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - "**"
-  push:
-    branches:
-      - "sonar-debug"
 
 # Cancel in-progress runs when a new workflow with the same group is triggered
 concurrency:
