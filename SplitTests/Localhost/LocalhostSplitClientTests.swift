@@ -32,7 +32,8 @@ class LocalhostSplitClientTests: XCTestCase {
                                       eventsManager: eventsManager,
                                       evaluator: DefaultEvaluator(splitsStorage: splitsStorage,
                                                                   mySegmentsStorage: EmptyMySegmentsStorage(),
-                                                                  myLargeSegmentsStorage: EmptyMySegmentsStorage()))
+                                                                  myLargeSegmentsStorage: EmptyMySegmentsStorage(),
+                                                                  fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculatorStub()))
     }
     
     override func tearDown() {
