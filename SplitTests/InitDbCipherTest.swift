@@ -17,13 +17,11 @@ class InitDbCipherTest: XCTestCase {
     let apiKey1 = IntegrationHelper.dummyApiKey
     let apiKey2 = "42bc399049fd8653247c5ea42bc3c1ae2c6a"
     var secureStorage = SecureStorageStub()
+    
     override func setUp() {
         GlobalSecureStorage.testStorage = secureStorage
         dbHelper = createDbHelper()
-        db = TestingHelper.createTestDatabase(name: "test",
-                                              queue: DispatchQueue.test,
-                                              helper: dbHelper)
-
+        db = TestingHelper.createTestDatabase(name: "test", queue: DispatchQueue.test, helper: dbHelper)
     }
 
     func testEncryptDb() throws {

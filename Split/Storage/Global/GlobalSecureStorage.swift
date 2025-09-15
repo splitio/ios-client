@@ -12,7 +12,7 @@ class GlobalSecureStorage: KeyValueStorage {
     private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
 
     // Only for testing
-    static var testStorage: KeyValueStorage?
+    nonisolated(unsafe) static var testStorage: KeyValueStorage?
 
     static var shared: KeyValueStorage {
         return testStorage ?? prodStorage
