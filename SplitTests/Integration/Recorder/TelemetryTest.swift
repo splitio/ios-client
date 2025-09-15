@@ -218,9 +218,11 @@ class TelemetryTest: XCTestCase {
         eventsManager.isSegmentsReadyFromCacheFired = false
         eventsManager.isSplitsReadyFromCacheFired = true
 
-        return DefaultTreatmentManager(evaluator: DefaultEvaluator(splitsStorage: splitsStorage, 
+        let fallbacksCalculator = DefaultFallbackTreatmentsCalculatorStub()
+        return DefaultTreatmentManager(evaluator: DefaultEvaluator(splitsStorage: splitsStorage,
                                                                    mySegmentsStorage: mySegmentsStorage,
-                                                                  myLargeSegmentsStorage: EmptyMySegmentsStorage()),
+                                                                   myLargeSegmentsStorage: EmptyMySegmentsStorage(),
+                                                                   fallbackTreatmentsCalculator: fallbacksCalculator),
                                        key: userKey,
                                        splitConfig: SplitClientConfig(),
                                        eventsManager: eventsManager,
@@ -231,7 +233,8 @@ class TelemetryTest: XCTestCase {
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
                                        validationLogger: ValidationMessageLoggerStub(),
-                                       propertyValidator: PropertyValidatorStub())
+                                       propertyValidator: PropertyValidatorStub(),
+                                       fallbackTreatmentsCalculator: fallbacksCalculator)
     }
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
