@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - "**"
+  push:
+    branches:
+      - "sonar-debug"
 
 # Cancel in-progress runs when a new workflow with the same group is triggered
 concurrency:
@@ -13,7 +16,7 @@ concurrency:
 jobs:
   build-and-collect-coverage:
     name: Build & Collect Coverage
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 15
     steps:
       - name: Checkout
@@ -27,8 +30,8 @@ jobs:
           xcodebuild -quiet test \
             -project Split.xcodeproj \
             -scheme Split \
-            -parallel-testing-enabled YES \
-            -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 15' \
+            -testPlan "SplitiOSFull" \
+            -destination 'platform=iOS Simulator,OS=18.4,name=iPhone 16' \
             -enableCodeCoverage YES \
             -resultBundlePath build/Logs/Test/TestResults.xcresult \
             -derivedDataPath build
