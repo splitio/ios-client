@@ -4,7 +4,6 @@
 //
 //  Created by Javier L. Avrudsky on 01/10/2019.
 //  Copyright © 2019 Split. All rights reserved.
-//
 
 import Foundation
 @testable import Split
@@ -12,27 +11,19 @@ import Foundation
 class IntegrationHelper {
 
     static var mockServiceEndpoint: ServiceEndpoints {
-        return ServiceEndpoints.builder().set(sdkEndpoint: mockEndPoint).set(eventsEndpoint: mockEndPoint).build()
+        ServiceEndpoints.builder().set(sdkEndpoint: mockEndPoint).set(eventsEndpoint: mockEndPoint).build()
     }
 
-    static var dummyApiKey: String {
-        return "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
-    }
+    static var dummyApiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
 
-    static var dummyFolderName: String {
-        return "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
-    }
+    static var dummyFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
 
-    static var dummyUserKey: String {
-        return "CUSTOMER_ID"
-    }
+    static var dummyUserKey = "CUSTOMER_ID"
 
-    static var mockEndPoint: String {
-        return "http://localhost:8080"
-    }
+    static var mockEndPoint = "http://localhost:8080"
 
     static var emptyMySegments: String {
-        return """
+          """
           {
           \"ms\": {
                       \"k\": []
@@ -44,12 +35,10 @@ class IntegrationHelper {
           """
     }
 
-    static var emptySplitChanges: String {
-        return "{\"ff\": {\"d\":[], \"s\": 9567456937865, \"t\": 9567456937869 }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": -1 }}"
-    }
+    static var emptySplitChanges = "{\"ff\": {\"d\":[], \"s\": 9567456937865, \"t\": 9567456937869 }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": -1 }}"
 
     static func emptySplitChanges(since: Int, till: Int) -> String {
-        return "{\"ff\": {\"d\":[], \"s\": \(since), \"t\": \(till) }, \"rbs\": {\"d\":[], \"s\": \(since), \"t\": \(till) }}"
+        "{\"ff\": {\"d\":[], \"s\": \(since), \"t\": \(till) }, \"rbs\": {\"d\":[], \"s\": \(since), \"t\": \(till) }}"
     }
 
 
@@ -79,7 +68,7 @@ class IntegrationHelper {
     }
 
     static func dummyImpressions() -> String {
-        return """
+        """
         [{\"testName\": \"test1\", \"keyImpressions\":[
         {
         \"feature\": \"test1\",
@@ -94,7 +83,7 @@ class IntegrationHelper {
     }
 
     static func dummyReducedImpressions() -> String {
-        return """
+        """
         [{\"f\": \"test1\", \"i\":[
         {
         \"b\": \"bkey\",
@@ -109,23 +98,23 @@ class IntegrationHelper {
     }
 
     static func buildImpressionKey(impression: Impression) -> String {
-        return buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
+        buildImpressionKey(key: impression.keyName!, splitName: impression.feature!, treatment: impression.treatment!)
     }
 
     static func buildImpressionKey(impression: KeyImpression) -> String {
-        return buildImpressionKey(key: impression.keyName, splitName: impression.featureName!, treatment: impression.treatment)
+        buildImpressionKey(key: impression.keyName, splitName: impression.featureName!, treatment: impression.treatment)
     }
 
     static func buildImpressionKey(key: String, splitName: String, treatment: String) -> String {
-        return "(\(key)_\(splitName)_\(treatment)"
+        "(\(key)_\(splitName)_\(treatment)"
     }
 
     static func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {
-        return try Json.decodeFrom(json: content, to: [ImpressionsTest].self)
+        try Json.decodeFrom(json: content, to: [ImpressionsTest].self)
     }
 
     static func buildEventsFromJson(content: String) throws -> [EventDTO] {
-        return try Json.dynamicDecodeFrom(json: content, to: [EventDTO].self)
+        try Json.dynamicDecodeFrom(json: content, to: [EventDTO].self)
     }
 
     static func getTrackEventBy(value: Double, trackHits: [String]) -> EventDTO? {
@@ -147,7 +136,7 @@ class IntegrationHelper {
 
 
     static func dummySseResponse(delay: Int = 0) -> String {
-        return """
+        """
         {
         \"pushEnabled\": true,
         \"connDelay\": \(delay),
@@ -157,7 +146,7 @@ class IntegrationHelper {
     }
 
     static func sseDisabledResponse() -> String {
-        return """
+        """
         {
         \"pushEnabled\": false
         }
@@ -173,7 +162,7 @@ class IntegrationHelper {
     }
 
     static func mySegments(names: [String]) -> String {
-        return TestingHelper.newAllSegmentsChangeJson(ms: names)
+        TestingHelper.newAllSegmentsChangeJson(ms: names)
     }
 
     static func tlog(_ message: String) {
@@ -181,7 +170,7 @@ class IntegrationHelper {
     }
 
     static func enabledTelemetry() -> TelemetryConfigHelper {
-        return TelemetryConfigHelperStub(enabled: true)
+        TelemetryConfigHelperStub(enabled: true)
     }
 
     static func loadSplitChangeFile(name fileName: String) -> SplitChange? {
@@ -200,11 +189,11 @@ class IntegrationHelper {
     }
 
     static func ably40012Error() -> String {
-        return """
-            id:cf74eb42-f687-48e4-ad18-af2125110aac
-            event:error
-            data:{ "code": 40012,  "statusCode":400,  "message": "Invalid client id"}
-            """
+        """
+        id:cf74eb42-f687-48e4-ad18-af2125110aac
+        event:error
+        data:{ "code": 40012,  "statusCode":400,  "message": "Invalid client id"}
+        """
     }
 
     static func describeEvent(_ event: SplitInternalEvent) -> String {
@@ -232,7 +221,73 @@ class IntegrationHelper {
         }
     }
 
-    static var dummyCipherKey: Data {
-        return String("11F17550-01EA-45").dataBytes!
+    static var dummyCipherKey = String("11F17550-01EA-45").dataBytes!
+}
+    
+// MARK: Simplest SDK Factory
+// Use this two methods to quickly setup a Factory for testing.
+// It mets the mininum conditions to trigger SDK_READY, and comes with flags.
+extension IntegrationHelper {
+    
+    func simplestFactory() -> SplitFactoryBuilder { // Initialize a working Factory ready to hook custom keys
+        
+        ///  let factory = IntegrationHelper().simplestFactory()
+        ///    .setApiKey(IntegrationHelper.dummyApiKey)
+        ///    .setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
+        ///    .setConfig(SplitConfig())
+        ///    .build()
+        ///  let client = factory!.client
+        
+        let builder = DefaultSplitFactoryBuilder()
+        builder.setHttpClient(buildSimplestHttpClient())
+        builder.setTestDatabase(TestingHelper.createTestDatabase(name: "test"))
+        return builder
+    }
+    
+    func simplestFactoryWithDummyKeys() -> SplitFactoryBuilder { // Initialize a working Factory in one line
+        
+        ///  let factory = IntegrationHelper().simplestFactoryWithDummyKeys().setConfig(SplitConfig()).build()
+        ///  let client = factory!.client
+        
+        simplestFactory()
+            .setApiKey(IntegrationHelper.dummyApiKey)
+            .setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
+    }
+    
+    private func buildSimplestHttpClient() -> HttpClient {
+        DefaultHttpClient(session: HttpSessionMock(), requestManager: buildSimplestReqManager())
+    }
+    
+    private func buildSimplestReqManager() -> HttpRequestManagerTestDispatcher {
+        HttpRequestManagerTestDispatcher(dispatcher: IntegrationHelper().buildSimplestTestDispatcher(), streamingHandler: IntegrationHelper().buildSimplestStreamingHandler())
+    }
+    
+    private func buildSimplestStreamingHandler() -> TestStreamResponseBindingHandler {
+        { request in TestStreamResponseBinding.createFor(request: request, code: 200) }
+    }
+    
+    private func buildSimplestTestDispatcher() -> HttpClientTestDispatcher {
+        return { request in
+            if request.isSplitEndpoint() {
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSampleSplitsChange()))
+            }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            if request.isImpressionsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+            return TestDispatcherResponse(code: 200)
+        }
+    }
+    
+    private func loadSampleSplitsChange() -> TargetingRulesChange? {
+        if let file = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json"), let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
+            return change
+        }
+        return nil
     }
 }

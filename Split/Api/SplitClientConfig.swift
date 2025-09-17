@@ -25,7 +25,7 @@ public class SplitClientConfig: NSObject {
 
     ///
     /// The treatment log captures which customer saw what treatment ("on", "off", etc) at what time.
-    // This log is periodically flushed back to Split servers.
+    /// This log is periodically flushed back to Split servers.
     /// This configuration controls how quickly does the cache expire after a write (in seconds).
     /// Default: 1800 seconds (30 minutes)
     ///
@@ -97,6 +97,27 @@ public class SplitClientConfig: NSObject {
     }
 
     @objc public var serviceEndpoints = ServiceEndpoints.builder().build()
+
+    ///
+    /// Fallback Treatments at the SDK or flag level.
+    ///
+    /// ### Usage Example:
+    /// ```swift
+    /// let fallbackTreatmentConfiguration = FallbackTreatmentConfiguration.builder()
+    ///    .global(FallbackTreatment("off", config: "{\"config_value\":true}"))
+    ///    .byFlag([
+    ///       "my_flag": "false"
+    ///    ])
+    ///    .byFlag([
+    ///      "my_flag_2": FallbackTreatment("false", "{\"message\": \"not found\"}")
+    ///    ])
+    ///    .build()
+    ///  let config = SplitClientConfig.builder()
+    ///    .fallbackTreatments(fallbackTreatmentConfiguration)
+    ///    .build()
+    /// ```
+    ///
+    @objc public var fallbackTreatments = FallbackTreatmentsConfig.builder().build()
 
     ///
     /// Enables debug messages in console.
