@@ -53,24 +53,26 @@ class StreamingAuthFail4xxTest: XCTestCase {
         var timeOutFired = false
         var sdkReadyFired = false
 
-        client.on(event: SplitEvent.sdkReady) {
+        client.on(event: .sdkReady) {
             sdkReadyFired = true
             sdkReadyExpectation.fulfill()
         }
 
-        client.on(event: SplitEvent.sdkReadyTimedOut) {
+        client.on(event: .sdkReadyTimedOut) {
             timeOutFired = true
             sdkReadyExpectation.fulfill()
         }
 
         wait(for: [sdkReadyExpectation, mySegExp, splitsChgExp], timeout: 20)
+        
+        ThreadUtils.delay(seconds: 10)
 
         XCTAssertTrue(sdkReadyFired)
         XCTAssertFalse(timeOutFired)
         XCTAssertEqual(1, sseAuthHits)
         XCTAssertEqual(0, sseConnHits)
-        XCTAssertEqual(2, mySegmentsHits)
-        XCTAssertEqual(2, splitsChangesHits)
+        XCTAssertEqual(1, mySegmentsHits) // For Smart Pausing
+        XCTAssertGreaterThan(splitsChangesHits, 5)
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
@@ -90,9 +92,7 @@ class StreamingAuthFail4xxTest: XCTestCase {
             }
             if request.isMySegmentsEndpoint() {
                 self.mySegmentsHits+=1
-                if self.mySegmentsHits > 1 {
-                    self.mySegExp.fulfill()
-                }
+                self.mySegExp.fulfill()
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
             }
             if request.isAuthEndpoint() {
@@ -110,6 +110,5 @@ class StreamingAuthFail4xxTest: XCTestCase {
             return self.streamingBinding!
         }
     }
-
 }
 

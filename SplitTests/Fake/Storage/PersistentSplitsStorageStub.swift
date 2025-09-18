@@ -21,7 +21,6 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     var getAllCalled = false
     var updateCalled = false
-    var getSegmentsInUseCalled = false
     var deleteCalled = false
     var clearCalled = false
     var closeCalled = false
@@ -46,13 +45,14 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
 
     func update(splitChange: ProcessedSplitChange) {
         processedSplitChange = splitChange
+        changeNumber = splitChange.changeNumber
         updateCalled = true
     }
 
     func update(split: Split) {
         updateSplitCalled  = true
         splits[split.name ?? ""] = split
-        snapshot = SplitsSnapshot(changeNumber: snapshot.changeNumber, splits: splits.values.compactMap { $0 },
+        snapshot = SplitsSnapshot(changeNumber: changeNumber, splits: splits.values.compactMap { $0 },
                                   updateTimestamp: snapshot.updateTimestamp)
     }
 
@@ -97,16 +97,5 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
     func getBySetsFilter() -> SplitFilter? {
         getBySetsFilterCalled = false
         return nil
-    }
-    
-    var segmentsInUse: Int64 = 0
-    func update(segmentsInUse: Int64) {
-        self.segmentsInUse = segmentsInUse
-        delegate?.update(segmentsInUse: segmentsInUse)
-    }
-    
-    func getSegmentsInUse() -> Int64? {
-        getSegmentsInUseCalled = true
-        return segmentsInUse
     }
 }

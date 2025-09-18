@@ -177,7 +177,7 @@ extension PrerequisitesMatcherTests {
         storage.updateWithoutChecks(split: split)
         storage.updateWithoutChecks(split: split2)
         
-        context = EvalContext(evaluator: DefaultEvaluator(splitsStorage: storage, mySegmentsStorage: MySegmentsStorageStub()), mySegmentsStorage: MySegmentsStorageStub(), myLargeSegmentsStorage: nil, ruleBasedSegmentsStorage: nil)
+        context = EvalContext(evaluator: DefaultEvaluator(splitsStorage: storage, mySegmentsStorage: MySegmentsStorageStub(), fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculatorStub()), mySegmentsStorage: MySegmentsStorageStub(), myLargeSegmentsStorage: nil, ruleBasedSegmentsStorage: nil)
         
         values = EvalValues(matchValue: "", matchingKey: "", bucketingKey: nil)
     }

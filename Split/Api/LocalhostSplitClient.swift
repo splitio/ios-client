@@ -4,7 +4,6 @@
 //
 //  Created by Javier L. Avrudsky on 14/02/2019.
 //  Copyright © 2019 Split. All rights reserved.
-//
 
 import Foundation
 
@@ -121,8 +120,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return results
     }
 
-    public func on(event: SplitEvent, runInBackground: Bool,
-                   execute action: @escaping SplitAction) {
+    public func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
     }
 
@@ -134,8 +132,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         on(event: event, runInBackground: false, queue: nil, execute: action)
     }
 
-    private func on(event: SplitEvent, runInBackground: Bool,
-                    queue: DispatchQueue?, execute action: @escaping SplitAction) {
+    private func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
 
         guard let factory = clientManger?.splitFactory else { return }
         if let eventsManager = self.eventsManager {
@@ -160,42 +157,40 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
 
     public func track(trafficType: String, eventType: String) -> Bool {
-        return true
+        true
     }
 
     public func track(trafficType: String, eventType: String, value: Double) -> Bool {
-        return true
+        true
     }
 
     public func track(eventType: String) -> Bool {
-        return true
+        true
     }
 
     public func track(eventType: String, value: Double) -> Bool {
-        return true
+        true
     }
 
     public func track(trafficType: String, eventType: String, properties: [String: Any]?) -> Bool {
-        return true
+        true
     }
 
     public func track(trafficType: String, eventType: String, value: Double, properties: [String: Any]?) -> Bool {
-        return true
+        true
     }
 
     public func track(eventType: String, properties: [String: Any]?) -> Bool {
-        return true
+        true
     }
 
     public func track(eventType: String, value: Double, properties: [String: Any]?) -> Bool {
-        return true
+        true
     }
 
-    public func setUserConsent(enabled: Bool) {
-    }
+    public func setUserConsent(enabled: Bool) {}
 
-    public func flush() {
-    }
+    public func flush() {}
 
     public func destroy() {
         splitsStorage.destroy()
@@ -211,63 +206,63 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
 extension LocalhostSplitClient {
 
     public func setAttribute(name: String, value: Any) -> Bool {
-        return true
+        true
     }
 
     public func getAttribute(name: String) -> Any? {
-        return nil
+        nil
     }
 
     public func setAttributes(_ values: [String: Any]) -> Bool {
-        return true
+        true
     }
 
     public func getAttributes() -> [String: Any]? {
-        return nil
+        nil
     }
 
     public func removeAttribute(name: String) -> Bool {
-        return true
+        true
     }
 
     public func clearAttributes() -> Bool {
-        return true
+        true
     }
 }
 
 // MARK: TreatmentBySets Feature
 extension LocalhostSplitClient {
     public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: String] {
-        return [String: String]()
+        [String: String]()
     }
 
     public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: String] {
-        return [String: String]()
+        [String: String]()
     }
 
     public func getTreatmentsWithConfigByFlagSet(_ flagSet: String, attributes: [String: Any]?) -> [String: SplitResult] {
-        return [String: SplitResult]()
+        [String: SplitResult]()
     }
 
     public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String], attributes: [String: Any]?) -> [String: SplitResult] {
-        return [String: SplitResult]()
+        [String: SplitResult]()
     }
 
     public func getTreatmentsByFlagSet(_ flagSet: String, attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
-        return [String: String]()
+        [String: String]()
     }
 
     public func getTreatmentsByFlagSets(_ flagSets: [String], attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: String] {
-        return [String: String]()
+        [String: String]()
     }
 
     public func getTreatmentsWithConfigByFlagSet(_ flagSet: String,
                                                  attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
-        return [String: SplitResult]()
+        [String: SplitResult]()
     }
 
     public func getTreatmentsWithConfigByFlagSets(_ flagSets: [String],
                                                   attributes: [String: Any]?, evaluationOptions: EvaluationOptions?) -> [String: SplitResult] {
-        return [String: SplitResult]()
+        [String: SplitResult]()
     }
 }
