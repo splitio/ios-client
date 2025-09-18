@@ -42,13 +42,13 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
                 return true
             } else {
                 // Fail
-                let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
+                let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .errorSegmentsSync, data: []))
                 notifyUpdate(event)
             }
         } catch {
             // Fail
             Logger.e("Error while fetching segments in method: \(error.localizedDescription)")
-            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .errorSegmentsSync, data: []))
             notifyUpdate(event)
             errorHandler?(error)
         }

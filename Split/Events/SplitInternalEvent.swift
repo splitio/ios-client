@@ -1,27 +1,36 @@
-//
-//  SplitInternalEvent.swift
-//  Split
-//
-//  Created by Sebastian Arrubia on 4/16/18.
-//
+//  Created by Sebastian Arrubia on 4/16/18
 
 import Foundation
 
 // All events (internal & external) support metadata.
-// Internal errors are propagated to the customer as events "(.sdkError)". The error info will travel as the event metadata.
-struct SplitInternalEventWithMetadata {
-    let type: SplitInternalEvent
-    let metadata: EventMetadata?
+// Internal errors are propagated to the customer as events "(.sdkError)".
+// The error info will travel as the event metadata.
+@objc public enum EventMetadataType: Int {
+    case errorFeatureFlagsSync
+    case errorSegmentsSync
+    case errorAuth
+    case errorStreaming
+    case errorImpressions
     
-    init(_ type: SplitInternalEvent, metadata: EventMetadata? = nil) {
-        self.type = type
-        self.metadata = metadata
+    public func toString() -> String {
+        switch self {
+            case .errorFeatureFlagsSync:
+                return "ERROR_FEATURE_FLAGS_SYNC"
+            case .errorSegmentsSync:
+                return "ERROR_SEGMENTS_SYNC"
+            case .errorAuth:
+                return "ERROR_AUTH"
+            case .errorStreaming:
+                return "ERROR_STREAMING"
+            case .errorImpressions:
+                return "ERROR_IMPRESSIONS"
+        }
     }
 }
 
 @objc public class EventMetadata: NSObject {
-    var type: EventMetadataType
-    var data: [String] = []
+    @objc public let type: EventMetadataType
+    @objc public let data: [String]
     
     init(type: EventMetadataType, data: [String] = []) {
         self.type = type
@@ -29,17 +38,13 @@ struct SplitInternalEventWithMetadata {
     }
 }
 
-enum EventMetadataType: Int {
-    case featureFlagsSyncError
-    case segmentsSyncError
+struct SplitInternalEventWithMetadata {
+    let type: SplitInternalEvent
+    let metadata: EventMetadata?
     
-    public func toString() -> String {
-        switch self {
-            case .featureFlagsSyncError:
-                return "FEATURE_FLAGS_SYNC_ERROR"
-            case .segmentsSyncError:
-                return "SEGMENTS_SYNC_ERROR"
-        }
+    init(_ type: SplitInternalEvent, metadata: EventMetadata? = nil) {
+        self.type = type
+        self.metadata = metadata
     }
 }
 

@@ -166,7 +166,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
         // 1. Try to Sync
         guard let result = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber) else {
             // Fail
-            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .errorFeatureFlagsSync, data: []))
             notifyUpdate(event)
             return
         }
@@ -177,7 +177,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
             notifyUpdate(.splitsUpdated)
         } else if !result.success {
             // Fail
-            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .errorFeatureFlagsSync, data: []))
             notifyUpdate(event)
         }
     }
@@ -219,13 +219,13 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
                 }
             } else {
                 // Fail
-                let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
+                let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .errorSegmentsSync, data: []))
                 notifyUpdate(event)
             }
         } catch {
             // Fail
             Logger.e("Problem fetching segments: %@", error.localizedDescription)
-            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .segmentsSyncError, data: []))
+            let event = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .errorSegmentsSync, data: []))
             notifyUpdate(event)
         }
     }

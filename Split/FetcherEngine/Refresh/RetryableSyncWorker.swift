@@ -138,13 +138,13 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
                 return true
             } else {
                 // Fail
-                let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
+                let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .errorFeatureFlagsSync, data: []))
                 notifyUpdate(eventWithMetadata)
             }
         } catch {
             // Fail
             Logger.e("Error while fetching splits in method: \(error.localizedDescription)")
-            let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
+            let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .errorFeatureFlagsSync, data: []))
             notifyUpdate(eventWithMetadata)
             errorHandler?(error)
         }
@@ -198,13 +198,13 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
                 return true
             } else {
                 // Fail
-                let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
+                let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .errorFeatureFlagsSync, data: []))
                 notifyUpdate(eventWithMetadata)
             }
         } catch {
             // Fail
             Logger.e("Error while fetching splits in method \(#function): \(error.localizedDescription)")
-            let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .featureFlagsSyncError, data: []))
+            let eventWithMetadata = SplitInternalEventWithMetadata(.sdkError, metadata: EventMetadata(type: .errorFeatureFlagsSync, data: []))
             notifyUpdate(eventWithMetadata)
             errorHandler?(error)
         }
