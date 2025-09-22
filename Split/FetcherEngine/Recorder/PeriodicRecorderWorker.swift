@@ -16,7 +16,7 @@ protocol PeriodicRecorderWorker {
     func destroy()
 }
 //
-class DefaultPeriodicRecorderWorker: PeriodicRecorderWorker {
+class DefaultPeriodicRecorderWorker: PeriodicRecorderWorker, @unchecked Sendable {
 
     private let recorderWorker: RecorderWorker
     private var fetchTimer: PeriodicTimer

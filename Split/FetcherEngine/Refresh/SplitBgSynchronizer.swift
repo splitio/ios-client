@@ -10,7 +10,7 @@ import Foundation
 #if os(iOS) || os(tvOS)
 import BackgroundTasks
 
-@objc public class SplitBgSynchronizer: NSObject {
+@objc public class SplitBgSynchronizer: NSObject, @unchecked Sendable {
 
     @objc public static let shared = SplitBgSynchronizer()
 
@@ -129,7 +129,7 @@ import BackgroundTasks
     }
 }
 
-struct BackgroundSyncExecutor {
+struct BackgroundSyncExecutor: @unchecked Sendable {
     private let splitDatabase: SplitDatabase
     private let splitsSyncWorker: BackgroundSyncWorker
     private let eventsRecorderWorker: RecorderWorker

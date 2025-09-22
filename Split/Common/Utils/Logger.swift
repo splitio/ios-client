@@ -9,7 +9,7 @@ import Foundation
 
 struct TimeChecker {
 
-    private static var startTime: Int64 = 0
+    nonisolated(unsafe) private static var startTime: Int64 = 0
     private static let tag = "[SPTPRF] "
     private static let showTimestamp = true
     private static let showSinceMsg = true
@@ -71,7 +71,7 @@ class Logger {
 
     var level: SplitLogLevel = .none
 
-    static let shared: Logger = {
+    nonisolated(unsafe) static let shared: Logger = {
         return Logger()
     }()
 

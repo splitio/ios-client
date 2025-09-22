@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
+class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification>, @unchecked Sendable {
 
     private let synchronizer: SegmentsSynchronizerWrapper
     private let mySegmentsStorage: MySegmentsStorage

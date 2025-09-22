@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol SplitEventsManager: AnyObject {
+protocol SplitEventsManager: AnyObject, Sendable {
     func register(event: SplitEvent, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
     func start()
@@ -16,18 +16,18 @@ protocol SplitEventsManager: AnyObject {
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
 }
 
-class DefaultSplitEventsManager: SplitEventsManager {
+final class DefaultSplitEventsManager: SplitEventsManager {
     private let readingRefreshTime: Int
 
-    private var sdkReadyTimeStart: Int64
+    nonisolated(unsafe) private var sdkReadyTimeStart: Int64
 
-    private var subscriptions = [SplitEvent: [SplitEventTask]]()
-    private var executionTimes: [String: Int]
-    private var triggered: [SplitInternalEvent]
+    nonisolated(unsafe) private var subscriptions = [SplitEvent: [SplitEventTask]]()
+    nonisolated(unsafe) private var executionTimes: [String: Int]
+    nonisolated(unsafe) private var triggered: [SplitInternalEvent]
     private let processQueue: DispatchQueue
     private let dataAccessQueue: DispatchQueue
-    private var isStarted: Bool
-    private var eventsQueue: InternalEventBlockingQueue
+    nonisolated(unsafe) private var isStarted: Bool
+    nonisolated(unsafe) private var eventsQueue: InternalEventBlockingQueue
 
     init(config: SplitClientConfig) {
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process", attributes: .concurrent)

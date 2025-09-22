@@ -8,8 +8,8 @@
 import Foundation
 
 protocol HttpRequest {
-    typealias RequestCompletionHandler = (HttpResponse) -> Void
-    typealias RequestErrorHandler = (HttpError) -> Void
+    typealias RequestCompletionHandler = @Sendable (HttpResponse) -> Void
+    typealias RequestErrorHandler = @Sendable (HttpError) -> Void
 
     var identifier: Int { get }
     var url: URL { get }

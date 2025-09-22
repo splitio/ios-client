@@ -13,7 +13,7 @@ enum BlockingQueueError: Error {
     case noElementAvailable
 }
 
-class GenericBlockingQueue<Item> {
+class GenericBlockingQueue<Item: Sendable>: @unchecked Sendable {
     private var elements: [Item]
     private let dispatchQueue: DispatchQueue
     private let semaphore: DispatchSemaphore

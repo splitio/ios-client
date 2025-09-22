@@ -20,13 +20,13 @@ protocol HttpRequestManager {
     func destroy()
 }
 
-class DefaultHttpRequestManager: NSObject {
-    private var requests = HttpRequestList()
-    private var authenticator: SplitHttpsAuthenticator?
+class DefaultHttpRequestManager: NSObject, @unchecked Sendable {
+    private nonisolated(unsafe) var requests = HttpRequestList()
+    private nonisolated(unsafe) var authenticator: SplitHttpsAuthenticator?
 
-    private let pinChecker: TlsPinChecker?
+    nonisolated(unsafe) private let pinChecker: TlsPinChecker?
 
-    private let notificationHelper: NotificationHelper?
+    nonisolated(unsafe) private let notificationHelper: NotificationHelper?
 
     init(authententicator: SplitHttpsAuthenticator? = nil,
          pinChecker: TlsPinChecker?,

@@ -8,13 +8,13 @@
 
 import Foundation
 
-protocol PersistentMySegmentsStorage {
+protocol PersistentMySegmentsStorage: Sendable {
     func set(_ change: SegmentChange, forKey key: String)
     func getSnapshot(forKey key: String) -> SegmentChange?
     func deleteAll()
 }
 
-class PersistentSegmentsStorage: PersistentMySegmentsStorage {
+class PersistentSegmentsStorage: PersistentMySegmentsStorage, @unchecked Sendable {
 
     private let dao: MySegmentsDao
 
@@ -35,13 +35,13 @@ class PersistentSegmentsStorage: PersistentMySegmentsStorage {
     }
 }
 
-class DefaultPersistentMySegmentsStorage: PersistentSegmentsStorage {
+class DefaultPersistentMySegmentsStorage: PersistentSegmentsStorage, @unchecked Sendable {
     init(database: SplitDatabase) {
         super.init(dao: database.mySegmentsDao)
     }
 }
 
-class DefaultPersistentMyLargeSegmentsStorage: PersistentSegmentsStorage {
+class DefaultPersistentMyLargeSegmentsStorage: PersistentSegmentsStorage, @unchecked Sendable {
     init(database: SplitDatabase) {
         super.init(dao: database.myLargeSegmentsDao)
     }

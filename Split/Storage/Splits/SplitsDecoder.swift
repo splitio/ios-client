@@ -12,7 +12,7 @@ protocol SplitsDecoder {
     func decode(_ list: [String]) -> [Split]
 }
 
-struct SplitsParallelDecoder: SplitsDecoder {
+struct SplitsParallelDecoder: SplitsDecoder, @unchecked Sendable {
     private var minTaskPerThread: Int
     private let serialDecoder: SplitsSerialDecoder
     init(minTaskPerThread: Int = 10, cipher: Cipher? = nil) {

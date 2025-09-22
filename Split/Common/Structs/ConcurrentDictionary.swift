@@ -8,10 +8,10 @@
 
 import Foundation
 
-class ConcurrentDictionary<K: Hashable, T> {
+final class ConcurrentDictionary<K: Hashable & Sendable, T: Sendable>: Sendable {
 
-    private var queue: DispatchQueue
-    private var items: [K: T]
+    nonisolated(unsafe) private var queue: DispatchQueue
+    nonisolated(unsafe) private var items: [K: T]
 
     var all: [K: T] {
         var allItems: [K: T]?

@@ -20,7 +20,7 @@ protocol SplitterProtocol {
 
 class Splitter: SplitterProtocol {
 
-    static let shared: Splitter = {
+    nonisolated(unsafe) static let shared: Splitter = {
         let instance = Splitter()
         return instance
     }()

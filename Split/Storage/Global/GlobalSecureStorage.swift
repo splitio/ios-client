@@ -9,7 +9,7 @@ import Foundation
 
 class GlobalSecureStorage: KeyValueStorage {
 
-    private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+    nonisolated(unsafe) private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
 
     // Only for testing
     nonisolated(unsafe) static var testStorage: KeyValueStorage?

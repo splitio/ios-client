@@ -20,7 +20,7 @@ protocol MySegmentsSynchronizer {
 }
 
 // One instance per client
-class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer {
+class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer, @unchecked Sendable {
 
     private let mySegmentsStorage: ByKeyMySegmentsStorage
     private let myLargeSegmentsStorage: ByKeyMySegmentsStorage

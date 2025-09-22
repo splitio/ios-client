@@ -50,7 +50,7 @@ struct SplitDatabaseHelper {
         GlobalSecureStorage.shared.set(item: keyBytes.base64EncodedString(options: []), for: .dbEncryptionKey(apiKey))
     }
 
-    static func buildStorageContainer(splitClientConfig: SplitClientConfig,
+    nonisolated static func buildStorageContainer(splitClientConfig: SplitClientConfig,
                                       apiKey: String,
                                       userKey: String,
                                       databaseName: String,

@@ -108,12 +108,12 @@ protocol TelemetryRuntimeConsumer {
 
 protocol TelemetryProducer: TelemetryInitProducer,
                          TelemetryEvaluationProducer,
-                         TelemetryRuntimeProducer {
+                         TelemetryRuntimeProducer, Sendable {
 }
 
 protocol TelemetryConsumer: TelemetryInitConsumer,
                          TelemetryEvaluationConsumer,
-                         TelemetryRuntimeConsumer {
+                         TelemetryRuntimeConsumer, Sendable {
 }
 
 protocol TelemetryStorage: TelemetryProducer, TelemetryConsumer {

@@ -15,7 +15,7 @@ class SecureDataStore {
 
     private var token: String?
 
-    static let shared: SecureDataStore = {
+    nonisolated(unsafe) static let shared: SecureDataStore = {
         let instance = SecureDataStore()
 
         return instance

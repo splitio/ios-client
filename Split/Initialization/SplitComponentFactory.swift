@@ -31,7 +31,7 @@ class SplitComponentFactory {
         self.userKey = userKey
     }
 
-    func buildStorageContainer(databaseName: String,
+    nonisolated func buildStorageContainer(databaseName: String,
                                telemetryStorage: TelemetryStorage?,
                                testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
         let component: SplitStorageContainer =

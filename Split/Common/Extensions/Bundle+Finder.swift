@@ -12,7 +12,7 @@ private class BundleFinder {}
 
 extension Foundation.Bundle {
     /// Returns the resource bundle associated with the current Swift module.
-    static var split: Bundle = {
+    nonisolated(unsafe) static var split: Bundle = {
         let bundleName = Bundle.splitBundleName
 
         let candidates = [

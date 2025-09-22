@@ -71,7 +71,7 @@ class DefaultNotificationHelper: NotificationHelper {
 
 #endif
 
-    static let instance: DefaultNotificationHelper = {
+    nonisolated(unsafe) static let instance: DefaultNotificationHelper = {
         return DefaultNotificationHelper()
     }()
 

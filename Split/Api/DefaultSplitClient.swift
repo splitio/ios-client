@@ -11,7 +11,7 @@ import Foundation
 
 typealias DestroyHandler = () -> Void
 
-public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClient {
+public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClient, @unchecked Sendable {
 
     private var storageContainer: SplitStorageContainer
     private var key: Key
@@ -309,7 +309,7 @@ extension DefaultSplitClient {
         destroy(completion: nil)
     }
 
-    public func destroy(completion: (() -> Void)?) {
+    public func destroy(completion: (@Sendable () -> Void)?) {
         isClientDestroyed = true
         treatmentManager.destroy()
         DispatchQueue.global().async { [weak self] in

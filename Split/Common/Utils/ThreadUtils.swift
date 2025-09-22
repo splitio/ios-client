@@ -50,7 +50,7 @@ class ThreadUtils {
     }
 }
 
-protocol CancellableTask {
+protocol CancellableTask: Sendable {
     typealias Work = () -> Void
     var taskId: Int64 { get }
     var isCancelled: Bool { get }
@@ -59,7 +59,7 @@ protocol CancellableTask {
     func cancel()
 }
 
-class DefaultTask: CancellableTask {
+final class DefaultTask: CancellableTask, @unchecked Sendable {
 
     private(set) var taskId: Int64
     private(set) var isCancelled = false
@@ -87,11 +87,11 @@ struct TaskExecutor {
 }
 
 extension DispatchQueue {
-    static var critical: DispatchQueue = {
+    nonisolated(unsafe) static var critical: DispatchQueue = {
         return DispatchQueue(label: "split-critical", qos: .userInteractive, attributes: .concurrent)
     }()
 
-    static var general: DispatchQueue = {
+    nonisolated(unsafe) static var general: DispatchQueue = {
         return DispatchQueue(label: "split-general", attributes: .concurrent)
     }()
 }

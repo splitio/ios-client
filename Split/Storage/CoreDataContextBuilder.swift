@@ -14,7 +14,7 @@ class CoreDataHelperBuilder {
     private static let kDataModelName = "split_cache"
     private static let kDataModelExtentsion = "momd"
 
-    static func build(databaseName: String) -> CoreDataHelper? {
+    nonisolated static func build(databaseName: String) -> CoreDataHelper? {
 
         let bundle = Bundle.split
         guard let modelUrl = bundle.url(forResource: kDataModelName, withExtension: kDataModelExtentsion) else {
@@ -32,7 +32,7 @@ class CoreDataHelperBuilder {
         let managedObjContext = NSManagedObjectContext(
             concurrencyType: NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
 
-        managedObjContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        managedObjContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         managedObjContext.persistentStoreCoordinator = persistenceCoordinator
 
         guard let docURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last else {

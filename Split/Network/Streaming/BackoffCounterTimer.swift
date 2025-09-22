@@ -9,11 +9,11 @@
 import Foundation
 
 protocol BackoffCounterTimer {
-    func schedule(handler: @escaping () -> Void)
+    func schedule(handler: @Sendable @escaping () -> Void)
     func cancel()
 }
 
-class DefaultBackoffCounterTimer: BackoffCounterTimer {
+class DefaultBackoffCounterTimer: BackoffCounterTimer, @unchecked Sendable {
     private let reconnectBackoffCounter: ReconnectBackoffCounter
     private let queue = DispatchQueue(label: "split-backoff-timer")
     private let timersQueue = DispatchQueue.general
@@ -24,7 +24,7 @@ class DefaultBackoffCounterTimer: BackoffCounterTimer {
         self.reconnectBackoffCounter = reconnectBackoffCounter
     }
 
-    func schedule(handler: @escaping () -> Void) {
+    func schedule(handler: @Sendable @escaping () -> Void) {
         queue.async {
             self.schedule(handler)
         }

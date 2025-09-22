@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ImpressionsCounter {
+final class ImpressionsCounter: @unchecked Sendable {
     struct Key: Hashable {
         let featureName: String
         let timeframe: Int64

@@ -24,7 +24,7 @@ class UpdateWorker<T: NotificationTypeField> {
     }
 }
 
-class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
+class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification>, @unchecked Sendable {
 
     private let synchronizer: Synchronizer
     private let splitsStorage: SplitsStorage
@@ -204,7 +204,7 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
     }
 }
 
-class SplitKillWorker: UpdateWorker<SplitKillNotification> {
+class SplitKillWorker: UpdateWorker<SplitKillNotification>, @unchecked Sendable {
 
     private let synchronizer: Synchronizer
     private let splitsStorage: SplitsStorage

@@ -73,7 +73,7 @@ typealias HttpHeaders = [String: String]
 class HttpSessionConfig {
     static let kDefaultConnectionTimeout: TimeInterval = 30
 
-    static let  `default`: HttpSessionConfig = {
+    nonisolated(unsafe) static let  `default`: HttpSessionConfig = {
         return HttpSessionConfig()
     }()
     var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
@@ -100,7 +100,7 @@ extension HttpClient {
 
 class DefaultHttpClient {
 
-    static let shared: HttpClient = {
+    nonisolated(unsafe) static let shared: HttpClient = {
         return DefaultHttpClient()
     }()
 

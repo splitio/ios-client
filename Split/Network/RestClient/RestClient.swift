@@ -58,7 +58,7 @@ class DefaultRestClient: SplitApiRestClient {
                     headers: HttpHeaders? = nil,
                     customDecoder: ((Data) throws -> T)? = nil,
                     customFailureHandler: ((Int) throws -> Error?)? = nil,
-                    completion: @escaping (DataResult<T>) -> Void) where T: Decodable {
+                    completion: @Sendable @escaping (DataResult<T>) -> Void) where T: Decodable {
 
         do {
         _ = try httpClient.sendRequest(
