@@ -20,10 +20,15 @@ protocol OneKeyAttributesStorage {
     func destroy()
 }
 
+struct AnySendable: Sendable {
+    let value: Any
+    init(_ value: Any) { self.value = value }
+}
+
 @available(*, deprecated, message: "Gonna be replaced by AttributesStorage and ByKeyAttributesStorage")
 class OneKeyDefaultAttributesStorage: OneKeyAttributesStorage {
 
-    private let inMemoryAttributes: ConcurrentDictionary<String, Any>
+    private let inMemoryAttributes: ConcurrentDictionary<String, AnySendable>
     private let persistentStorage: OneKeyPersistentAttributesStorage?
 
     init(persistentAttributesStorage: OneKeyPersistentAttributesStorage? = nil) {

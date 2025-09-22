@@ -8,5 +8,5 @@
 import Foundation
 
 class Spec {
-    nonisolated(unsafe) static var flagsSpec = "1.3"
+    static var flagsSpec = "1.3"
 }

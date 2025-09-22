@@ -126,7 +126,7 @@ class Excluded: NSObject, Codable {
     }
 }
 
-class RuleBasedSegment: NSObject, Codable {
+class RuleBasedSegment: NSObject, Codable, @unchecked Sendable {
     var name: String?
     var trafficTypeName: String?
     var changeNumber: Int64 = -1
