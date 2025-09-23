@@ -1,5 +1,8 @@
 3.4.0: (sept. 23, 2025)
-- - Added new configuration for Fallback Treatments, which allows setting a treatment value and optional config to be returned in place of "control", either globally or by flag. Read more in our docs.
+- Added new configuration for Fallback Treatments, which allows setting a treatment value and optional config to be returned in place of "control", either globally or by flag. Read more in our docs.
+
+3.3.3: (ago. 29, 2025)
+- Updated polling logic to stop and restart memberships data synchronization when not currently used in flags or rule based segments.
 
 3.3.2: (Aug 12, 2025)
 - Fixed issue in BlockingQueue implementation that caused hangs due to a race condition.
