@@ -9,11 +9,11 @@
 import Foundation
 
 protocol RestClientUniqueKeys: RestClient {
-    func send(uniqueKeys: UniqueKeys, completion: @escaping (DataResult<EmptyValue>) -> Void)
+    func send(uniqueKeys: UniqueKeys, completion: @Sendable @escaping (DataResult<EmptyValue>) -> Void)
 }
 
 extension DefaultRestClient: RestClientUniqueKeys {
-    func send(uniqueKeys: UniqueKeys, completion: @escaping (DataResult<EmptyValue>) -> Void) {
+    func send(uniqueKeys: UniqueKeys, completion: @Sendable @escaping (DataResult<EmptyValue>) -> Void) {
         do {
             self.execute(
                     endpoint: endpointFactory.uniqueKeysEndpoint,

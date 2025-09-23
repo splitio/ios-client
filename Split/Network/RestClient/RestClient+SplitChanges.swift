@@ -39,7 +39,7 @@ protocol RestClientSplitChanges: RestClient {
                          till: Int64?,
                          headers: HttpHeaders?,
                          spec: String,
-                         completion: @escaping (DataResult<TargetingRulesChange>) -> Void)
+                         completion: @Sendable @escaping (DataResult<TargetingRulesChange>) -> Void)
 }
 
 extension DefaultRestClient: RestClientSplitChanges {
@@ -48,7 +48,7 @@ extension DefaultRestClient: RestClientSplitChanges {
                          till: Int64?,
                          headers: HttpHeaders?,
                          spec: String = Spec.flagsSpec,
-                         completion: @escaping (DataResult<TargetingRulesChange>) -> Void) {
+                         completion: @Sendable @escaping (DataResult<TargetingRulesChange>) -> Void) {
 
         let errorHandler = SplitChangesErrorHandler(serviceEndpoints: endpointFactory.serviceEndpoints)
 

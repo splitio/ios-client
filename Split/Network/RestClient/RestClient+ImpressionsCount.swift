@@ -9,11 +9,11 @@
 import Foundation
 
 protocol RestClientImpressionsCount: RestClient {
-    func send(counts: ImpressionsCount, completion: @escaping (DataResult<EmptyValue>) -> Void)
+    func send(counts: ImpressionsCount, completion: @Sendable @escaping (DataResult<EmptyValue>) -> Void)
 }
 
 extension DefaultRestClient: RestClientImpressionsCount {
-    func send(counts: ImpressionsCount, completion: @escaping (DataResult<EmptyValue>) -> Void) {
+    func send(counts: ImpressionsCount, completion: @Sendable @escaping (DataResult<EmptyValue>) -> Void) {
         do {
             self.execute(
                     endpoint: endpointFactory.impressionsCountEndpoint,
