@@ -1,3 +1,6 @@
+3.4.0: (sept. 23, 2025)
+- - Added new configuration for Fallback Treatments, which allows setting a treatment value and optional config to be returned in place of "control", either globally or by flag. Read more in our docs.
+
 3.3.2: (Aug 12, 2025)
 - Fixed issue in BlockingQueue implementation that caused hangs due to a race condition.
 - Replaced data structure for in memory flags to prevent deadlocks in high concurrency scenarios.
