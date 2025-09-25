@@ -1,3 +1,6 @@
+3.4.1: (Sep 25, 2025)
+- Modified SplitEventsManager to not rely on BlockingQueue
+
 3.4.0: (sept. 23, 2025)
 - Added new configuration for Fallback Treatments, which allows setting a treatment value and optional config to be returned in place of "control", either globally or by flag. Read more in our docs.
 
