@@ -254,7 +254,7 @@ extension DefaultTreatmentManager {
                           evaluationOptions: evaluationOptions)
             return SplitResult(treatment: result.treatment, config: result.configuration)
         } catch {
-            let finalTreatment = fallbackTreatmentsCalculator.resolve(flagName: splitName, label: nil)
+            let finalTreatment = fallbackTreatmentsCalculator.resolve(flagName: splitName, label: ImpressionsConstants.exception)
             logImpression(label: ImpressionsConstants.exception, treatment: finalTreatment.treatment,
                           splitName: trimmedSplitName, attributes: mergedAttributes, impressionsDisabled: false,
                           validationTag: validationTag, evaluationOptions: evaluationOptions)

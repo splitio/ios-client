@@ -441,8 +441,6 @@
 		9524F0042C6BFCCE00ECBF7B /* SyncSegmentsUpdateWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9524F0032C6BFCCE00ECBF7B /* SyncSegmentsUpdateWorker.swift */; };
 		952BF5F8278DF57D00FF6181 /* TelemetryIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BF5F7278DF57D00FF6181 /* TelemetryIntegrationTest.swift */; };
 		952BF5FC278DF66700FF6181 /* TelemetryConfigHelperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */; };
-		952C2B7726447FDD009275B4 /* BlockingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7626447FDD009275B4 /* BlockingQueue.swift */; };
-		952C2B7B26449456009275B4 /* BlockingQueueTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7A26449456009275B4 /* BlockingQueueTest.swift */; };
 		952E266B2833E35A0015D633 /* PersistentUniqueKeysStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E266A2833E35A0015D633 /* PersistentUniqueKeysStorage.swift */; };
 		952E266D2833E4120015D633 /* UniqueKeyDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E266C2833E4120015D633 /* UniqueKeyDao.swift */; };
 		952E26702833E4F20015D633 /* UniqueKeyEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E266F2833E4F20015D633 /* UniqueKeyEntity.swift */; };
@@ -694,7 +692,6 @@
 		95B02CCE28D0BDC20030EC8B /* ConcurrentDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592D2CF922088606007458F9 /* ConcurrentDictionary.swift */; };
 		95B02CCF28D0BDC20030EC8B /* SynchronizedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955B595328060CF100D105CD /* SynchronizedDictionary.swift */; };
 		95B02CD028D0BDC20030EC8B /* KeyStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95118EF2281C551A00782F33 /* KeyStorage.swift */; };
-		95B02CD128D0BDC20030EC8B /* BlockingQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952C2B7626447FDD009275B4 /* BlockingQueue.swift */; };
 		95B02CD228D0BDC20030EC8B /* LRUCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953911A7267A4F250040433A /* LRUCache.swift */; };
 		95B02CD328D0BDC20030EC8B /* Data+StringRepresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9E20EA6AE10067435E /* Data+StringRepresentation.swift */; };
 		95B02CD428D0BDC20030EC8B /* Date+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE9F20EA6AE10067435E /* Date+Utils.swift */; };
@@ -1651,8 +1648,6 @@
 		9524F0032C6BFCCE00ECBF7B /* SyncSegmentsUpdateWorker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncSegmentsUpdateWorker.swift; sourceTree = "<group>"; };
 		952BF5F7278DF57D00FF6181 /* TelemetryIntegrationTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TelemetryIntegrationTest.swift; sourceTree = "<group>"; };
 		952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetryConfigHelperStub.swift; sourceTree = "<group>"; };
-		952C2B7626447FDD009275B4 /* BlockingQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueue.swift; sourceTree = "<group>"; };
-		952C2B7A26449456009275B4 /* BlockingQueueTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockingQueueTest.swift; sourceTree = "<group>"; };
 		952E266A2833E35A0015D633 /* PersistentUniqueKeysStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PersistentUniqueKeysStorage.swift; sourceTree = "<group>"; };
 		952E266C2833E4120015D633 /* UniqueKeyDao.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeyDao.swift; sourceTree = "<group>"; };
 		952E266F2833E4F20015D633 /* UniqueKeyEntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UniqueKeyEntity.swift; sourceTree = "<group>"; };
@@ -2627,7 +2622,6 @@
 				592D2CF922088606007458F9 /* ConcurrentDictionary.swift */,
 				955B595328060CF100D105CD /* SynchronizedDictionary.swift */,
 				95118EF2281C551A00782F33 /* KeyStorage.swift */,
-				952C2B7626447FDD009275B4 /* BlockingQueue.swift */,
 				953911A7267A4F250040433A /* LRUCache.swift */,
 			);
 			path = Structs;
@@ -3587,7 +3581,6 @@
 				59B8B8A9220B1091003E0D5A /* SyncDictionaryCollectionWrapperTest.swift */,
 				59B8B8AB220B279F003E0D5A /* SyncDictionarySingleWrapperTest.swift */,
 				592C6AB3211B718D002D120C /* ArrayBlockingQueueTest.swift */,
-				952C2B7A26449456009275B4 /* BlockingQueueTest.swift */,
 			);
 			path = Collections;
 			sourceTree = "<group>";
@@ -4186,7 +4179,6 @@
 				95B1801A2762B2C4002DC9DF /* TelemetryStatsRecorderWorker.swift in Sources */,
 				955B595628076BB900D105CD /* MySegmentsPayloadDecoder.swift in Sources */,
 				3B6DEF6020EA6AE50067435E /* BetweenMatcher.swift in Sources */,
-				952C2B7726447FDD009275B4 /* BlockingQueue.swift in Sources */,
 				9572BA7D2AC37B7400C10FC1 /* Array+asSet.swift in Sources */,
 				594F5F5C253F163A00A945B4 /* BackoffCounterTimer.swift in Sources */,
 				3B6DEF3720EA6AE50067435E /* SplitManager.swift in Sources */,
@@ -4766,7 +4758,6 @@
 				596A7B71235729B5004F6139 /* DestroyTest.swift in Sources */,
 				95B180222763C00C002DC9DF /* HttpTelemetryStatsRecorderStub.swift in Sources */,
 				595AD25924E59E6200A7B750 /* EventStreamParserTest.swift in Sources */,
-				952C2B7B26449456009275B4 /* BlockingQueueTest.swift in Sources */,
 				C526DE4C2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift in Sources */,
 				9572BA812AC4A4B100C10FC1 /* SplitChangeProcessorTests.swift in Sources */,
 				95ABF4CA29352589006ED016 /* AnyValueValidatorStub.swift in Sources */,
@@ -4912,7 +4903,6 @@
 				9500D9D12C61814000383593 /* MySegmentEntity.swift in Sources */,
 				95B02CCF28D0BDC20030EC8B /* SynchronizedDictionary.swift in Sources */,
 				95B02CD028D0BDC20030EC8B /* KeyStorage.swift in Sources */,
-				95B02CD128D0BDC20030EC8B /* BlockingQueue.swift in Sources */,
 				95B02CD228D0BDC20030EC8B /* LRUCache.swift in Sources */,
 				95B02CD328D0BDC20030EC8B /* Data+StringRepresentation.swift in Sources */,
 				95B02CD428D0BDC20030EC8B /* Date+Utils.swift in Sources */,
