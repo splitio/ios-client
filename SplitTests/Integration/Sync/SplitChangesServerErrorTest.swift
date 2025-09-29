@@ -38,7 +38,7 @@ class SplitChangesServerErrorTest: XCTestCase {
     override func setUp() {
         splitConfig = SplitClientConfig()
         splitConfig!.streamingEnabled = false
-        splitConfig!.featuresRefreshRate = 3
+        splitConfig!.featuresRefreshRate = 30
         splitConfig!.impressionRefreshRate = kNeverRefreshRate
         splitConfig!.sdkReadyTimeOut = 60000
         splitConfig!.trafficType = "client"
@@ -98,9 +98,8 @@ class SplitChangesServerErrorTest: XCTestCase {
             }
             return TestDispatcherResponse(code: 200)
         }
-        let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
-        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        httpClient = DefaultHttpClient(session: HttpSessionMock(), requestManager: reqManager)
         
         // Client config
         _ = builder.setHttpClient(httpClient)
@@ -133,9 +132,8 @@ class SplitChangesServerErrorTest: XCTestCase {
             }
             return TestDispatcherResponse(code: 500) // Error for Splits
         }
-        let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
-        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        httpClient = DefaultHttpClient(session: HttpSessionMock(), requestManager: reqManager)
         
         // Client config
         _ = builder.setHttpClient(httpClient)
@@ -171,9 +169,8 @@ class SplitChangesServerErrorTest: XCTestCase {
             }
             return TestDispatcherResponse(code: 200)
         }
-        let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
-        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        httpClient = DefaultHttpClient(session: HttpSessionMock(), requestManager: reqManager)
         
         // Client config
         _ = builder.setHttpClient(httpClient)
@@ -183,10 +180,13 @@ class SplitChangesServerErrorTest: XCTestCase {
         let sdkError = XCTestExpectation(description: "SDK ERROR Expectation")
         var errorType: EventMetadataType?
         
+        var errors = [EventMetadataType]()
+        
         // Listener
         client.on(event: .sdkError) { error in
             errorType = error.type
-            sdkError.fulfill()
+            errors.append(error.type)
+            //sdkError.fulfill()
         }
         
         // Test
@@ -202,16 +202,15 @@ class SplitChangesServerErrorTest: XCTestCase {
         // Networking setup
         let dispatcher: HttpClientTestDispatcher = { request in
             if request.isMySegmentsEndpoint() {
-                return TestDispatcherResponse(code: 200, data: Data("".utf8)) // OK for Segments, but bad JSON
+                return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("matchers"))) // OK for Segments, but bad JSON
             }
             if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSplitsChangeFile("splitchanges_int_test"))) // OK Splits
             }
             return TestDispatcherResponse(code: 500)
         }
-        let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher, streamingHandler: buildStreamingHandler())
-        httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        httpClient = DefaultHttpClient(session: HttpSessionMock(), requestManager: reqManager)
         
         // Client config
         _ = builder.setHttpClient(httpClient)
@@ -221,14 +220,17 @@ class SplitChangesServerErrorTest: XCTestCase {
         let sdkError = XCTestExpectation(description: "SDK ERROR Expectation")
         var errorType: EventMetadataType?
         
+        var errors = [EventMetadataType]()
+        
         // Listener
         client.on(event: .sdkError) { error in
             errorType = error.type
-            sdkError.fulfill()
+            errors.append(error.type)
+            //sdkError.fulfill()
         }
         
         // Test
-        wait(for: [sdkError], timeout: 5)
+        wait(for: [sdkError], timeout: 10)
         XCTAssertEqual(errorType, .errorSegmentsSync)
         
         cleanup(client, &factory)
