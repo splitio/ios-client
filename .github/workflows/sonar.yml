@@ -28,7 +28,7 @@ jobs:
             -project Split.xcodeproj \
             -scheme Split \
             -testPlan "SplitiOSFull" \
-            -destination 'platform=iOS Simulator,OS=18.4,name=iPhone 16' \
+            -destination 'platform=iOS Simulator,OS=18.4,name=iPhone 16 Pro Max' \
             -enableCodeCoverage YES \
             -resultBundlePath build/Logs/Test/TestResults.xcresult \
             -derivedDataPath build
