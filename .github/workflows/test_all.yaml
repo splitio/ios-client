@@ -37,4 +37,3 @@ jobs:
     with:
       test-plan: ${{ matrix.plan }}
       destination: 'platform=iOS Simulator,OS=18.5,name=iPhone 16 Pro Max'
-      build-settings: SWIFT_VERSION=5.9
