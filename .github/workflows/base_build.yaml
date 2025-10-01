@@ -31,10 +31,9 @@ jobs:
         uses: sersoft-gmbh/xcodebuild-action@v3
         with:
           action: build
-          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
+          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO SWIFT_VERSION=5.9
           configuration: Debug
           derived-data-path: "${{ github.workspace }}/SplitApp"
           destination: ${{ inputs.destination }}
           project: Split.xcodeproj
           scheme: ${{ inputs.scheme }}
-          build-settings: SWIFT_VERSION=5.9

@@ -30,7 +30,7 @@ jobs:
         uses: sersoft-gmbh/xcodebuild-action@v3
         with:
           action: test
-          build-settings: ONLY_ACTIVE_ARCH=NO
+          build-settings: ONLY_ACTIVE_ARCH=NO SWIFT_VERSION=5.9
           configuration: Debug
           derived-data-path: "${{github.workspace}}/SplitApp"
           destination: ${{ inputs.destination }}
@@ -39,7 +39,6 @@ jobs:
           output-formatter: 'xcbeautify'
           sdk: 'iphonesimulator'
           test-plan: ${{ inputs.test-plan }}
-          build-settings: SWIFT_VERSION=5.9
 
       # - name: Install java 11
       #   uses: actions/setup-java@v3
