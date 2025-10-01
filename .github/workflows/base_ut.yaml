@@ -39,6 +39,7 @@ jobs:
           output-formatter: 'xcbeautify'
           sdk: 'iphonesimulator'
           test-plan: ${{ inputs.test-plan }}
+          build-settings: SWIFT_VERSION=5.9
 
       # - name: Install java 11
       #   uses: actions/setup-java@v3
