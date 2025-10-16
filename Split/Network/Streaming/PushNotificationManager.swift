@@ -98,7 +98,7 @@ class DefaultPushNotificationManager: PushNotificationManager {
             isConnecting.value || sseConnectionHandler.isConnectionOpened {
             return
         }
-        
+
         connectionQueue.async { [weak self] in
             guard let self = self else { return }
             self.isConnecting.set(true)
