@@ -60,7 +60,7 @@ class SplitChangesErrorHandlerTests: XCTestCase {
         
         // Simulate HTTP 400 response
         requestManager.append(data: Data(), to: 1)
-        _ = requestManager.set(responseCode: HttpCode.badRequest, to: 1)
+        _ = requestManager.set(responseCode: HttpCode.networkLost, to: 1)
         
         wait(for: [expectation], timeout: 1)
 
@@ -72,7 +72,7 @@ class SplitChangesErrorHandlerTests: XCTestCase {
         
         // Verify we got our custom error
         if case .outdatedProxyError(let code, let spec)? = outdatedProxyError {
-            XCTAssertEqual(code, HttpCode.badRequest)
+            XCTAssertEqual(code, HttpCode.networkLost)
             XCTAssertEqual(spec, testSpec)
         } else {
             XCTFail("Expected outdatedProxyError error but got \(String(describing: outdatedProxyError))")

@@ -26,6 +26,7 @@ struct HttpCode {
     static let requestTimeOut = 408
     static let uriTooLong = 414
     static let internalServerError = 500
+    static let networkLost = -1005
 }
 
 // MARK: HttpMethod

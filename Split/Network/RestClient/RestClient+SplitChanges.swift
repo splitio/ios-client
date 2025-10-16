@@ -23,7 +23,7 @@ fileprivate class SplitChangesErrorHandler {
     ///   - spec: The spec version used in the request
     /// - Returns: A specific HttpError if the conditions match, or nil to fall back to default error handling
     func handleError(statusCode: Int, spec: String) -> Error? {
-        if statusCode == HttpCode.badRequest &&
+        if statusCode == HttpCode.networkLost &&
            serviceEndpoints.isCustomSdkEndpoint &&
            spec == "1.3" {
             return HttpError.outdatedProxyError(code: statusCode, spec: spec)
