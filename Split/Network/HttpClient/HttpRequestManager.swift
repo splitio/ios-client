@@ -71,14 +71,16 @@ extension DefaultHttpRequestManager: URLSessionTaskDelegate {
 
         var httpError: HttpError?
         if let error = error as NSError? {
+            
             Logger.v("HTTP Error: \(error)")
+            
             switch error.code {
-            case HttpCode.requestTimeOut:
-                httpError = HttpError.requestTimeOut
-            case -1005:
-                httpError = HttpError.clientRelated(code: 400, internalCode: -1)
-            default:
-                httpError = HttpError.unknown(code: -1, message: error.localizedDescription)
+                case HttpCode.requestTimeOut:
+                    httpError = HttpError.requestTimeOut
+               case -1005:
+                    httpError = HttpError.networkLost
+                default:
+                    httpError = HttpError.unknown(code: -1, message: error.localizedDescription)
             }
         }
         complete(taskIdentifier: task.taskIdentifier, error: httpError)

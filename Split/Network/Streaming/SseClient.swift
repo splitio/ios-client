@@ -98,10 +98,10 @@ class DefaultSseClient: SseClient {
 
     private func isClientRelatedError(_ error: HttpError) -> Bool {
         switch error {
-        case .clientRelated:
-            return true
-        default:
-            return false
+            case .clientRelated:
+                return true
+            default:
+                return false
         }
     }
 

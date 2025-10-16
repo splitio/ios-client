@@ -24,6 +24,7 @@ class SplitsSyncHelper {
         let featureFlagsUpdated: Bool
         let rbsUpdated: Bool
     }
+    
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SyncSplitsStorage
@@ -117,7 +118,7 @@ class SplitsSyncHelper {
             Logger.e("Problem fetching feature flags: %@", error.localizedDescription)
 
             // Check if this is a proxy error and track it if necessary
-            if let httpError = error as? HttpError, httpError.isProxyOutdatedError(), let proxyHandler = outdatedSplitProxyHandler {
+            if let httpError = error as? HttpError, let proxyHandler = outdatedSplitProxyHandler {
                 proxyHandler.trackProxyError()
             }
 

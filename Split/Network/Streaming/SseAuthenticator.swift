@@ -92,6 +92,12 @@ class DefaultSseAuthenticator: SseAuthenticator {
 
         } catch HttpError.clientRelated(let httpCode, _) {
             syncHelper.recordHttpError(code: httpCode, resource: resource, startTime: startTime)
+            
+            // Netowrk lost. It should be recoverable to attempt reconnecting to streaming when Network is back
+            if httpCode == 1005 {
+                return errorResult(recoverable: true)
+            }
+            
             return errorResult(recoverable: false)
         } catch {
             _ = syncHelper.handleError(error, resource: resource, startTime: startTime)

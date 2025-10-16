@@ -121,55 +121,55 @@ class DefaultSyncManager: SyncManager {
         }
 
         switch pushEvent {
-        case .pushSubsystemUp:
-            Logger.d("Push Subsystem Up event message received.")
-            reconnectStreamingTimer?.cancel()
-            synchronizer.syncAll()
-            synchronizer.stopPeriodicFetching()
-            isPollingEnabled.set(false)
-            Logger.i("Polling disabled")
+            case .pushSubsystemUp:
+                Logger.d("Push Subsystem Up event message received.")
+                reconnectStreamingTimer?.cancel()
+                synchronizer.syncAll()
+                synchronizer.stopPeriodicFetching()
+                isPollingEnabled.set(false)
+                Logger.i("Polling disabled")
 
-        case .pushSubsystemDown:
-            Logger.d("Push Subsystem Down event message received.")
-            reconnectStreamingTimer?.cancel()
-            enablePolling()
+            case .pushSubsystemDown:
+                Logger.d("Push Subsystem Down event message received.")
+                reconnectStreamingTimer?.cancel()
+                enablePolling()
 
-        case .pushSubsystemDisabled:
-            Logger.d("Push Subsystem Disabled event message received.")
-            switchToPolling()
+            case .pushSubsystemDisabled:
+                Logger.d("Push Subsystem Disabled event message received.")
+                switchToPolling()
 
-        case .pushRetryableError:
-            Logger.d("Push recoverable event message received.")
-            enablePolling()
-            scheduleStreamingReconnection()
-
-        case .pushNonRetryableError:
-            Logger.d("Push non recoverable event message received.")
-            switchToPolling()
-
-        case .pushReset:
-            Logger.d("Push Subsystem reset received.")
-            pushNotificationManager?.disconnect()
-            if !isPaused.value {
+            case .pushRetryableError:
+                Logger.d("Push recoverable event message received.")
+                enablePolling()
                 scheduleStreamingReconnection()
+
+            case .pushNonRetryableError:
+                Logger.d("Push non recoverable event message received.")
+                switchToPolling()
+
+            case .pushReset:
+                Logger.d("Push Subsystem reset received.")
+                pushNotificationManager?.disconnect()
+                if !isPaused.value {
+                    scheduleStreamingReconnection()
+                }
+
+            case .pushDelayReceived(let delaySeconds):
+                Logger.d("Push delay received (\(delaySeconds) secs).")
+                syncGuardian.setMaxSyncPeriod(delaySeconds * 1000)
+
+            case .syncExecuted:
+                Logger.d("Sync has been executed.")
+                syncGuardian.updateLastSyncTimestamp()
+
+            case .uriTooLongOnSync:
+                stopStreaming()
+                synchronizer.stopPeriodicFetching()
+
+            case .splitLoadedFromCache:
+                Logger.d("Features flags has been loaded from cache.")
+                startSync()
             }
-
-        case .pushDelayReceived(let delaySeconds):
-            Logger.d("Push delay received (\(delaySeconds) secs).")
-            syncGuardian.setMaxSyncPeriod(delaySeconds * 1000)
-
-        case .syncExecuted:
-            Logger.d("Sync has been executed.")
-            syncGuardian.updateLastSyncTimestamp()
-
-        case .uriTooLongOnSync:
-            stopStreaming()
-            synchronizer.stopPeriodicFetching()
-
-        case .splitLoadedFromCache:
-            Logger.d("Features flags has been loaded from cache.")
-            startSync()
-        }
     }
 
     func resetStreaming() {

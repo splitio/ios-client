@@ -26,7 +26,8 @@ fileprivate class SplitChangesErrorHandler {
         if statusCode == HttpCode.badRequest &&
            serviceEndpoints.isCustomSdkEndpoint &&
            spec == "1.3" {
-            return HttpError.outdatedProxyError(code: statusCode, spec: spec)
+            // TODO: CHECK THIS (should we use it or finally not?)
+            // return HttpError.outdatedProxyError(code: statusCode, spec: spec)
         }
         // Return nil to fall back to default error handling
         return nil

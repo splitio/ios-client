@@ -20,60 +20,47 @@ enum HttpError: Error, Equatable {
     case clientRelated(code: Int, internalCode: Int)
     case couldNotCreateRequest(message: String)
     case unknown(code: Int, message: String)
-    case outdatedProxyError(code: Int, spec: String)
+    case networkLost
 }
 
 // MARK: Get message
 extension HttpError {
     var code: Int {
         switch self {
-        case .clientRelated(let code, _):
-            return code
-        case .unknown(let code, _):
-            return code
-        case .outdatedProxyError(let code, _):
-            return code
-        default:
-            return -1
-        }
-    }
-
-    /// Determines if this error is related to an outdated proxy
-    /// - Returns: true if this is an outdated proxy error, false otherwise
-    func isProxyOutdatedError() -> Bool {
-        switch self {
-        case .outdatedProxyError(_, _):
-            return true
-        default:
-            return false
+            case .clientRelated(let code, _):
+                return code
+            case .unknown(let code, _):
+                return code
+            default:
+                return -1
         }
     }
 
     var message: String {
         switch self {
-        case .serverUnavailable:
-            return "Server is unavailable"
-        case .clientRelated:
-            return "Authentication error"
-        case .couldNotCreateRequest(let message):
-            return message
-        case .unknown( _, let message):
-            return message
-        case .requestTimeOut:
-            return "Request Time Out"
-        case .uriTooLong:
-            return "Uri too long"
-        case .outdatedProxyError(let code, let spec):
-            return "Outdated proxy error with spec version \(spec) (HTTP \(code))"
+            case .serverUnavailable:
+                return "Server is unavailable"
+            case .clientRelated:
+                return "Authentication error"
+            case .couldNotCreateRequest(let message):
+                return message
+            case .unknown( _, let message):
+                return message
+            case .requestTimeOut:
+                return "Request Time Out"
+            case .uriTooLong:
+                return "Uri too long"
+            case .networkLost:
+                return "Network connection was lost"
         }
     }
 
     var internalCode: Int {
         switch self {
-        case .clientRelated(_, let internalCode):
-            return internalCode
-        default:
-            return InternalHttpErrorCode.noCode
+            case .clientRelated(_, let internalCode):
+                return internalCode
+            default:
+                return InternalHttpErrorCode.noCode
         }
     }
 }

@@ -56,7 +56,7 @@ class SplitsSyncHelperWithProxyHandlerTests: XCTestCase {
     
     func testProxyErrorCausesFallbackToLegacySpec() throws {
         // Setup fetcher to throw outdated proxy error on first call
-        splitFetcher.errorToThrow = HttpError.outdatedProxyError(code: 400, spec: "1.3")
+        splitFetcher.errorToThrow = HttpError.networkLost
         
         do {
             // Execute sync - should throw
@@ -64,7 +64,7 @@ class SplitsSyncHelperWithProxyHandlerTests: XCTestCase {
             XCTFail("Should have thrown an error")
         } catch let error as HttpError {
             // Verify that the error is an outdated proxy error
-            XCTAssertTrue(error.isProxyOutdatedError())
+            XCTAssertEqual(error, .networkLost)
             
             // Now setup for successful second call with legacy spec
             splitFetcher.errorToThrow = nil

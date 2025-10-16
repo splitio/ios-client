@@ -42,7 +42,7 @@ class SplitChangesErrorHandlerTests: XCTestCase {
         let expectation = XCTestExpectation(description: "API call completes with outdated proxy error")
         var result: TargetingRulesChange?
         var error: Error?
-        var outdatedProxyError: HttpError?
+        var networkLostError: HttpError?
 
         // Call getSplitChanges with the test spec
         clientWithOverriddenEndpoint.getSplitChanges(since: 1000, rbSince: 500, till: nil, headers: nil, spec: testSpec) { dataResult in
@@ -52,15 +52,15 @@ class SplitChangesErrorHandlerTests: XCTestCase {
             } catch let err {
                 error = err
                 if let httpError = err as? HttpError {
-                    outdatedProxyError = httpError
+                    networkLostError = httpError
                 }
                 expectation.fulfill()
             }
         }
         
-        // Simulate HTTP 400 response
+        // Simulate Network Loss
         requestManager.append(data: Data(), to: 1)
-        _ = requestManager.set(responseCode: HttpCode.badRequest, to: 1)
+        requestManager.complete(taskIdentifier: 1, error: .networkLost)
         
         wait(for: [expectation], timeout: 1)
 
@@ -68,15 +68,10 @@ class SplitChangesErrorHandlerTests: XCTestCase {
         XCTAssertEqual(1, requestManager.addRequestCallCount)
         XCTAssertNil(result)
         XCTAssertNotNil(error)
-        XCTAssertNotNil(outdatedProxyError)
+        XCTAssertNotNil(networkLostError)
         
         // Verify we got our custom error
-        if case .outdatedProxyError(let code, let spec)? = outdatedProxyError {
-            XCTAssertEqual(code, HttpCode.badRequest)
-            XCTAssertEqual(spec, testSpec)
-        } else {
-            XCTFail("Expected outdatedProxyError error but got \(String(describing: outdatedProxyError))")
-        }
+        XCTAssertEqual(HttpError.networkLost, networkLostError)
     }
     
     func testSplitChangesWithDifferentStatusCode() {

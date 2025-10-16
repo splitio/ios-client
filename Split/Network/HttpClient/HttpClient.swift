@@ -24,6 +24,7 @@ struct HttpCode {
     static let forbidden = 403
     static let notFound = 404
     static let requestTimeOut = 408
+    static let networkLost = 1005
     static let uriTooLong = 414
     static let internalServerError = 500
 }
@@ -167,11 +168,9 @@ extension DefaultHttpClient {
         return request
     }
 
-    private func createStreamRequest(_ url: URL, parameters: HttpParameters? = nil,
-                                     headers: HttpHeaders? = nil) throws -> HttpStreamRequest {
+    private func createStreamRequest(_ url: URL, parameters: HttpParameters? = nil, headers: HttpHeaders? = nil) throws -> HttpStreamRequest {
         startIfNeeded()
-        let request = try DefaultHttpStreamRequest(session: httpSession, url: url,
-                                                   parameters: parameters, headers: headers)
+        let request = try DefaultHttpStreamRequest(session: httpSession, url: url, parameters: parameters, headers: headers)
         return request
     }
 
@@ -187,16 +186,14 @@ extension DefaultHttpClient: HttpClient {
             httpHeaders += headers
         }
 
-        let request = try self.createRequest(endpoint.url, method: endpoint.method, parameters: parameters,
-                                             headers: httpHeaders, body: body)
+        let request = try self.createRequest(endpoint.url, method: endpoint.method, parameters: parameters, headers: httpHeaders, body: body)
         request.send()
         requestManager.addRequest(request)
         return request
     }
 
-    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?,
-                           headers: [String: String]?) throws -> HttpStreamRequest {
-            let request = try self.createStreamRequest(endpoint.url, parameters: parameters, headers: headers)
+    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?, headers: [String: String]?) throws -> HttpStreamRequest {
+        let request = try self.createStreamRequest(endpoint.url, parameters: parameters, headers: headers)
         request.send()
         requestManager.addRequest(request)
         return request
