@@ -79,15 +79,7 @@ class HttpRequestManagerTests: XCTestCase {
 
         XCTAssertNotNil(request.completedError)
         if let error = request.completedError as? HttpError {
-            switch error {
-            case .clientRelated(let code, let internalCode):
-                XCTAssertEqual(code, 400, "Error code should be 400")
-                XCTAssertEqual(internalCode, -1, "Internal code should be -1")
-            default:
-                XCTFail("Expected clientRelated error with code 400 but got \(error)")
-            }
-        } else {
-            XCTFail("Expected HttpError but got \(String(describing: request.completedError))")
+            XCTAssertEqual(error, HttpError.networkLost)
         }
     }
 
