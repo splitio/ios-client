@@ -24,7 +24,6 @@ class SplitsSyncHelper {
         let featureFlagsUpdated: Bool
         let rbsUpdated: Bool
     }
-    
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SyncSplitsStorage
