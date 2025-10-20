@@ -76,19 +76,20 @@ class HttpRequestManagerTests: XCTestCase {
 
         manager.addRequest(request)
         manager.urlSession(URLSession.shared, task: URLTaskMock(taskIdentifier: taskId), didCompleteWithError: networkError)
-
+        
+        var ok = false
         XCTAssertNotNil(request.completedError)
         if let error = request.completedError as? HttpError {
             switch error {
-            case .clientRelated(let code, let internalCode):
-                XCTAssertEqual(code, 400, "Error code should be 400")
-                XCTAssertEqual(internalCode, -1, "Internal code should be -1")
+            case .networkLost:
+                ok = true
             default:
-                XCTFail("Expected clientRelated error with code 400 but got \(error)")
+                XCTFail("Expected networkLost error")
             }
         } else {
             XCTFail("Expected HttpError but got \(String(describing: request.completedError))")
         }
+        XCTAssertTrue(ok)
     }
 
     func createRequestManager() -> URLSessionTaskDelegate {

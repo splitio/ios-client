@@ -41,6 +41,21 @@ class SseAuthenticatorTest: XCTestCase {
         XCTAssertEqual(rawToken, result.rawToken)
     }
 
+    func testNetworkLostIsReceived() {
+        // Check token error response
+        // If network lost error is received, it's recoveragble
+        restClient.updateFailedSseAuth(error: HttpError.networkLost(code: -1005))
+        let sseAuthenticator = DefaultSseAuthenticator(restClient: restClient,
+                                                       syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
+
+        let result = sseAuthenticator.authenticate(userKeys: [kUserKey])
+
+        XCTAssertEqual(false, result.success)
+        XCTAssertEqual(true, result.errorIsRecoverable)
+        XCTAssertEqual(false, result.pushEnabled)
+        XCTAssertNil(result.rawToken)
+    }
+
     func testSuccesfulMultiUserKeyRequest() {
         // Check successful response
 

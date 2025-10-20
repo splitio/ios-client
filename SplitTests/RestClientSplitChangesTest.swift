@@ -279,7 +279,7 @@ class RestClientSplitChangesTest: XCTestCase {
             }
         }
 
-        let clientRelatedError = HttpError.clientRelated(code: 400, internalCode: -1)
+        let clientRelatedError = HttpError.networkLost(code: -1005)
         requestManager.complete(taskIdentifier: 1, error: clientRelatedError)
 
         wait(for: [expectation], timeout: 1)
@@ -293,7 +293,7 @@ class RestClientSplitChangesTest: XCTestCase {
         if let httpError = error as? HttpError {
             switch httpError {
             case .outdatedProxyError(let code, let spec):
-                XCTAssertEqual(400, code)
+                XCTAssertEqual(-1005, code)
                 XCTAssertEqual("1.3", spec)
             default:
                 XCTFail("Expected outdatedProxyError but got \(httpError)")
