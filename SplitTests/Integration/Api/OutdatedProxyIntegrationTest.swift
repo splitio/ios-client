@@ -85,7 +85,7 @@ class OutdatedProxyIntegrationTest: XCTestCase {
                 
                 if self.outdatedProxy && specFromUri > 1.2 {
                     self.simulatedProxyError = true
-                    return TestDispatcherResponse(code: 400, data: Data())
+                    return TestDispatcherResponse(code: -1005, data: Data())
                 } else if self.outdatedProxy {
                     let since = self.getSinceFromUri(request.url)
                     let body = (since == "-1") ?
