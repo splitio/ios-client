@@ -1,5 +1,5 @@
 3.4.2: (oct. 22, 2025)
-- - Fix on streaming reconnection after connection interrupted.
+- Fix on streaming reconnection after connection interrupted.
 
 3.4.1: (Sep 25, 2025)
 - Modified SplitEventsManager to not rely on BlockingQueue
