@@ -60,7 +60,7 @@ sed -i '' "s/private static let kVersion = \".*\"/private static let kVersion = 
 echo "📝 Updating Split.podspec to $VERSION..."
 sed -i '' "s/s.version          = '.*'/s.version          = '$VERSION'/" Split.podspec
 
-# Update CHANGES.txt if not an RC version
+# Update CHANGES.txt if not an RC version (stable release)
 if [ "$IS_RC" = false ]; then
   echo "📝 Updating CHANGES.txt..."
   
