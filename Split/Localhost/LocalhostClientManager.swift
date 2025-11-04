@@ -4,7 +4,6 @@
 //
 //  Created by Javier Avrudsky on 05-Jan-2024.
 //  Copyright © 2024 Split. All rights reserved.
-//
 
 import Foundation
 
@@ -23,7 +22,6 @@ class LocalhostClientManager: SplitClientManager {
 
     private var eventsManagerCoordinator: SplitEventsManagerCoordinator
     private var synchronizer: FeatureFlagsSynchronizer
-    private var fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
 
     private let defaultKey: Key
     private let evaluator: Evaluator
@@ -31,13 +29,7 @@ class LocalhostClientManager: SplitClientManager {
     private let splitManager: SplitManager
     weak var splitFactory: SplitFactory?
 
-    init(config: SplitClientConfig,
-         key: Key,
-         splitManager: SplitManager,
-         splitsStorage: SplitsStorage,
-         synchronizer: FeatureFlagsSynchronizer,
-         eventsManagerCoordinator: SplitEventsManagerCoordinator,
-         factory: SplitFactory) {
+    init(config: SplitClientConfig, key: Key, splitManager: SplitManager, splitsStorage: SplitsStorage, synchronizer: FeatureFlagsSynchronizer, eventsManagerCoordinator: SplitEventsManagerCoordinator, factory: SplitFactory) {
 
         self.defaultKey = key
         self.config = config
@@ -47,12 +39,11 @@ class LocalhostClientManager: SplitClientManager {
         self.splitsStorage = splitsStorage
         self.splitFactory = factory
         
-        fallbackTreatmentsCalculator = DefaultFallbackTreatmentsCalculator(fallbacksConfig: config.fallbackTreatments)
         evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
-                                          mySegmentsStorage: EmptyMySegmentsStorage(),
-                                          myLargeSegmentsStorage: EmptyMySegmentsStorage(),
-                                          ruleBasedSegmentsStorage: nil,
-                                          fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculator(fallbacksConfig: config.fallbackTreatments))
+                                     mySegmentsStorage: EmptyMySegmentsStorage(),
+                                     myLargeSegmentsStorage: EmptyMySegmentsStorage(),
+                                     ruleBasedSegmentsStorage: nil,
+                                     fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculator(fallbacksConfig: config.fallbackTreatments))
 
         defaultClient = client(forKey: key)
 
@@ -61,18 +52,17 @@ class LocalhostClientManager: SplitClientManager {
     }
 
     func get(forKey key: Key) -> SplitClient {
-        return client(forKey: key)
+        client(forKey: key)
     }
 
-    func flush() {
-    }
+    func flush() {}
 
     func destroy(forKey key: Key) {
 
         if clients.takeValue(forKey: key.matchingKey) != nil,
            clients.count == 0 {
             splitsStorage.destroy()
-            (self.splitManager as? Destroyable)?.destroy()
+            (splitManager as? Destroyable)?.destroy()
 
             eventsManagerCoordinator.stop()
             synchronizer.destroy()
@@ -80,8 +70,7 @@ class LocalhostClientManager: SplitClientManager {
         }
     }
 
-    private func client(forKey key: Key,
-                        eventsManager: SplitEventsManager? = nil) -> SplitClient {
+    private func client(forKey key: Key, eventsManager: SplitEventsManager? = nil) -> SplitClient {
 
         if let group = clients.value(forKey: key.matchingKey) {
             return group.client
@@ -101,5 +90,4 @@ class LocalhostClientManager: SplitClientManager {
 
         return newClient
     }
-
 }

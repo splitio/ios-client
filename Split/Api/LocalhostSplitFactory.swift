@@ -15,15 +15,15 @@ import Foundation
 /// Check LocalhostSplitClient class for more information
 ///  - seealso:
 /// [Split iOS SDK](https://docs.split.io/docs/ios-sdk-overview#section-localhost)
-///
+
 public class LocalhostSplitFactory: NSObject, SplitFactory {
 
     @objc public static var sdkVersion: String {
-        return Version.semantic
+        Version.semantic
     }
 
     @objc public var userConsent: UserConsent {
-        return .granted
+        .granted
     }
 
     private var localhostManager: SplitManager
@@ -34,15 +34,15 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
     private var clientManager: SplitClientManager?
 
     public var client: SplitClient {
-        return clientManager?.defaultClient ?? FailedClient()
+        clientManager?.defaultClient ?? FailedClient()
     }
 
     public var manager: SplitManager {
-        return localhostManager
+        localhostManager
     }
 
     public var version: String {
-        return Version.sdk
+        Version.sdk
     }
 
     init(key: Key, config: SplitClientConfig, bundle: Bundle) {
@@ -71,26 +71,22 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
     }
 
     public func client(key: Key) -> SplitClient {
-        return client(forKey: key)
+        client(forKey: key)
     }
 
     public func client(matchingKey: String) -> SplitClient {
-        return client(forKey: Key(matchingKey: matchingKey))
+        client(forKey: Key(matchingKey: matchingKey))
     }
 
     public func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
-        return client(forKey: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
+        client(forKey: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
     }
 
-    private func client(forKey key: Key,
-                        eventsManager: SplitEventsManager? = nil,
-                        splitsStorage: SplitsStorage? = nil) -> SplitClient {
-
+    private func client(forKey key: Key, eventsManager: SplitEventsManager? = nil, splitsStorage: SplitsStorage? = nil) -> SplitClient {
         clientManager?.get(forKey: key) ?? FailedClient()
     }
 
-    public func setUserConsent(enabled: Bool) {
-    }
+    public func setUserConsent(enabled: Bool) {}
 
     private static func splitsDataSource(config: SplitClientConfig, bundle: Bundle) -> LocalhostDataSource {
         let dataFolderName = SplitDatabaseHelper.sanitizeForFolderName(config.localhostDataFolder)
@@ -114,10 +110,10 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
 
 extension LocalhostSplitFactory: SplitLocalhostDataSource {
     public func updateLocalhost(yaml: String) -> Bool {
-        return (externalDataSource?.update(yaml: yaml)) != nil
+        (externalDataSource?.update(yaml: yaml)) != nil
     }
 
     public func updateLocalhost(splits: String) -> Bool {
-        return (externalDataSource?.update(splits: splits)) != nil
+        (externalDataSource?.update(splits: splits)) != nil
     }
 }
