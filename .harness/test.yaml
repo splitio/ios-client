@@ -8,9 +8,10 @@ pipeline:
   properties:
     ci:
       codebase:
-        connectorRef: githubdevops
+        connectorRef: fmegithubharnessgitops
         repoName: ios-client
         build: <+input>
+        sparseCheckout: []
   stages:
     - stage:
         name: Build
