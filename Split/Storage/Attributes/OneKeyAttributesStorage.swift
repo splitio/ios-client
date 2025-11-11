@@ -19,7 +19,7 @@ protocol OneKeyAttributesStorage {
     func clear()
     func destroy()
 }
-
+ 
 @available(*, deprecated, message: "Gonna be replaced by AttributesStorage and ByKeyAttributesStorage")
 class OneKeyDefaultAttributesStorage: OneKeyAttributesStorage {
 
