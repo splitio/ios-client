@@ -44,56 +44,67 @@ import Foundation
         super.init()
     }
 
+    @discardableResult
     public func setApiKey(_ apiKey: String) -> SplitFactoryBuilder {
         params.apiKey = apiKey
         return self
     }
 
+    @discardableResult
     public func setMatchingKey(_ matchingKey: String) -> SplitFactoryBuilder {
         self.matchingKey = matchingKey
         return self
     }
 
+    @discardableResult
     public func setBucketingKey(_ bucketingKey: String) -> SplitFactoryBuilder {
         self.bucketingKey = bucketingKey
         return self
     }
 
+    @discardableResult
     public func setKey(_ key: Key) -> SplitFactoryBuilder {
         params.key = key
         return self
     }
 
+    @discardableResult
     public func setConfig(_ config: SplitClientConfig) -> SplitFactoryBuilder {
         params.config = config
         return self
     }
 
+    @discardableResult
     func setBundle(_ bundle: Bundle) -> SplitFactoryBuilder {
         self.bundle = bundle
         return self
     }
 
+    @discardableResult
     func setHttpClient(_ httpClient: HttpClient) -> SplitFactoryBuilder {
         params.httpClient = httpClient
         return self
     }
 
+    @discardableResult
     func setReachabilityChecker(_ checker: HostReachabilityChecker) -> SplitFactoryBuilder {
         params.reachabilityChecker = checker
         return self
     }
 
+    @discardableResult
     func setTestDatabase(_ database: SplitDatabase) -> SplitFactoryBuilder {
         params.testDatabase = database
         return self
     }
 
+    @discardableResult
     func setNotificationHelper(_ notificationHelper: NotificationHelper) -> SplitFactoryBuilder {
         params.notificationHelper = notificationHelper
         return self
     }
 
+    @discardableResult
     func setTelemetryStorage(_ telemetryStorage: TelemetryStorage) -> SplitFactoryBuilder {
         params.telemetryStorage = telemetryStorage
         return self

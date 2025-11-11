@@ -514,7 +514,8 @@ class TreatmentManagerTest: XCTestCase {
                                          myLargeSegmentsStorage: storageContainer.mySegmentsStorage)
         let defaultEvaluator = evaluator ?? DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
                                                              mySegmentsStorage: storageContainer.mySegmentsStorage,
-                                                             myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage)
+                                                             myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
+                                                             fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculatorStub())
 
         let eventsManager = SplitEventsManagerMock()
         eventsManager.isSegmentsReadyFired = true
@@ -534,7 +535,8 @@ class TreatmentManagerTest: XCTestCase {
                                        keyValidator: DefaultKeyValidator(),
                                        splitValidator: DefaultSplitValidator(splitsStorage: splitsStorage),
                                        validationLogger: validationLogger,
-                                       propertyValidator: propertyValidator)
+                                       propertyValidator: propertyValidator,
+                                       fallbackTreatmentsCalculator: DefaultFallbackTreatmentsCalculatorStub())
     }
 
     func loadSplitsFile() -> [Split] {

@@ -22,6 +22,7 @@ final class DefaultClientManager: SplitClientManager, @unchecked Sendable {
     private var storageContainer: SplitStorageContainer
     private let config: SplitClientConfig
     private let apiFacade: SplitApiFacade
+    private let evaluator: Evaluator
 
     private var eventsManagerCoordinator: SplitEventsManagerCoordinator
     private var synchronizer: Synchronizer
@@ -30,12 +31,13 @@ final class DefaultClientManager: SplitClientManager, @unchecked Sendable {
     private let telemetryProducer: TelemetryProducer?
     private let defaultKey: Key
     private let syncManager: SyncManager
-    private let evaluator: Evaluator
     private let telemetryStopwatch: Stopwatch?
     private let splitManager: SplitManager
     private let byKeyRegistry: ByKeyRegistry
     private let mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory
     private let propertyValidator: PropertyValidator
+    private let fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
+    
     weak var splitFactory: SplitFactory?
 
     init(config: SplitClientConfig,
@@ -65,17 +67,20 @@ final class DefaultClientManager: SplitClientManager, @unchecked Sendable {
         self.eventsManagerCoordinator = eventsManagerCoordinator
         self.storageContainer = storageContainer
         self.telemetryProducer = storageContainer.telemetryStorage
-        self.evaluator = DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
-                                          mySegmentsStorage: storageContainer.mySegmentsStorage,
-                                          myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
-                                          ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage)
 
         self.telemetryStopwatch = telemetryStopwatch
 
         self.eventsTracker = eventsTracker
         self.propertyValidator = propertyValidator
         self.splitFactory = factory
-
+        
+        fallbackTreatmentsCalculator = DefaultFallbackTreatmentsCalculator(fallbacksConfig: config.fallbackTreatments)
+        evaluator = DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,
+                                     mySegmentsStorage: storageContainer.mySegmentsStorage,
+                                     myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
+                                     ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
+                                     fallbackTreatmentsCalculator: fallbackTreatmentsCalculator)
+        
         defaultClient = createClient(forKey: key)
 
         (defaultClient as? TelemetrySplitClient)?.initStopwatch = telemetryStopwatch
@@ -145,8 +150,8 @@ final class DefaultClientManager: SplitClientManager, @unchecked Sendable {
     private func createClient(forKey key: Key) -> SplitClient {
 
         let eventsManager = DefaultSplitEventsManager(config: config)
-        let treatmentManager = buildTreatmentManager(key: key,
-                                                     eventsManager: eventsManager)
+        let treatmentManager = buildTreatmentManager(key: key, eventsManager: eventsManager)
+
 
         let client = buildClient(key: key,
                                  treatmentManager: treatmentManager,
@@ -164,23 +169,22 @@ final class DefaultClientManager: SplitClientManager, @unchecked Sendable {
         return client
     }
 
-    private func buildTreatmentManager(key: Key,
-                                       eventsManager: SplitEventsManager) -> TreatmentManager {
+    private func buildTreatmentManager(key: Key, eventsManager: SplitEventsManager) -> TreatmentManager {
         let validationLogger = DefaultValidationMessageLogger()
 
-        return DefaultTreatmentManager(
-            evaluator: evaluator,
-            key: key,
-            splitConfig: config,
-            eventsManager: eventsManager,
-            impressionLogger: synchronizer,
-            telemetryProducer: storageContainer.telemetryStorage,
-            storageContainer: storageContainer,
-            flagSetsValidator: DefaultFlagSetsValidator(telemetryProducer: storageContainer.telemetryStorage),
-            keyValidator: DefaultKeyValidator(),
-            splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
-            validationLogger: validationLogger,
-            propertyValidator: propertyValidator)
+        return DefaultTreatmentManager(evaluator: evaluator,
+                                       key: key,
+                                       splitConfig: config,
+                                       eventsManager: eventsManager,
+                                       impressionLogger: synchronizer,
+                                       telemetryProducer: storageContainer.telemetryStorage,
+                                       storageContainer: storageContainer,
+                                       flagSetsValidator: DefaultFlagSetsValidator(telemetryProducer: storageContainer.telemetryStorage),
+                                       keyValidator: DefaultKeyValidator(),
+                                       splitValidator: DefaultSplitValidator(splitsStorage: storageContainer.splitsStorage),
+                                       validationLogger: validationLogger,
+                                       propertyValidator: propertyValidator,
+                                       fallbackTreatmentsCalculator: fallbackTreatmentsCalculator)
     }
 
     private func addToByKeyRegistry(key: Key,

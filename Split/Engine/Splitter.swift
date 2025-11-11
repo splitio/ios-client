@@ -1,9 +1,4 @@
-//
-//  Splitter.swift
-//  Split
-//
-//  Created by Natalia  Stele on 11/7/17.
-//
+//  Created by Natalia Stele on 11/7/17
 
 import Foundation
 
@@ -13,8 +8,7 @@ enum Algorithm: Int {
 }
 
 protocol SplitterProtocol {
-    func getTreatment(key: Key, seed: Int, attributes: [String: Any]?,
-                      partions: [Partition]?, algo: Algorithm) -> String
+    func getTreatment(key: Key, seed: Int, attributes: [String: Any]?, partions: [Partition]?, algo: Algorithm) -> String
     func getBucket(seed: Int, key: String, algo: Algorithm) -> Int64
 }
 

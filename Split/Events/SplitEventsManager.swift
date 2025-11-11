@@ -26,17 +26,15 @@ final class DefaultSplitEventsManager: SplitEventsManager {
     nonisolated(unsafe) private var triggered: [SplitInternalEvent]
     private let processQueue: DispatchQueue
     private let dataAccessQueue: DispatchQueue
-    nonisolated(unsafe) private var isStarted: Bool
-    nonisolated(unsafe) private var eventsQueue: InternalEventBlockingQueue
+    private var isStarted: Bool
 
     init(config: SplitClientConfig) {
-        self.processQueue = DispatchQueue(label: "split-evt-mngr-process", attributes: .concurrent)
+        self.processQueue = DispatchQueue(label: "split-evt-mngr-process")
         self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data", target: DispatchQueue.general)
         self.isStarted = false
         self.sdkReadyTimeStart = Date().unixTimestampInMiliseconds()
         self.readingRefreshTime = 300
         self.triggered = [SplitInternalEvent]()
-        self.eventsQueue = DefaultInternalEventBlockingQueue()
         self.executionTimes = [String: Int]()
         registerMaxAllowedExecutionTimesPerEvent()
 
@@ -51,10 +49,9 @@ final class DefaultSplitEventsManager: SplitEventsManager {
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         processQueue.async { [weak self] in
-            if let self = self {
-                Logger.v("Event \(event) notified")
-                self.eventsQueue.add(event)
-            }
+            guard let self = self else { return }
+            Logger.v("Event \(event) notified")
+            self.processEvent(event)
         }
     }
 
@@ -78,11 +75,6 @@ final class DefaultSplitEventsManager: SplitEventsManager {
             }
             self.isStarted = true
         }
-        processQueue.async { [weak self] in
-            if let self = self {
-                self.processEvents()
-            }
-        }
     }
 
     func eventAlreadyTriggered(event: SplitEvent) -> Bool {
@@ -98,10 +90,6 @@ final class DefaultSplitEventsManager: SplitEventsManager {
             guard let self = self else { return }
             self.isStarted = false
             self.subscriptions.removeAll()
-            self.processQueue.sync {
-                self.eventsQueue.stop()
-                self.eventsQueue.stop()
-            }
         }
     }
 
@@ -127,30 +115,15 @@ final class DefaultSplitEventsManager: SplitEventsManager {
         return isRunning
     }
 
-    private func takeEvent() -> SplitInternalEvent? {
-        do {
-            return try eventsQueue.take()
-        } catch BlockingQueueError.hasBeenStopped {
-            Logger.d("Events manager stoped")
-        } catch BlockingQueueError.noElementAvailable {
-            return nil
-        } catch {
-            Logger.d("Events manager take event has exit because \(error.localizedDescription)")
-        }
-        return nil
-    }
+    private func processEvent(_ event: SplitInternalEvent) {
+        guard isRunning() else { return }
 
-    private func processEvents() {
-        while isRunning() {
-            guard let event = takeEvent() else {
-                continue
-            }
-            self.triggered.append(event)
+        self.triggered.append(event)
             switch event {
             case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
                 if isTriggered(external: .sdkReady) {
                     trigger(event: .sdkUpdated)
-                    continue
+                    return
                 }
                 self.triggerSdkReadyIfNeeded()
 
@@ -166,14 +139,13 @@ final class DefaultSplitEventsManager: SplitEventsManager {
             case .splitKilledNotification:
                 if isTriggered(external: .sdkReady) {
                     trigger(event: .sdkUpdated)
-                    continue
+                    return
                 }
             case .sdkReadyTimeoutReached:
                 if !isTriggered(external: .sdkReady) {
                     trigger(event: SplitEvent.sdkReadyTimedOut)
                 }
             }
-        }
     }
 
     // MARK: Helper functions.

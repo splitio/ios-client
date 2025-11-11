@@ -13,12 +13,13 @@ concurrency:
 jobs:
   build-and-collect-coverage:
     name: Build & Collect Coverage
-    runs-on: macos-14
+    runs-on: macos-15
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for proper SonarQube analysis
+          fetch-depth: 0 # Fetch all history for proper SonarQube analysis
 
       - name: Run tests with coverage (ignore failures)
         continue-on-error: true
@@ -26,8 +27,8 @@ jobs:
           xcodebuild -quiet test \
             -project Split.xcodeproj \
             -scheme Split \
-            -parallel-testing-enabled YES \
-            -destination 'platform=iOS Simulator,OS=17.2,name=iPhone 15' \
+            -testPlan "SplitiOSFull" \
+            -destination 'platform=iOS Simulator,OS=18.4,name=iPhone 16' \
             -enableCodeCoverage YES \
             -resultBundlePath build/Logs/Test/TestResults.xcresult \
             -derivedDataPath build
@@ -37,10 +38,10 @@ jobs:
           set -euo pipefail
 
           mkdir -p coverage
-          
+
           # Make the script executable (just in case)
           chmod +x .github/scripts/xccov-to-sonarqube.sh
-          
+
           # Verify the xcresult bundle exists
           echo "📁 Checking for xcresult bundle..."
           if [ ! -d "build/Logs/Test/TestResults.xcresult" ]; then
@@ -48,33 +49,33 @@ jobs:
             find build -name "*.xcresult" || echo "No xcresult files found"
             exit 1
           fi
-          
+
           echo "✅ Found xcresult bundle at build/Logs/Test/TestResults.xcresult"
-          
+
           # Generate SonarQube generic coverage XML
           echo "📊 Generating SonarQube coverage XML..."
           .github/scripts/xccov-to-sonarqube.sh build/Logs/Test/TestResults.xcresult > sonarqube-generic-coverage.xml
-          
+
           # Verify the coverage file was created
           if [ ! -f "sonarqube-generic-coverage.xml" ]; then
             echo "❌ Error: Failed to generate sonarqube-generic-coverage.xml"
             exit 1
           fi
-          
+
           # Check file size and content
           FILE_SIZE=$(stat -f%z sonarqube-generic-coverage.xml)
           echo "📏 Coverage XML file size: $FILE_SIZE bytes"
-          
+
           if [ "$FILE_SIZE" -lt 100 ]; then
             echo "⚠️ Warning: Coverage file is suspiciously small ($FILE_SIZE bytes)"
             cat sonarqube-generic-coverage.xml
             exit 1
           fi
-          
+
           # Show sample of the coverage file
           echo "📄 Sample of coverage XML file:"
           head -n 20 sonarqube-generic-coverage.xml
-          
+
           echo "✅ SonarQube coverage XML generated successfully"
 
       - name: Upload coverage artifact
@@ -86,12 +87,13 @@ jobs:
   sonar:
     name: Run SonarQube Scan
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: build-and-collect-coverage
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Fetch all history for proper SonarQube analysis
+          fetch-depth: 0 # Fetch all history for proper SonarQube analysis
 
       - name: Download coverage
         uses: actions/download-artifact@v4
@@ -102,7 +104,7 @@ jobs:
       - name: Verify SonarQube Coverage XML
         run: |
           echo "📊 Verifying SonarQube coverage XML..."
-          
+
           # Check if file exists and has content
           if [ ! -f sonarqube-generic-coverage.xml ]; then
             echo "❌ Error: sonarqube-generic-coverage.xml file does not exist"
@@ -110,23 +112,23 @@ jobs:
             ls -la
             exit 1
           fi
-          
+
           # Check file size
           FILE_SIZE=$(stat -c%s sonarqube-generic-coverage.xml)
           echo "📏 File size: $FILE_SIZE bytes"
-          
+
           # Count coverage entries
           COVERAGE_ENTRIES=$(grep -c "lineToCover" sonarqube-generic-coverage.xml || echo "0")
           echo "📊 Number of coverage entries: $COVERAGE_ENTRIES"
-          
+
           if [ "$COVERAGE_ENTRIES" -lt 10 ]; then
             echo "⚠️ Warning: Very few coverage entries found ($COVERAGE_ENTRIES)"
           else
             echo "✅ Coverage entries look good"
           fi
-          
+
           echo "✅ SonarQube coverage XML validation passed"
-          
+
           # Show sample of the coverage XML
           echo "📄 Sample of coverage XML:"
           head -n 20 sonarqube-generic-coverage.xml
