@@ -13,8 +13,13 @@ class GlobalSecureStorage: KeyValueStorage {
     private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
 
     // Only for testing
-    @available(swift 6.0) nonisolated(unsafe)
-    static var testStorage: KeyValueStorage?
+    #if DEBUG
+        #if swift(>=6.0)
+            nonisolated(unsafe) static var testStorage: KeyValueStorage?
+        #else
+            static var testStorage: KeyValueStorage?
+        #endif
+    #endif
 
     static var shared: KeyValueStorage {
         return testStorage ?? prodStorage
