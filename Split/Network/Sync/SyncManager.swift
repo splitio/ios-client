@@ -17,7 +17,7 @@ protocol SyncManager {
     func stop()
 }
 
-class DefaultSyncManager: SyncManager {
+class DefaultSyncManager: SyncManager, @unchecked Sendable {
 
     private let splitConfig: SplitClientConfig
     private let synchronizer: Synchronizer

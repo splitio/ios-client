@@ -8,9 +8,9 @@
 
 import Foundation
 #if os(iOS) || os(tvOS)
-import BackgroundTasks
+@preconcurrency import BackgroundTasks
 
-@objc public class SplitBgSynchronizer: NSObject {
+@objc public class SplitBgSynchronizer: NSObject, @unchecked Sendable {
 
     @objc public static let shared = SplitBgSynchronizer()
 

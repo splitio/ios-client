@@ -9,9 +9,11 @@ import Foundation
 
 class GlobalSecureStorage: KeyValueStorage {
 
+    @available(swift 6.0) nonisolated(unsafe)
     private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
 
     // Only for testing
+    @available(swift 6.0) nonisolated(unsafe)
     static var testStorage: KeyValueStorage?
 
     static var shared: KeyValueStorage {

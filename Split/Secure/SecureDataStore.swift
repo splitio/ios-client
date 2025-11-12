@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SecureDataStore {
+class SecureDataStore: @unchecked Sendable {
 
     enum Asset: String {
         case accessToken = "user_auth_token"

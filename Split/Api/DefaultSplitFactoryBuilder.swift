@@ -33,7 +33,8 @@ import Foundation
         (Singleton pattern) and reusing it throughout your application.
     """
 
-    private static let  factoryMonitor: FactoryMonitor = {
+    @available(swift 6.0) nonisolated(unsafe)
+    private static let factoryMonitor: FactoryMonitor = {
         return DefaultFactoryMonitor()
     }()
 

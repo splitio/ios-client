@@ -128,7 +128,7 @@ struct CertSpki {
     }
 }
 
-protocol TlsPinChecker {
+protocol TlsPinChecker: Sendable {
     func check(credential: AnyObject) -> CredentialValidationResult
 }
 

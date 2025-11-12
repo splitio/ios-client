@@ -71,10 +71,10 @@ enum HttpMethod: String, CustomStringConvertible {
 // MARK: HttpSession Delegate
 typealias HttpHeaders = [String: String]
 
-class HttpSessionConfig {
+class HttpSessionConfig: @unchecked Sendable {
     static let kDefaultConnectionTimeout: TimeInterval = 30
 
-    static let  `default`: HttpSessionConfig = {
+    static let `default`: HttpSessionConfig = {
         return HttpSessionConfig()
     }()
     var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
@@ -101,8 +101,9 @@ extension HttpClient {
 
 class DefaultHttpClient {
 
+    @available(swift 6.0) nonisolated(unsafe)
     static let shared: HttpClient = {
-        return DefaultHttpClient()
+        DefaultHttpClient()
     }()
 
     private var testSession: HttpSession?
