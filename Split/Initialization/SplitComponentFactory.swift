@@ -8,6 +8,19 @@
 
 import Foundation
 
+//MARK: Solving Swift 6 stricter casting
+#if swift(>=6.0)
+    typealias AnySplitApiRestClient = DefaultRestClient
+    typealias AnySynchronizer = DefaultSynchronizer
+    typealias AnySyncManager = DefaultSyncManager
+    typealias AnyImpressionTracker = DefaultImpressionsTracker
+#else
+    typealias AnySplitApiRestClient = SplitApiRestClient
+    typealias AnySynchronizer = Synchronizer
+    typealias AnySyncManager = SyncManager
+    typealias AnyImpressionTracker = ImpressionsTracker
+#endif
+
 enum ComponentError: Error {
     case notFound(name: String)
     case buildFailed(name: String)
@@ -140,12 +153,6 @@ class SplitComponentFactory {
     }
 
     func getSynchronizer() throws -> Synchronizer {
-        #if swift(>=6.0)
-        typealias AnySynchronizer = DefaultSynchronizer
-        #else
-        typealias AnySynchronizer = Synchronizer
-        #endif
-        
         if let obj = catalog.get(for: AnySynchronizer.self) as? Synchronizer {
             return obj
         }
@@ -195,12 +202,6 @@ class SplitComponentFactory {
     }
 
     func getSyncManager() throws -> SyncManager {
-        #if swift(>=6.0)
-        typealias AnySyncManager = DefaultSyncManager
-        #else
-        typealias AnySyncManager = SyncManager
-        #endif
-        
         if let obj = catalog.get(for: AnySyncManager.self) as? SyncManager {
             return obj
         }
@@ -401,12 +402,6 @@ extension SplitComponentFactory {
     }
 
     func getImpressionsTracker() throws -> ImpressionsTracker {
-        #if swift(>=6.0)
-        typealias AnyImpressionTracker = DefaultImpressionsTracker
-        #else
-        typealias AnyImpressionTracker = ImpressionsTracker
-        #endif
-        
         if let obj = catalog.get(for: AnyImpressionTracker.self) as? ImpressionsTracker {
             return obj
         }
@@ -415,14 +410,8 @@ extension SplitComponentFactory {
 }
 
 extension SplitComponentFactory {
-    #if swift(>=6.0)
-    typealias AnySplitApiRestClient = DefaultRestClient
-    #else
-    typealias AnySplitApiRestClient = SplitApiRestClient
-    #endif
-    
     func getRestClient() throws -> SplitApiRestClient {
-        if let obj = catalog.get(for: AnySplitApiRestClient.self) as? any SplitApiRestClient {
+        if let obj = catalog.get(for: AnySplitApiRestClient.self) as? SplitApiRestClient {
             return obj
         }
         throw ComponentError.notFound(name: "Rest client")
