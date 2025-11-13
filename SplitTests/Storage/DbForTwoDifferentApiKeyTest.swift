@@ -50,7 +50,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
         sseExp = [XCTestExpectation(), XCTestExpectation()]
         // Factory 1
         let splitConfig: SplitClientConfig = SplitClientConfig()
-        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.sdkReadyTimeOut = 50 //60000
         splitConfig.logLevel = TestingHelper.testLogLevel
         splitConfig.cdnBackoffTimeBaseInSecs = 1
 
@@ -78,7 +78,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
             sdkReadyExpectation1.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation1, sseExp[0]], timeout: 555)
+        wait(for: [sdkReadyExpectation1, sseExp[0]], timeout: 30)//555)
         streamingBinding?.push(message: ":keepalive")
         testSplitsUpdate(changeNumber: changeNumberF2)
 
@@ -111,7 +111,7 @@ class DbForDifferentApiKeysTest: XCTestCase {
             sdkReadyExpectation2.fulfill()
         }
 
-        wait(for: [sdkReadyExpectation2, sseExp[1]], timeout: 5555)
+        wait(for: [sdkReadyExpectation2, sseExp[1]], timeout: 30) // 5555)
 
         let t2Split1 = client2.getTreatment("split1")
         let t2Split2 = client2.getTreatment("split2")

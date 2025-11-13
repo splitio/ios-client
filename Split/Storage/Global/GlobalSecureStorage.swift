@@ -9,8 +9,11 @@ import Foundation
 
 class GlobalSecureStorage: KeyValueStorage {
 
-    @available(swift 6.0) nonisolated(unsafe)
-    private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+    #if swift(>=6.0)
+        nonisolated(unsafe) private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+    #else
+        private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+    #endif
 
     // Only for testing
     #if DEBUG

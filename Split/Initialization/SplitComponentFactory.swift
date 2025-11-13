@@ -140,7 +140,13 @@ class SplitComponentFactory {
     }
 
     func getSynchronizer() throws -> Synchronizer {
-        if let obj = catalog.get(for: Synchronizer.self) as? Synchronizer {
+        #if swift(>=6.0)
+        typealias AnySynchronizer = DefaultSynchronizer
+        #else
+        typealias AnySynchronizer = Synchronizer
+        #endif
+        
+        if let obj = catalog.get(for: AnySynchronizer.self) as? Synchronizer {
             return obj
         }
         throw ComponentError.notFound(name: "Synchronizer")
@@ -189,7 +195,13 @@ class SplitComponentFactory {
     }
 
     func getSyncManager() throws -> SyncManager {
-        if let obj = catalog.get(for: SyncManager.self) as? SyncManager {
+        #if swift(>=6.0)
+        typealias AnySyncManager = DefaultSyncManager
+        #else
+        typealias AnySyncManager = SyncManager
+        #endif
+        
+        if let obj = catalog.get(for: AnySyncManager.self) as? SyncManager {
             return obj
         }
         throw ComponentError.notFound(name: "Sync manager")
@@ -389,7 +401,13 @@ extension SplitComponentFactory {
     }
 
     func getImpressionsTracker() throws -> ImpressionsTracker {
-        if let obj = catalog.get(for: ImpressionsTracker.self) as? ImpressionsTracker {
+        #if swift(>=6.0)
+        typealias AnyImpressionTracker = DefaultImpressionsTracker
+        #else
+        typealias AnyImpressionTracker = ImpressionsTracker
+        #endif
+        
+        if let obj = catalog.get(for: AnyImpressionTracker.self) as? ImpressionsTracker {
             return obj
         }
         throw ComponentError.notFound(name: "ImpressionsTracker")
@@ -397,8 +415,14 @@ extension SplitComponentFactory {
 }
 
 extension SplitComponentFactory {
+    #if swift(>=6.0)
+    typealias AnySplitApiRestClient = DefaultRestClient
+    #else
+    typealias AnySplitApiRestClient = SplitApiRestClient
+    #endif
+    
     func getRestClient() throws -> SplitApiRestClient {
-        if let obj = catalog.get(for: SplitApiRestClient.self) as? SplitApiRestClient {
+        if let obj = catalog.get(for: AnySplitApiRestClient.self) as? any SplitApiRestClient {
             return obj
         }
         throw ComponentError.notFound(name: "Rest client")

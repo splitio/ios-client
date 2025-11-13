@@ -33,11 +33,12 @@ import Foundation
         (Singleton pattern) and reusing it throughout your application.
     """
 
-    @available(swift 6.0) nonisolated(unsafe)
-    private static let factoryMonitor: FactoryMonitor = {
-        return DefaultFactoryMonitor()
-    }()
-
+    #if swift(>=6.0)
+        nonisolated(unsafe) private static let factoryMonitor: FactoryMonitor = { DefaultFactoryMonitor() }()
+    #else
+        private static let factoryMonitor: FactoryMonitor = { DefaultFactoryMonitor() }()
+    #endif
+    
     public override init() {
         keyValidator = DefaultKeyValidator()
         apiKeyValidator = DefaultApiKeyValidator()
