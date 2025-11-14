@@ -31,7 +31,7 @@ class SplitComponentCatalog {
     }
 
     func get(byName name: String) -> Any? {
-        return components[name]
+        components[name]
     }
 
     func clear() {

@@ -103,13 +103,17 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
             }
         }
 
-        group.notify(queue: .main) {
+        let semaphore = DispatchSemaphore(value: 0)
+        group.notify(queue: queue) {
             XCTAssertEqual(6, self.statsRecorder.executeCallCount)
             XCTAssertNotNil(self.statsRecorder.statsSent)
             XCTAssertEqual(6, self.splitsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.mySegmentsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.myLargeSegmentsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.telemetryStorage.popTagsCallCount)
+            semaphore.signal()
         }
+            
+        semaphore.wait()
     }
 }

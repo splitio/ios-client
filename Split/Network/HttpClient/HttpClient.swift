@@ -102,9 +102,9 @@ extension HttpClient {
 class DefaultHttpClient {
 
     #if swift(>=6.0)
-        nonisolated(unsafe) static let shared: HttpClient = { return DefaultHttpClient() }()
+        nonisolated(unsafe) static let shared: HttpClient = { DefaultHttpClient() }()
     #else
-        static let shared: HttpClient = { return DefaultHttpClient() }()
+        static let shared: HttpClient = { DefaultHttpClient() }()
     #endif
     
     private var testSession: HttpSession?
