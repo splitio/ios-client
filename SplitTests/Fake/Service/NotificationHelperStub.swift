@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class NotificationHelperStub: NotificationHelper {
+class NotificationHelperStub: NotificationHelper, @unchecked Sendable {
     private let queue = DispatchQueue(label: UUID.init().uuidString, attributes: .concurrent)
     private var actions = [String: [ObserverAction]]()
 

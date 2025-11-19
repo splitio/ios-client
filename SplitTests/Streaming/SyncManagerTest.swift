@@ -216,21 +216,23 @@ class SyncManagerTest: XCTestCase {
             .set(telemetryServiceEndpoint: endpoints[3])
             .set(eventsEndpoint: endpoints[4])
             .build()
-       splitConfig.serviceEndpoints = epConfig
+        splitConfig.serviceEndpoints = epConfig
         splitConfig.streamingEnabled = true
-        var exp: XCTestExpectation?
-        let nHelper = DefaultNotificationHelper.instance
-        nHelper.addObserver(for: .pinnedCredentialValidationFail) { host in
-            exp?.fulfill()
-        }
+
         for (oIndex, oEndpoint) in endpoints.enumerated() {
-            exp = XCTestExpectation()
+            let exp = XCTestExpectation(description: "Expectation for \(oEndpoint)")
+                
+                let nHelper = DefaultNotificationHelper.instance
+                nHelper.addObserver(for: .pinnedCredentialValidationFail) { host in
+                    exp.fulfill()
+                }
+            
             synchronizer = SynchronizerStub()
             pushManager = PushNotificationManagerStub()
             syncManager = createSyncManager()
             syncManager.start()
             nHelper.post(notification: .pinnedCredentialValidationFail, info: oEndpoint as AnyObject)
-            wait(for: [exp!], timeout: 5.0)
+            wait(for: [exp], timeout: 5.0)
 
             print("Evaluating: \(oEndpoint)")
             switch oIndex {
