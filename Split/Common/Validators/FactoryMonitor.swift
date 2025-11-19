@@ -12,7 +12,7 @@ struct WeakFactory {
     private(set) weak var factory: SplitFactory?
 }
 
-class FactoryRegistry {
+final class FactoryRegistry: @unchecked Sendable {
 
     private var queue: DispatchQueue
     private var weakFactories: [String: [WeakFactory]]
@@ -79,16 +79,16 @@ class FactoryRegistry {
     }
 }
 
-protocol FactoryMonitor {
+protocol FactoryMonitor: Sendable {
     var allCount: Int { get }
     func instanceCount(for apiKey: String) -> Int
     func activeCount() -> Int
     func register(instance: SplitFactory?, for apiKey: String)
 }
 
-class DefaultFactoryMonitor: FactoryMonitor {
+final class DefaultFactoryMonitor: FactoryMonitor {
 
-    var factoryRegistry: FactoryRegistry
+    nonisolated(unsafe) var factoryRegistry: FactoryRegistry
 
     var allCount: Int {
         return factoryRegistry.count
