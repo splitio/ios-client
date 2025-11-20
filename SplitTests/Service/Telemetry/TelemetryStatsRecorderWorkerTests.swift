@@ -103,7 +103,8 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
             }
         }
 
-        let semaphore = DispatchSemaphore(value: 0)
+        let exp = XCTestExpectation(description: "Waiting for all flushes")
+        
         group.notify(queue: queue) {
             XCTAssertEqual(6, self.statsRecorder.executeCallCount)
             XCTAssertNotNil(self.statsRecorder.statsSent)
@@ -111,9 +112,9 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
             XCTAssertEqual(6, self.mySegmentsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.myLargeSegmentsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.telemetryStorage.popTagsCallCount)
-            semaphore.signal()
+            exp.fulfill()
         }
             
-        semaphore.wait()
+        wait(for: [exp], timeout: 4)
     }
 }
