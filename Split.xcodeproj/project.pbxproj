@@ -807,6 +807,8 @@
 		5B26EC722ECE9ACC007143C5 /* rsa_2048_public.pem in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BBD92C1A27C200C5F2E4 /* rsa_2048_public.pem */; };
 		5B26EC732ECE9ACC007143C5 /* splitchanges_flagsets.json in Resources */ = {isa = PBXBuildFile; fileRef = 95737E112AD6D016007FD15C /* splitchanges_flagsets.json */; };
 		5B26EC742ECE9ACC007143C5 /* ed25519-pub.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC0C2C2A1F3600C5F2E4 /* ed25519-pub.der */; };
+		5B26EC7E2ECF5D2E007143C5 /* SplitTests copy-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5B26EC7D2ECF5D2E007143C5 /* SplitTests copy-Info.plist */; };
+		5B26EC7F2ECF5D2E007143C5 /* SplitTests copy-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5B26EC7D2ECF5D2E007143C5 /* SplitTests copy-Info.plist */; };
 		5B279CF92E340FC600B73A36 /* splitschanges_no_segments.json in Resources */ = {isa = PBXBuildFile; fileRef = 5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */; };
 		5B343EAD2E26E93B006BEBE7 /* StorageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */; };
 		5B343EAE2E26E93B006BEBE7 /* StorageHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */; };
@@ -1832,7 +1834,7 @@
 		5921ED3F2538E8BF000D6C8B /* StreamingSplitsSyncTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingSplitsSyncTest.swift; sourceTree = "<group>"; };
 		5921ED412538EA39000D6C8B /* StreamingIntegrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamingIntegrationHelper.swift; sourceTree = "<group>"; };
 		5921ED432538F19E000D6C8B /* simple_split_change.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = simple_split_change.json; sourceTree = "<group>"; };
-		592C6AA5211B6C99002D120C /* SplitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		592C6AA5211B6C99002D120C /* SplitTests Swift5.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SplitTests Swift5.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		592C6AA9211B6C99002D120C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		592C6AB0211B718D002D120C /* SplitTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SplitTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		592C6AB2211B718D002D120C /* DatesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatesTests.swift; sourceTree = "<group>"; };
@@ -2039,7 +2041,7 @@
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		5B26EC792ECE9ACC007143C5 /* SplitTests Swift6.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SplitTests Swift6.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B26EC7A2ECE9ACC007143C5 /* SplitTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SplitTests copy-Info.plist"; path = "/Users/martin/Desktop/Code/ios-client/SplitTests copy-Info.plist"; sourceTree = "<absolute>"; };
+		5B26EC7D2ECF5D2E007143C5 /* SplitTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SplitTests copy-Info.plist"; sourceTree = SOURCE_ROOT; };
 		5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitschanges_no_segments.json; sourceTree = "<group>"; };
 		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
@@ -2619,23 +2621,6 @@
 		3B6DEE5020EA6A4D0067435E = {
 			isa = PBXGroup;
 			children = (
-				9583C2D42C987B02001298C8 /* SplitiOSHalf_1.xctestplan */,
-				9583C2D52C987B02001298C8 /* SplitiOSHalf_2.xctestplan */,
-				950F72FD292E87A4008A0040 /* SplitiOSIntegration.xctestplan */,
-				95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */,
-				95F7BBC52C07D02F00C5F2E4 /* SemVer.xctestplan */,
-				956A7E1A2970B0F20080D53C /* SplitiOSStreaming.xctestplan */,
-				95880D082AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan */,
-				958F987A2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan */,
-				952FA1682A44C0FB00264AB5 /* SplitStreamingUT.xctestplan */,
-				95D83A962A561CB000ADA55E /* SplitPushManagerUT.xctestplan */,
-				95B0307B28D275020030EC8B /* SplitiOSUnit.xctestplan */,
-				95192EA92BEA9806004084EA /* SplitiOSUnit_1.xctestplan */,
-				95DF58EB2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan */,
-				95DF58F72BEC5432009220B8 /* SplitiOSUnit_3.xctestplan */,
-				95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */,
-				5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */,
-				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
 				956E418E271DC8F1008B4DB6 /* Splitlib */,
@@ -2646,7 +2631,7 @@
 				95B02E1028D222100030EC8B /* SplitMacOSTests */,
 				3B6DEE5B20EA6A4E0067435E /* Products */,
 				590DF9962125F6900082B94F /* Frameworks */,
-				5B26EC7A2ECE9ACC007143C5 /* SplitTests copy-Info.plist */,
+				5B26EC7C2ECF5A4E007143C5 /* TesttUnits */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2654,7 +2639,7 @@
 			isa = PBXGroup;
 			children = (
 				3B6DEE5A20EA6A4E0067435E /* Split.framework */,
-				592C6AA5211B6C99002D120C /* SplitTests.xctest */,
+				592C6AA5211B6C99002D120C /* SplitTests Swift5.xctest */,
 				95825BA0271F004700A0CDAD /* Split_Split.bundle */,
 				95B02CA428D0BD790030EC8B /* SplitWatchOS.framework */,
 				5B26EC792ECE9ACC007143C5 /* SplitTests Swift6.xctest */,
@@ -3692,6 +3677,31 @@
 			path = Localhost;
 			sourceTree = "<group>";
 		};
+		5B26EC7C2ECF5A4E007143C5 /* TesttUnits */ = {
+			isa = PBXGroup;
+			children = (
+				5B26EC7D2ECF5D2E007143C5 /* SplitTests copy-Info.plist */,
+				9583C2D42C987B02001298C8 /* SplitiOSHalf_1.xctestplan */,
+				9583C2D52C987B02001298C8 /* SplitiOSHalf_2.xctestplan */,
+				950F72FD292E87A4008A0040 /* SplitiOSIntegration.xctestplan */,
+				95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */,
+				95F7BBC52C07D02F00C5F2E4 /* SemVer.xctestplan */,
+				956A7E1A2970B0F20080D53C /* SplitiOSStreaming.xctestplan */,
+				95880D082AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan */,
+				958F987A2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan */,
+				952FA1682A44C0FB00264AB5 /* SplitStreamingUT.xctestplan */,
+				95D83A962A561CB000ADA55E /* SplitPushManagerUT.xctestplan */,
+				95B0307B28D275020030EC8B /* SplitiOSUnit.xctestplan */,
+				95192EA92BEA9806004084EA /* SplitiOSUnit_1.xctestplan */,
+				95DF58EB2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan */,
+				95DF58F72BEC5432009220B8 /* SplitiOSUnit_3.xctestplan */,
+				95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */,
+				5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */,
+				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
+			);
+			path = TesttUnits;
+			sourceTree = "<group>";
+		};
 		5BD75FAE2E5DF0CA00F9EFBD /* FallbackTreatments */ = {
 			isa = PBXGroup;
 			children = (
@@ -4325,9 +4335,9 @@
 			productReference = 3B6DEE5A20EA6A4E0067435E /* Split.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		592C6AA4211B6C99002D120C /* SplitTests */ = {
+		592C6AA4211B6C99002D120C /* SplitTests Swift5 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 592C6AAF211B6C99002D120C /* Build configuration list for PBXNativeTarget "SplitTests" */;
+			buildConfigurationList = 592C6AAF211B6C99002D120C /* Build configuration list for PBXNativeTarget "SplitTests Swift5" */;
 			buildPhases = (
 				592C6AA1211B6C99002D120C /* Sources */,
 				592C6AA2211B6C99002D120C /* Frameworks */,
@@ -4339,11 +4349,11 @@
 			dependencies = (
 				592C6AAC211B6C99002D120C /* PBXTargetDependency */,
 			);
-			name = SplitTests;
+			name = "SplitTests Swift5";
 			packageProductDependencies = (
 			);
 			productName = SplitTests;
-			productReference = 592C6AA5211B6C99002D120C /* SplitTests.xctest */;
+			productReference = 592C6AA5211B6C99002D120C /* SplitTests Swift5.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		5B26EAA92ECE9ACC007143C5 /* SplitTests Swift6 */ = {
@@ -4446,9 +4456,9 @@
 			projectRoot = "";
 			targets = (
 				3B6DEE5920EA6A4E0067435E /* Split */,
-				592C6AA4211B6C99002D120C /* SplitTests */,
 				95825B9F271F004700A0CDAD /* Split_Split */,
 				95B02CA328D0BD790030EC8B /* SplitWatchOS */,
+				592C6AA4211B6C99002D120C /* SplitTests Swift5 */,
 				5B26EAA92ECE9ACC007143C5 /* SplitTests Swift6 */,
 			);
 		};
@@ -4481,6 +4491,7 @@
 				5982D936219F494500230F44 /* matchers.json in Resources */,
 				592C6AE9211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
 				95F7BC072C1CE84500C5F2E4 /* rsa_4096_pub.der in Resources */,
+				5B26EC7E2ECF5D2E007143C5 /* SplitTests copy-Info.plist in Resources */,
 				95F7BC0D2C2A1F3700C5F2E4 /* ed25519-cert.der in Resources */,
 				59FB7C2C2202467C00ECC96A /* localhost_2.splits in Resources */,
 				95F7BC152C346BB400C5F2E4 /* ec_256v1_cert.der in Resources */,
@@ -4572,6 +4583,7 @@
 				5B26EC252ECE9ACC007143C5 /* matchers.json in Resources */,
 				5B26EC262ECE9ACC007143C5 /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
 				5B26EC272ECE9ACC007143C5 /* rsa_4096_pub.der in Resources */,
+				5B26EC7F2ECF5D2E007143C5 /* SplitTests copy-Info.plist in Resources */,
 				5B26EC282ECE9ACC007143C5 /* ed25519-cert.der in Resources */,
 				5B26EC292ECE9ACC007143C5 /* localhost_2.splits in Resources */,
 				5B26EC2A2ECE9ACC007143C5 /* ec_256v1_cert.der in Resources */,
@@ -6685,7 +6697,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		592C6AAF211B6C99002D120C /* Build configuration list for PBXNativeTarget "SplitTests" */ = {
+		592C6AAF211B6C99002D120C /* Build configuration list for PBXNativeTarget "SplitTests Swift5" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				592C6AAD211B6C99002D120C /* Debug */,
