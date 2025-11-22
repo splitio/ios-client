@@ -306,7 +306,7 @@ class SplitEventsManagerTest: XCTestCase {
     }
 }
 
-class TestTask: SplitEventTask {
+class TestTask: SplitEventTask, @unchecked Sendable {
 
     var event: SplitEvent = .sdkReady
 

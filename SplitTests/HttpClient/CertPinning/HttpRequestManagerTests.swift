@@ -30,13 +30,16 @@ class HttpRequestManagerTests: XCTestCase {
         let manager = createRequestManager()
         var notifications = [String]()
         var results = [CredentialValidationResult: URLSession.AuthChallengeDisposition]()
-
+        let notificationsQueue = DispatchQueue(label: "notifications.queue")
+        
         notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { info in
             guard let info = info as? String else {
                 XCTFail()
                 return
             }
-            notifications.append(info)
+            notificationsQueue.sync {
+                notifications.append(info)
+            }
         }
         
         for result in CredentialValidationResult.allCases {

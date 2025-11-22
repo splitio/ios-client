@@ -40,7 +40,7 @@ class MySegmentsStorageStub: MySegmentsStorage {
         loadLocalForKeyCalled[key] = true
         segments = persistedSegments
     }
-    
+     
     func getAll(forKey key: String) -> Set<String> {
         return segments[key] ?? Set()
     }

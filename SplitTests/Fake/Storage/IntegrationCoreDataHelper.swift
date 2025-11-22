@@ -140,7 +140,12 @@ class IntegrationCoreDataHelper  {
         }
     }
 
-    private static var obsCrud = [String: DbRowNotification]()
+    #if swift(>=6.0)
+        nonisolated(unsafe) private static var obsCrud = [String: DbRowNotification]()
+    #else
+        private static var obsCrud = [String: DbRowNotification]()
+    #endif
+    
     
     static func getDbExp(count: Int, entity: CoreDataEntity, operation: String) -> XCTestExpectation {
         let row = DbRowNotification(expectation: XCTestExpectation(description: "\(operation)_count: \(count)"), triggerCount: count)

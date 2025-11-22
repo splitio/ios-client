@@ -27,6 +27,8 @@ class TelemetryStorageStub: TelemetryStorage {
     var methodLatencies = [TelemetryMethod: Int]()
     var impressions = [TelemetryImpressionsDataType: Int]()
     var events = [TelemetryEventsDataType: Int]()
+    
+    var lock = NSLock()
 
     var lock = NSLock()
     

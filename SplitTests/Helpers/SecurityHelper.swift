@@ -120,7 +120,7 @@ class SecurityHelper  {
 
 }
 
-class ChallengeSenderMock: NSObject, URLAuthenticationChallengeSender {
+class ChallengeSenderMock: NSObject, URLAuthenticationChallengeSender, @unchecked Sendable {
     func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {}
     func continueWithoutCredential(for challenge: URLAuthenticationChallenge) {}
     func cancel(_ challenge: URLAuthenticationChallenge) {}
