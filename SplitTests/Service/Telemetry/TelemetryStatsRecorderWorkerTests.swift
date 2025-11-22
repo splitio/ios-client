@@ -94,6 +94,7 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
         statsRecorder.queue = DispatchQueue(label: "pepe")
         let queue = DispatchQueue(label: "concurrent-test", attributes: .concurrent)
         let group = DispatchGroup()
+        let expectation = self.expectation(description: "Concurrent flush finished")
 
         for _ in 0..<6 {
             group.enter()
@@ -103,7 +104,6 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
             }
         }
 
-        let semaphore = DispatchSemaphore(value: 0)
         group.notify(queue: queue) {
             XCTAssertEqual(6, self.statsRecorder.executeCallCount)
             XCTAssertNotNil(self.statsRecorder.statsSent)
@@ -111,9 +111,9 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
             XCTAssertEqual(6, self.mySegmentsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.myLargeSegmentsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.telemetryStorage.popTagsCallCount)
-            semaphore.signal()
+            expectation.fulfill()
         }
-            
-        semaphore.wait()
+        
+        waitForExpectations(timeout: 5)
     }
 }
