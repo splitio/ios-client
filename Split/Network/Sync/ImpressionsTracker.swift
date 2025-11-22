@@ -26,7 +26,7 @@ protocol ImpressionsTracker: AnyObject {
     func enablePersistence(_ enable: Bool)
 }
 
-class DefaultImpressionsTracker: ImpressionsTracker {
+class DefaultImpressionsTracker: ImpressionsTracker, @unchecked Sendable {
     private let splitConfig: SplitClientConfig
 
     private let syncWorkerFactory: SyncWorkerFactory
@@ -68,7 +68,7 @@ class DefaultImpressionsTracker: ImpressionsTracker {
         self.impressionsObserver = impressionsObserver
 
 #if os(macOS)
-        notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { @Sendable [weak self] _ in
+        notificationHelper?.addObserver(for: AppNotification.didEnterBackground) { [weak self] _ in
             if let self = self {
                 self.saveUniqueKeys()
                 self.saveImpressionsCount()
