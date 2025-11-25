@@ -2631,7 +2631,7 @@
 				95B02E1028D222100030EC8B /* SplitMacOSTests */,
 				3B6DEE5B20EA6A4E0067435E /* Products */,
 				590DF9962125F6900082B94F /* Frameworks */,
-				5B26EC7C2ECF5A4E007143C5 /* TesttUnits */,
+				5B26EC7C2ECF5A4E007143C5 /* TestUnits */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3677,7 +3677,7 @@
 			path = Localhost;
 			sourceTree = "<group>";
 		};
-		5B26EC7C2ECF5A4E007143C5 /* TesttUnits */ = {
+		5B26EC7C2ECF5A4E007143C5 /* TestUnits */ = {
 			isa = PBXGroup;
 			children = (
 				5B26EC7D2ECF5D2E007143C5 /* SplitTests copy-Info.plist */,
@@ -3699,7 +3699,7 @@
 				5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */,
 				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
 			);
-			path = TesttUnits;
+			path = TestUnits;
 			sourceTree = "<group>";
 		};
 		5BD75FAE2E5DF0CA00F9EFBD /* FallbackTreatments */ = {
