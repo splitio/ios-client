@@ -29,8 +29,6 @@ class TelemetryStorageStub: TelemetryStorage {
     var events = [TelemetryEventsDataType: Int]()
     
     var lock = NSLock()
-
-    var lock = NSLock()
     
     var isFactoryDataRecorded = Atomic<Bool>(false)
 
