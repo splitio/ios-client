@@ -30,6 +30,13 @@
   },
   "testTargets" : [
     {
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "5B82ED5A2ED75C96000F77D9",
+        "name" : "SplitTests Swift6"
+      }
+    },
+    {
       "skippedTests" : [
         "AnyValueValidatorTests",
         "AnyValueValidatorTests\/testInvalidListValues()",
@@ -1139,7 +1146,7 @@
       "target" : {
         "containerPath" : "container:Split.xcodeproj",
         "identifier" : "592C6AA4211B6C99002D120C",
-        "name" : "SplitTests"
+        "name" : "SplitTests Swift5"
       }
     }
   ],

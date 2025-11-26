@@ -56,7 +56,8 @@
             reference = "container:TestsUnits/SplitiOSStreaming_2.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:TestsUnits/SplitiOSFull.xctestplan">
+            reference = "container:TestsUnits/SplitiOSFull.xctestplan"
+            default = "YES">
          </TestPlanReference>
          <TestPlanReference
             reference = "container:TestsUnits/SplitiOSUnit_3.xctestplan">

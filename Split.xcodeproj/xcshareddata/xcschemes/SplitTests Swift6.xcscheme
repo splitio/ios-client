@@ -14,8 +14,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:TestsUnits/SplitiOSUnit_1.xctestplan"
-            default = "YES">
+            reference = "container:TestsUnits/SplitiOSUnit_1.xctestplan">
          </TestPlanReference>
          <TestPlanReference
             reference = "container:TestsUnits/SplitiOSHalf_2.xctestplan">
@@ -63,7 +62,8 @@
             reference = "container:TestsUnits/SemVer.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:TestsUnits/SplitiOSFull.xctestplan">
+            reference = "container:TestsUnits/SplitiOSFull.xctestplan"
+            default = "YES">
          </TestPlanReference>
       </TestPlans>
       <Testables>

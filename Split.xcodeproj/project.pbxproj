@@ -2041,7 +2041,7 @@
 		5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitschanges_no_segments.json; sourceTree = "<group>"; };
 		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B82EF2A2ED75C96000F77D9 /* SplitTests Swift6.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "SplitTests Swift6.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B82EF2B2ED75C96000F77D9 /* SplitTests Swift6 Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SplitTests Swift6 Info.plist"; path = "/Users/martin/Desktop/Code/ios-client/TestsUnits/SplitTests Swift6 Info.plist"; sourceTree = "<absolute>"; };
+		5B82EF2B2ED75C96000F77D9 /* SplitTests Swift5 copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SplitTests Swift5 copy-Info.plist"; path = "/Users/martin/Desktop/Code/ios-client/SplitTests Swift5 copy-Info.plist"; sourceTree = "<absolute>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
 		5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit_5.xctestplan; sourceTree = "<group>"; };
 		5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatments.swift; sourceTree = "<group>"; };
@@ -2629,6 +2629,7 @@
 				95B02E1028D222100030EC8B /* SplitMacOSTests */,
 				3B6DEE5B20EA6A4E0067435E /* Products */,
 				590DF9962125F6900082B94F /* Frameworks */,
+				5B82EF2B2ED75C96000F77D9 /* SplitTests Swift5 copy-Info.plist */,
 				5B26ECA82ED75C3A007143C5 /* TestsUnits */,
 			);
 			sourceTree = "<group>";
@@ -3695,7 +3696,6 @@
 				95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */,
 				5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */,
 				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
-				5B82EF2B2ED75C96000F77D9 /* SplitTests Swift6 Info.plist */,
 			);
 			path = TestsUnits;
 			sourceTree = "<group>";
