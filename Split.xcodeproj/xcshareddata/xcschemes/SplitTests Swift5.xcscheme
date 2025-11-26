@@ -11,8 +11,60 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <TestPlans>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSStreaming.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitStreamingUT.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSUnit_1.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SemVer.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSHalf_2.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitPushManagerUT.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSUnit_2.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSUnit_5.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSHalf_1.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSIntegration.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSStreaming_1.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSIntegration_1.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSUnit.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSStreaming_2.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSFull.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSUnit_3.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:TestsUnits/SplitiOSUnit_4.xctestplan">
+         </TestPlanReference>
+      </TestPlans>
       <Testables>
          <TestableReference
             skipped = "NO">
