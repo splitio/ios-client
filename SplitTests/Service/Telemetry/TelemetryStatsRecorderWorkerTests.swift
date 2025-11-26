@@ -113,7 +113,7 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
             XCTAssertEqual(6, self.telemetryStorage.popTagsCallCount)
             semaphore.signal()
         }
-            
+        
         semaphore.wait()
     }
 }
