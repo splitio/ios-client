@@ -17,20 +17,20 @@ jobs:
     strategy:
       matrix:
         plan: [
-            TestUnits/SplitiOSIntegration,
-            TestUnits/SplitiOSIntegration_1,
-            TestUnits/SplitiOSStreaming,
-            TestUnits/SplitiOSStreaming_1,
-            TestUnits/SplitiOSStreaming_2,
-            TestUnits/SplitiOSUnit,
-            TestUnits/SplitiOSUnit_1,
-            TestUnits/SplitiOSUnit_2,
-            TestUnits/SplitiOSUnit_3,
-            TestUnits/SplitiOSUnit_4,
-            TestUnits/SplitiOSUnit_5,
-            TestUnits/SemVer,
-            TestUnits/SplitPushManagerUT,
-            TestUnits/SplitStreamingUT
+          SplitiOSIntegration,
+          SplitiOSIntegration_1,
+          SplitiOSStreaming,
+          SplitiOSStreaming_1,
+          SplitiOSStreaming_2,
+          SplitiOSUnit,
+          SplitiOSUnit_1,
+          SplitiOSUnit_2,
+          SplitiOSUnit_3,
+          SplitiOSUnit_4,
+          SplitiOSUnit_5,
+          SemVer,
+          SplitPushManagerUT,
+          SplitStreamingUT
         ]
       fail-fast: false
     uses: ./.github/workflows/base_ut.yaml
