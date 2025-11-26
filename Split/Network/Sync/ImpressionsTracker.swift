@@ -26,7 +26,7 @@ protocol ImpressionsTracker: AnyObject {
     func enablePersistence(_ enable: Bool)
 }
 
-class DefaultImpressionsTracker: ImpressionsTracker {
+class DefaultImpressionsTracker: ImpressionsTracker, @unchecked Sendable {
     private let splitConfig: SplitClientConfig
 
     private let syncWorkerFactory: SyncWorkerFactory

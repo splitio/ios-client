@@ -27,7 +27,9 @@ class TelemetryStorageStub: TelemetryStorage {
     var methodLatencies = [TelemetryMethod: Int]()
     var impressions = [TelemetryImpressionsDataType: Int]()
     var events = [TelemetryEventsDataType: Int]()
-
+    
+    var lock = NSLock()
+    
     var isFactoryDataRecorded = Atomic<Bool>(false)
 
     func recordLastSync(resource: Resource, time: Int64) {
@@ -148,6 +150,8 @@ class TelemetryStorageStub: TelemetryStorage {
     }
 
     func popTags() -> [String] {
+        lock.lock()
+        defer { lock.unlock() }
         popTagsCallCount+=1
         return []
     }
