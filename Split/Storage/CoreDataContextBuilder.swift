@@ -32,7 +32,7 @@ class CoreDataHelperBuilder {
         let managedObjContext = NSManagedObjectContext(
             concurrencyType: NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
 
-        managedObjContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        managedObjContext.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
         managedObjContext.persistentStoreCoordinator = persistenceCoordinator
 
         guard let docURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last else {

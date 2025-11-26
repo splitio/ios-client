@@ -20,9 +20,9 @@ protocol HttpRequestManager {
     func destroy()
 }
 
-class DefaultHttpRequestManager: NSObject {
-    private var requests = HttpRequestList()
-    private var authenticator: SplitHttpsAuthenticator?
+final class DefaultHttpRequestManager: NSObject, Sendable {
+    private let requests = HttpRequestList()
+    private let authenticator: SplitHttpsAuthenticator?
 
     private let pinChecker: TlsPinChecker?
 

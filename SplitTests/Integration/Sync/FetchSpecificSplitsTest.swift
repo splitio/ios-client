@@ -24,14 +24,17 @@ class FetchSpecificSplitsTest: XCTestCase {
     var lastChangeNumber = 0
     
     override func setUp() {
-        if splitChange == nil {
-            splitChange = loadSplitsChangeFile()
-        }
-
+        splitChange = splitChange ?? loadSplitsChangeFile()
+        
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
                                                           streamingHandler: buildStreamingHandler())
         httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+    }
+    
+    override func tearDown() {
+        httpClient = nil
+        streamingBinding = nil
     }
 
     func testBothFilters() {
@@ -103,7 +106,7 @@ class FetchSpecificSplitsTest: XCTestCase {
     }
     
     private func loadSplitsChangeFile() -> TargetingRulesChange? {
-        return loadSplitChangeFile(name: "splitchanges_1")
+        loadSplitChangeFile(name: "splitchanges_1")
     }
     
     private func loadSplitChangeFile(name fileName: String) -> TargetingRulesChange? {
@@ -114,7 +117,6 @@ class FetchSpecificSplitsTest: XCTestCase {
         }
         return nil
     }
-
 
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
         return { request in

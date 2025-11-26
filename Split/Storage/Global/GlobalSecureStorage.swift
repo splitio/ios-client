@@ -9,10 +9,20 @@ import Foundation
 
 class GlobalSecureStorage: KeyValueStorage {
 
-    private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+    #if swift(>=6.0)
+        nonisolated(unsafe) private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+    #else
+        private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+    #endif
 
     // Only for testing
-    static var testStorage: KeyValueStorage?
+    #if DEBUG
+        #if swift(>=6.0)
+            nonisolated(unsafe) static var testStorage: KeyValueStorage?
+        #else
+            static var testStorage: KeyValueStorage?
+        #endif
+    #endif
 
     static var shared: KeyValueStorage {
         return testStorage ?? prodStorage

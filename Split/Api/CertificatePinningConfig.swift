@@ -8,11 +8,11 @@
 
 import Foundation
 
-public typealias CertificatePinningFailureHandler = (String) -> Void
+public typealias CertificatePinningFailureHandler = @Sendable (String) -> Void
 
 /// Custom error type for certificate pinning errors, conforming to LocalizedError.
 @objc
-public class CertificatePinningError: NSObject, LocalizedError {
+public class CertificatePinningError: NSObject, LocalizedError, @unchecked Sendable {
     private let message: String
 
     /// Initializes a new instance of CertificatePinningError with a custom message.

@@ -9,7 +9,7 @@
 import Foundation
 
 // MARK: Request list
-class HttpRequestList {
+class HttpRequestList: @unchecked Sendable {
     private let queueName = "split.http-request-queue"
     private var queue: DispatchQueue
     private var requests: [Int: HttpRequest]

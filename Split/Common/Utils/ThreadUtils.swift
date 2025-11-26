@@ -87,11 +87,11 @@ struct TaskExecutor {
 }
 
 extension DispatchQueue {
-    static var critical: DispatchQueue = {
+    static let critical: DispatchQueue = {
         return DispatchQueue(label: "split-critical", qos: .userInteractive, attributes: .concurrent)
     }()
 
-    static var general: DispatchQueue = {
+    static let general: DispatchQueue = {
         return DispatchQueue(label: "split-general", attributes: .concurrent)
     }()
 }

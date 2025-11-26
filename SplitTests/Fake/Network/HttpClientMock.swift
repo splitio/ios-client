@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 import XCTest
 
-class HttpClientMock: HttpClient {
+class HttpClientMock: HttpClient, @unchecked Sendable {
 
     var throwOnSend = false
     var httpDataRequest: HttpDataRequest!

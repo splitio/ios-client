@@ -27,7 +27,7 @@ class TestStreamResponseBinding {
     let request: HttpStreamRequest
 
     static func createFor(request: HttpStreamRequest, code: Int) -> TestStreamResponseBinding {
-        return TestStreamResponseBinding(code: code, request: request)
+        TestStreamResponseBinding(code: code, request: request)
     }
 
     private init(code: Int, request: HttpStreamRequest) {

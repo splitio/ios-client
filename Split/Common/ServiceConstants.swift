@@ -11,7 +11,13 @@ import Foundation
 struct ServiceConstants {
 
     // Created for testing purposes only
-    static var values: Values?
+    #if DEBUG
+        #if swift(>=6.0)
+            nonisolated(unsafe) static var values: Values?
+        #else
+            static var values: Values?
+        #endif
+    #endif
 
     static let estimatedImpressionSizeInBytes = 150
     // Estimated size of a UniqueKey having a key of 100 chars and

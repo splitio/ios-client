@@ -16,7 +16,7 @@ protocol SplitEventsManager: AnyObject {
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
 }
 
-class DefaultSplitEventsManager: SplitEventsManager {
+class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
     private let readingRefreshTime: Int
 
     private var sdkReadyTimeStart: Int64

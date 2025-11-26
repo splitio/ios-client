@@ -61,7 +61,7 @@ struct Context {
 
 private typealias Context = Yaml.Context
 
-private var error = Yaml.Context.error
+private let error = Yaml.Context.error
 
 private typealias ContextValue = (context: Context, value: Yaml)
 

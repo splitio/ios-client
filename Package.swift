@@ -18,5 +18,6 @@ let package = Package(
                 "Split.h"
             ]
         )
-    ]
+    ],
+    swiftLanguageModes: [.v5, .v6]
 )

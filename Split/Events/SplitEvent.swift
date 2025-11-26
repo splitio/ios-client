@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objc public enum SplitEvent: Int {
+@objc public enum SplitEvent: Int, Sendable {
     case sdkReady
     case sdkReadyTimedOut
     case sdkReadyFromCache

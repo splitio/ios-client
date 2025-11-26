@@ -103,6 +103,8 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
             }
         }
 
+        let exp = XCTestExpectation(description: "Waiting for all flushes")
+        
         group.notify(queue: .main) {
             XCTAssertEqual(6, self.statsRecorder.executeCallCount)
             XCTAssertNotNil(self.statsRecorder.statsSent)
@@ -110,6 +112,9 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
             XCTAssertEqual(6, self.mySegmentsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.myLargeSegmentsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.telemetryStorage.popTagsCallCount)
+            exp.fulfill()
         }
+            
+        wait(for: [exp], timeout: 5)
     }
 }
