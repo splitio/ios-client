@@ -38,8 +38,15 @@
     {
       "target" : {
         "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "5B3C16342ED76BAD0068D623",
+        "name" : "SplitTestsSwift6"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
         "identifier" : "592C6AA4211B6C99002D120C",
-        "name" : "SplitTests"
+        "name" : "SplitTestsSwift5"
       }
     }
   ],

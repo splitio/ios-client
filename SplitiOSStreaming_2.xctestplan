@@ -1138,7 +1138,7 @@
       "target" : {
         "containerPath" : "container:Split.xcodeproj",
         "identifier" : "592C6AA4211B6C99002D120C",
-        "name" : "SplitTests"
+        "name" : "SplitTestsSwift5"
       }
     }
   ],

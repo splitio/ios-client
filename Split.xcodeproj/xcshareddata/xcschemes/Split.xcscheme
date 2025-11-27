@@ -20,20 +20,6 @@
                ReferencedContainer = "container:Split.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "592C6AA4211B6C99002D120C"
-               BuildableName = "SplitTestsSwift5.xctest"
-               BlueprintName = "SplitTestsSwift5"
-               ReferencedContainer = "container:Split.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -104,18 +90,6 @@
             reference = "container:SplitiOSUnit_5.xctestplan">
          </TestPlanReference>
       </TestPlans>
-      <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "592C6AA4211B6C99002D120C"
-               BuildableName = "SplitTestsSwift5.xctest"
-               BlueprintName = "SplitTestsSwift5"
-               ReferencedContainer = "container:Split.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"

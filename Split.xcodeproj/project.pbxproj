@@ -4447,9 +4447,9 @@
 			targets = (
 				3B6DEE5920EA6A4E0067435E /* Split */,
 				592C6AA4211B6C99002D120C /* SplitTestsSwift5 */,
+				5B3C16342ED76BAD0068D623 /* SplitTestsSwift6 */,
 				95825B9F271F004700A0CDAD /* Split_Split */,
 				95B02CA328D0BD790030EC8B /* SplitWatchOS */,
-				5B3C16342ED76BAD0068D623 /* SplitTestsSwift6 */,
 			);
 		};
 /* End PBXProject section */
