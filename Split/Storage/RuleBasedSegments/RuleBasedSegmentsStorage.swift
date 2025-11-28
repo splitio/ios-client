@@ -118,10 +118,10 @@ class DefaultRuleBasedSegmentsStorage: RuleBasedSegmentsStorage {
         var segmentsInUse = generalInfoStorage.getSegmentsInUse() ?? 0
         let activeSegments = persistentStorage.getSnapshot().segments.filter { $0.status == .active }
         
-        for i in 0..<activeSegments.count {
-            guard let segmentName = activeSegments[i].name else { continue }
+        for segment in activeSegments {
+            guard let segmentName = segment.name else { continue }
             
-            if let parsedSegment = parseSegment(activeSegments[i]) { // Parse it
+            if let parsedSegment = parseSegment(segment) { // Parse it
                 segmentsInUse += updateSegmentsCount(parsedSegment)
                 inMemorySegments.setValue(parsedSegment, forKey: segmentName)
             }

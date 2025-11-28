@@ -42,12 +42,12 @@ class DefaultSplitsStorage: SplitsStorage {
 
     init(persistentSplitsStorage: PersistentSplitsStorage,
          flagSetsCache: FlagSetsCache,
-         GeneralInfoStorage: GeneralInfoStorage) {
+         generalInfoStorage: GeneralInfoStorage) {
         self.persistentStorage = persistentSplitsStorage
         self.inMemorySplits = SynchronizedDictionary()
         self.trafficTypes = SynchronizedDictionary()
         self.flagSetsCache = flagSetsCache
-        self.generalInfoStorage = GeneralInfoStorage
+        self.generalInfoStorage = generalInfoStorage
     }
 
     func loadLocal() {
@@ -231,13 +231,11 @@ class DefaultSplitsStorage: SplitsStorage {
         var segmentsInUse: Int64 = 0
         let activeSplits = persistentStorage.getSplitsSnapshot().splits.filter( { $0.status == .active } )
         
-        if activeSplits.count > 0 {
-            for i in 0...activeSplits.count-1 {
-                guard let splitName = activeSplits[i].name else { continue }
-                let parsedSplit = parseSplit(activeSplits[i])
-                segmentsInUse += updateSegmentsCount(split: parsedSplit)
-                inMemorySplits.setValue(parsedSplit, forKey: splitName)
-            }
+        for split in activeSplits {
+            guard let splitName = split.name else { continue }
+            let parsedSplit = parseSplit(split)
+            segmentsInUse += updateSegmentsCount(split: parsedSplit)
+            inMemorySplits.setValue(parsedSplit, forKey: splitName)
         }
         
         generalInfoStorage.setSegmentsInUse(segmentsInUse)

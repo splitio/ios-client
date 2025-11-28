@@ -23,7 +23,11 @@ class GlobalSecureStorage: KeyValueStorage {
     #endif
 
     static var shared: KeyValueStorage {
+        #if DEBUG
         return testStorage ?? prodStorage
+        #else
+        return prodStorage
+        #endif
     }
 
     func set<T: Encodable>(item: T, for key: SecureItem) {

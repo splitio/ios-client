@@ -44,7 +44,11 @@ struct ServiceConstants {
 
     static let defaultLocalhostRefreshRate = 10
     static var maxSyncPeriodInMillis: Int64 {
+        #if DEBUG
         return values?.maxSyncPeriodInMillis ?? (defaultSseConnectionDelayInSecs * 1000)
+        #else
+        return defaultSseConnectionDelayInSecs * 1000
+        #endif
     }
 
     static let defaultSegmentsChangeNumber: Int64 = -1
