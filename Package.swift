@@ -19,5 +19,4 @@ let package = Package(
             ]
         )
     ],
-    swiftLanguageModes: [.v5, .v6]
 )
