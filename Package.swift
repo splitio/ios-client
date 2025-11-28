@@ -18,5 +18,5 @@ let package = Package(
                 "Split.h"
             ]
         )
-    ],
+    ]
 )
