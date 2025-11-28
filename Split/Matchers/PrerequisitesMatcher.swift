@@ -20,7 +20,11 @@ class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
             guard !prerequisite.treatments.isEmpty else { return true }
             
             do {
-                guard let treatment = try context?.evaluator?.evalTreatment(matchingKey: values.matchingKey, bucketingKey: values.bucketingKey, splitName: prerequisite.flagName, attributes: nil).treatment else {
+                guard let treatment = try context?.evaluator?.evalTreatment(
+                    matchingKey: values.matchingKey,
+                    bucketingKey: values.bucketingKey,
+                    splitName: prerequisite.flagName,
+                    attributes: nil).treatment else {
                     continue
                 }
                 

@@ -20,7 +20,11 @@ class DefaultEvaluator: Evaluator {
     
     private let fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
 
-    init(splitsStorage: SplitsStorage, mySegmentsStorage: MySegmentsStorage, myLargeSegmentsStorage: MySegmentsStorage? = nil, ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil, fallbackTreatmentsCalculator: FallbackTreatmentsCalculator) {
+    init(splitsStorage: SplitsStorage,
+         mySegmentsStorage: MySegmentsStorage,
+         myLargeSegmentsStorage: MySegmentsStorage? = nil,
+         ruleBasedSegmentsStorage: RuleBasedSegmentsStorage? = nil,
+         fallbackTreatmentsCalculator: FallbackTreatmentsCalculator) {
         self.splitsStorage = splitsStorage
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
@@ -134,7 +138,11 @@ class DefaultEvaluator: Evaluator {
     // We pass the treatment through one last filter, where it can be overriden by some Fallback Treatment
     private func controlTreatment(_ flagName: String, label: String? = nil, changeNumber: Int64? = nil, impressionsDisabled: Bool? = false) -> EvaluationResult {
         let finalTreatment = fallbackTreatmentsCalculator.resolve(flagName: flagName, label: label)
-        return EvaluationResult(treatment: finalTreatment.treatment, label: finalTreatment.label ?? "", changeNumber: changeNumber, configuration: finalTreatment.config, impressionsDisabled: impressionsDisabled ?? false)
+        return EvaluationResult(treatment: finalTreatment.treatment,
+                                label: finalTreatment.label ?? "",
+                                changeNumber: changeNumber,
+                                configuration: finalTreatment.config,
+                                impressionsDisabled: impressionsDisabled ?? false)
     }
     
     #if DEBUG

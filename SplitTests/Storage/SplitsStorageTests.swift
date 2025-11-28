@@ -25,7 +25,7 @@ class SplitsStorageTest: XCTestCase {
     override func setUp() {
         persistentStorage = PersistentSplitsStorageStub()
         flagSetsCache = FlagSetsCacheMock()
-        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache, GeneralInfoStorage: generalInfoStorage)
+        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache, generalInfoStorage: generalInfoStorage)
     }
 
     func testNoLocalLoaded() {
@@ -40,7 +40,7 @@ class SplitsStorageTest: XCTestCase {
     }
     
     func testLazyParsing() {
-        noLoadedStorage = DefaultSplitsStorage(persistentSplitsStorage: createPersistentStorageStub(isParsed: false), flagSetsCache: FlagSetsCacheMock(), GeneralInfoStorage: generalInfoStorage)
+        noLoadedStorage = DefaultSplitsStorage(persistentSplitsStorage: createPersistentStorageStub(isParsed: false), flagSetsCache: FlagSetsCacheMock(), generalInfoStorage: generalInfoStorage)
         
         noLoadedStorage?.loadLocal()
 
@@ -278,7 +278,7 @@ class SplitsStorageTest: XCTestCase {
 
         let flagSetsCache = FlagSetsCacheMock()
         flagSetsCache.setsInFilter = ["set1", "set2", "set3"]
-        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache, GeneralInfoStorage: GeneralInfoStorageMock())
+        splitsStorage = DefaultSplitsStorage(persistentSplitsStorage: persistentStorage, flagSetsCache: flagSetsCache, generalInfoStorage: GeneralInfoStorageMock())
         persistentStorage.snapshot = getTestSnapshot(count: 3, sets: [
                                                                        ["set1", "set2"],
                                                                        ["set1"],
