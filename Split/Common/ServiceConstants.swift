@@ -11,12 +11,10 @@ import Foundation
 struct ServiceConstants {
 
     // Created for testing purposes only
-    #if DEBUG
-        #if swift(>=6.0)
-            nonisolated(unsafe) static var values: Values?
-        #else
-            static var values: Values?
-        #endif
+    #if swift(>=6.0)
+        nonisolated(unsafe) static var values: Values?
+    #else
+        static var values: Values?
     #endif
 
     static let estimatedImpressionSizeInBytes = 150

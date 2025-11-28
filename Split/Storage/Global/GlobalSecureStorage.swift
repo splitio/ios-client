@@ -16,12 +16,10 @@ class GlobalSecureStorage: KeyValueStorage {
     #endif
 
     // Only for testing
-    #if DEBUG
-        #if swift(>=6.0)
-            nonisolated(unsafe) static var testStorage: KeyValueStorage?
-        #else
-            static var testStorage: KeyValueStorage?
-        #endif
+    #if swift(>=6.0)
+        nonisolated(unsafe) static var testStorage: KeyValueStorage?
+    #else
+        static var testStorage: KeyValueStorage?
     #endif
 
     static var shared: KeyValueStorage {
