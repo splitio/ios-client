@@ -30,42 +30,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
       - name: Build iOS and Test
-        uses: sersoft-gmbh/xcodebuild-action@v3
+        uses: nick-fields/retry@v3
         with:
-          action: test
-          build-settings: ONLY_ACTIVE_ARCH=NO
-          configuration: Debug
-          derived-data-path: "${{github.workspace}}/SplitApp"
-          destination: ${{ inputs.destination }}
-          project: Split.xcodeproj
-          scheme: ${{ inputs.scheme }}
-          output-formatter: 'xcbeautify'
-          sdk: 'iphonesimulator'
-          test-plan: ${{ inputs.test-plan }}
-
-      # - name: Install java 11
-      #   uses: actions/setup-java@v3
-      #   with:
-      #     distribution: 'oracle'
-      #     java-version: '17'
-
-      # - name: SonarQube Install
-      #   uses: mathrix-education/sonar-scanner@master
-      #   env:
-      #     ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-      #   with:
-      #     version: 4.8.0.2856
-      #     scan: false
-
-      # - name: SonarQube Scan
-      #   run: >
-      #     sonar-scanner --debug
-      #     -Dsonar.login=${{ secrets.SONARQUBE_TOKEN }}
-      #     -Dsonar.host.url=${{ secrets.SONARQUBE_HOST }} 
-      #     -Dsonar.projectName=${{ github.event.repository.name }} 
-      #     -Dsonar.projectKey=splitio_ios-client 
-      #     -Dsonar.github.token=${{ secrets.GITHUB_TOKEN }} 
-      #     -Dsonar.c.file.suffixes=- 
-      #     -Dsonar.cpp.file.suffixes=- 
-      #     -Dsonar.objc.file.suffixes=-
+          timeout_minutes: 30
+          max_attempts: 3
+          command: |
+            set -o pipefail
+            xcodebuild test \
+              -project Split.xcodeproj \
+              -scheme ${{ inputs.scheme }} \
+              -destination '${{ inputs.destination }}' \
+              -testPlan ${{ inputs.test-plan }} \
+              -configuration Debug \
+              -sdk iphonesimulator \
+              ONLY_ACTIVE_ARCH=NO | xcbeautify
