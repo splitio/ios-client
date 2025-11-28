@@ -87,9 +87,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B26EAA92ECE9ACC007143C5"
-               BuildableName = "SplitTests Swift6.xctest"
-               BlueprintName = "SplitTests Swift6"
+               BlueprintIdentifier = "592C6AA4211B6C99002D120C"
+               BuildableName = "SplitTestsSwift5.xctest"
+               BlueprintName = "SplitTestsSwift5"
                ReferencedContainer = "container:Split.xcodeproj">
             </BuildableReference>
          </TestableReference>
