@@ -33,6 +33,19 @@ jobs:
       - name: Install xcbeautify
         run: brew install xcbeautify
 
+      - name: Determine Swift Version
+        id: swift-version
+        run: |
+          if [[ "${{ inputs.scheme }}" == *"Swift5"* ]]; then
+            echo "version=5.0" >> $GITHUB_OUTPUT
+          else
+            echo "version=6.0" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Log Swift Version
+        run: |
+          echo "Building with SWIFT_VERSION=${{ steps.swift-version.outputs.version }} (scheme: ${{ inputs.scheme }})"
+
       - name: Build iOS and Test
         uses: nick-fields/retry@v3
         with:
@@ -47,4 +60,5 @@ jobs:
               -testPlan ${{ inputs.test-plan }} \
               -configuration Debug \
               -sdk iphonesimulator \
-              ONLY_ACTIVE_ARCH=NO | xcbeautify
+              ONLY_ACTIVE_ARCH=NO \
+              SWIFT_VERSION=${{ steps.swift-version.outputs.version }} | xcbeautify
