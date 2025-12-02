@@ -7,7 +7,7 @@ protocol Evaluator {
     func evalTreatment(matchingKey: String, bucketingKey: String?, splitName: String, attributes: [String: Any]?) throws -> EvaluationResult
 }
 
-class DefaultEvaluator: Evaluator {
+class DefaultEvaluator: Evaluator, @unchecked Sendable {
     
     // For testing purposes
     internal var splitter: SplitterProtocol = Splitter.shared

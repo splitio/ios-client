@@ -15,7 +15,7 @@ import Foundation
 /// The idea is to avoid some boilerplate code when creating the factory.
 /// For now it's just the defaul factory.
 ///
-@objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder {
+@objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder, @unchecked Sendable {
 
     private var matchingKey: String?
     private var bucketingKey: String?

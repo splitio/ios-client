@@ -11,7 +11,7 @@ import Foundation
 ///
 /// Default implementation of SplitManager protocol
 ///
-@objc public class DefaultSplitManager: NSObject, SplitManager {
+@objc public class DefaultSplitManager: NSObject, SplitManager, @unchecked Sendable {
 
     private let splitsStorage: SplitsStorage
     private let splitValidator: SplitValidator

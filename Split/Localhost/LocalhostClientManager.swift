@@ -7,7 +7,7 @@
 
 import Foundation
 
-class LocalhostClientManager: SplitClientManager {
+class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
 
     struct LocalhostComponentsGroup {
         let client: SplitClient

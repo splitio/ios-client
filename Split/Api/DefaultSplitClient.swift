@@ -11,7 +11,7 @@ import Foundation
 
 typealias DestroyHandler = () -> Void
 
-public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClient {
+public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClient, @unchecked Sendable {
 
     private var storageContainer: SplitStorageContainer
     private var key: Key
