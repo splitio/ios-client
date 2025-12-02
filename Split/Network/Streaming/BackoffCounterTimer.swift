@@ -13,7 +13,7 @@ protocol BackoffCounterTimer {
     func cancel()
 }
 
-class DefaultBackoffCounterTimer: BackoffCounterTimer {
+class DefaultBackoffCounterTimer: BackoffCounterTimer, @unchecked Sendable {
     private let reconnectBackoffCounter: ReconnectBackoffCounter
     private let queue = DispatchQueue(label: "split-backoff-timer")
     private let timersQueue = DispatchQueue.general

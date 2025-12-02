@@ -14,7 +14,7 @@ protocol SseHandler {
     func reportError(isRetryable: Bool)
 }
 
-class DefaultSseHandler: SseHandler {
+class DefaultSseHandler: SseHandler, @unchecked Sendable {
     let notificationProcessor: SseNotificationProcessor
     let notificationParser: SseNotificationParser
     let notificationManagerKeeper: NotificationManagerKeeper

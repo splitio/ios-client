@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification> {
+class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification>, @unchecked Sendable {
 
     private let synchronizer: SegmentsSynchronizerWrapper
     private let mySegmentsStorage: MySegmentsStorage
@@ -174,7 +174,7 @@ protocol SegmentsSynchronizerWrapper {
     func notifyUpdate(forKey: String)
 }
 
-class MySegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
+class MySegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper, @unchecked Sendable {
     private let synchronizer: Synchronizer
 
     init(synchronizer: Synchronizer) {
@@ -190,7 +190,7 @@ class MySegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
     }
 }
 
-class MyLargeSegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper {
+class MyLargeSegmentsSynchronizerWrapper: SegmentsSynchronizerWrapper, @unchecked Sendable {
     private let synchronizer: Synchronizer
 
     init(synchronizer: Synchronizer) {

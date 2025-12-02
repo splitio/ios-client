@@ -17,7 +17,7 @@ protocol HttpSession: AnyObject {
     func finalize()
 }
 
-class DefaultHttpSession: HttpSession {
+class DefaultHttpSession: HttpSession, @unchecked Sendable {
 
     var urlSession: URLSession
 

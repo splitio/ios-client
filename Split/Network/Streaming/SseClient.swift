@@ -22,7 +22,7 @@ protocol SseClient: AnyObject {
     var isConnectionOpened: Bool { get }
 }
 
-class DefaultSseClient: SseClient {
+class DefaultSseClient: SseClient, @unchecked Sendable {
 
     ///
     /// NOTE:

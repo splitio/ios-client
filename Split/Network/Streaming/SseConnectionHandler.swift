@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SseConnectionHandler {
+class SseConnectionHandler: @unchecked Sendable {
     private let clientLock = NSLock()
     private let sseClientFactory: SseClientFactory
     private var curClientId: String?

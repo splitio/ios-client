@@ -99,7 +99,7 @@ extension HttpClient {
     }
 }
 
-class DefaultHttpClient {
+class DefaultHttpClient: @unchecked Sendable {
 
     #if swift(>=6.0)
         nonisolated(unsafe) static let shared: HttpClient = { DefaultHttpClient() }()

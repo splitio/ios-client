@@ -14,7 +14,7 @@ protocol SyncGuardian {
     func mustSync() -> Bool
 }
 
-class DefaultSyncGuardian: SyncGuardian {
+class DefaultSyncGuardian: SyncGuardian, @unchecked Sendable {
     typealias TimestampProvider = () -> Int64
     private let defaultMaxSyncPeriod: Int64
     private var maxSyncPeriod: Int64

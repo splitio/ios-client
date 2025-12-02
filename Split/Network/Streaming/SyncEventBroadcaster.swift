@@ -32,7 +32,7 @@ protocol SyncEventBroadcaster {
 /// Component to allow push notification manager to comunicate status events
 /// to other components
 ///
-class DefaultSyncEventBroadcaster: SyncEventBroadcaster {
+class DefaultSyncEventBroadcaster: SyncEventBroadcaster, @unchecked Sendable {
     let messageQueue = DispatchQueue(label: "split-sync-event-broadcaster",
                                      attributes: .concurrent)
     var handlers = [IncomingMessageHandler]()

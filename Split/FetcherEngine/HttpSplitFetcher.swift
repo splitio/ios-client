@@ -10,7 +10,7 @@ protocol HttpSplitFetcher {
     func execute(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders?, spec: String?) throws -> TargetingRulesChange
 }
 
-class DefaultHttpSplitFetcher: HttpSplitFetcher {
+class DefaultHttpSplitFetcher: HttpSplitFetcher, @unchecked Sendable {
 
     private let restClient: RestClientSplitChanges
     private let syncHelper: SyncHelper
