@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 import XCTest
 
-class SegmentsSyncHelperMock: SegmentsSyncHelper {
+class SegmentsSyncHelperMock: SegmentsSyncHelper, @unchecked Sendable {
     var results = [SegmentsSyncResult]()
     var syncCallCount = 0
     var syncCallIndex = 0

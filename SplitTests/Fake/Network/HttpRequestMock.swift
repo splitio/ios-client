@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HttpRequestMock: HttpRequest {
+class HttpRequestMock: HttpRequest, @unchecked Sendable {
     var pinnedCredentialFail: Bool = false
     
     func notifyPinnedCredentialFail() {

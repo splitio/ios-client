@@ -49,7 +49,7 @@ class TestStreamResponseBinding {
 }
 typealias TestStreamResponseBindingHandler = (HttpStreamRequest) -> TestStreamResponseBinding
 
-class HttpRequestManagerTestDispatcher: HttpRequestManager {
+class HttpRequestManagerTestDispatcher: HttpRequestManager, @unchecked Sendable {
     private var streamingBinding = [TestStreamResponseBinding]()
     private var dispatcher: HttpClientTestDispatcher
     private var streamingHandler: TestStreamResponseBindingHandler

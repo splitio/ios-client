@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SplitsStorageStub: SplitsStorage {
+class SplitsStorageStub: SplitsStorage, @unchecked Sendable {
 
     var updatedSplitChange: ProcessedSplitChange? = nil
     

@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SseNotificationParserStub: SseNotificationParser {
+class SseNotificationParserStub: SseNotificationParser, @unchecked Sendable {
 
 
     var incomingNotification: IncomingNotification?

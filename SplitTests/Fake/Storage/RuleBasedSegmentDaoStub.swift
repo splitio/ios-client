@@ -9,7 +9,7 @@
 @testable import Split
 import Foundation
 
-class RuleBasedSegmentDaoStub: RuleBasedSegmentDao {
+class RuleBasedSegmentDaoStub: RuleBasedSegmentDao, @unchecked Sendable {
     var insertedSegments = [RuleBasedSegment]()
     var segments = [RuleBasedSegment]()
     var deletedSegments: [String]?

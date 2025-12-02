@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PersistentUniqueKeyStorageStub: PersistentUniqueKeysStorage {
+class PersistentUniqueKeyStorageStub: PersistentUniqueKeysStorage, @unchecked Sendable {
 
     struct Record {
         var uniqueKey: UniqueKey

@@ -1,7 +1,7 @@
 import Foundation
 @testable import Split
 
-class GeneralInfoStorageMock: GeneralInfoStorage {
+class GeneralInfoStorageMock: GeneralInfoStorage, @unchecked Sendable {
     
     let queue = DispatchQueue(label: "test", target: .global())
     var updateTimestamp: Int64 = 0

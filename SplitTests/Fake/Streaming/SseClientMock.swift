@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 import XCTest
 
-class SseClientMock: SseClient {
+class SseClientMock: SseClient, @unchecked Sendable {
     var isConnectionOpened: Bool = true
 
 

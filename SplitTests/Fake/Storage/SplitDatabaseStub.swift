@@ -37,7 +37,7 @@ struct CoreDataDaoProviderMock: DaoProvider {
     var ruleBasedSegmentDao: RuleBasedSegmentDao = RuleBasedSegmentDaoStub()
 }
 
-class SplitDatabaseStub: SplitDatabase {
+class SplitDatabaseStub: SplitDatabase, @unchecked Sendable {
 
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao

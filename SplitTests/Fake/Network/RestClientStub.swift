@@ -17,7 +17,7 @@ protocol RestClientTest {
     func updateFailedSseAuth(error: Error)
 }
 
-class RestClientStub: SplitApiRestClient {
+class RestClientStub: SplitApiRestClient, @unchecked Sendable {
     private var sseAuthResult: DataResult<SseAuthenticationResponse>?
     private var segments: [AllSegmentsChange]?
     private var largeSegments: [SegmentChange]?

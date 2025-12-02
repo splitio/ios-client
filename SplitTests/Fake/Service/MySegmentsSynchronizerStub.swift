@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class MySegmentsSynchronizerStub: MySegmentsSynchronizer {
+class MySegmentsSynchronizerStub: MySegmentsSynchronizer, @unchecked Sendable {
 
     var loadMySegmentsFromCacheCalled = false
     var synchronizeMySegmentsCalled = false

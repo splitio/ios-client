@@ -9,7 +9,7 @@
 @testable import Split
 import Foundation
 
-class GeneralInfoDaoStub: GeneralInfoDao {
+class GeneralInfoDaoStub: GeneralInfoDao, @unchecked Sendable {
 
     var updatedString = [String: String]()
     var updatedLong = [String: Int64]()

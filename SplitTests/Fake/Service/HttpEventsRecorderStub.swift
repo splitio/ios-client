@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HttpEventsRecorderStub: HttpEventsRecorder {
+class HttpEventsRecorderStub: HttpEventsRecorder, @unchecked Sendable {
 
     var eventsSent = [EventDTO]()
     var errorOccurredCallCount = -1

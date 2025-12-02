@@ -9,7 +9,7 @@
 import XCTest
 @testable import Split
 
-class EventsTrackerStub: EventsTracker {
+class EventsTrackerStub: EventsTracker, @unchecked Sendable {
     var isTrackingEnabled: Bool = true
 
     var trackCalled = false

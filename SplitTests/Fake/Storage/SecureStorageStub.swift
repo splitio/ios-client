@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SecureStorageStub: KeyValueStorage {
+class SecureStorageStub: KeyValueStorage, @unchecked Sendable {
 
     var values = [String: String]()
     func set<T: Encodable>(item: T, for key: SecureItem) {

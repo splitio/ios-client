@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PersistentMySegmentsStorageMock: PersistentMySegmentsStorage {
+class PersistentMySegmentsStorageMock: PersistentMySegmentsStorage, @unchecked Sendable {
     var persistedSegments = [String: SegmentChange]()
 
     func set(_ change: SegmentChange, forKey key: String) {
