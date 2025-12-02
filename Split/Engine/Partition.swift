@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc public class Partition: NSObject, Codable {
+@objc public class Partition: NSObject, Codable, @unchecked Sendable {
 
     var treatment: String?
     var size: Int?

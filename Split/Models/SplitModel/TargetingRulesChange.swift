@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc class TargetingRulesChange: NSObject, Codable {
+@objc class TargetingRulesChange: NSObject, Codable, @unchecked Sendable {
     var featureFlags: SplitChange
     var ruleBasedSegments: RuleBasedSegmentChange
     

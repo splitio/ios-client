@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc class BetweenMatcherData: NSObject, Codable {
+@objc class BetweenMatcherData: NSObject, Codable, @unchecked Sendable {
     var dataType: DataType?
     var start: Int64?
     var end: Int64?
