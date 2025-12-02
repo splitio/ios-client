@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ConcurrentDictionary<K: Hashable, T> {
+class ConcurrentDictionary<K: Hashable, T>: @unchecked Sendable {
 
     private var queue: DispatchQueue
     private var items: [K: T]

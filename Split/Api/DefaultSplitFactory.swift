@@ -59,8 +59,9 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
             HttpSessionConfig.default.notificationHelper = notificationHelper
             if let handler = pinningConfig.failureHandler {
+                nonisolated(unsafe) let capturedHandler = handler
                 notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { host in
-                    handler(host as? String ?? "Unknown")
+                    capturedHandler(host as? String ?? "Unknown")
                 }
             }
             savePins(pinningConfig.pins, apiKey: params.apiKey)
