@@ -28,7 +28,11 @@ struct SplitsParallelDecoder: SplitsDecoder {
 
         Logger.v("Using parallel decoding for \(list.count) splits")
         let start = Date.nowMillis()
+        #if swift(>=6.0)
+        nonisolated(unsafe) var splits = [Split]()
+        #else
         var splits = [Split]()
+        #endif
         let dataQueue = DispatchQueue(label: "split-parallel-parsing-data",
                                       target: DispatchQueue(label: "split-parallel-parsing-data-conc",
                                                             attributes: .concurrent))
