@@ -15,7 +15,7 @@ protocol PersistentImpressionsCountStorage {
     func setActive(_ counts: [ImpressionsCountPerFeature])
 }
 
-class DefaultImpressionsCountStorage: PersistentImpressionsCountStorage {
+class DefaultImpressionsCountStorage: PersistentImpressionsCountStorage, @unchecked Sendable {
 
     private let impressionsCountDao: ImpressionsCountDao
     private let expirationPeriod: Int64

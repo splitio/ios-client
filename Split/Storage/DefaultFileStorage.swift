@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DefaultFileStorage: FileStorage {
+class DefaultFileStorage: FileStorage, @unchecked Sendable {
 
     var dataFolderUrl: URL?
     let dataFolderName: String

@@ -17,7 +17,7 @@ protocol EventDao {
     func delete(_ events: [EventDTO])
 }
 
-class CoreDataEventDao: BaseCoreDataDao, EventDao {
+class CoreDataEventDao: BaseCoreDataDao, EventDao, @unchecked Sendable {
 
     private let cipher: Cipher?
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {

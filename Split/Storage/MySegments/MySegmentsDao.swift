@@ -18,7 +18,7 @@ protocol MySegmentsDao {
 /// Added a new parameter to specify the entity to work with.
 /// Since Segments and LargeSegments are handled the same way,
 /// it is not necessary to create a new DAO class for them.
-class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao {
+class CoreDataMySegmentsDao: BaseCoreDataDao, MySegmentsDao, @unchecked Sendable {
 
     private let coreDataEntity: CoreDataEntity
     private let cipher: Cipher?

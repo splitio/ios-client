@@ -29,7 +29,7 @@ protocol GeneralInfoDao {
     func delete(info: GeneralInfo)
 }
 
-class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
+class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao, @unchecked Sendable {
 
     func update(info: GeneralInfo, stringValue: String) {
         executeAsync { [weak self] in

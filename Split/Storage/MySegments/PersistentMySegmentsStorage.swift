@@ -14,7 +14,7 @@ protocol PersistentMySegmentsStorage {
     func deleteAll()
 }
 
-class PersistentSegmentsStorage: PersistentMySegmentsStorage {
+class PersistentSegmentsStorage: PersistentMySegmentsStorage, @unchecked Sendable {
 
     private let dao: MySegmentsDao
 
@@ -35,7 +35,7 @@ class PersistentSegmentsStorage: PersistentMySegmentsStorage {
     }
 }
 
-class DefaultPersistentMySegmentsStorage: PersistentSegmentsStorage {
+class DefaultPersistentMySegmentsStorage: PersistentSegmentsStorage, @unchecked Sendable {
     init(database: SplitDatabase) {
         super.init(dao: database.mySegmentsDao)
     }

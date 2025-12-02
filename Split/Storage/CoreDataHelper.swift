@@ -21,7 +21,7 @@ enum CoreDataEntity: String {
     case ruleBasedSegment = "RuleBasedSegment"
 }
 
-class CoreDataHelper {
+class CoreDataHelper: @unchecked Sendable {
     typealias Operation = () -> Void
     private let managedObjectContext: NSManagedObjectContext
     private let persistentCoordinator: NSPersistentStoreCoordinator

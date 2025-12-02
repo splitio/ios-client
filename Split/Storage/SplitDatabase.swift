@@ -61,7 +61,7 @@ protocol SplitDatabase {
     var ruleBasedSegmentDao: RuleBasedSegmentDao { get }
 }
 
-class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
+class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase, @unchecked Sendable {
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
     var myLargeSegmentsDao: MySegmentsDao

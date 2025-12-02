@@ -29,7 +29,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func forceParsing()
 }
 
-class DefaultSplitsStorage: SplitsStorage {
+class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
 
     private var persistentStorage: PersistentSplitsStorage
     private var inMemorySplits: SynchronizedDictionary<String, Split>

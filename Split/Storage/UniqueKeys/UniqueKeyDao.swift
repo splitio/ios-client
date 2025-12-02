@@ -17,7 +17,7 @@ protocol UniqueKeyDao {
     func delete(_ ids: [String])
 }
 
-class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao {
+class CoreDataUniqueKeyDao: BaseCoreDataDao, UniqueKeyDao, @unchecked Sendable {
 
     private let cipher: Cipher?
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {

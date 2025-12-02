@@ -15,7 +15,7 @@ protocol AttributesDao {
     func syncUpdate(userKey: String, attributes: [String: Any]?)
 }
 
-class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao {
+class CoreDataAttributesDao: BaseCoreDataDao, AttributesDao, @unchecked Sendable {
 
     private let cipher: Cipher?
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {

@@ -18,7 +18,7 @@ protocol SplitDao {
     func syncInsertOrUpdate(split: Split)
 }
 
-class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
+class CoreDataSplitDao: BaseCoreDataDao, SplitDao, @unchecked Sendable {
     private let decoder: SplitsDecoder
     private let encoder: SplitsEncoder
     private var cipher: Cipher?

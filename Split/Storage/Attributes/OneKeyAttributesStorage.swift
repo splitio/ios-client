@@ -21,7 +21,7 @@ protocol OneKeyAttributesStorage {
 }
 
 @available(*, deprecated, message: "Gonna be replaced by AttributesStorage and ByKeyAttributesStorage")
-class OneKeyDefaultAttributesStorage: OneKeyAttributesStorage {
+class OneKeyDefaultAttributesStorage: OneKeyAttributesStorage, @unchecked Sendable {
 
     private let inMemoryAttributes: ConcurrentDictionary<String, Any>
     private let persistentStorage: OneKeyPersistentAttributesStorage?

@@ -7,7 +7,7 @@
 //
 import Foundation
 
-class GlobalSecureStorage: KeyValueStorage {
+class GlobalSecureStorage: KeyValueStorage, @unchecked Sendable {
 
     #if swift(>=6.0)
         nonisolated(unsafe) private static let prodStorage: KeyValueStorage = GlobalSecureStorage()

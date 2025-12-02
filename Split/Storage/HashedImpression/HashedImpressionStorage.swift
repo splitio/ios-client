@@ -16,7 +16,7 @@ protocol HashedImpressionsStorage {
     func save()
 }
 
-class DefaultHashedImpressionsStorage: HashedImpressionsStorage {
+class DefaultHashedImpressionsStorage: HashedImpressionsStorage, @unchecked Sendable {
 
     private let cache: LRUCache<UInt32, Int64>
     private let persistentStorage: PersistentHashedImpressionsStorage
