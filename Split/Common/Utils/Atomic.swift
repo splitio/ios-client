@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class Atomic<T: Sendable>: @unchecked Sendable {
+final class Atomic<T>: @unchecked Sendable {
 //    private let queue = DispatchQueue(label: "split-atomic", target: DispatchQueue.general)
     private var currentValue: T
 

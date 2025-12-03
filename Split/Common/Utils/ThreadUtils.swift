@@ -59,7 +59,7 @@ protocol CancellableTask {
     func cancel()
 }
 
-class DefaultTask: CancellableTask {
+class DefaultTask: CancellableTask, @unchecked Sendable {
 
     private(set) var taskId: Int64
     private(set) var isCancelled = false

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ConcurrentSet<T: Hashable & Sendable>: @unchecked Sendable {
+class ConcurrentSet<T: Hashable>: @unchecked Sendable {
     private var queue = DispatchQueue(label: "Split.ConcurrentSet",
                                       attributes: .concurrent)
     private var items: Set<T> = Set<T>()

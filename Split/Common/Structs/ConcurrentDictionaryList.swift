@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ConcurrentDictionaryList<K: Hashable & Sendable, T: Sendable>: @unchecked Sendable {
+class ConcurrentDictionaryList<K: Hashable, T>: @unchecked Sendable {
 
     private var queue = DispatchQueue(label: "split-concurrent-dictionary-list",
                                       attributes: .concurrent)
