@@ -22,7 +22,7 @@ struct TestDispatcherResponse {
 
 typealias HttpClientTestDispatcher = (HttpDataRequest) -> TestDispatcherResponse
 
-class TestStreamResponseBinding {
+class TestStreamResponseBinding: @unchecked Sendable {
     let code: Int
     let request: HttpStreamRequest
 
