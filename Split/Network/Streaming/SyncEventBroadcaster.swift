@@ -22,7 +22,7 @@ enum SyncStatusEvent: Equatable {
 }
 
 protocol SyncEventBroadcaster {
-    typealias IncomingMessageHandler = (SyncStatusEvent) -> Void
+    typealias IncomingMessageHandler = @Sendable (SyncStatusEvent) -> Void
     func push(event: SyncStatusEvent)
     func register(handler: @escaping IncomingMessageHandler)
     func destroy()

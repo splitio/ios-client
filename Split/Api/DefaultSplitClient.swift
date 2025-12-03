@@ -309,7 +309,7 @@ extension DefaultSplitClient {
         destroy(completion: nil)
     }
 
-    public func destroy(completion: (() -> Void)?) {
+    public func destroy(completion: (@Sendable () -> Void)?) {
         isClientDestroyed = true
         treatmentManager.destroy()
         DispatchQueue.global().async { [weak self] in

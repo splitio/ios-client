@@ -1,0 +1,674 @@
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 6.1.2 (swiftlang-6.1.2.1.2 clang-1700.0.13.5)
+// swift-module-flags: -target x86_64-apple-ios12.0-simulator -enable-objc-interop -enable-library-evolution -swift-version 6 -enforce-exclusivity=checked -O -enable-experimental-feature DebugDescriptionMacro -module-name Split
+// swift-module-flags-ignorable: -no-verify-emitted-module-interface -interface-compiler-version 6.1.2
+import BackgroundTasks
+import CommonCrypto
+import Compression
+import CoreData
+import Foundation
+@_exported import Split
+import Swift
+import SystemConfiguration
+import UIKit
+import _Concurrency
+import _StringProcessing
+import _SwiftConcurrencyShims
+@_hasMissingDesignatedInitializers @objc public class SyncConfig : ObjectiveC.NSObject {
+  @objc(builder) public static func builder() -> Split.SyncConfig.Builder
+  @_inheritsConvenienceInitializers @objc(SyncConfigBuilder) public class Builder : ObjectiveC.NSObject {
+    @objc(build) public func build() -> Split.SyncConfig
+    @discardableResult
+    @objc(addSplitFilter:) public func addSplitFilter(_ filter: Split.SplitFilter) -> Split.SyncConfig.Builder
+    @objc override dynamic public init()
+    @objc deinit
+  }
+  @objc deinit
+}
+extension Split.Partition {
+  @objc override dynamic public var debugDescription: Swift.String {
+    @objc get
+  }
+}
+@objc @_hasMissingDesignatedInitializers public class DefaultSplitFactory : ObjectiveC.NSObject, Split.SplitFactory {
+  @objc public static var sdkVersion: Swift.String {
+    @objc get
+  }
+  @objc public var userConsent: Split.UserConsent {
+    @objc get
+  }
+  @objc public var client: any Split.SplitClient {
+    @objc get
+  }
+  @objc public var manager: any Split.SplitManager {
+    @objc get
+  }
+  @objc public var version: Swift.String {
+    @objc get
+  }
+  @objc public func client(key: Split.Key) -> any Split.SplitClient
+  @objc public func client(matchingKey: Swift.String) -> any Split.SplitClient
+  @objc public func client(matchingKey: Swift.String, bucketingKey: Swift.String?) -> any Split.SplitClient
+  @objc public func setUserConsent(enabled: Swift.Bool)
+  @objc deinit
+}
+@objc public protocol SplitLocalhostDataSource {
+  @objc func updateLocalhost(yaml: Swift.String) -> Swift.Bool
+  @objc func updateLocalhost(splits: Swift.String) -> Swift.Bool
+}
+@objc public class EvaluationOptions : ObjectiveC.NSObject {
+  @objc final public let properties: [Swift.String : Any]?
+  @objc public init(properties: [Swift.String : Any]? = nil)
+  @objc deinit
+}
+@objc public protocol SplitManager {
+  @objc var splits: [Split.SplitView] { get }
+  @objc var splitNames: [Swift.String] { get }
+  @objc func split(featureName: Swift.String) -> Split.SplitView?
+}
+public func += <K, V>(left: inout [K : V], right: [K : V]) where K : Swift.Hashable
+@_inheritsConvenienceInitializers @objc(RuleBasedSegmentEntity) public class RuleBasedSegmentEntity : CoreData.NSManagedObject {
+  @objc @NSManaged dynamic public var name: Swift.String {
+    @objc get
+    @objc set
+  }
+  @objc @NSManaged dynamic public var body: Swift.String {
+    @objc get
+    @objc set
+  }
+  @objc @NSManaged dynamic public var updatedAt: Swift.Int64 {
+    @objc get
+    @objc set
+  }
+  @objc override dynamic public init(entity: CoreData.NSEntityDescription, insertInto context: CoreData.NSManagedObjectContext?)
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers @objc public class RolloutCacheConfiguration : ObjectiveC.NSObject {
+  @objc(builder) public static func builder() -> Split.RolloutCacheConfiguration.Builder
+  @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(RolloutCacheConfigurationBuilder) public class Builder : ObjectiveC.NSObject {
+    @objc public func build() -> Split.RolloutCacheConfiguration
+    @discardableResult
+    @objc(setExpirationDays:) public func set(expirationDays: Swift.Int) -> Split.RolloutCacheConfiguration.Builder
+    @discardableResult
+    @objc(setClearOnInit:) public func set(clearOnInit: Swift.Bool) -> Split.RolloutCacheConfiguration.Builder
+    @objc deinit
+  }
+  @objc deinit
+}
+public typealias SplitImpressionListener = (Split.SplitImpression) -> Swift.Void
+@objc @_inheritsConvenienceInitializers public class SplitClientConfig : ObjectiveC.NSObject {
+  @objc public var sdkReadyTimeOut: Swift.Int
+  @objc public var featuresRefreshRate: Swift.Int
+  @objc public var impressionRefreshRate: Swift.Int
+  @objc public var impressionsChunkSize: Swift.Int64
+  @objc public var segmentsRefreshRate: Swift.Int
+  @objc public var impressionsQueueSize: Swift.Int
+  @objc public var connectionTimeout: Swift.Int
+  @objc public var trafficType: Swift.String?
+  @objc public var eventsFirstPushWindow: Swift.Int
+  @objc public var eventsPushRate: Swift.Int
+  @objc public var eventsQueueSize: Swift.Int64
+  @objc public var eventsPerPush: Swift.Int
+  @objc public var metricsPushRate: Swift.Int
+  @objc public var apiKey: Swift.String {
+    @objc get
+    @objc set
+  }
+  @objc public var serviceEndpoints: Split.ServiceEndpoints
+  @objc public var fallbackTreatments: Split.FallbackTreatmentsConfig
+  @available(*, deprecated, message: "Use logLevel instead")
+  @objc public var isDebugModeEnabled: Swift.Bool {
+    @objc get
+    @objc set
+  }
+  @available(*, deprecated, message: "Use logLevel instead")
+  @objc public var isVerboseModeEnabled: Swift.Bool {
+    @objc get
+    @objc set
+  }
+  public var logLevel: Split.SplitLogLevel {
+    get
+    set
+  }
+  @objc public func set(logLevel: Swift.String)
+  @objc public var encryptionEnabled: Swift.Bool
+  @objc public var impressionListener: Split.SplitImpressionListener?
+  @objc public var localhostDataFolder: Swift.String
+  @objc public var splitFile: Swift.String
+  @objc public var isLabelsEnabled: Swift.Bool
+  @objc public var sync: Split.SyncConfig
+  @objc public var streamingEnabled: Swift.Bool
+  @Split.ImpressionsModeProperty @objc @_projectedValueProperty($impressionsMode) public var impressionsMode: Swift.String {
+    @objc get
+    @objc set
+    _modify
+  }
+  public var $impressionsMode: Split.ImpressionsMode {
+    get
+    set
+  }
+  @objc public var pushRetryBackoffBase: Swift.Int {
+    @objc get
+    @objc set
+  }
+  @objc public var offlineRefreshRate: Swift.Int
+  @objc public var synchronizeInBackground: Swift.Bool
+  public var userConsent: Split.UserConsent
+  @objc public var httpsAuthenticator: (any Split.SplitHttpsAuthenticator)?
+  @objc public var telemetryRefreshRate: Swift.Int {
+    @objc get
+    @objc set
+  }
+  @objc public var persistentAttributesEnabled: Swift.Bool
+  @objc public var syncEnabled: Swift.Bool
+  @objc public var prefix: Swift.String?
+  @objc public var certificatePinningConfig: Split.CertificatePinningConfig?
+  @objc public var rolloutCacheConfiguration: Split.RolloutCacheConfiguration?
+  @objc override dynamic public init()
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc public class Partition : ObjectiveC.NSObject, Swift.Codable {
+  @objc override dynamic public init()
+  @objc deinit
+  public func encode(to encoder: any Swift.Encoder) throws
+  required public init(from decoder: any Swift.Decoder) throws
+}
+public typealias SplitImpression = Split.Impression
+@_inheritsConvenienceInitializers @objc public class Impression : ObjectiveC.NSObject, Swift.Codable {
+  @objc public var feature: Swift.String?
+  @objc public var keyName: Swift.String?
+  @objc public var treatment: Swift.String?
+  public var time: Swift.Int64?
+  @objc public var timestamp: Foundation.NSNumber? {
+    @objc get
+  }
+  public var changeNumber: Swift.Int64?
+  @objc public var changeNum: Foundation.NSNumber? {
+    @objc get
+  }
+  @objc public var label: Swift.String?
+  @objc public var bucketingKey: Swift.String?
+  @objc public var attributes: [Swift.String : Any]?
+  @objc public var properties: Swift.String?
+  @objc override dynamic public init()
+  @objc deinit
+  public func encode(to encoder: any Swift.Encoder) throws
+  required public init(from decoder: any Swift.Decoder) throws
+}
+@objc @_inheritsConvenienceInitializers public class SplitView : ObjectiveC.NSObject, Swift.Codable {
+  @objc public var name: Swift.String?
+  @objc public var trafficType: Swift.String?
+  @objc public var defaultTreatment: Swift.String?
+  public var killed: Swift.Bool?
+  @objc public var isKilled: Swift.Bool {
+    @objc get
+  }
+  @objc public var treatments: [Swift.String]?
+  @objc public var sets: [Swift.String]?
+  public var changeNumber: Swift.Int64?
+  @objc public var changeNum: Foundation.NSNumber? {
+    @objc get
+  }
+  @objc public var configs: [Swift.String : Swift.String]?
+  @objc public var prerequisites: [Split.Prerequisite]?
+  @objc public var impressionsDisabled: Swift.Bool
+  @objc override dynamic public init()
+  @objc deinit
+  public func encode(to encoder: any Swift.Encoder) throws
+  required public init(from decoder: any Swift.Decoder) throws
+}
+@objc public class Key : ObjectiveC.NSObject {
+  final public let matchingKey: Swift.String
+  final public let bucketingKey: Swift.String?
+  @objc(initWithMatchingKey:bucketingKey:) public init(matchingKey: Swift.String, bucketingKey: Swift.String? = nil)
+  @objc override dynamic public var hash: Swift.Int {
+    @objc get
+  }
+  @objc override dynamic public func isEqual(_ object: Any?) -> Swift.Bool
+  @objc override dynamic public var description: Swift.String {
+    @objc get
+  }
+  @objc deinit
+}
+infix operator |> : Functional
+@objc public enum SplitEncryptionLevel : Swift.Int, Swift.Codable {
+  case aes128Cbc
+  case none
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+public typealias SplitAction = () -> Swift.Void
+@objc public protocol SplitClient {
+  @objc func getTreatment(_ split: Swift.String, attributes: [Swift.String : Any]?) -> Swift.String
+  @objc func getTreatment(_ split: Swift.String) -> Swift.String
+  @objc(getTreatmentsForSplits:attributes:) func getTreatments(splits: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Swift.String]
+  @objc func getTreatmentWithConfig(_ split: Swift.String) -> Split.SplitResult
+  @objc func getTreatmentWithConfig(_ split: Swift.String, attributes: [Swift.String : Any]?) -> Split.SplitResult
+  @objc(getTreatmentsWithConfigForSplits:attributes:) func getTreatmentsWithConfig(splits: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Split.SplitResult]
+  @objc func getTreatment(_ split: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> Swift.String
+  @objc(getTreatmentsForSplits:attributes:evaluationOptions:) func getTreatments(splits: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Swift.String]
+  @objc func getTreatmentWithConfig(_ split: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> Split.SplitResult
+  @objc(getTreatmentsWithConfigForSplits:attributes:evaluationOptions:) func getTreatmentsWithConfig(splits: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Split.SplitResult]
+  @objc func on(event: Split.SplitEvent, execute action: @escaping Split.SplitAction)
+  @objc func on(event: Split.SplitEvent, runInBackground: Swift.Bool, execute action: @escaping Split.SplitAction)
+  @objc func on(event: Split.SplitEvent, queue: Dispatch.DispatchQueue, execute action: @escaping Split.SplitAction)
+  @objc func track(trafficType: Swift.String, eventType: Swift.String) -> Swift.Bool
+  @objc func track(trafficType: Swift.String, eventType: Swift.String, value: Swift.Double) -> Swift.Bool
+  @objc func track(eventType: Swift.String) -> Swift.Bool
+  @objc func track(eventType: Swift.String, value: Swift.Double) -> Swift.Bool
+  @objc func setAttribute(name: Swift.String, value: Any) -> Swift.Bool
+  @objc func getAttribute(name: Swift.String) -> Any?
+  @objc func setAttributes(_ values: [Swift.String : Any]) -> Swift.Bool
+  @objc func getAttributes() -> [Swift.String : Any]?
+  @objc func removeAttribute(name: Swift.String) -> Swift.Bool
+  @objc func clearAttributes() -> Swift.Bool
+  @objc func flush()
+  @objc func destroy()
+  @objc func destroy(completion: (() -> Swift.Void)?)
+  @objc(trackWithTrafficType:eventType:properties:) func track(trafficType: Swift.String, eventType: Swift.String, properties: [Swift.String : Any]?) -> Swift.Bool
+  @objc(trackWithTrafficType:eventType:value:properties:) func track(trafficType: Swift.String, eventType: Swift.String, value: Swift.Double, properties: [Swift.String : Any]?) -> Swift.Bool
+  @objc(trackWithEventType:properties:) func track(eventType: Swift.String, properties: [Swift.String : Any]?) -> Swift.Bool
+  @objc(trackWithEventType:value:properties:) func track(eventType: Swift.String, value: Swift.Double, properties: [Swift.String : Any]?) -> Swift.Bool
+  @objc func getTreatmentsByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?) -> [Swift.String : Swift.String]
+  @objc func getTreatmentsByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Swift.String]
+  @objc func getTreatmentsWithConfigByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?) -> [Swift.String : Split.SplitResult]
+  @objc func getTreatmentsWithConfigByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Split.SplitResult]
+  @objc func getTreatmentsByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Swift.String]
+  @objc func getTreatmentsByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Swift.String]
+  @objc func getTreatmentsWithConfigByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Split.SplitResult]
+  @objc func getTreatmentsWithConfigByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Split.SplitResult]
+}
+public enum ConditionType : Swift.Int, Swift.Codable {
+  case whitelist
+  case rollout
+  public typealias RawValue = Swift.Int
+  public init(from decoder: any Swift.Decoder) throws
+  public func encode(to encoder: any Swift.Encoder) throws
+  public init?(rawValue: Swift.Int)
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@_inheritsConvenienceInitializers @objc public class SplitBgSynchronizer : ObjectiveC.NSObject, @unchecked Swift.Sendable {
+  @objc public static let shared: Split.SplitBgSynchronizer
+  @objc public func register(dbKey: Swift.String, prefix: Swift.String?, userKey: Swift.String, encryptionLevel: Split.SplitEncryptionLevel = .none)
+  @objc public func unregister(dbKey: Swift.String, userKey: Swift.String)
+  @objc public func unregisterAll()
+  @available(iOSApplicationExtension, unavailable)
+  @available(tvOSApplicationExtension, unavailable)
+  @objc public func schedule(serviceEndpoints: Split.ServiceEndpoints? = nil)
+  @objc override dynamic public init()
+  @objc deinit
+}
+@objc @_hasMissingDesignatedInitializers public class LocalhostSplitFactory : ObjectiveC.NSObject, Split.SplitFactory {
+  @objc public static var sdkVersion: Swift.String {
+    @objc get
+  }
+  @objc public var userConsent: Split.UserConsent {
+    @objc get
+  }
+  @objc public var client: any Split.SplitClient {
+    @objc get
+  }
+  @objc public var manager: any Split.SplitManager {
+    @objc get
+  }
+  @objc public var version: Swift.String {
+    @objc get
+  }
+  @objc public func client(key: Split.Key) -> any Split.SplitClient
+  @objc public func client(matchingKey: Swift.String) -> any Split.SplitClient
+  @objc public func client(matchingKey: Swift.String, bucketingKey: Swift.String?) -> any Split.SplitClient
+  @objc public func setUserConsent(enabled: Swift.Bool)
+  @objc deinit
+}
+extension Split.LocalhostSplitFactory : Split.SplitLocalhostDataSource {
+  @objc dynamic public func updateLocalhost(yaml: Swift.String) -> Swift.Bool
+  @objc dynamic public func updateLocalhost(splits: Swift.String) -> Swift.Bool
+}
+@objc public protocol SplitBase {
+}
+@objc @_inheritsConvenienceInitializers public class DateTime : ObjectiveC.NSObject {
+  @objc override dynamic public init()
+  @objc deinit
+}
+public typealias CertificatePinningFailureHandler = @Sendable (Swift.String) -> Swift.Void
+@_hasMissingDesignatedInitializers @objc public class CertificatePinningError : ObjectiveC.NSObject, Foundation.LocalizedError, @unchecked Swift.Sendable {
+  public var errorDescription: Swift.String? {
+    get
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers @objc public class CertificatePinningConfig : ObjectiveC.NSObject {
+  @objc(builder) public static func builder() -> Split.CertificatePinningConfig.Builder
+  @_inheritsConvenienceInitializers @objc(CertificatePinningConfigBuilder) public class Builder : ObjectiveC.NSObject {
+    @objc public func build() throws -> Split.CertificatePinningConfig
+    @discardableResult
+    @objc(addPinForHost:certificateName:) public func addPin(host: Swift.String, certificateName: Swift.String) -> Split.CertificatePinningConfig.Builder
+    @discardableResult
+    @objc(addPinForHost:hash:) public func addPin(host: Swift.String, keyHash: Swift.String) -> Split.CertificatePinningConfig.Builder
+    public func failureHandler(_ handler: @escaping Split.CertificatePinningFailureHandler)
+    @objc override dynamic public init()
+    @objc deinit
+  }
+  @objc deinit
+}
+@objc public enum UserConsent : Swift.Int {
+  case unknown = 1
+  case granted = 2
+  case declined = 3
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+@_hasMissingDesignatedInitializers @objc final public class FallbackTreatment : ObjectiveC.NSObject {
+  @objc final public let treatment: Swift.String
+  @objc final public let config: Swift.String?
+  @objc final public let label: Swift.String?
+  @objc(initWithTreatment:config:) public init(treatment: Swift.String, config: Swift.String? = nil)
+  @objc override final public var description: Swift.String {
+    @objc get
+  }
+  @objc deinit
+}
+@_hasMissingDesignatedInitializers @objc final public class FallbackTreatmentsConfig : ObjectiveC.NSObject {
+  @objc final public let global: Split.FallbackTreatment?
+  @objc final public let byFlag: [Swift.String : Split.FallbackTreatment]
+  @objc public static func builder() -> Split.FallbackTreatmentsConfig.Builder
+  @_inheritsConvenienceInitializers @objc final public class Builder : ObjectiveC.NSObject {
+    @objc final public func build() -> Split.FallbackTreatmentsConfig
+    @objc(global:) final public func global(_ treatment: Split.FallbackTreatment) -> Split.FallbackTreatmentsConfig.Builder
+    @objc(byFlag:) final public func byFlag(_ byFlagFallbacks: [Swift.String : Split.FallbackTreatment]) -> Split.FallbackTreatmentsConfig.Builder
+    @objc(globalWithString:) final public func global(_ treatment: Swift.String) -> Split.FallbackTreatmentsConfig.Builder
+    @objc(byFlagWithString:) final public func byFlag(_ byFlagFallbacks: [Swift.String : Swift.String]) -> Split.FallbackTreatmentsConfig.Builder
+    @objc override dynamic public init()
+    @objc deinit
+  }
+  @objc deinit
+}
+@objc open class SplitResult : ObjectiveC.NSObject {
+  @objc public var treatment: Swift.String
+  @objc public var config: Swift.String?
+  @objc public init(treatment: Swift.String, config: Swift.String? = nil)
+  @objc deinit
+}
+extension Foundation.Date {
+  public func isBetween(date date1: Foundation.Date, andDate date2: Foundation.Date) -> Swift.Bool
+  public static func dateFromInt(number: Swift.Int64) -> Foundation.Date
+}
+@_hasMissingDesignatedInitializers @objc public class DefaultSplitManager : ObjectiveC.NSObject, Split.SplitManager {
+  @objc public var splits: [Split.SplitView] {
+    @objc get
+  }
+  @objc public var splitNames: [Swift.String] {
+    @objc get
+  }
+  @objc public func split(featureName: Swift.String) -> Split.SplitView?
+  @objc deinit
+}
+@_inheritsConvenienceInitializers @objc public class DefaultSplitFactoryBuilder : ObjectiveC.NSObject, Split.SplitFactoryBuilder {
+  @objc override dynamic public init()
+  @discardableResult
+  @objc public func setApiKey(_ apiKey: Swift.String) -> any Split.SplitFactoryBuilder
+  @discardableResult
+  @objc public func setMatchingKey(_ matchingKey: Swift.String) -> any Split.SplitFactoryBuilder
+  @discardableResult
+  @objc public func setBucketingKey(_ bucketingKey: Swift.String) -> any Split.SplitFactoryBuilder
+  @discardableResult
+  @objc public func setKey(_ key: Split.Key) -> any Split.SplitFactoryBuilder
+  @discardableResult
+  @objc public func setConfig(_ config: Split.SplitClientConfig) -> any Split.SplitFactoryBuilder
+  @objc public func build() -> (any Split.SplitFactory)?
+  @objc deinit
+}
+@objc public protocol SplitHttpsAuthenticator : Swift.Sendable {
+  @objc(authenticateSession:challenge:completionHandler:) func authenticate(session: Foundation.URLSession, challenge: Foundation.URLAuthenticationChallenge, completionHandler: @escaping (Foundation.URLSession.AuthChallengeDisposition, Foundation.URLCredential?) -> Swift.Void)
+}
+@objc public protocol SplitFactoryBuilder {
+  @objc @discardableResult
+  func setApiKey(_ apiKey: Swift.String) -> any Split.SplitFactoryBuilder
+  @objc @discardableResult
+  func setMatchingKey(_ matchingKey: Swift.String) -> any Split.SplitFactoryBuilder
+  @objc @discardableResult
+  func setBucketingKey(_ bucketingKey: Swift.String) -> any Split.SplitFactoryBuilder
+  @objc @discardableResult
+  func setKey(_ key: Split.Key) -> any Split.SplitFactoryBuilder
+  @objc @discardableResult
+  func setConfig(_ config: Split.SplitClientConfig) -> any Split.SplitFactoryBuilder
+  @objc func build() -> (any Split.SplitFactory)?
+}
+public enum SplitLogLevel : Swift.String {
+  case verbose
+  case debug
+  case info
+  case warning
+  case error
+  case none
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@objc public class Prerequisite : ObjectiveC.NSObject, Swift.Codable {
+  @objc public var flagName: Swift.String
+  @objc public var treatments: [Swift.String]
+  required public init(from decoder: any Swift.Decoder) throws
+  @objc deinit
+  public func encode(to encoder: any Swift.Encoder) throws
+}
+@objc public enum SplitEvent : Swift.Int, Swift.Sendable {
+  case sdkReady
+  case sdkReadyTimedOut
+  case sdkReadyFromCache
+  case sdkUpdated
+  public func toString() -> Swift.String
+  public init?(rawValue: Swift.Int)
+  public typealias RawValue = Swift.Int
+  public var rawValue: Swift.Int {
+    get
+  }
+}
+precedencegroup Functional {
+  associativity: left
+  higherThan: DefaultPrecedence
+}
+infix operator <*> : Functional
+infix operator <^> : Functional
+infix operator >>- : Functional
+infix operator >>=- : Functional
+infix operator >>| : Functional
+@_hasMissingDesignatedInitializers @objc public class SplitFilter : ObjectiveC.NSObject, Swift.Codable {
+  @objc(byName:) public static func byName(_ values: [Swift.String]) -> Split.SplitFilter
+  @objc(byPrefix:) public static func byPrefix(_ values: [Swift.String]) -> Split.SplitFilter
+  @objc(bySet:) public static func bySet(_ values: [Swift.String]) -> Split.SplitFilter
+  @objc deinit
+  public func encode(to encoder: any Swift.Encoder) throws
+  required public init(from decoder: any Swift.Decoder) throws
+}
+public enum ImpressionsMode : Swift.String {
+  case optimized
+  case debug
+  case none
+  public init?(rawValue: Swift.String)
+  public typealias RawValue = Swift.String
+  public var rawValue: Swift.String {
+    get
+  }
+}
+@propertyWrapper public struct ImpressionsModeProperty {
+  public var projectedValue: Split.ImpressionsMode
+  public var wrappedValue: Swift.String {
+    get
+    set
+  }
+  public init(wrappedValue: Swift.String)
+}
+@_hasMissingDesignatedInitializers @objc public class ServiceEndpoints : ObjectiveC.NSObject {
+  public var sdkEndpoint: Foundation.URL {
+    get
+  }
+  public var eventsEndpoint: Foundation.URL {
+    get
+  }
+  public var authServiceEndpoint: Foundation.URL {
+    get
+  }
+  public var streamingServiceEndpoint: Foundation.URL {
+    get
+  }
+  public var telemetryServiceEndpoint: Foundation.URL {
+    get
+  }
+  @objc public static func builder() -> Split.ServiceEndpoints.Builder
+  @_inheritsConvenienceInitializers @objc(ServiceEndpointsBuilder) public class Builder : ObjectiveC.NSObject {
+    @objc(setSdkEndpoint:) public func set(sdkEndpoint: Swift.String) -> Self
+    @objc(setEventsEndpoint:) public func set(eventsEndpoint: Swift.String) -> Self
+    @objc(setAuthServiceEndpoint:) public func set(authServiceEndpoint: Swift.String) -> Self
+    @objc(setStreamingServiceEndpoint:) public func set(streamingServiceEndpoint: Swift.String) -> Self
+    @objc(setTelemetryServiceEndpoint:) public func set(telemetryServiceEndpoint: Swift.String) -> Self
+    @objc public func build() -> Split.ServiceEndpoints
+    @objc override dynamic public init()
+    @objc deinit
+  }
+  @objc deinit
+}
+extension Split.SplitView {
+  @objc override dynamic public var description: Swift.String {
+    @objc get
+  }
+}
+@objc @_hasMissingDesignatedInitializers final public class LocalhostSplitClient : ObjectiveC.NSObject, Split.SplitClient {
+  @objc final public func getTreatment(_ split: Swift.String, attributes: [Swift.String : Any]?) -> Swift.String
+  @objc final public func getTreatment(_ split: Swift.String) -> Swift.String
+  @objc final public func getTreatment(_ split: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> Swift.String
+  @objc final public func getTreatments(splits: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatments(splits: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentWithConfig(_ split: Swift.String) -> Split.SplitResult
+  @objc final public func getTreatmentWithConfig(_ split: Swift.String, attributes: [Swift.String : Any]?) -> Split.SplitResult
+  @objc final public func getTreatmentWithConfig(_ split: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> Split.SplitResult
+  @objc final public func getTreatmentsWithConfig(splits: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Split.SplitResult]
+  @objc final public func getTreatmentsWithConfig(splits: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Split.SplitResult]
+  @objc final public func on(event: Split.SplitEvent, runInBackground: Swift.Bool, execute action: @escaping Split.SplitAction)
+  @objc final public func on(event: Split.SplitEvent, queue: Dispatch.DispatchQueue, execute action: @escaping Split.SplitAction)
+  @objc final public func on(event: Split.SplitEvent, execute action: @escaping Split.SplitAction)
+  @objc final public func track(trafficType: Swift.String, eventType: Swift.String) -> Swift.Bool
+  @objc final public func track(trafficType: Swift.String, eventType: Swift.String, value: Swift.Double) -> Swift.Bool
+  @objc final public func track(eventType: Swift.String) -> Swift.Bool
+  @objc final public func track(eventType: Swift.String, value: Swift.Double) -> Swift.Bool
+  @objc final public func track(trafficType: Swift.String, eventType: Swift.String, properties: [Swift.String : Any]?) -> Swift.Bool
+  @objc final public func track(trafficType: Swift.String, eventType: Swift.String, value: Swift.Double, properties: [Swift.String : Any]?) -> Swift.Bool
+  @objc final public func track(eventType: Swift.String, properties: [Swift.String : Any]?) -> Swift.Bool
+  @objc final public func track(eventType: Swift.String, value: Swift.Double, properties: [Swift.String : Any]?) -> Swift.Bool
+  final public func setUserConsent(enabled: Swift.Bool)
+  @objc final public func flush()
+  @objc final public func destroy()
+  @objc final public func destroy(completion: (() -> Swift.Void)?)
+  @objc deinit
+}
+extension Split.LocalhostSplitClient {
+  @objc final public func setAttribute(name: Swift.String, value: Any) -> Swift.Bool
+  @objc final public func getAttribute(name: Swift.String) -> Any?
+  @objc final public func setAttributes(_ values: [Swift.String : Any]) -> Swift.Bool
+  @objc final public func getAttributes() -> [Swift.String : Any]?
+  @objc final public func removeAttribute(name: Swift.String) -> Swift.Bool
+  @objc final public func clearAttributes() -> Swift.Bool
+}
+extension Split.LocalhostSplitClient {
+  @objc final public func getTreatmentsByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentsByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentsWithConfigByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?) -> [Swift.String : Split.SplitResult]
+  @objc final public func getTreatmentsWithConfigByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Split.SplitResult]
+  @objc final public func getTreatmentsByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentsByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentsWithConfigByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Split.SplitResult]
+  @objc final public func getTreatmentsWithConfigByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Split.SplitResult]
+}
+@objc public protocol SplitFactory {
+  @objc var client: any Split.SplitClient { get }
+  @objc func client(key: Split.Key) -> any Split.SplitClient
+  @objc(clientWithMatchingKey:) func client(matchingKey: Swift.String) -> any Split.SplitClient
+  @objc(clientWithMatchingKey:bucketingKey:) func client(matchingKey: Swift.String, bucketingKey: Swift.String?) -> any Split.SplitClient
+  @objc var manager: any Split.SplitManager { get }
+  @objc func setUserConsent(enabled: Swift.Bool)
+  @objc var userConsent: Split.UserConsent { get }
+  @objc var version: Swift.String { get }
+}
+@objc @_hasMissingDesignatedInitializers final public class DefaultSplitClient : ObjectiveC.NSObject, Split.SplitClient {
+  @objc deinit
+}
+extension Split.DefaultSplitClient {
+  @objc final public func on(event: Split.SplitEvent, execute action: @escaping Split.SplitAction)
+  @objc final public func on(event: Split.SplitEvent, runInBackground: Swift.Bool, execute action: @escaping Split.SplitAction)
+  @objc final public func on(event: Split.SplitEvent, queue: Dispatch.DispatchQueue, execute action: @escaping Split.SplitAction)
+}
+extension Split.DefaultSplitClient {
+  @objc final public func getTreatmentWithConfig(_ split: Swift.String) -> Split.SplitResult
+  @objc final public func getTreatmentWithConfig(_ split: Swift.String, attributes: [Swift.String : Any]?) -> Split.SplitResult
+  @objc final public func getTreatment(_ split: Swift.String) -> Swift.String
+  @objc final public func getTreatment(_ split: Swift.String, attributes: [Swift.String : Any]?) -> Swift.String
+  @objc final public func getTreatments(splits: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentsWithConfig(splits: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Split.SplitResult]
+}
+extension Split.DefaultSplitClient {
+  @objc final public func getTreatment(_ split: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> Swift.String
+  @objc final public func getTreatments(splits: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentWithConfig(_ split: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> Split.SplitResult
+  @objc final public func getTreatmentsWithConfig(splits: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Split.SplitResult]
+  @objc final public func getTreatmentsByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentsByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentsWithConfigByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Split.SplitResult]
+  @objc final public func getTreatmentsWithConfigByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?, evaluationOptions: Split.EvaluationOptions?) -> [Swift.String : Split.SplitResult]
+}
+extension Split.DefaultSplitClient {
+  @objc final public func track(trafficType: Swift.String, eventType: Swift.String) -> Swift.Bool
+  @objc final public func track(trafficType: Swift.String, eventType: Swift.String, value: Swift.Double) -> Swift.Bool
+  @objc final public func track(eventType: Swift.String) -> Swift.Bool
+  @objc final public func track(eventType: Swift.String, value: Swift.Double) -> Swift.Bool
+  @objc final public func track(trafficType: Swift.String, eventType: Swift.String, properties: [Swift.String : Any]?) -> Swift.Bool
+  @objc final public func track(trafficType: Swift.String, eventType: Swift.String, value: Swift.Double, properties: [Swift.String : Any]?) -> Swift.Bool
+  @objc final public func track(eventType: Swift.String, properties: [Swift.String : Any]?) -> Swift.Bool
+  @objc final public func track(eventType: Swift.String, value: Swift.Double, properties: [Swift.String : Any]?) -> Swift.Bool
+}
+extension Split.DefaultSplitClient {
+  @objc final public func setAttribute(name: Swift.String, value: Any) -> Swift.Bool
+  @objc final public func getAttribute(name: Swift.String) -> Any?
+  @objc final public func setAttributes(_ values: [Swift.String : Any]) -> Swift.Bool
+  @objc final public func getAttributes() -> [Swift.String : Any]?
+  @objc final public func removeAttribute(name: Swift.String) -> Swift.Bool
+  @objc final public func clearAttributes() -> Swift.Bool
+}
+extension Split.DefaultSplitClient {
+  @objc final public func getTreatmentsByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentsByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Swift.String]
+  @objc final public func getTreatmentsWithConfigByFlagSet(_ flagSet: Swift.String, attributes: [Swift.String : Any]?) -> [Swift.String : Split.SplitResult]
+  @objc final public func getTreatmentsWithConfigByFlagSets(_ flagSets: [Swift.String], attributes: [Swift.String : Any]?) -> [Swift.String : Split.SplitResult]
+}
+extension Split.DefaultSplitClient {
+  @objc final public func flush()
+  @objc final public func destroy()
+  @objc final public func destroy(completion: (() -> Swift.Void)?)
+}
+extension Split.SplitEncryptionLevel : Swift.Equatable {}
+extension Split.SplitEncryptionLevel : Swift.Hashable {}
+extension Split.SplitEncryptionLevel : Swift.RawRepresentable {}
+extension Split.ConditionType : Swift.Equatable {}
+extension Split.ConditionType : Swift.Hashable {}
+extension Split.ConditionType : Swift.RawRepresentable {}
+extension Split.UserConsent : Swift.Equatable {}
+extension Split.UserConsent : Swift.Hashable {}
+extension Split.UserConsent : Swift.RawRepresentable {}
+extension Split.SplitLogLevel : Swift.Equatable {}
+extension Split.SplitLogLevel : Swift.Hashable {}
+extension Split.SplitLogLevel : Swift.RawRepresentable {}
+extension Split.SplitEvent : Swift.Equatable {}
+extension Split.SplitEvent : Swift.Hashable {}
+extension Split.SplitEvent : Swift.RawRepresentable {}
+extension Split.ImpressionsMode : Swift.Equatable {}
+extension Split.ImpressionsMode : Swift.Hashable {}
+extension Split.ImpressionsMode : Swift.RawRepresentable {}

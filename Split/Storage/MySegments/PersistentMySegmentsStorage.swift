@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol PersistentMySegmentsStorage {
+protocol PersistentMySegmentsStorage: Sendable {
     func set(_ change: SegmentChange, forKey key: String)
     func getSnapshot(forKey key: String) -> SegmentChange?
     func deleteAll()

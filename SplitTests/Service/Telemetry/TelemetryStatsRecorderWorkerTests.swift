@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class TelemetryStatsRecorderWorkerTests: XCTestCase {
+class TelemetryStatsRecorderWorkerTests: XCTestCase, @unchecked Sendable {
 
     var worker: TelemetryStatsRecorderWorker!
     var statsRecorder: HttpTelemetryStatsRecorderStub!

@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol RetryableSyncWorker {
+protocol RetryableSyncWorker: Sendable {
     typealias SyncCompletion = (Bool) -> Void
     typealias ErrorHandler = (Error) -> Void
     var completion: SyncCompletion? { get set }

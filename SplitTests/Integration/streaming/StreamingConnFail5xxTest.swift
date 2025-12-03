@@ -9,7 +9,7 @@
 import XCTest
 @testable import Split
 
-class StreamingConnFail5xxTest: XCTestCase {
+class StreamingConnFail5xxTest: XCTestCase, @unchecked Sendable {
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = IntegrationHelper.dummyUserKey
@@ -94,7 +94,7 @@ class StreamingConnFail5xxTest: XCTestCase {
             if self.sseConnHits < self.kMaxSseConnRetries {
                 let bind = TestStreamResponseBinding.createFor(request: request, code: 500)
                 DispatchQueue.test.asyncAfter(deadline: .now() + 0.3) {
-                    bind.complete(error: nil)
+                    self.bind.complete(error: nil)
                 }
                 return bind
             }

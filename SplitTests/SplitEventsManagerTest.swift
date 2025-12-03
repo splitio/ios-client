@@ -11,14 +11,24 @@ import XCTest
 
 @testable import Split
 
-class SplitEventsManagerTest: XCTestCase {
+class SplitEventsManagerTest: XCTestCase, @unchecked Sendable {
     
     let expectationTimeOut = 10.0
     let intervalExecutionTime = 1
     var queue = DispatchQueue(label: "test", attributes: .concurrent)
+    let lock = DispatchQueue(label: "lock")
+    var shouldStop = false
+    
+    func shouldStopGet() -> Bool {
+        lock.sync { shouldStop }
+    }
+
+    func shouldStopSet(_ val: Bool) {
+        lock.sync { shouldStop = val }
+    }
     
     func testSdkReady() {
-        var shouldStop = false
+        shouldStopSet(false)
         let config: SplitClientConfig = SplitClientConfig()
         let eventManager: SplitEventsManager = DefaultSplitEventsManager(config: config)
         let updatedTask = TestTask(exp: nil)
@@ -33,10 +43,10 @@ class SplitEventsManagerTest: XCTestCase {
         
         let expectation = XCTestExpectation(description: "SDK Readky triggered")
         queue.async {
-            while !shouldStop {
+            while !self.shouldStopGet() {
                 sleep(UInt32(self.intervalExecutionTime))
                 if eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
-                    shouldStop = true;
+                    self.shouldStopSet(true)
                     expectation.fulfill()
                 }
             }
@@ -64,13 +74,13 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
-        var shouldStop = false
+        shouldStopSet(false)
         let expectation = XCTestExpectation(description: "SDK Readky from cache triggered")
         queue.async {
-            while !shouldStop {
+            while !self.shouldStopGet() {
                 sleep(UInt32(self.intervalExecutionTime))
                 if eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
-                    shouldStop = true;
+                    self.shouldStopSet(true)
                     expectation.fulfill()
                 }
             }
@@ -276,13 +286,13 @@ class SplitEventsManagerTest: XCTestCase {
         eventManager.notifyInternalEvent(SplitInternalEvent.mySegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsUpdated)
         eventManager.notifyInternalEvent(SplitInternalEvent.splitsUpdated)
-        var shouldStop = false
+        shouldStopSet(false)
         let expectation = XCTestExpectation(description: "SDK Ready triggered")
         queue.async {
-            while !shouldStop {
+            while !self.shouldStopGet() {
                 sleep(UInt32(self.intervalExecutionTime))
                 if eventManager.eventAlreadyTriggered(event: SplitEvent.sdkReady) {
-                    shouldStop = true;
+                    self.shouldStopSet(true)
                     expectation.fulfill()
                 }
             }

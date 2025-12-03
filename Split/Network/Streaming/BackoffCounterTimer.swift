@@ -9,7 +9,7 @@
 import Foundation
 
 protocol BackoffCounterTimer {
-    func schedule(handler: @escaping () -> Void)
+    func schedule(handler: @escaping @Sendable () -> Void)
     func cancel()
 }
 
@@ -24,7 +24,7 @@ class DefaultBackoffCounterTimer: BackoffCounterTimer, @unchecked Sendable {
         self.reconnectBackoffCounter = reconnectBackoffCounter
     }
 
-    func schedule(handler: @escaping () -> Void) {
+    func schedule(handler: @escaping @Sendable () -> Void) {
         queue.async {
             self.schedule(handler)
         }

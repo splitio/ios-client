@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class HttpRequestManagerTests: XCTestCase {
+class HttpRequestManagerTests: XCTestCase, @unchecked Sendable {
     var reqManager: HttpRequestManager!
     var pinChecker: PinCheckerMock!
     var notificationHelper = NotificationHelperStub()
@@ -18,6 +18,20 @@ class HttpRequestManagerTests: XCTestCase {
     let hostName = "www.test.com"
     let certName = "rsa_4096_cert.pem"
     var dummyChallenge: URLAuthenticationChallenge!
+    
+    // Notifications concurrently safe
+    let lock = DispatchQueue(label: "lock")
+    var notifications = [String]()
+    func appendNotifications(_ v: String) {
+        lock.sync { notifications.append(v) }
+    }
+    
+    // Results concurrently safe
+    let lock2 = DispatchQueue(label: "lock2")
+    var results = [CredentialValidationResult: URLSession.AuthChallengeDisposition]()
+    func appendResults(_ k: CredentialValidationResult, _ v: URLSession.AuthChallengeDisposition) {
+        lock2.sync { results[k] = v }
+    }
 
     override func setUp() {
         dummyChallenge = securityHelper.createAuthChallenge(host: hostName, certName: certName)
@@ -28,8 +42,6 @@ class HttpRequestManagerTests: XCTestCase {
         let request = URLRequest(url: URL(string: hostName)!)
         let task = URLSession.shared.dataTask(with: request)
         let manager = createRequestManager()
-        var notifications = [String]()
-        var results = [CredentialValidationResult: URLSession.AuthChallengeDisposition]()
         let notificationsQueue = DispatchQueue(label: "notifications.queue")
         
         notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { info in
@@ -38,13 +50,13 @@ class HttpRequestManagerTests: XCTestCase {
                 return
             }
             notificationsQueue.sync {
-                notifications.append(info)
+                self.appendNotifications(info)
             }
         }
         
         for result in CredentialValidationResult.allCases {
             manager.urlSession?(URLSession.shared, task: task, didReceive: dummyChallenge) {disposition,_ in
-                results[result] = disposition
+                self.appendResults(result, disposition)
                 exp.fulfill()
             }
         }
