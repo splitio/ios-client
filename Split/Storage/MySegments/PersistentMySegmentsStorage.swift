@@ -41,7 +41,7 @@ class DefaultPersistentMySegmentsStorage: PersistentSegmentsStorage, @unchecked 
     }
 }
 
-class DefaultPersistentMyLargeSegmentsStorage: PersistentSegmentsStorage {
+class DefaultPersistentMyLargeSegmentsStorage: PersistentSegmentsStorage, @unchecked Sendable {
     init(database: SplitDatabase) {
         super.init(dao: database.myLargeSegmentsDao)
     }

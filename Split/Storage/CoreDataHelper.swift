@@ -33,7 +33,7 @@ class CoreDataHelper: @unchecked Sendable {
     }
 
     func create(entity: CoreDataEntity) -> NSManagedObject {
-        var obj: NSManagedObject!
+        nonisolated(unsafe) var obj: NSManagedObject!
 
         managedObjectContext.performAndWait {
             obj = NSEntityDescription.insertNewObject(forEntityName: entity.rawValue,
@@ -69,7 +69,7 @@ class CoreDataHelper: @unchecked Sendable {
     }
 
     func fetch(entity: CoreDataEntity, where predicate: NSPredicate? = nil, rowLimit: Int? = nil) -> [Any] {
-        var entities = [Any]()
+        nonisolated(unsafe) var entities = [Any]()
         managedObjectContext.performAndWait {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity.rawValue)
             if let rowLimit = rowLimit {

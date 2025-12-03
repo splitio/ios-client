@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SynchronizedDictionaryComposed<K: Hashable, IK: Hashable>: @unchecked Sendable {
+class SynchronizedDictionaryComposed<K: Hashable & Sendable, IK: Hashable & Sendable>: @unchecked Sendable {
 
     private var queue: DispatchQueue = DispatchQueue(label: "split-synchronized-dictionary-composed",
                                                      target: .global())

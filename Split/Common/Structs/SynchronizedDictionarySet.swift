@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SynchronizedDictionarySet<K: Hashable, T: Hashable>: @unchecked Sendable {
+class SynchronizedDictionarySet<K: Hashable & Sendable, T: Hashable & Sendable>: @unchecked Sendable {
 
     private var queue: DispatchQueue = DispatchQueue(label: "split-synchronized-dictionary-set",
                                                      target: .global())

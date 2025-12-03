@@ -12,7 +12,7 @@ protocol SplitsEncoder {
     func encode(_ list: [Split]) -> [String: String]
 }
 
-struct SplitsParallelEncoder: SplitsEncoder {
+struct SplitsParallelEncoder: SplitsEncoder, @unchecked Sendable {
 
     private var minTaskPerThread: Int
     private let serialEncoder: SplitsEncoder

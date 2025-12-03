@@ -129,7 +129,7 @@ import Foundation
     }
 }
 
-struct BackgroundSyncExecutor {
+struct BackgroundSyncExecutor: @unchecked Sendable {
     private let splitDatabase: SplitDatabase
     private let splitsSyncWorker: BackgroundSyncWorker
     private let eventsRecorderWorker: RecorderWorker
