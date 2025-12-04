@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 import XCTest
 
-class TelemetryStorageStub: TelemetryStorage {
+class TelemetryStorageStub: TelemetryStorage, @unchecked Sendable {
 
     var nonReadyUsageCallCount = 0
     var popTagsCallCount = 0

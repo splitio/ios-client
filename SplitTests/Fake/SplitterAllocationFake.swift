@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SplitterAllocationFake: SplitterProtocol {
+class SplitterAllocationFake: SplitterProtocol, @unchecked Sendable {
     
     func getTreatment(key: Key, seed: Int, attributes: [String : Any]?, partions: [Partition]?, algo: Algorithm) -> String {
         return Splitter.shared.getTreatment(key: key, seed: seed, attributes: attributes, partions: partions, algo: algo)

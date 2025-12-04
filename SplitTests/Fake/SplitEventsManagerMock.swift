@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 import XCTest
 
-class SplitEventsManagerMock: SplitEventsManager {
+class SplitEventsManagerMock: SplitEventsManager, @unchecked Sendable {
 
     var timeoutExp: XCTestExpectation?
     var readyExp: XCTestExpectation?

@@ -20,7 +20,7 @@ protocol HttpRequestManager {
     func destroy()
 }
 
-final class DefaultHttpRequestManager: NSObject, Sendable {
+final class DefaultHttpRequestManager: NSObject, @unchecked Sendable {
     private let requests = HttpRequestList()
     private let authenticator: SplitHttpsAuthenticator?
 

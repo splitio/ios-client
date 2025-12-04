@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc class SplitChange: NSObject, Codable {
+@objc class SplitChange: NSObject, Codable, @unchecked Sendable {
     var splits: [Split]
     var since: Int64
     var till: Int64

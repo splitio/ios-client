@@ -7,9 +7,9 @@
 
 import Foundation
 
-class LocalhostClientManager: SplitClientManager {
+class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
 
-    struct LocalhostComponentsGroup {
+    struct LocalhostComponentsGroup: @unchecked Sendable {
         let client: SplitClient
         let eventsManager: SplitEventsManager
     }

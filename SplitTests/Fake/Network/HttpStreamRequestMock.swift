@@ -11,7 +11,7 @@ import XCTest
 
 @testable import Split
 
-class HttpStreamRequestMock: HttpStreamRequest {
+class HttpStreamRequestMock: HttpStreamRequest, @unchecked Sendable {
     var pinnedCredentialFail: Bool = false
 
     var responseHandler: ResponseHandler?

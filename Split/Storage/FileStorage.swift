@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol FileStorage {
+protocol FileStorage: Sendable {
     func read(fileName: String) -> String?
     func write(fileName: String, content: String?)
     func delete(fileName: String)

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class UniqueKeysRecorderWorker: RecorderWorker {
+class UniqueKeysRecorderWorker: RecorderWorker, @unchecked Sendable {
 
     private let uniqueKeyStorage: PersistentUniqueKeysStorage
     private let uniqueKeysRecorder: HttpUniqueKeysRecorder

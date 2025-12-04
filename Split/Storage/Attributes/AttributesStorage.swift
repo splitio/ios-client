@@ -19,7 +19,7 @@ protocol AttributesStorage {
     func destroy(forKey key: String)
 }
 
-class DefaultAttributesStorage: AttributesStorage {
+class DefaultAttributesStorage: AttributesStorage, @unchecked Sendable {
 
     private let inMemoryAttributes: SynchronizedDictionaryComposed<String, String>
     private let persistentStorage: PersistentAttributesStorage?

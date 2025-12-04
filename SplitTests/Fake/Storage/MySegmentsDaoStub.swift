@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class MySegmentsDaoStub: MySegmentsDao {
+class MySegmentsDaoStub: MySegmentsDao, @unchecked Sendable {
     var segments =  [String: SegmentChange]()
     var deleteAllCalled = false
     func getBy(userKey: String) -> SegmentChange? {

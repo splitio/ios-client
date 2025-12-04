@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PushNotificationManagerStub: PushNotificationManager {
+class PushNotificationManagerStub: PushNotificationManager, @unchecked Sendable {
 
     var jwtParser: JwtTokenParser = DefaultJwtTokenParser()
     var startCalled = false

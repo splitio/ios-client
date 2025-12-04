@@ -11,7 +11,7 @@ import XCTest
 
 @testable import Split
 
-class SseHandlerStub: SseHandler {
+class SseHandlerStub: SseHandler, @unchecked Sendable {
 
     var errorExpectation: XCTestExpectation?
     var messageExpectation: XCTestExpectation?

@@ -12,7 +12,7 @@ protocol HttpImpressionsCountRecorder {
     func execute(_ counts: ImpressionsCount) throws
 }
 
-class DefaultHttpImpressionsCountRecorder: HttpImpressionsCountRecorder {
+class DefaultHttpImpressionsCountRecorder: HttpImpressionsCountRecorder, @unchecked Sendable {
 
     private let restClient: RestClientImpressionsCount
     private let syncHelper: SyncHelper

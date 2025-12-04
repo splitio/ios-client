@@ -50,7 +50,7 @@ class ThreadUtils {
     }
 }
 
-protocol CancellableTask {
+protocol CancellableTask: Sendable {
     typealias Work = () -> Void
     var taskId: Int64 { get }
     var isCancelled: Bool { get }
@@ -59,7 +59,7 @@ protocol CancellableTask {
     func cancel()
 }
 
-class DefaultTask: CancellableTask {
+class DefaultTask: CancellableTask, @unchecked Sendable {
 
     private(set) var taskId: Int64
     private(set) var isCancelled = false

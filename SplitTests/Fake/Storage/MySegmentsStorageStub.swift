@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class MySegmentsStorageStub: MySegmentsStorage {
+class MySegmentsStorageStub: MySegmentsStorage, @unchecked Sendable {
 
     var segments: [String: Set<String>] = [String: Set<String>]()
     var persistedSegments = [String: Set<String>]()

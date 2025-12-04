@@ -15,7 +15,7 @@ protocol ImpressionsStorage {
 }
 
 // TODO: Rename persistent and this one
-class MainImpressionsStorage: ImpressionsStorage {
+class MainImpressionsStorage: ImpressionsStorage, @unchecked Sendable {
     private let persistentStorage: PersistentImpressionsStorage
     private let impressions = SynchronizedList<KeyImpression>()
     private let isPersistenceEnabled: Atomic<Bool>

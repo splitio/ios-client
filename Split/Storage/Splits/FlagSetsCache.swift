@@ -16,7 +16,7 @@ protocol FlagSetsCache {
     func removeFromFlagSets(featureFlagName: String, sets: Set<String>)
 }
 
-class DefaultFlagSetsCache: FlagSetsCache {
+class DefaultFlagSetsCache: FlagSetsCache, @unchecked Sendable {
     private(set) var setsInFilter: Set<String>?
     private let flagSets = SynchronizedDictionarySet<String, String>()
 

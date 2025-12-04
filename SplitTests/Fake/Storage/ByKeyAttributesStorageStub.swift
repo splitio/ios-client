@@ -19,7 +19,7 @@ import Foundation
 import Foundation
 @testable import Split
 
-class ByKeyAttributesStorageStub: ByKeyAttributesStorage {
+class ByKeyAttributesStorageStub: ByKeyAttributesStorage, @unchecked Sendable {
 
     let attributesStorage: AttributesStorageStub
     private let userKey: String

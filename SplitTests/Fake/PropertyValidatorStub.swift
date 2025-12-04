@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PropertyValidatorStub: PropertyValidator {
+class PropertyValidatorStub: PropertyValidator, @unchecked Sendable {
     var validateResult: PropertyValidationResult? = nil
     var validateCalled = false
     var lastPropertiesValidated: [String: Any]?

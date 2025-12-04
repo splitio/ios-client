@@ -8,7 +8,7 @@
 
 import Foundation
 
-class LocalhostSplitsStorage: SplitsStorage {
+class LocalhostSplitsStorage: SplitsStorage, @unchecked Sendable {
     var changeNumber: Int64 = -1
     var updateTimestamp: Int64 = 1
     var splitsFilterQueryString: String = ""

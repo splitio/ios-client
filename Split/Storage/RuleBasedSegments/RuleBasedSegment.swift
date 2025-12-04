@@ -48,7 +48,7 @@ import Foundation
     }
 }
 
-class ExcludedSegment: NSObject, Codable {
+class ExcludedSegment: NSObject, Codable, @unchecked Sendable {
     var name: String?
     var type: SegmentType?
 
@@ -93,7 +93,7 @@ class ExcludedSegment: NSObject, Codable {
     }
 }
 
-class Excluded: NSObject, Codable {
+class Excluded: NSObject, Codable, @unchecked Sendable {
     var keys: Set<String>?
     var segments: Set<ExcludedSegment>?
 
@@ -126,7 +126,7 @@ class Excluded: NSObject, Codable {
     }
 }
 
-class RuleBasedSegment: NSObject, Codable {
+class RuleBasedSegment: NSObject, Codable, @unchecked Sendable {
     var name: String?
     var trafficTypeName: String?
     var changeNumber: Int64 = -1

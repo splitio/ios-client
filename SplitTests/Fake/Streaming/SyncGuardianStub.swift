@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SyncGuardianStub: SyncGuardian {
+class SyncGuardianStub: SyncGuardian, @unchecked Sendable {
 
     var maxSyncPeriod: Int64 = 0
     func setMaxSyncPeriod(_ newPeriod: Int64) {

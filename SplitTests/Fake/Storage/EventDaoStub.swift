@@ -9,7 +9,7 @@
 @testable import Split
 import Foundation
 
-class EventDaoStub: EventDao {
+class EventDaoStub: EventDao, @unchecked Sendable {
 
     var insertedEvents = [EventDTO]()
     var getByEvents = [EventDTO]()

@@ -11,7 +11,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class EventValidatorStub: EventValidator {
+class EventValidatorStub: EventValidator, @unchecked Sendable {
     func validate(key: String?, trafficTypeName: String?,
                   eventTypeId: String?, value: Double?,
                   properties: [String: Any]?,

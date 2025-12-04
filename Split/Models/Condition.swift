@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Condition: NSObject, Codable {
+class Condition: NSObject, Codable, @unchecked Sendable {
 
     var conditionType: ConditionType?
     var matcherGroup: MatcherGroup?

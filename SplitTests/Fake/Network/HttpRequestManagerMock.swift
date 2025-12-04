@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HttpRequestManagerMock: HttpRequestManager {
+class HttpRequestManagerMock: HttpRequestManager, @unchecked Sendable {
 
     // Function counters
     var addRequestCallCount = 0

@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SplitFactoryStub: SplitFactory {
+class SplitFactoryStub: SplitFactory, @unchecked Sendable {
 
     var client: SplitClient
     

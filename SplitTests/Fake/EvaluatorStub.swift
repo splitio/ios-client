@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class EvaluatorStub: Evaluator {
+class EvaluatorStub: Evaluator, @unchecked Sendable {
     var lastAttributes = [Any]()
 
     func evalTreatment(matchingKey: String, bucketingKey: String?,

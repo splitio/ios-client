@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HttpImpressionsRecorderStub: HttpImpressionsRecorder {
+class HttpImpressionsRecorderStub: HttpImpressionsRecorder, @unchecked Sendable {
 
     var impressionsSent = [ImpressionsTest]()
     var errorOccurredCallCount = -1

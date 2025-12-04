@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class EventsSynchronizerStub: EventsSynchronizer {
+class EventsSynchronizerStub: EventsSynchronizer, @unchecked Sendable {
 
     var startCalled = false
     var pauseCalled = false

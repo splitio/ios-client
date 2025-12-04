@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SseAuthenticatorStub: SseAuthenticator {
+class SseAuthenticatorStub: SseAuthenticator, @unchecked Sendable {
     var userKeys = [String]()
     var results: [SseAuthenticationResult]?
     private var resultIndex = 0

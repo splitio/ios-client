@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class ImpressionsLoggerStub: ImpressionLogger {
+class ImpressionsLoggerStub: ImpressionLogger, @unchecked Sendable {
     var impressions = [String: KeyImpression]()
     var impressionsPushedCount = 0
     func pushImpression(impression: DecoratedImpression) {

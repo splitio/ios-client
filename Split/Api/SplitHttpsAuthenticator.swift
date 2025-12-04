@@ -7,7 +7,7 @@
 //
 
 import Foundation
-@objc public protocol SplitHttpsAuthenticator: Sendable {
+@objc public protocol SplitHttpsAuthenticator {
     @objc(authenticateSession:challenge:completionHandler:)
     func authenticate(session: URLSession,
                       challenge: URLAuthenticationChallenge,

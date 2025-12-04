@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HttpUniqueKeysRecorderStub: HttpUniqueKeysRecorder {
+class HttpUniqueKeysRecorderStub: HttpUniqueKeysRecorder, @unchecked Sendable {
 
     var keysSent = [UniqueKey]()
     var errorOccurredCallCount = -1

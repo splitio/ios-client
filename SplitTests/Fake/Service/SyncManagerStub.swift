@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 import XCTest
 
-class SyncManagerStub: SyncManager {
+class SyncManagerStub: SyncManager, @unchecked Sendable {
 
     var setupUserConsentExp: XCTestExpectation?
 

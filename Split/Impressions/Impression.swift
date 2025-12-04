@@ -8,7 +8,7 @@
 import Foundation
 public typealias SplitImpression = Impression
 
-@objc public class Impression: NSObject, Codable {
+@objc public class Impression: NSObject, Codable, @unchecked Sendable {
     var storageId: String?
     @objc public var feature: String?
     @objc public var keyName: String?

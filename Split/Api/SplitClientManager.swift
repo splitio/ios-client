@@ -16,7 +16,7 @@ protocol SplitClientManager: AnyObject {
     var splitFactory: SplitFactory? { get }
 }
 
-class DefaultClientManager: SplitClientManager {
+class DefaultClientManager: SplitClientManager, @unchecked Sendable {
     private(set) var defaultClient: SplitClient?
 
     private var storageContainer: SplitStorageContainer

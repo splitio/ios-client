@@ -15,7 +15,7 @@ protocol PersistentUniqueKeysStorage {
     func setActiveAndUpdateSendCount(_ ids: [String])
 }
 
-class DefaultPersistentUniqueKeysStorage: PersistentUniqueKeysStorage {
+class DefaultPersistentUniqueKeysStorage: PersistentUniqueKeysStorage, @unchecked Sendable {
 
     private let uniqueKeyDao: UniqueKeyDao
     private let expirationPeriod: Int64

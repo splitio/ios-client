@@ -11,7 +11,7 @@ import Foundation
 /**
  Default implementation of SplitManager protocol
  */
-public class DefaultSplitFactory: NSObject, SplitFactory {
+public class DefaultSplitFactory: NSObject, SplitFactory, @unchecked Sendable {
 
     private static let kInitErrorMessage = "Something happened on Split init and the client couldn't be created"
 
@@ -59,8 +59,13 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
             HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
             HttpSessionConfig.default.notificationHelper = notificationHelper
             if let handler = pinningConfig.failureHandler {
+                #if swift(>=6.0)
+                nonisolated(unsafe) let capturedHandler = handler
+                #else
+                let capturedHandler = handler
+                #endif
                 notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { host in
-                    handler(host as? String ?? "Unknown")
+                    capturedHandler(host as? String ?? "Unknown")
                 }
             }
             savePins(pinningConfig.pins, apiKey: params.apiKey)

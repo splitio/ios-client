@@ -9,7 +9,7 @@
 @testable import Split
 import Foundation
 
-class ImpressionDaoStub: ImpressionDao {
+class ImpressionDaoStub: ImpressionDao, @unchecked Sendable {
 
     var insertedImpressions = [KeyImpression]()
     var getByImpressions = [KeyImpression]()

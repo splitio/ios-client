@@ -12,7 +12,7 @@ protocol SyncSplitsStorage: RolloutDefinitionsCache {
     func update(splitChange: ProcessedSplitChange) -> Bool
 }
 
-protocol SplitsStorage: SyncSplitsStorage {
+protocol SplitsStorage: SyncSplitsStorage, Sendable {
     var changeNumber: Int64 { get }
     var updateTimestamp: Int64 { get }
 
@@ -29,7 +29,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func forceParsing()
 }
 
-class DefaultSplitsStorage: SplitsStorage {
+class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
 
     private var persistentStorage: PersistentSplitsStorage
     private var inMemorySplits: SynchronizedDictionary<String, Split>

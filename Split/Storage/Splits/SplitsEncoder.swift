@@ -12,7 +12,7 @@ protocol SplitsEncoder {
     func encode(_ list: [Split]) -> [String: String]
 }
 
-struct SplitsParallelEncoder: SplitsEncoder {
+struct SplitsParallelEncoder: SplitsEncoder, @unchecked Sendable {
 
     private var minTaskPerThread: Int
     private let serialEncoder: SplitsEncoder
@@ -30,7 +30,11 @@ struct SplitsParallelEncoder: SplitsEncoder {
         }
         Logger.v("Using parallel encoding for \(list.count) feature flags")
 
+        #if swift(>=6.0)
+        nonisolated(unsafe) var splitsJson = [String: String]()
+        #else
         var splitsJson = [String: String]()
+        #endif
         let dataQueue = DispatchQueue(label: "split-parallel-encoding-data",
                                       target: DispatchQueue(label: "split-parallel-encoding-data-conc",
                                                             attributes: .concurrent))

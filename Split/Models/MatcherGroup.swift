@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MatcherGroup: NSObject, Codable {
+class MatcherGroup: NSObject, Codable, @unchecked Sendable {
     var matcherCombiner: MatcherCombiner?
     var matchers: [Matcher]?
 

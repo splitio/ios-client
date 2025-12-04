@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage {
+class PersistentRuleBasedSegmentsStorageStub: PersistentRuleBasedSegmentsStorage, @unchecked Sendable {
 
     var updateCalled = false
     var clearCalled = false

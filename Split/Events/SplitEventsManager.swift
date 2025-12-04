@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol SplitEventsManager: AnyObject {
+protocol SplitEventsManager: AnyObject, Sendable {
     func register(event: SplitEvent, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
     func start()
