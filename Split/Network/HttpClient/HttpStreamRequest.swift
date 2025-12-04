@@ -23,12 +23,12 @@ protocol HttpStreamRequest: HttpRequest, HttpDataReceivingRequest {
 }
 
 // MARK: DefaultHttpStreamRequest
-class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest {
+class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest, @unchecked Sendable {
 
     var responseHandler: ResponseHandler?
     var incomingDataHandler: IncomingDataHandler?
     var closeHandler: CloseHandler?
-
+    
     init(session: HttpSession, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
         try super.init(session: session, url: url, method: .get, parameters: parameters, headers: headers)
     }
