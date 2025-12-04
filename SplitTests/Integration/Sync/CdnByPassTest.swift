@@ -9,7 +9,7 @@
 import XCTest
 @testable import Split
 
-class CdnByPassTest: XCTestCase {
+class CdnByPassTest: XCTestCase, @unchecked Sendable {
 
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey

@@ -12,7 +12,7 @@ protocol SyncSplitsStorage: RolloutDefinitionsCache {
     func update(splitChange: ProcessedSplitChange) -> Bool
 }
 
-protocol SplitsStorage: SyncSplitsStorage {
+protocol SplitsStorage: SyncSplitsStorage, Sendable {
     var changeNumber: Int64 { get }
     var updateTimestamp: Int64 { get }
 

@@ -50,7 +50,7 @@ class ThreadUtils {
     }
 }
 
-protocol CancellableTask {
+protocol CancellableTask: Sendable {
     typealias Work = () -> Void
     var taskId: Int64 { get }
     var isCancelled: Bool { get }

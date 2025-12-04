@@ -9,7 +9,7 @@
 import XCTest
 @testable import Split
 
-class SdkUpdateStreamingTest: XCTestCase {
+class SdkUpdateStreamingTest: XCTestCase, @unchecked Sendable {
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = IntegrationHelper.dummyUserKey

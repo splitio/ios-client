@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache {
+protocol RuleBasedSegmentsStorage: RolloutDefinitionsCache, Sendable {
     var changeNumber: Int64 { get }
 
     func get(segmentName: String) -> RuleBasedSegment?
