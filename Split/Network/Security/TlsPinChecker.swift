@@ -35,7 +35,7 @@ enum CredentialValidationResult: CaseIterable {
     var description: String {
         switch self {
             case .success:
-                return "success"
+                return "Success"
             case .error:
                 return "Error validating credentials"
             case .noPinsForDomain:
