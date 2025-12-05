@@ -9,6 +9,7 @@
 import Foundation
 
 public typealias CertificatePinningFailureHandler = (String) -> Void
+public typealias CertificatePinningStatusHandler = (String, CertificatePinningStatus, String) -> Void
 
 /// Custom error type for certificate pinning errors, conforming to LocalizedError.
 @objc
@@ -31,6 +32,7 @@ public class CertificatePinningError: NSObject, LocalizedError {
 @objc public class CertificatePinningConfig: NSObject {
     private(set) var pins: [CredentialPin]
     private(set) var failureHandler: CertificatePinningFailureHandler?
+    private(set) var statusHandler: CertificatePinningStatusHandler?
 
     /// Initializes a new instance of CertificatePinningConfig with an array of pins.
     /// - Parameter pins: Array of CredentialPin objects.

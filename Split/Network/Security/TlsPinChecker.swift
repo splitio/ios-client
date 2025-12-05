@@ -34,28 +34,46 @@ enum CredentialValidationResult: CaseIterable {
 
     var description: String {
         switch self {
-        case .success:
-            return "success"
-        case .error:
-            return "Error validating credentials"
-        case .noPinsForDomain:
-            return "No pins found for domain"
-        case .invalidChain:
-            return "Key chain invalided"
-        case .credentialNotPinned:
-            return "Credential is not pinned"
-        case .spkiError:
-            return "Unable to get SPKI from public key"
-        case .noServerTrustMethod:
-            return "Validation method is not Server Trust"
-        case .unavailableServerTrust:
-            return "No server trust available"
-        case .invalidCredential:
-            return "Invalid credentials"
-        case .invalidParameter:
-            return "Incorrect credentials type"
+            case .success:
+                return "success"
+            case .error:
+                return "Error validating credentials"
+            case .noPinsForDomain:
+                return "No pins found for domain"
+            case .invalidChain:
+                return "Key chain invalided"
+            case .credentialNotPinned:
+                return "Credential is not pinned"
+            case .spkiError:
+                return "Unable to get SPKI from public key"
+            case .noServerTrustMethod:
+                return "Validation method is not Server Trust"
+            case .unavailableServerTrust:
+                return "No server trust available"
+            case .invalidCredential:
+                return "Invalid credentials"
+            case .invalidParameter:
+                return "Incorrect credentials type"
         }
     }
+}
+
+@objc public class CertificatePinningCompleteStatus: NSObject {
+    let host: String
+    let status: CertificatePinningStatus
+    let reason: String
+    
+    public init(host: String, status: CertificatePinningStatus, reason: String) {
+        self.host = host
+        self.status = status
+        self.reason = reason
+    }
+}
+
+@objc public enum CertificatePinningStatus: Int {
+    case success
+    case failed
+    case defaultHandling
 }
 
 enum KeyHashAlgo: String, Codable {
@@ -97,12 +115,12 @@ enum CertKeyType {
 
     func isSupported() -> Bool {
         switch self {
-        case .rsa2048, .rsa3072, .rsa4096:
-            return true
-        case .secp256r1, .secp384r1, .secp521r1:
-            return true
-        default:
-            return false
+            case .rsa2048, .rsa3072, .rsa4096:
+                return true
+            case .secp256r1, .secp384r1, .secp521r1:
+                return true
+            default:
+                return false
         }
     }
 }
@@ -226,11 +244,11 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     }
 
     private func pinsFor(domain: String, pins: [CredentialPin]) -> [CredentialPin] {
-        return HostDomainFilter.pinsFor(host: domain, pins: pins)
+        HostDomainFilter.pinsFor(host: domain, pins: pins)
     }
 
     private func base64Encoded(_ data: Data) -> Data? {
-        return data.base64EncodedString().dataBytes
+        data.base64EncodedString().dataBytes
     }
 
     private func isValidSecurityChain(_ secTrust: SecTrust, host: String) -> Bool {
@@ -277,7 +295,7 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     }
 
     private func chainLength(_ secTrust: SecTrust) -> Int {
-        return SecTrustGetCertificateCount(secTrust)
+        SecTrustGetCertificateCount(secTrust)
     }
 
     private func logValidationAvoidance(host: String, method: String, message: String) {
@@ -288,10 +306,10 @@ struct DefaultTlsPinChecker: TlsPinChecker {
 struct AlgoHelper {
     static func computeHash(_ data: Data, algo: KeyHashAlgo) -> Data {
         switch algo {
-        case .sha1:
-            return hashSha1(data)
-        case .sha256:
-            return hashSha256(data)
+            case .sha1:
+                return hashSha1(data)
+            case .sha256:
+                return hashSha256(data)
         }
     }
 
@@ -315,6 +333,7 @@ struct AlgoHelper {
 // TODO: improve this parser to encapsulate Apple's framework
 struct TlsCertificateParser {
     private static let certificateExtension = "der"
+    
     static func spki(from certificateName: String, bundle: Bundle) -> CertSpki? {
         guard let certificate = loadCertificate(name: certificateName, bundle: bundle) else {
             Logger.e("Could not load certificate \(certificateName) to get SPKI")
