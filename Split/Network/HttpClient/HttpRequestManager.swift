@@ -152,7 +152,7 @@ extension DefaultHttpRequestManager {
                    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
 
         // Validate the server trust using the PinValidator
-        let checkResult = pinChecker.check(credential: challenge)
+        var checkResult = pinChecker.check(credential: challenge)
         var finalStatus: CertificatePinningStatus
         
         switch checkResult {
@@ -160,7 +160,9 @@ extension DefaultHttpRequestManager {
                 guard let serverTrust = challenge.protectionSpace.serverTrust else {
                     // This shouldn't happen
                     completionHandler(.cancelAuthenticationChallenge, nil)
-                    return
+                    finalStatus = .failed
+                    checkResult = .unavailableServerTrust
+                    break
                 }
                 let credential = URLCredential(trust: serverTrust)
                 completionHandler(.useCredential, credential)
@@ -178,7 +180,7 @@ extension DefaultHttpRequestManager {
                 finalStatus = .defaultHandling
         }
         
-        // Finally we trigger the complete status handler (host, success/fail, reason)
+        // Finally we trigger the complete-status handler (host, success/fail, reason)
         notificationHelper?.post(notification: .pinnedCredentialStatus, info: CertificatePinningCompleteStatus(host: challenge.protectionSpace.host, status: finalStatus, reason: checkResult.description) as AnyObject)
     }
 }
