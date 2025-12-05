@@ -63,7 +63,7 @@ enum CredentialValidationResult: CaseIterable {
     let status: CertificatePinningStatus
     let reason: String
     
-    public init(host: String, status: CertificatePinningStatus, reason: String) {
+    init(host: String, status: CertificatePinningStatus, reason: String) {
         self.host = host
         self.status = status
         self.reason = reason
