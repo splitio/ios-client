@@ -3,8 +3,6 @@
 //  Split
 //
 //  Created by Brian Sztamfater on 27/9/17.
-//
-//
 
 import Foundation
 
@@ -50,10 +48,11 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         Version.sdk
     }
 
+    // MARK: Initializer
     init(_ params: SplitFactoryParams) throws {
         super.init()
         
-        // MARK: Certificate Pinning
+        // Certificate Pinning
         setupCertificatePinning(params)
         
         // Components
@@ -130,11 +129,11 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     public func client(matchingKey: String) -> SplitClient {
-        return client(key: Key(matchingKey: matchingKey))
+        client(key: Key(matchingKey: matchingKey))
     }
 
     public func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
-        return client(key: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
+        client(key: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
     }
 
     public func setUserConsent(enabled: Bool) {
@@ -146,11 +145,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         userConsentManager.set(newMode)
     }
 
-    private func setupBgSync(config: SplitClientConfig,
-                             apiKey: String,
-                             userKey: String,
-                             storageContainer: SplitStorageContainer) {
-#if os(iOS)
+    private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String, storageContainer: SplitStorageContainer) {
+        #if os(iOS)
         let dbKey = SplitDatabaseHelper.buildDbKey(prefix: config.prefix, sdkKey: apiKey)
         if config.synchronizeInBackground {
             SplitBgSynchronizer.shared.register(dbKey: dbKey, prefix: config.prefix, userKey: userKey)
@@ -158,31 +154,31 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         } else {
             SplitBgSynchronizer.shared.unregister(dbKey: dbKey, userKey: userKey)
         }
-#endif
+        #endif
     }
 }
 
- 
 // MARK: Certificate Pinning
 extension DefaultSplitFactory {
-    
+
     func setupCertificatePinning(_ params: SplitFactoryParams) {
-        HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
         
-        // Setup
         if let pinningConfig = params.config.certificatePinningConfig {
+            
+            // 1. Setup Notificator
             let notificationHelper = params.notificationHelper ?? DefaultNotificationHelper.instance
             HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
+            HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
             HttpSessionConfig.default.notificationHelper = notificationHelper
             
-            // Failure Handler
+            // 2. Connect Failure Handler
             if let handler = pinningConfig.failureHandler {
                 notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { host in
                     handler(host as? String ?? "Unknown")
                 }
             }
             
-            // Status Handler
+            // 3. Connect Status Handler
             if let handler = pinningConfig.statusHandler {
                 notificationHelper.addObserver(for: .pinnedCredentialStatus) { completeStatus in
                     guard let status = completeStatus as? CertificatePinningCompleteStatus else { return }
@@ -190,12 +186,8 @@ extension DefaultSplitFactory {
                 }
             }
             
-            // Pins
-            savePins(pinningConfig.pins, apiKey: params.apiKey)
+            // 4. Save Pins
+            GlobalSecureStorage.shared.set(item: pinningConfig.pins, for: .pinsConfig(params.apiKey))
         }
-    }
-
-    func savePins(_ pins: [CredentialPin], apiKey: String) {
-        GlobalSecureStorage.shared.set(item: pins, for: .pinsConfig(apiKey))
     }
 }
