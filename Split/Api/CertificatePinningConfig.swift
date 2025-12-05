@@ -37,9 +37,10 @@ public class CertificatePinningError: NSObject, LocalizedError {
     /// Initializes a new instance of CertificatePinningConfig with an array of pins.
     /// - Parameter pins: Array of CredentialPin objects.
     init(pins: [CredentialPin],
-         failureHandler: CertificatePinningFailureHandler?) {
+         failureHandler: CertificatePinningFailureHandler?, statusHandler: CertificatePinningStatusHandler?) {
         self.pins = pins
         self.failureHandler = failureHandler
+        self.statusHandler = statusHandler
     }
 
     /// Provides a builder for CertificatePinningConfig.
@@ -66,6 +67,7 @@ public class CertificatePinningError: NSObject, LocalizedError {
         private let splitValidator = SplitNameValidator()
         private var builderPins = [Pin]()
         private var failHandler: CertificatePinningFailureHandler?
+        private var statusHandler: CertificatePinningStatusHandler?
 
         // Visible for testing variable
         var bundle: Bundle = Bundle.main
@@ -80,7 +82,7 @@ public class CertificatePinningError: NSObject, LocalizedError {
                 let credential = (pin.type == .certificate ? try parseCertificate(pin: pin) : try parseHash(pin: pin))
                 pins.append(credential)
             }
-            return CertificatePinningConfig(pins: pins, failureHandler: failHandler)
+            return CertificatePinningConfig(pins: pins, failureHandler: failHandler, statusHandler: statusHandler)
         }
 
         /// Adds a certificate pin for the specified host.
@@ -137,6 +139,24 @@ public class CertificatePinningError: NSObject, LocalizedError {
 
         public func failureHandler(_ handler: @escaping CertificatePinningFailureHandler) {
             failHandler = handler
+        }
+        
+        /**
+         Sets the status handler for certificate pinning.
+
+         This method allows you to specify a closure that will be called when a certificate pinning occurs.
+         - Parameter handler: A closure that takes a `CertificatePinningStatusHandler` as its parameter. This closure will be called when a certificate pinning happens wheter it fails or not.
+         - Note: The `handler` closure is marked as `@escaping` because it is stored for later use, rather than being called immediately within the method.
+         - Example:
+         ```swift
+         certificatePinning.statusHandler { status in
+             print("Certificate pinning with details: \(status.host) - \(status.status) - \(status.reason)")
+         }
+         ```
+         **/
+
+        public func statusHandler(_ handler: @escaping CertificatePinningStatusHandler) {
+            statusHandler = handler
         }
 
         /// Parses a certificate pin into a CredentialPin.

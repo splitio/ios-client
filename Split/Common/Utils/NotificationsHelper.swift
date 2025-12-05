@@ -141,6 +141,6 @@ class DefaultNotificationHelper: NotificationHelper {
     }
 
     func post(notification: AppNotification, info: AnyObject?) {
-        executeActions(for: .pinnedCredentialValidationFail, info: info)
+        executeActions(for: notification, info: info)
     }
 }
