@@ -12,24 +12,24 @@ import Foundation
  Default implementation of SplitManager protocol
  */
 public class DefaultSplitFactory: NSObject, SplitFactory {
-    
+
     private static let kInitErrorMessage = "Something happened on Split init and the client couldn't be created"
-    
+
     private var clientManager: SplitClientManager?
     private var userConsentManager: UserConsentManager?
-    
+
     // Not using default implementation in protocol
     // extension due to Objc interoperability
     @objc public static var sdkVersion: String {
         Version.semantic
     }
-    
+
     @objc public var userConsent: UserConsent {
         userConsentManager?.getStatus() ?? .granted
     }
-    
+
     private var defaultManager: SplitManager?
-    
+
     public var client: SplitClient {
         if let client = clientManager?.defaultClient {
             return client
@@ -37,7 +37,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         Logger.e(Self.kInitErrorMessage)
         return FailedClient()
     }
-    
+
     public var manager: SplitManager {
         if let manager = defaultManager {
             return manager
@@ -45,11 +45,11 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         Logger.e(Self.kInitErrorMessage)
         return FailedManager()
     }
-    
+
     public var version: String {
         Version.sdk
     }
-    
+
     init(_ params: SplitFactoryParams) throws {
         super.init()
         
@@ -60,18 +60,18 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let components = SplitComponentFactory(splitClientConfig: params.config,
                                                apiKey: params.apiKey,
                                                userKey: params.key.matchingKey)
-        
+
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManagerCoordinator()
-        
+
         let databaseName = SplitDatabaseHelper.databaseName(
             prefix: params.config.prefix,
             apiKey: params.apiKey) ?? params.config.defaultDataFolder
-        
+
         let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
                                                                     telemetryStorage: params.telemetryStorage,
                                                                     testDatabase: params.testDatabase)
-        
+
         let rolloutCacheConfig = params.config.rolloutCacheConfiguration ?? RolloutCacheConfiguration.builder().build()
         let rolloutCacheManager = DefaultRolloutCacheManager(generalInfoStorage: storageContainer.generalInfoStorage,
                                                              rolloutCacheConfiguration: rolloutCacheConfig,
@@ -84,22 +84,22 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         _ = try components.buildRestClient(
             httpClient: params.httpClient ?? DefaultHttpClient.shared,
             reachabilityChecker: params.reachabilityChecker ?? ReachabilityWrapper())
-        
+
         let splitApiFacade = try components.buildSplitApiFacade(testHttpClient: params.httpClient)
-        
+
         let synchronizer = try components.buildSynchronizer(notificationHelper: params.notificationHelper)
         let syncManager = try components.buildSyncManager(notificationHelper: params.notificationHelper)
         let byKeyFacade = components.getByKeyFacade()
         let mySegmentsSyncWorkerFactory = try components.buildMySegmentsSyncWorkerFactory()
-        
+
         let eventsTracker = try components.buildEventsTracker()
-        
+
         userConsentManager = try components.buildUserConsentManager()
-        
+
         setupBgSync(config: params.config, apiKey: params.apiKey,
                     userKey: params.key.matchingKey,
                     storageContainer: storageContainer)
-        
+
         // TODO: Avoid somehow this big constructor
         clientManager = DefaultClientManager(config: params.config,
                                              key: params.key,
@@ -116,11 +116,11 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
                                              telemetryStopwatch: params.initStopwatch,
                                              propertyValidator: components.getPropertyValidator(),
                                              factory: self)
-        
+
         components.destroy()
-        
+
     }
-    
+
     public func client(key: Key) -> SplitClient {
         if let client = clientManager?.get(forKey: key) {
             return client
@@ -128,15 +128,15 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         Logger.e(Self.kInitErrorMessage)
         return FailedClient()
     }
-    
+
     public func client(matchingKey: String) -> SplitClient {
         return client(key: Key(matchingKey: matchingKey))
     }
-    
+
     public func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
         return client(key: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
     }
-    
+
     public func setUserConsent(enabled: Bool) {
         let newMode = (enabled ? UserConsent.granted : UserConsent.declined)
         guard let userConsentManager = self.userConsentManager else {
@@ -145,7 +145,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         }
         userConsentManager.set(newMode)
     }
-    
+
     private func setupBgSync(config: SplitClientConfig,
                              apiKey: String,
                              userKey: String,
