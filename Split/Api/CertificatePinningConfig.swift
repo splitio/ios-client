@@ -145,7 +145,7 @@ public class CertificatePinningError: NSObject, LocalizedError {
          Sets the status handler for certificate pinning.
 
          This method allows you to specify a closure that will be called when a certificate pinning verification occurs.
-         - Parameter handler: A closure that takes a `CertificatePinningStatusHandler` as its parameter. This closure will be called when a certificate pinning happens wheter it fails or not.
+         - Parameter handler: A closure that takes a `CertificatePinningStatusHandler` as its parameter. This closure will be called when a certificate pinning verification happens whether it fails or not.
          - Note: The `handler` closure is marked as `@escaping` because it is stored for later use, rather than being called immediately within the method.
          - Example:
          ```swift
