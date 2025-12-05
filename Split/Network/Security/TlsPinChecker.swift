@@ -70,10 +70,10 @@ enum CredentialValidationResult: CaseIterable {
     }
 }
 
-@objc public enum CertificatePinningStatus: Int {
-    case success
-    case failed
-    case defaultHandling
+@objc public enum CertificatePinningStatus: String {
+    case success = "Success"
+    case failed = "Failed"
+    case defaultHandling = "Default"
 }
 
 enum KeyHashAlgo: String, Codable {
