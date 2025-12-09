@@ -70,15 +70,19 @@ enum CredentialValidationResult: CaseIterable {
     }
 }
 
-@objc public enum CertificatePinningStatus: Int {
+@objc public enum CertificatePinningStatus: Int, CustomStringConvertible {
     case success, failed, defaultHandling
 
-    public func toString() -> String {
+    public var description: String {
         switch self {
             case .success: "Success"
             case .failed: "Failed"
             case .defaultHandling: "DefaultHandling"
         }
+    }
+
+    public func toString() -> String {
+        return description
     }
 }
 
