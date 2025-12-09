@@ -171,8 +171,6 @@ extension DefaultHttpRequestManager {
             case .error, .invalidChain, .credentialNotPinned, .spkiError, .invalidCredential, .invalidParameter, .unavailableServerTrust:
                 notificationHelper?.post(notification: .pinnedCredentialValidationFail, info: challenge.protectionSpace.host as AnyObject)
                 completionHandler(.cancelAuthenticationChallenge, nil)
-            
-                notificationHelper?.post(notification: .pinnedCredentialValidationFail, info: challenge.protectionSpace.host as AnyObject)
                 finalStatus = .failed
 
             case .noServerTrustMethod, .noPinsForDomain:

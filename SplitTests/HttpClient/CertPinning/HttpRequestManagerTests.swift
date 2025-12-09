@@ -68,7 +68,7 @@ class HttpRequestManagerTests: XCTestCase {
 
         let res3: [CredentialValidationResult] = [.noServerTrustMethod, .noPinsForDomain]
 
-        XCTAssertEqual(notifications.count, 14)
+        XCTAssertEqual(notifications.count, 7)
         XCTAssertEqual(results.count, 10)
         XCTAssertEqual(results[.success], .useCredential)
         for res in res2 {
