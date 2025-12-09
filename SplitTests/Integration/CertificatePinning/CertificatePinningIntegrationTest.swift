@@ -57,4 +57,50 @@ class CertificatePinningIntegrationTest: XCTestCase {
         
         waitForExpectations(timeout: 1.0, handler: nil)
     }
+
+    func testFactoryWiringOfBothHandlers() {
+        let statusExpectation = self.expectation(description: "Status handler called")
+        let failureExpectation = self.expectation(description: "Failure handler called")
+        let testHost = "www.test.com"
+        
+        let pinningConfigBuilder = CertificatePinningConfig.builder()
+        pinningConfigBuilder.addPin(host: "www.google.com", keyHash: "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
+        
+        pinningConfigBuilder.statusHandler { _, status, _ in
+            if status == .failed {
+                statusExpectation.fulfill()
+            }
+        }
+        
+        pinningConfigBuilder.failureHandler { host in
+            XCTAssertEqual(host, testHost)
+            failureExpectation.fulfill()
+        }
+        
+        guard let pinningConfig = try? pinningConfigBuilder.build() else {
+            XCTFail("Failed to build pinning config")
+            return
+        }
+        
+        let builder = IntegrationHelper().simplestFactoryWithDummyKeys()
+        let splitConfig = SplitClientConfig()
+        splitConfig.certificatePinningConfig = pinningConfig
+        _ = builder.setConfig(splitConfig)
+        
+        factory = builder.build()
+        XCTAssertNotNil(factory)
+        
+        guard let notificationHelper = HttpSessionConfig.default.notificationHelper else {
+            XCTFail("Notification helper is nil")
+            return
+        }
+        
+        // Post failure notification (triggers failureHandler)
+        notificationHelper.post(notification: .pinnedCredentialValidationFail, info: testHost as AnyObject)
+
+        // Post status notification (triggers statusHandler)
+        let statusObj = CertificatePinningCompleteStatus(host: testHost, status: .failed, reason: "Error")
+        notificationHelper.post(notification: .pinnedCredentialStatus, info: statusObj)
+        waitForExpectations(timeout: 1.0, handler: nil)
+    }
 }
