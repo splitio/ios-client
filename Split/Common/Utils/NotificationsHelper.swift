@@ -30,6 +30,7 @@ enum AppNotification: String {
     case didEnterBackground
     case didBecomeActive
     case pinnedCredentialValidationFail
+    case pinnedCredentialStatus
 }
 
 /// ** NotificationHelper **
@@ -140,6 +141,6 @@ class DefaultNotificationHelper: NotificationHelper {
     }
 
     func post(notification: AppNotification, info: AnyObject?) {
-        executeActions(for: AppNotification.pinnedCredentialValidationFail, info: info)
+        executeActions(for: notification, info: info)
     }
 }

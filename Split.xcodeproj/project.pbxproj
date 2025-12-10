@@ -1128,6 +1128,7 @@
 		C53EDFCD2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */; };
 		C53F3C472DCB956900655753 /* SplitsSyncHelperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F3C462DCB956900655753 /* SplitsSyncHelperTest.swift */; };
 		C53F3C4F2DCD112400655753 /* RuleBasedSegmentChangeProcessorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F3C4E2DCD110700655753 /* RuleBasedSegmentChangeProcessorStub.swift */; };
+		C55E82D92EE8E8A300777A06 /* CertificatePinningIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55E82D72EE8E8A300777A06 /* CertificatePinningIntegrationTest.swift */; };
 		C58F33732BDAC4AC00D66549 /* split_unsupported_matcher.json in Resources */ = {isa = PBXBuildFile; fileRef = C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */; };
 		C5977BFF2BF27375003E293A /* Semver.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977BFE2BF27375003E293A /* Semver.swift */; };
 		C5977C012BF27390003E293A /* SemverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C002BF27390003E293A /* SemverTest.swift */; };
@@ -2021,6 +2022,7 @@
 		C53EDFCC2DD4E10A000DCDBC /* SplitsSyncHelperWithProxyHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelperWithProxyHandlerTests.swift; sourceTree = "<group>"; };
 		C53F3C462DCB956900655753 /* SplitsSyncHelperTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsSyncHelperTest.swift; sourceTree = "<group>"; };
 		C53F3C4E2DCD110700655753 /* RuleBasedSegmentChangeProcessorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentChangeProcessorStub.swift; sourceTree = "<group>"; };
+		C55E82D72EE8E8A300777A06 /* CertificatePinningIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CertificatePinningIntegrationTest.swift; sourceTree = "<group>"; };
 		C58F33722BDAC4AC00D66549 /* split_unsupported_matcher.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_unsupported_matcher.json; sourceTree = "<group>"; };
 		C5977BFE2BF27375003E293A /* Semver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Semver.swift; sourceTree = "<group>"; };
 		C5977C002BF27390003E293A /* SemverTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SemverTest.swift; sourceTree = "<group>"; };
@@ -3064,6 +3066,7 @@
 		599A6E3222FC67BF00D3D68C /* Integration */ = {
 			isa = PBXGroup;
 			children = (
+				C55E82D82EE8E8A300777A06 /* CertificatePinning */,
 				952FA1382A320B5900264AB5 /* Api */,
 				952FA1372A320B3300264AB5 /* Recorder */,
 				952FA1352A3209ED00264AB5 /* Cache */,
@@ -3755,6 +3758,14 @@
 				C539CAE42D947D2A0050C732 /* Validators */,
 			);
 			path = Common;
+			sourceTree = "<group>";
+		};
+		C55E82D82EE8E8A300777A06 /* CertificatePinning */ = {
+			isa = PBXGroup;
+			children = (
+				C55E82D72EE8E8A300777A06 /* CertificatePinningIntegrationTest.swift */,
+			);
+			path = CertificatePinning;
 			sourceTree = "<group>";
 		};
 		C5977C0E2BF2832A003E293A /* Matcher */ = {
@@ -4491,6 +4502,7 @@
 				9583554028464FD300014F0C /* SingleSyncTest.swift in Sources */,
 				5959C480228051CA0064F968 /* SplitManagerStub.swift in Sources */,
 				9519A93627DBD41100278AEC /* MySegmentsSyncWorkerFactoryStub.swift in Sources */,
+				C55E82D92EE8E8A300777A06 /* CertificatePinningIntegrationTest.swift in Sources */,
 				59F4AA9624FE800200A1C69A /* SseHandlerTest.swift in Sources */,
 				59F65F0625654EBB005FE8C9 /* PersistentEventsStorageTest.swift in Sources */,
 				5905D4E5255B2395006DA3B1 /* MySegmentsStorageTests.swift in Sources */,
