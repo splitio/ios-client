@@ -185,13 +185,13 @@ struct SplitDatabaseHelper {
     }
 
     /// Result of encryption key validation and recovery process
-    private struct EncryptionValidationResult {
+    struct EncryptionValidationResult {
         let cipherKey: Data?
         let recoveryPerformed: Bool
     }
 
     /// Validates encryption key and performs recovery if needed
-    private static func validateAndRecoverEncryptionKey(
+    static func validateAndRecoverEncryptionKey(
         dbKey: String,
         previousLevel: SplitEncryptionLevel,
         targetLevel: SplitEncryptionLevel,
@@ -204,8 +204,25 @@ struct SplitDatabaseHelper {
             return EncryptionValidationResult(cipherKey: cipherKey, recoveryPerformed: false)
         }
         let keyToValidate = cipherKey ?? currentEncryptionKey(for: dbKey)
-        guard let keyToValidate = keyToValidate,
-              !isEncryptionKeyValid(cipherKey: keyToValidate, generalInfoDao: generalInfoDao,
+        guard let keyToValidate = keyToValidate else {
+            // If we previously had encryption enabled but can't get a key to validate,
+            // treat this as invalid and trigger recovery
+            if previousLevel != .none {
+                Logger.w("Encryption was previously enabled but no key available for validation - initiating recovery")
+                deleteEncryptionCanary(generalInfoDao: generalInfoDao)
+                clearAllEncryptedEntities(dbHelper: dbHelper)
+                cipherKey = replaceEncryptionKey(for: dbKey)
+                if targetLevel != .none, let newKey = cipherKey {
+                    storeEncryptionCanary(cipherKey: newKey, generalInfoDao: generalInfoDao)
+                    setCurrentEncryptionLevel(targetLevel, for: dbKey)
+                } else {
+                    setCurrentEncryptionLevel(.none, for: dbKey)
+                }
+                return EncryptionValidationResult(cipherKey: cipherKey, recoveryPerformed: true)
+            }
+            return EncryptionValidationResult(cipherKey: cipherKey, recoveryPerformed: false)
+        }
+        guard !isEncryptionKeyValid(cipherKey: keyToValidate, generalInfoDao: generalInfoDao,
                                     dbHelper: dbHelper, previousEncryptionLevel: previousLevel) else {
             return EncryptionValidationResult(cipherKey: cipherKey, recoveryPerformed: false)
         }
@@ -223,7 +240,7 @@ struct SplitDatabaseHelper {
     }
 
     /// Handles encryption migration when levels change
-    private static func handleEncryptionMigration(
+    static func handleEncryptionMigration(
         dbKey: String,
         targetLevel: SplitEncryptionLevel,
         cipherKey: Data?,
@@ -246,7 +263,7 @@ struct SplitDatabaseHelper {
         // Edge case: Encryption enabled, levels match, but no canary
         if targetLevel != .none,
            generalInfoDao.stringValue(info: .encryptionCanary) == nil,
-           let key = cipherKey {
+           let key = cipherKey ?? currentEncryptionKey(for: dbKey) {
             storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
         }
     }

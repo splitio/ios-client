@@ -537,7 +537,128 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [exp], timeout: 3)
     }
-    
+
+    func testMissingCanaryWhenLevelsMatchStoresCanaryUsingCurrentKey() {
+        let dbKey = "test_missing_canary_\(UUID().uuidString.prefix(8))"
+        let originalKey = generateTestKey()
+
+        // Setup: Store key and set encryption level (simulating existing encrypted setup)
+        secureStorage.set(item: originalKey.base64EncodedString(), for: .dbEncryptionKey(dbKey))
+        secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(dbKey))
+
+        // Verify no canary exists initially
+        XCTAssertNil(generalInfoDao.stringValue(info: .encryptionCanary))
+
+        // Call handleEncryptionMigration with same target level but no cipherKey parameter
+        // This simulates the case where levels match but no canary exists
+        do {
+            try SplitDatabaseHelper.handleEncryptionMigration(
+                dbKey: dbKey,
+                targetLevel: .aes128Cbc,
+                cipherKey: nil, // No cipherKey passed
+                dbHelper: dbHelper,
+                generalInfoDao: generalInfoDao
+            )
+        } catch {
+            XCTFail("handleEncryptionMigration should not throw: \(error)")
+        }
+
+        // Verify canary was stored using the key from currentEncryptionKey(for:)
+        let exp = expectation(description: "Canary stored")
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+            let storedCanary = self.generalInfoDao.stringValue(info: .encryptionCanary)
+            XCTAssertNotNil(storedCanary, "Canary should be stored when missing and levels match")
+
+            // Verify the canary can be decrypted with the original key
+            let isValid = SplitDatabaseHelper.isEncryptionKeyValid(
+                cipherKey: originalKey,
+                generalInfoDao: self.generalInfoDao
+            )
+            XCTAssertTrue(isValid, "Stored canary should be valid with the original key")
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 3)
+    }
+
+    /// Test: Key deleted from Keychain triggers recovery when encrypted data exists
+    /// When key is lost but encrypted data exists, validation fails and recovery is triggered
+    func testKeyDeletedWithEncryptedDataTriggersRecovery() {
+        let dbKey = "test_key_deleted_recovery_\(UUID().uuidString.prefix(8))"
+
+        // Create original key and encrypt some data with it
+        let originalKey = generateTestKey()
+        let cipher = DefaultCipher(cipherKey: originalKey)
+
+        // Insert encrypted data with original key (simulating pre-existing encrypted DB)
+        dbHelper.performAndWait {
+            if let entity = dbHelper.create(entity: .split) as? SplitEntity {
+                entity.name = cipher.encrypt("test_split") ?? ""
+                entity.body = cipher.encrypt("{\"name\":\"test_split\",\"status\":\"ACTIVE\"}") ?? ""
+                entity.updatedAt = Date().unixTimestamp()
+            }
+        }
+        dbHelper.save()
+
+        // Wait for DB write
+        let writeExp = expectation(description: "Data written")
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+            writeExp.fulfill()
+        }
+        wait(for: [writeExp], timeout: 3)
+
+        // Setup: Set previous encryption level but DON'T store the original key
+        // This simulates key being deleted/lost from Keychain
+        secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(dbKey))
+        // Note: NOT storing originalKey - simulating key deletion
+
+        let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
+
+        // Verify no canary exists (legacy installation scenario)
+        XCTAssertNil(generalInfoDao.stringValue(info: .encryptionCanary))
+
+        // Call validateAndRecoverEncryptionKey
+        // Since no key is stored, currentEncryptionKey(for:) will generate a NEW key
+        // That new key won't be able to decrypt the data encrypted with originalKey
+        let result = SplitDatabaseHelper.validateAndRecoverEncryptionKey(
+            dbKey: dbKey,
+            previousLevel: .aes128Cbc, // Previously encrypted
+            targetLevel: .aes128Cbc, // Still encrypted
+            currentKey: nil, // No current key passed
+            dbHelper: dbHelper,
+            generalInfoDao: generalInfoDao
+        )
+
+        // Verify recovery was performed (because new key couldn't decrypt existing data)
+        XCTAssertTrue(result.recoveryPerformed, "Recovery should be performed when key can't decrypt existing data")
+
+        // Verify new key was generated
+        XCTAssertNotNil(result.cipherKey, "New cipher key should be generated during recovery")
+
+        // Verify canary was stored with the new key
+        let verifyExp = expectation(description: "Verify recovery state")
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+            let storedCanary = generalInfoDao.stringValue(info: .encryptionCanary)
+            XCTAssertNotNil(storedCanary, "Canary should be stored after recovery")
+
+            // Verify encrypted data was cleared
+            self.dbHelper.performAndWait {
+                let splits = self.dbHelper.fetch(entity: .split).compactMap { $0 as? SplitEntity }
+                XCTAssertEqual(0, splits.count, "Encrypted data should be cleared during recovery")
+            }
+
+            // Verify the canary can be decrypted with the new key
+            if let newKey = result.cipherKey {
+                let isValid = SplitDatabaseHelper.isEncryptionKeyValid(
+                    cipherKey: newKey,
+                    generalInfoDao: generalInfoDao
+                )
+                XCTAssertTrue(isValid, "Stored canary should be valid with the new key")
+            }
+            verifyExp.fulfill()
+        }
+        wait(for: [verifyExp], timeout: 3)
+    }
+
     // MARK: - Helpers
     
     private func generateTestKey() -> Data {
