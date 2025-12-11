@@ -152,26 +152,33 @@ extension DefaultHttpRequestManager {
                    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
 
         // Validate the server trust using the PinValidator
-        let checkResult = pinChecker.check(credential: challenge)
+        var checkResult = pinChecker.check(credential: challenge)
+        var finalStatus: CertificatePinningStatus
+        
         switch checkResult {
-        case .success:
-            guard let serverTrust = challenge.protectionSpace.serverTrust else {
-                // This shouldn't happen
+            case .success:
+                guard let serverTrust = challenge.protectionSpace.serverTrust else {
+                    // This shouldn't happen
+                    completionHandler(.cancelAuthenticationChallenge, nil)
+                    finalStatus = .failed
+                    checkResult = .unavailableServerTrust
+                    break
+                }
+                let credential = URLCredential(trust: serverTrust)
+                completionHandler(.useCredential, credential)
+                finalStatus = .success
+            
+            case .error, .invalidChain, .credentialNotPinned, .spkiError, .invalidCredential, .invalidParameter, .unavailableServerTrust:
+                notificationHelper?.post(notification: .pinnedCredentialValidationFail, info: challenge.protectionSpace.host as AnyObject)
                 completionHandler(.cancelAuthenticationChallenge, nil)
-                return
-            }
-            let credential = URLCredential(trust: serverTrust)
-            completionHandler(.useCredential, credential)
+                finalStatus = .failed
 
-        case .error, .invalidChain, .credentialNotPinned, .spkiError,
-                .invalidCredential, .invalidParameter, .unavailableServerTrust:
-            notificationHelper?.post(notification: .pinnedCredentialValidationFail,
-                                     info: challenge.protectionSpace.host as AnyObject)
-            completionHandler(.cancelAuthenticationChallenge, nil)
-
-        case .noServerTrustMethod, .noPinsForDomain:
-            completionHandler(.performDefaultHandling, nil)
-            return
+            case .noServerTrustMethod, .noPinsForDomain:
+                completionHandler(.performDefaultHandling, nil)
+                finalStatus = .defaultHandling
         }
+        
+        // Finally we trigger the complete-status handler (host, success/fail, reason)
+        notificationHelper?.post(notification: .pinnedCredentialStatus, info: CertificatePinningCompleteStatus(host: challenge.protectionSpace.host, status: finalStatus, reason: checkResult.description) as AnyObject)
     }
 }

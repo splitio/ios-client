@@ -235,6 +235,28 @@ class LocalhostTests: XCTestCase {
         XCTAssertEqual("off", results["split_b"]?.treatment)
         XCTAssertEqual("red", results["split_c"]?.treatment)
     }
+
+    func testFallbackTreatment() {
+        let config = SplitClientConfig()
+        let fallbackTreatment = "FALLBACK_OFF"
+        let fallbackConfiguration = FallbackTreatmentsConfig.builder()
+            .global(fallbackTreatment)
+            .build()
+        config.fallbackTreatments = fallbackConfiguration
+        config.offlineRefreshRate = 1
+        config.splitFile = "localhost_legacy.splits"
+        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
+        let client = factory.client
+        
+        let readyExp = XCTestExpectation()
+        client.on(event: .sdkReady) {
+            readyExp.fulfill()
+        }
+        wait(for: [readyExp], timeout: 10.0)
+
+        let treatment = client.getTreatment("non_existent_flag")
+        XCTAssertEqual(treatment, "FALLBACK_OFF")
+    }
     
     func testLoadYml() {
         let config = SplitClientConfig()

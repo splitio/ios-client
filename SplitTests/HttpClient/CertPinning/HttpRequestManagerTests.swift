@@ -30,7 +30,7 @@ class HttpRequestManagerTests: XCTestCase {
         let manager = createRequestManager()
         var notifications = [String]()
         var results = [CredentialValidationResult: URLSession.AuthChallengeDisposition]()
-
+        
         notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { info in
             guard let info = info as? String else {
                 XCTFail()
@@ -39,6 +39,22 @@ class HttpRequestManagerTests: XCTestCase {
             notifications.append(info)
         }
         
+        // MARK: Pinning status handler
+        var statuses = [CertificatePinningStatus]()
+        var reasons = [String]()
+        var host: String?
+
+        notificationHelper.addObserver(for: .pinnedCredentialStatus) { info in
+            guard let info = info as? CertificatePinningCompleteStatus else {
+                XCTFail()
+                return
+            }
+            statuses.append(info.status)
+            reasons.append(info.reason)
+            host = info.host 
+        }
+        
+        // MARK: Inject data
         for result in CredentialValidationResult.allCases {
             manager.urlSession?(URLSession.shared, task: task, didReceive: dummyChallenge) {disposition,_ in
                 results[result] = disposition
@@ -64,6 +80,21 @@ class HttpRequestManagerTests: XCTestCase {
         }
 
         XCTAssertEqual(notifications[0], hostName)
+        
+        // Statuses
+        XCTAssertEqual(reasons[0], CredentialValidationResult.success.description)
+        XCTAssertEqual(reasons[1], CredentialValidationResult.error.description)
+        XCTAssertEqual(reasons[2], CredentialValidationResult.noPinsForDomain.description)
+        XCTAssertEqual(reasons[3], CredentialValidationResult.invalidChain.description)
+        XCTAssertEqual(reasons[4], CredentialValidationResult.credentialNotPinned.description)
+        XCTAssertEqual(reasons[5], CredentialValidationResult.spkiError.description)
+        XCTAssertEqual(reasons[6], CredentialValidationResult.noServerTrustMethod.description)
+        XCTAssertEqual(reasons[7], CredentialValidationResult.unavailableServerTrust.description)
+        XCTAssertEqual(reasons[8], CredentialValidationResult.invalidCredential.description)
+        XCTAssertEqual(reasons[9], CredentialValidationResult.invalidParameter.description)
+        XCTAssertEqual(statuses[0], CertificatePinningStatus.success)
+        XCTAssertEqual(statuses[9], CertificatePinningStatus.failed)
+        XCTAssertEqual(host, "www.test.com")
     }
 
     func testNetworkConnectionLostErrorMapping() {
