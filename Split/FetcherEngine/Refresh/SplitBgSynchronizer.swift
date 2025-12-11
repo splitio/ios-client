@@ -147,8 +147,8 @@ struct BackgroundSyncExecutor {
         self.mapKey = SplitDatabaseHelper.buildDbKey(prefix: prefix, sdkKey: apiKey)
         self.userKeys = userKeys
 
-        let cipherKey = SplitDatabaseHelper.currentEncryptionKey(for: mapKey)
-        let encryptionLevel = SplitDatabaseHelper.currentEncryptionLevel(dbKey: mapKey)
+        let cipherKey = DbEncryptionManager.currentEncryptionKey(for: mapKey)
+        let encryptionLevel = DbEncryptionManager.currentEncryptionLevel(dbKey: mapKey)
 
         let databaseName = SplitDatabaseHelper.databaseName(prefix: prefix,
                                                             apiKey: apiKey) ?? ServiceConstants.defaultDataFolder

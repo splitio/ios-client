@@ -97,12 +97,12 @@ class EncryptionKeyValidationTest: XCTestCase {
         let key = generateTestKey()
         
         // Store canary encrypted with this key
-        SplitDatabaseHelper.storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
+        DbEncryptionManager.storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
         
         let exp = expectation(description: "Canary stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
             // Validate with same key
-            let isValid = SplitDatabaseHelper.isEncryptionKeyValid(cipherKey: key, generalInfoDao: self.generalInfoDao)
+            let isValid = DbEncryptionManager.isEncryptionKeyValid(cipherKey: key, generalInfoDao: self.generalInfoDao)
             XCTAssertTrue(isValid)
             exp.fulfill()
         }
@@ -113,7 +113,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         let key = generateTestKey()
         
         // No canary stored - first time setup
-        let isValid = SplitDatabaseHelper.isEncryptionKeyValid(cipherKey: key, generalInfoDao: generalInfoDao)
+        let isValid = DbEncryptionManager.isEncryptionKeyValid(cipherKey: key, generalInfoDao: generalInfoDao)
         
         XCTAssertTrue(isValid, "First time setup (no canary) should pass validation")
     }
@@ -123,12 +123,12 @@ class EncryptionKeyValidationTest: XCTestCase {
         let differentKey = generateTestKey()
         
         // Store canary with original key
-        SplitDatabaseHelper.storeEncryptionCanary(cipherKey: originalKey, generalInfoDao: generalInfoDao)
+        DbEncryptionManager.storeEncryptionCanary(cipherKey: originalKey, generalInfoDao: generalInfoDao)
         
         let exp = expectation(description: "Canary stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
             // Validate with different key
-            let isValid = SplitDatabaseHelper.isEncryptionKeyValid(cipherKey: differentKey, generalInfoDao: self.generalInfoDao)
+            let isValid = DbEncryptionManager.isEncryptionKeyValid(cipherKey: differentKey, generalInfoDao: self.generalInfoDao)
             XCTAssertFalse(isValid, "Different key should fail canary validation")
             exp.fulfill()
         }
@@ -143,7 +143,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         
         let exp = expectation(description: "Canary stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            let isValid = SplitDatabaseHelper.isEncryptionKeyValid(cipherKey: key, generalInfoDao: self.generalInfoDao)
+            let isValid = DbEncryptionManager.isEncryptionKeyValid(cipherKey: key, generalInfoDao: self.generalInfoDao)
             XCTAssertFalse(isValid, "Corrupted canary should fail validation")
             exp.fulfill()
         }
@@ -160,7 +160,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         
         let exp = expectation(description: "Canary stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            let isValid = SplitDatabaseHelper.isEncryptionKeyValid(cipherKey: key, generalInfoDao: self.generalInfoDao)
+            let isValid = DbEncryptionManager.isEncryptionKeyValid(cipherKey: key, generalInfoDao: self.generalInfoDao)
             XCTAssertFalse(isValid, "Tampered canary (wrong decrypted value) should fail validation")
             exp.fulfill()
         }
@@ -172,7 +172,7 @@ class EncryptionKeyValidationTest: XCTestCase {
     func testStoreEncryptionCanaryCreatesValidCanary() {
         let key = generateTestKey()
         
-        SplitDatabaseHelper.storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
+        DbEncryptionManager.storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
         
         let exp = expectation(description: "Canary stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -184,7 +184,7 @@ class EncryptionKeyValidationTest: XCTestCase {
             XCTAssertNotEqual("SPLIT_ENC_CHECK", stored)
             
             // Verify it can be validated
-            XCTAssertTrue(SplitDatabaseHelper.isEncryptionKeyValid(cipherKey: key, generalInfoDao: self.generalInfoDao))
+            XCTAssertTrue(DbEncryptionManager.isEncryptionKeyValid(cipherKey: key, generalInfoDao: self.generalInfoDao))
             exp.fulfill()
         }
         wait(for: [exp], timeout: 3)
@@ -193,7 +193,7 @@ class EncryptionKeyValidationTest: XCTestCase {
     /// Test deleteEncryptionCanary removes the canary
     func testDeleteEncryptionCanaryRemovesCanary() {
         let key = generateTestKey()
-        SplitDatabaseHelper.storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
+        DbEncryptionManager.storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
         
         let storeExp = expectation(description: "Canary stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -201,7 +201,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [storeExp], timeout: 3)
         
-        SplitDatabaseHelper.deleteEncryptionCanary(generalInfoDao: generalInfoDao)
+        DbEncryptionManager.deleteEncryptionCanary(generalInfoDao: generalInfoDao)
         
         let deleteExp = expectation(description: "Canary deleted")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -223,7 +223,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         secureStorage.set(item: originalKey.base64EncodedString(), for: .dbEncryptionKey(dbKey))
         
         // Replace key
-        let newKey = SplitDatabaseHelper.replaceEncryptionKey(for: dbKey)
+        let newKey = DbEncryptionManager.replaceEncryptionKey(for: dbKey)
         
         // New key should be generated
         XCTAssertNotNil(newKey)
@@ -255,7 +255,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         wait(for: [insertExp], timeout: 3)
         
         // Clear using CoreDataHelper directly (DbCipher pattern)
-        SplitDatabaseHelper.clearAllEncryptedEntities(dbHelper: dbHelper)
+        DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
         
         let clearExp = expectation(description: "Splits cleared")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -276,7 +276,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [insertExp], timeout: 3)
         
-        SplitDatabaseHelper.clearAllEncryptedEntities(dbHelper: dbHelper)
+        DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
         
         let clearExp = expectation(description: "Segments cleared")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -297,7 +297,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [insertExp], timeout: 3)
         
-        SplitDatabaseHelper.clearAllEncryptedEntities(dbHelper: dbHelper)
+        DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
         
         let clearExp = expectation(description: "Events cleared")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -318,7 +318,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [insertExp], timeout: 3)
         
-        SplitDatabaseHelper.clearAllEncryptedEntities(dbHelper: dbHelper)
+        DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
         
         let clearExp = expectation(description: "Impressions cleared")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -339,7 +339,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [insertExp], timeout: 3)
         
-        SplitDatabaseHelper.clearAllEncryptedEntities(dbHelper: dbHelper)
+        DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
         
         let clearExp = expectation(description: "Attributes cleared")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -359,7 +359,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [insertExp], timeout: 3)
         
-        SplitDatabaseHelper.clearAllEncryptedEntities(dbHelper: dbHelper)
+        DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
         
         let clearExp = expectation(description: "GeneralInfo preserved")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -388,7 +388,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [insertExp], timeout: 3)
         
-        SplitDatabaseHelper.clearAllEncryptedEntities(dbHelper: dbHelper)
+        DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
         
         let clearExp = expectation(description: "HashedImpressions preserved")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -423,7 +423,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
             // No canary exists, but data was encrypted with this key
             // previousEncryptionLevel indicates encryption was enabled before
-            let isValid = SplitDatabaseHelper.isEncryptionKeyValid(
+            let isValid = DbEncryptionManager.isEncryptionKeyValid(
                 cipherKey: key,
                 generalInfoDao: self.generalInfoDao,
                 dbHelper: self.dbHelper,
@@ -455,7 +455,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         let exp = expectation(description: "Data inserted")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
             // No canary exists, data encrypted with original key, validating with wrong key
-            let isValid = SplitDatabaseHelper.isEncryptionKeyValid(
+            let isValid = DbEncryptionManager.isEncryptionKeyValid(
                 cipherKey: wrongKey,
                 generalInfoDao: self.generalInfoDao,
                 dbHelper: self.dbHelper,
@@ -474,7 +474,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         
         // No data, no canary - but previousEncryptionLevel says encryption was enabled
         // This could happen if encryption was enabled but no data was ever cached
-        let isValid = SplitDatabaseHelper.isEncryptionKeyValid(
+        let isValid = DbEncryptionManager.isEncryptionKeyValid(
             cipherKey: key,
             generalInfoDao: generalInfoDao,
             dbHelper: dbHelper,
@@ -489,7 +489,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         let key = generateTestKey()
         
         // First time setup - previousEncryptionLevel is .none
-        let isValid = SplitDatabaseHelper.isEncryptionKeyValid(
+        let isValid = DbEncryptionManager.isEncryptionKeyValid(
             cipherKey: key,
             generalInfoDao: generalInfoDao,
             dbHelper: dbHelper,
@@ -518,13 +518,13 @@ class EncryptionKeyValidationTest: XCTestCase {
         let exp = expectation(description: "Data inserted")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
             // Without dbHelper, validation passes (old behavior - can't check data)
-            let isValidWithoutHelper = SplitDatabaseHelper.isEncryptionKeyValid(
+            let isValidWithoutHelper = DbEncryptionManager.isEncryptionKeyValid(
                 cipherKey: wrongKey,
                 generalInfoDao: self.generalInfoDao
             )
             
             // With dbHelper, validation fails (new behavior - checks actual data)
-            let isValidWithHelper = SplitDatabaseHelper.isEncryptionKeyValid(
+            let isValidWithHelper = DbEncryptionManager.isEncryptionKeyValid(
                 cipherKey: wrongKey,
                 generalInfoDao: self.generalInfoDao,
                 dbHelper: self.dbHelper,
@@ -552,7 +552,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         // Call handleEncryptionMigration with same target level but no cipherKey parameter
         // This simulates the case where levels match but no canary exists
         do {
-            try SplitDatabaseHelper.handleEncryptionMigration(
+            try DbEncryptionManager.handleEncryptionMigration(
                 dbKey: dbKey,
                 targetLevel: .aes128Cbc,
                 cipherKey: nil, // No cipherKey passed
@@ -570,7 +570,7 @@ class EncryptionKeyValidationTest: XCTestCase {
             XCTAssertNotNil(storedCanary, "Canary should be stored when missing and levels match")
 
             // Verify the canary can be decrypted with the original key
-            let isValid = SplitDatabaseHelper.isEncryptionKeyValid(
+            let isValid = DbEncryptionManager.isEncryptionKeyValid(
                 cipherKey: originalKey,
                 generalInfoDao: self.generalInfoDao
             )
@@ -619,7 +619,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         // Call validateAndRecoverEncryptionKey
         // Since no key is stored, currentEncryptionKey(for:) will generate a NEW key
         // That new key won't be able to decrypt the data encrypted with originalKey
-        let result = SplitDatabaseHelper.validateAndRecoverEncryptionKey(
+        let result = DbEncryptionManager.validateAndRecoverEncryptionKey(
             dbKey: dbKey,
             previousLevel: .aes128Cbc, // Previously encrypted
             targetLevel: .aes128Cbc, // Still encrypted
@@ -648,7 +648,7 @@ class EncryptionKeyValidationTest: XCTestCase {
 
             // Verify the canary can be decrypted with the new key
             if let newKey = result.cipherKey {
-                let isValid = SplitDatabaseHelper.isEncryptionKeyValid(
+                let isValid = DbEncryptionManager.isEncryptionKeyValid(
                     cipherKey: newKey,
                     generalInfoDao: generalInfoDao
                 )
