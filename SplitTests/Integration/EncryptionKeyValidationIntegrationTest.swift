@@ -94,16 +94,16 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         let newKeyString = secureStorage.getString(item: .dbEncryptionKey(dbKey))
         XCTAssertNotNil(newKeyString)
         XCTAssertNotEqual(originalKey.base64EncodedString(), newKeyString)
-        
-        // Canary should exist with new key
+
+        // Canary should exist with new key (synchronous write during init)
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
         let canary = generalInfoDao.stringValue(info: .encryptionCanary)
-        XCTAssertNotNil(canary)
-        
+        XCTAssertNotNil(canary, "Canary should exist after recovery")
+
         // SDK should be functional - verify it can return treatments
         let treatment = factory.client.getTreatment("FACUNDO_TEST")
         XCTAssertNotEqual("control", treatment, "SDK should be functional after recovery")
-        
+
         factory.client.destroy()
     }
     
@@ -131,15 +131,15 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         wait(for: [readyExp], timeout: 10)
         
         // 4. Verify recovery happened
-        // New canary should be stored (old one couldn't be decrypted)
+        // New canary should be stored (old one couldn't be decrypted) - synchronous write during init
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
         let canary = generalInfoDao.stringValue(info: .encryptionCanary)
-        XCTAssertNotNil(canary)
-        
+        XCTAssertNotNil(canary, "Canary should exist after recovery")
+
         // SDK should be functional - verify it can return treatments
         let treatment = factory.client.getTreatment("FACUNDO_TEST")
         XCTAssertNotEqual("control", treatment, "SDK should be functional after recovery")
-        
+
         factory.client.destroy()
     }
     

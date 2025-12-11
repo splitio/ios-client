@@ -97,7 +97,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         let key = generateTestKey()
         
         // Store canary encrypted with this key
-        DbEncryptionManager.storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
+        DbEncryptionManager.storeEncryptionCanary(cipherKey: key, dbHelper: dbHelper)
         
         let exp = expectation(description: "Canary stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -123,7 +123,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         let differentKey = generateTestKey()
         
         // Store canary with original key
-        DbEncryptionManager.storeEncryptionCanary(cipherKey: originalKey, generalInfoDao: generalInfoDao)
+        DbEncryptionManager.storeEncryptionCanary(cipherKey: originalKey, dbHelper: dbHelper)
         
         let exp = expectation(description: "Canary stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
@@ -171,45 +171,34 @@ class EncryptionKeyValidationTest: XCTestCase {
     
     func testStoreEncryptionCanaryCreatesValidCanary() {
         let key = generateTestKey()
-        
-        DbEncryptionManager.storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
-        
-        let exp = expectation(description: "Canary stored")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            // Verify canary was stored
-            let stored = self.generalInfoDao.stringValue(info: .encryptionCanary)
-            XCTAssertNotNil(stored)
-            
-            // Verify it's encrypted (not plain text)
-            XCTAssertNotEqual("SPLIT_ENC_CHECK", stored)
-            
-            // Verify it can be validated
-            XCTAssertTrue(DbEncryptionManager.isEncryptionKeyValid(cipherKey: key, generalInfoDao: self.generalInfoDao))
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 3)
+
+        // Store canary (synchronous)
+        DbEncryptionManager.storeEncryptionCanary(cipherKey: key, dbHelper: dbHelper)
+
+        // Verify immediately - operation is synchronous
+        let stored = generalInfoDao.stringValue(info: .encryptionCanary)
+        XCTAssertNotNil(stored)
+
+        // Verify it's encrypted (not plain text)
+        XCTAssertNotEqual("SPLIT_ENC_CHECK", stored)
+
+        // Verify it can be validated
+        XCTAssertTrue(DbEncryptionManager.isEncryptionKeyValid(cipherKey: key, generalInfoDao: generalInfoDao))
     }
-    
+
     /// Test deleteEncryptionCanary removes the canary
     func testDeleteEncryptionCanaryRemovesCanary() {
         let key = generateTestKey()
-        DbEncryptionManager.storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
-        
-        let storeExp = expectation(description: "Canary stored")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            storeExp.fulfill()
-        }
-        wait(for: [storeExp], timeout: 3)
-        
-        DbEncryptionManager.deleteEncryptionCanary(generalInfoDao: generalInfoDao)
-        
-        let deleteExp = expectation(description: "Canary deleted")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            let stored = self.generalInfoDao.stringValue(info: .encryptionCanary)
-            XCTAssertNil(stored)
-            deleteExp.fulfill()
-        }
-        wait(for: [deleteExp], timeout: 3)
+
+        // Store canary (synchronous)
+        DbEncryptionManager.storeEncryptionCanary(cipherKey: key, dbHelper: dbHelper)
+
+        // Delete canary (synchronous)
+        DbEncryptionManager.deleteEncryptionCanary(dbHelper: dbHelper)
+
+        // Verify immediately - operation is synchronous
+        let stored = generalInfoDao.stringValue(info: .encryptionCanary)
+        XCTAssertNil(stored)
     }
     
     // MARK: - Key Replacement Tests
@@ -254,17 +243,13 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [insertExp], timeout: 3)
         
-        // Clear using CoreDataHelper directly (DbCipher pattern)
+        // Clear using CoreDataHelper directly (synchronous)
         DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
-        
-        let clearExp = expectation(description: "Splits cleared")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertEqual(0, db.splitDao.getAll().count)
-            clearExp.fulfill()
-        }
-        wait(for: [clearExp], timeout: 3)
+
+        // Verify immediately - operation is synchronous
+        XCTAssertEqual(0, db.splitDao.getAll().count)
     }
-    
+
     /// Test clearAllEncryptedEntities clears mySegments
     func testClearEncryptedEntitiesClearsMySegments() {
         let db = TestingHelper.createTestDatabase(name: testDbName, queue: DispatchQueue.global(), helper: dbHelper)
@@ -277,15 +262,11 @@ class EncryptionKeyValidationTest: XCTestCase {
         wait(for: [insertExp], timeout: 3)
         
         DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
-        
-        let clearExp = expectation(description: "Segments cleared")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertNil(db.mySegmentsDao.getBy(userKey: "test_user"))
-            clearExp.fulfill()
-        }
-        wait(for: [clearExp], timeout: 3)
+
+        // Verify immediately - operation is synchronous
+        XCTAssertNil(db.mySegmentsDao.getBy(userKey: "test_user"))
     }
-    
+
     /// Test clearAllEncryptedEntities clears events
     func testClearEncryptedEntitiesClearsEvents() {
         let db = TestingHelper.createTestDatabase(name: testDbName, queue: DispatchQueue.global(), helper: dbHelper)
@@ -298,15 +279,11 @@ class EncryptionKeyValidationTest: XCTestCase {
         wait(for: [insertExp], timeout: 3)
         
         DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
-        
-        let clearExp = expectation(description: "Events cleared")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertEqual(0, db.eventDao.getBy(createdAt: 0, status: StorageRecordStatus.active, maxRows: 100).count)
-            clearExp.fulfill()
-        }
-        wait(for: [clearExp], timeout: 3)
+
+        // Verify immediately - operation is synchronous
+        XCTAssertEqual(0, db.eventDao.getBy(createdAt: 0, status: StorageRecordStatus.active, maxRows: 100).count)
     }
-    
+
     /// Test clearAllEncryptedEntities clears impressions
     func testClearEncryptedEntitiesClearsImpressions() {
         let db = TestingHelper.createTestDatabase(name: testDbName, queue: DispatchQueue.global(), helper: dbHelper)
@@ -319,15 +296,11 @@ class EncryptionKeyValidationTest: XCTestCase {
         wait(for: [insertExp], timeout: 3)
         
         DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
-        
-        let clearExp = expectation(description: "Impressions cleared")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertEqual(0, db.impressionDao.getBy(createdAt: 0, status: StorageRecordStatus.active, maxRows: 100).count)
-            clearExp.fulfill()
-        }
-        wait(for: [clearExp], timeout: 3)
+
+        // Verify immediately - operation is synchronous
+        XCTAssertEqual(0, db.impressionDao.getBy(createdAt: 0, status: StorageRecordStatus.active, maxRows: 100).count)
     }
-    
+
     /// Test clearAllEncryptedEntities clears attributes
     func testClearEncryptedEntitiesClearsAttributes() {
         let db = TestingHelper.createTestDatabase(name: testDbName, queue: DispatchQueue.global(), helper: dbHelper)
@@ -340,39 +313,34 @@ class EncryptionKeyValidationTest: XCTestCase {
         wait(for: [insertExp], timeout: 3)
         
         DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
-        
-        let clearExp = expectation(description: "Attributes cleared")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertNil(db.attributesDao.getBy(userKey: "test_user"))
-            clearExp.fulfill()
-        }
-        wait(for: [clearExp], timeout: 3)
+
+        // Verify immediately - operation is synchronous
+        XCTAssertNil(db.attributesDao.getBy(userKey: "test_user"))
     }
-    
+
     /// Test clearAllEncryptedEntities preserves GeneralInfo (not encrypted)
+    /// Note: Change numbers ARE intentionally reset, but other GeneralInfo fields are preserved
     func testClearEncryptedEntitiesPreservesGeneralInfo() {
-        generalInfoDao.update(info: .splitsChangeNumber, longValue: 12345)
-        
+        // Use splitsFilterQueryString which should NOT be reset (unlike change numbers)
+        generalInfoDao.update(info: .splitsFilterQueryString, stringValue: "test_filter_query")
+
         let insertExp = expectation(description: "GeneralInfo inserted")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
             insertExp.fulfill()
         }
         wait(for: [insertExp], timeout: 3)
-        
+
         DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
-        
-        let clearExp = expectation(description: "GeneralInfo preserved")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            // GeneralInfo should NOT be cleared (not encrypted)
-            XCTAssertEqual(12345, self.generalInfoDao.longValue(info: .splitsChangeNumber))
-            clearExp.fulfill()
-        }
-        wait(for: [clearExp], timeout: 3)
+
+        // Verify immediately - operation is synchronous
+        // GeneralInfo should NOT be cleared (not encrypted)
+        // Note: Change numbers ARE reset intentionally, but other fields are preserved
+        XCTAssertEqual("test_filter_query", generalInfoDao.stringValue(info: .splitsFilterQueryString))
     }
-    
+
     /// Test clearAllEncryptedEntities preserves hashedImpressions (not encrypted)
     func testClearEncryptedEntitiesPreservesHashedImpressions() {
-        // Insert hashed impression directly via CoreDataHelper
+        // Insert hashed impression directly via CoreDataHelper (synchronous)
         dbHelper.performAndWait {
             if let entity = dbHelper.create(entity: .hashedImpression) as? HashedImpressionEntity {
                 entity.impressionHash = 12345
@@ -381,25 +349,15 @@ class EncryptionKeyValidationTest: XCTestCase {
             }
         }
         dbHelper.save()
-        
-        let insertExp = expectation(description: "HashedImpression inserted")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-            insertExp.fulfill()
-        }
-        wait(for: [insertExp], timeout: 3)
-        
+
         DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
-        
-        let clearExp = expectation(description: "HashedImpressions preserved")
-        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            // HashedImpressions should NOT be cleared (not encrypted)
-            self.dbHelper.performAndWait {
-                let entities = self.dbHelper.fetch(entity: .hashedImpression)
-                XCTAssertTrue(entities.count > 0, "HashedImpressions should be preserved")
-            }
-            clearExp.fulfill()
+
+        // Verify immediately - operation is synchronous
+        // HashedImpressions should NOT be cleared (not encrypted)
+        dbHelper.performAndWait {
+            let entities = dbHelper.fetch(entity: .hashedImpression)
+            XCTAssertTrue(entities.count > 0, "HashedImpressions should be preserved")
         }
-        wait(for: [clearExp], timeout: 3)
     }
     
     // MARK: - Legacy Installation Tests (Pre-Canary)
@@ -589,6 +547,10 @@ class EncryptionKeyValidationTest: XCTestCase {
         let originalKey = generateTestKey()
         let cipher = DefaultCipher(cipherKey: originalKey)
 
+        // Store the original key in Keychain (simulating a working encrypted setup)
+        secureStorage.set(item: originalKey.base64EncodedString(), for: .dbEncryptionKey(dbKey))
+        secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(dbKey))
+
         // Insert encrypted data with original key (simulating pre-existing encrypted DB)
         dbHelper.performAndWait {
             if let entity = dbHelper.create(entity: .split) as? SplitEntity {
@@ -606,10 +568,9 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [writeExp], timeout: 3)
 
-        // Setup: Set previous encryption level but DON'T store the original key
-        // This simulates key being deleted/lost from Keychain
-        secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(dbKey))
-        // Note: NOT storing originalKey - simulating key deletion
+        // Simulate key deletion from Keychain (user cleared Keychain, system wiped it, etc.)
+        secureStorage.remove(item: .dbEncryptionKey(dbKey))
+        // Note: Encryption level is still set to .aes128Cbc, but key is gone
 
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
 
@@ -617,13 +578,13 @@ class EncryptionKeyValidationTest: XCTestCase {
         XCTAssertNil(generalInfoDao.stringValue(info: .encryptionCanary))
 
         // Call validateAndRecoverEncryptionKey
-        // Since no key is stored, currentEncryptionKey(for:) will generate a NEW key
+        // Since key was deleted, currentEncryptionKey(for:) will generate a NEW key
         // That new key won't be able to decrypt the data encrypted with originalKey
         let result = DbEncryptionManager.validateAndRecoverEncryptionKey(
             dbKey: dbKey,
             previousLevel: .aes128Cbc, // Previously encrypted
             targetLevel: .aes128Cbc, // Still encrypted
-            currentKey: nil, // No current key passed
+            currentKey: nil, // No current key passed (will be fetched/generated)
             dbHelper: dbHelper,
             generalInfoDao: generalInfoDao
         )
@@ -631,8 +592,9 @@ class EncryptionKeyValidationTest: XCTestCase {
         // Verify recovery was performed (because new key couldn't decrypt existing data)
         XCTAssertTrue(result.recoveryPerformed, "Recovery should be performed when key can't decrypt existing data")
 
-        // Verify new key was generated
+        // Verify new key was generated (different from original)
         XCTAssertNotNil(result.cipherKey, "New cipher key should be generated during recovery")
+        XCTAssertNotEqual(originalKey, result.cipherKey, "New key should be different from deleted original key")
 
         // Verify canary was stored with the new key
         let verifyExp = expectation(description: "Verify recovery state")
@@ -657,6 +619,91 @@ class EncryptionKeyValidationTest: XCTestCase {
             verifyExp.fulfill()
         }
         wait(for: [verifyExp], timeout: 3)
+    }
+
+    // MARK: - Change Number Reset Tests
+    
+    /// Test: clearAllEncryptedEntities should reset change numbers to -1
+    /// This ensures SDK will fetch fresh data from server after recovery
+    func testClearAllEncryptedEntitiesResetsChangeNumbers() {
+        // Setup: Store high change numbers (simulating existing cached data)
+        generalInfoDao.update(info: .splitsChangeNumber, longValue: 99999)
+        generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 1234567890)
+        generalInfoDao.update(info: .ruleBasedSegmentsChangeNumber, longValue: 88888)
+        
+        let setupExp = expectation(description: "Setup complete")
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+            // Verify setup
+            XCTAssertEqual(99999, self.generalInfoDao.longValue(info: .splitsChangeNumber))
+            XCTAssertEqual(1234567890, self.generalInfoDao.longValue(info: .splitsUpdateTimestamp))
+            XCTAssertEqual(88888, self.generalInfoDao.longValue(info: .ruleBasedSegmentsChangeNumber))
+            setupExp.fulfill()
+        }
+        wait(for: [setupExp], timeout: 3)
+        
+        // Act: Clear all encrypted entities (synchronous)
+        DbEncryptionManager.clearAllEncryptedEntities(dbHelper: dbHelper)
+
+        // Assert: Change numbers should be reset immediately (no wait needed - synchronous operation)
+        XCTAssertEqual(-1, generalInfoDao.longValue(info: .splitsChangeNumber),
+                      "splitsChangeNumber should be reset to -1 after clearing encrypted data")
+        XCTAssertEqual(0, generalInfoDao.longValue(info: .splitsUpdateTimestamp),
+                      "splitsUpdateTimestamp should be reset to 0 after clearing encrypted data")
+        XCTAssertEqual(-1, generalInfoDao.longValue(info: .ruleBasedSegmentsChangeNumber),
+                      "ruleBasedSegmentsChangeNumber should be reset to -1 after clearing encrypted data")
+    }
+    
+    /// Test: validateAndRecoverEncryptionKey should reset change numbers during recovery
+    /// This is an end-to-end test for the recovery flow
+    func testRecoveryResetsChangeNumbers() {
+        let dbKey = "test_recovery_change_numbers_\(UUID().uuidString.prefix(8))"
+        
+        // Setup: Create encrypted data with high change numbers
+        let originalKey = generateTestKey()
+        let cipher = DefaultCipher(cipherKey: originalKey)
+        
+        dbHelper.performAndWait {
+            if let entity = dbHelper.create(entity: .split) as? SplitEntity {
+                entity.name = cipher.encrypt("test_split") ?? ""
+                entity.body = cipher.encrypt("{\"name\":\"test_split\",\"status\":\"ACTIVE\"}") ?? ""
+                entity.updatedAt = Date().unixTimestamp()
+            }
+        }
+        dbHelper.save()
+        
+        // Store high change numbers
+        generalInfoDao.update(info: .splitsChangeNumber, longValue: 99999)
+        generalInfoDao.update(info: .ruleBasedSegmentsChangeNumber, longValue: 88888)
+        
+        // Simulate key being replaced with a wrong key (triggers recovery)
+        let wrongKey = generateTestKey()
+        secureStorage.set(item: wrongKey.base64EncodedString(), for: .dbEncryptionKey(dbKey))
+        secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(dbKey))
+        
+        let setupExp = expectation(description: "Setup complete")
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+            setupExp.fulfill()
+        }
+        wait(for: [setupExp], timeout: 3)
+        
+        // Act: Validate and recover (should fail validation and trigger recovery) - synchronous
+        let result = DbEncryptionManager.validateAndRecoverEncryptionKey(
+            dbKey: dbKey,
+            previousLevel: .aes128Cbc,
+            targetLevel: .aes128Cbc,
+            currentKey: wrongKey,
+            dbHelper: dbHelper,
+            generalInfoDao: generalInfoDao
+        )
+
+        // Assert: Recovery should have been performed
+        XCTAssertTrue(result.recoveryPerformed, "Recovery should be triggered due to wrong key")
+
+        // Assert: Change numbers should be reset immediately (no wait needed - synchronous operation)
+        XCTAssertEqual(-1, generalInfoDao.longValue(info: .splitsChangeNumber),
+                      "splitsChangeNumber should be reset to -1 after recovery")
+        XCTAssertEqual(-1, generalInfoDao.longValue(info: .ruleBasedSegmentsChangeNumber),
+                      "ruleBasedSegmentsChangeNumber should be reset to -1 after recovery")
     }
 
     // MARK: - Helpers

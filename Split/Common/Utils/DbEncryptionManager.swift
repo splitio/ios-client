@@ -62,24 +62,49 @@ struct DbEncryptionManager {
     }
     
     // MARK: - Encryption Canary Operations
-    
-    /// Stores a new encryption canary encrypted with the provided key
+    // Note: These use CoreDataHelper directly for synchronous writes during initialization.
+    // This ensures canary is persisted before SDK ready fires.
+
+    /// Stores a new encryption canary encrypted with the provided key (synchronous)
     static func storeEncryptionCanary(
         cipherKey: Data,
-        generalInfoDao: GeneralInfoDao
+        dbHelper: CoreDataHelper
     ) {
         let cipher = DefaultCipher(cipherKey: cipherKey)
-        if let encryptedCanary = cipher.encrypt(kEncryptionCanaryValue) {
-            generalInfoDao.update(info: .encryptionCanary, stringValue: encryptedCanary)
-            Logger.d("Encryption canary stored successfully")
-        } else {
+        guard let encryptedCanary = cipher.encrypt(kEncryptionCanaryValue) else {
             Logger.e("Failed to encrypt canary value")
+            return
         }
+
+        dbHelper.performAndWait {
+            let predicate = NSPredicate(format: "name == %@", GeneralInfo.encryptionCanary.rawValue)
+            let entities = dbHelper.fetch(entity: .generalInfo, where: predicate)
+                .compactMap { $0 as? GeneralInfoEntity }
+
+            let entity: GeneralInfoEntity
+            if let existing = entities.first {
+                entity = existing
+            } else if let new = dbHelper.create(entity: .generalInfo) as? GeneralInfoEntity {
+                entity = new
+            } else {
+                Logger.e("Failed to create GeneralInfoEntity for canary")
+                return
+            }
+
+            entity.name = GeneralInfo.encryptionCanary.rawValue
+            entity.stringValue = encryptedCanary
+            entity.updatedAt = Date().unixTimestamp()
+        }
+        dbHelper.save()
+        Logger.d("Encryption canary stored successfully")
     }
-    
-    /// Deletes the encryption canary
-    static func deleteEncryptionCanary(generalInfoDao: GeneralInfoDao) {
-        generalInfoDao.delete(info: .encryptionCanary)
+
+    /// Deletes the encryption canary (synchronous)
+    static func deleteEncryptionCanary(dbHelper: CoreDataHelper) {
+        dbHelper.performAndWait {
+            dbHelper.delete(entity: .generalInfo, by: "name", values: [GeneralInfo.encryptionCanary.rawValue])
+        }
+        dbHelper.save()
         Logger.d("Encryption canary deleted")
     }
     
@@ -186,11 +211,11 @@ struct DbEncryptionManager {
             // treat this as invalid and trigger recovery
             if previousLevel != .none {
                 Logger.w("Encryption was previously enabled but no key available for validation - initiating recovery")
-                deleteEncryptionCanary(generalInfoDao: generalInfoDao)
+                deleteEncryptionCanary(dbHelper: dbHelper)
                 clearAllEncryptedEntities(dbHelper: dbHelper)
                 cipherKey = replaceEncryptionKey(for: dbKey)
                 if targetLevel != .none, let newKey = cipherKey {
-                    storeEncryptionCanary(cipherKey: newKey, generalInfoDao: generalInfoDao)
+                    storeEncryptionCanary(cipherKey: newKey, dbHelper: dbHelper)
                     setCurrentEncryptionLevel(targetLevel, for: dbKey)
                 } else {
                     setCurrentEncryptionLevel(.none, for: dbKey)
@@ -204,11 +229,11 @@ struct DbEncryptionManager {
             return EncryptionValidationResult(cipherKey: cipherKey, recoveryPerformed: false)
         }
         Logger.w("Encryption key validation failed - initiating recovery")
-        deleteEncryptionCanary(generalInfoDao: generalInfoDao)
+        deleteEncryptionCanary(dbHelper: dbHelper)
         clearAllEncryptedEntities(dbHelper: dbHelper)
         cipherKey = replaceEncryptionKey(for: dbKey)
         if targetLevel != .none, let newKey = cipherKey {
-            storeEncryptionCanary(cipherKey: newKey, generalInfoDao: generalInfoDao)
+            storeEncryptionCanary(cipherKey: newKey, dbHelper: dbHelper)
             setCurrentEncryptionLevel(targetLevel, for: dbKey)
         } else {
             setCurrentEncryptionLevel(.none, for: dbKey)
@@ -232,29 +257,30 @@ struct DbEncryptionManager {
             dbCipher.apply()
             setCurrentEncryptionLevel(targetLevel, for: dbKey)
             if targetLevel != .none {
-                storeEncryptionCanary(cipherKey: dbCipherKey, generalInfoDao: generalInfoDao)
+                storeEncryptionCanary(cipherKey: dbCipherKey, dbHelper: dbHelper)
             } else {
-                deleteEncryptionCanary(generalInfoDao: generalInfoDao)
+                deleteEncryptionCanary(dbHelper: dbHelper)
             }
         }
         // Edge case: Encryption enabled, levels match, but no canary
         if targetLevel != .none,
            generalInfoDao.stringValue(info: .encryptionCanary) == nil,
            let key = cipherKey ?? currentEncryptionKey(for: dbKey) {
-            storeEncryptionCanary(cipherKey: key, generalInfoDao: generalInfoDao)
+            storeEncryptionCanary(cipherKey: key, dbHelper: dbHelper)
         }
     }
     
-    /// Clears all encrypted entities from CoreData.
+    /// Clears all encrypted entities from CoreData and resets change numbers (synchronous).
     /// Follows DbCipher pattern - direct CoreDataHelper access during initialization.
     /// Called when encryption key is invalid and data cannot be recovered.
+    /// - Parameter dbHelper: CoreDataHelper for database operations
     static func clearAllEncryptedEntities(dbHelper: CoreDataHelper) {
         Logger.w("Clearing all encrypted entities due to invalid encryption key")
-        
+
         // Same pattern as DbCipher.apply() - direct CoreDataHelper access
         // because this runs BEFORE Storage classes are created
         dbHelper.performAndWait {
-            // Encrypted entities (same list as DbCipher operates on)
+            // Clear encrypted entities (same list as DbCipher operates on)
             dbHelper.deleteAll(entity: .split)
             dbHelper.deleteAll(entity: .mySegment)
             dbHelper.deleteAll(entity: .myLargeSegment)
@@ -264,10 +290,45 @@ struct DbEncryptionManager {
             dbHelper.deleteAll(entity: .uniqueKey)
             dbHelper.deleteAll(entity: .attribute)
             dbHelper.deleteAll(entity: .ruleBasedSegment)
+
+            // Reset change numbers synchronously to ensure first splitChanges fetch uses -1
+            // Without this, SDK might think it's up-to-date and not fetch new data
+            updateGeneralInfoLongValue(dbHelper: dbHelper,
+                                       info: .splitsChangeNumber, value: -1)
+            updateGeneralInfoLongValue(dbHelper: dbHelper,
+                                       info: .splitsUpdateTimestamp, value: 0)
+            updateGeneralInfoLongValue(dbHelper: dbHelper,
+                                       info: .ruleBasedSegmentsChangeNumber, value: -1)
         }
         dbHelper.save()
-        
-        Logger.d("All encrypted entities cleared")
+
+        Logger.d("All encrypted entities cleared and change numbers reset")
+    }
+
+    /// Helper to synchronously update a GeneralInfo long value
+    private static func updateGeneralInfoLongValue(
+        dbHelper: CoreDataHelper,
+        info: GeneralInfo,
+        value: Int64
+    ) {
+        let predicate = NSPredicate(format: "name == %@", info.rawValue)
+        let entities = dbHelper.fetch(entity: .generalInfo, where: predicate)
+            .compactMap { $0 as? GeneralInfoEntity }
+
+        let entity: GeneralInfoEntity
+        if let existing = entities.first {
+            entity = existing
+        } else if let new = dbHelper.create(entity: .generalInfo) as? GeneralInfoEntity {
+            entity = new
+        } else {
+            Logger.e("Failed to create GeneralInfoEntity for \(info.rawValue)")
+            return
+        }
+
+        entity.name = info.rawValue
+        entity.stringValue = ""
+        entity.longValue = value
+        entity.updatedAt = Date().unixTimestamp()
     }
 }
 
