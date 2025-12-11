@@ -19,6 +19,7 @@ enum GeneralInfo: String {
     case ruleBasedSegmentsChangeNumber = "ruleBasedSegmentsChangeNumber"
     case lastProxyUpdateTimestamp = "lastProxyCheckTimestamp"
     case segmentsInUse = "segmentsInUse"
+    case encryptionCanary = "encryptionCanary"
 }
 
 protocol GeneralInfoDao {
