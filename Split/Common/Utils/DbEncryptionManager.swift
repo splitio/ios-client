@@ -22,7 +22,7 @@ struct DbEncryptionManager {
         return SplitEncryptionLevel(rawValue: rawValue) ?? .none
     }
     
-    static func setCurrentEncryptionLevel(_ level: SplitEncryptionLevel, for apiKey: String) {
+    private static func setCurrentEncryptionLevel(_ level: SplitEncryptionLevel, for apiKey: String) {
         GlobalSecureStorage.shared.set(item: level.rawValue, for: .dbEncryptionLevel(apiKey))
     }
     
@@ -50,7 +50,7 @@ struct DbEncryptionManager {
         return nil
     }
     
-    static func setCurrentEncryptionKey(_ keyBytes: Data, for apiKey: String) {
+    private static func setCurrentEncryptionKey(_ keyBytes: Data, for apiKey: String) {
         GlobalSecureStorage.shared.set(item: keyBytes.base64EncodedString(options: []), for: .dbEncryptionKey(apiKey))
     }
     
@@ -153,7 +153,7 @@ struct DbEncryptionManager {
     ///   - dbHelper: CoreDataHelper for database operations
     /// - Returns: `true` if no encrypted data exists OR data decrypts successfully
     /// - Returns: `false` if encrypted data exists but decryption fails
-    static func validateKeyByDecryptingData(
+    private static func validateKeyByDecryptingData(
         cipher: Cipher,
         dbHelper: CoreDataHelper
     ) -> Bool {
@@ -166,7 +166,7 @@ struct DbEncryptionManager {
                 // If body exists (non-empty), try to decrypt it
                 let encryptedBody = split.body
                 if !encryptedBody.isEmpty {
-                    // Decrypt and verify the result is valid JSON (split bodies are JSON)
+                    // Decrypt and verify the result is valid JSON
                     guard let decrypted = cipher.decrypt(encryptedBody),
                           let data = decrypted.data(using: .utf8),
                           (try? JSONSerialization.jsonObject(with: data)) != nil else {

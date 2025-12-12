@@ -12,7 +12,10 @@ struct SplitDatabaseHelper {
     static private let kDbMagicCharsCount = 4
     static private let kDbExt = ["", "-shm", "-wal"]
     static private let kExpirationPeriod = ServiceConstants.recordedDataExpirationPeriodInSeconds
-
+    
+    /// Lock to prevent concurrent storage container. This is a safeguard
+    /// for concurrent initialization of SDK instances using the same SDK key + prefix
+    static private let storageLock = NSLock()
 
     static func buildStorageContainer(splitClientConfig: SplitClientConfig,
                                       apiKey: String,
@@ -20,6 +23,9 @@ struct SplitDatabaseHelper {
                                       databaseName: String,
                                       telemetryStorage: TelemetryStorage?,
                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
+        storageLock.lock()
+        defer { storageLock.unlock() }
+        
         let dbKey = buildDbKey(prefix: splitClientConfig.prefix, sdkKey: apiKey)
         let previousEncryptionLevel = DbEncryptionManager.currentEncryptionLevel(dbKey: dbKey)
         var splitDatabase = testDatabase
