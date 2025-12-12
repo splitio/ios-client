@@ -182,7 +182,31 @@ struct DbEncryptionManager {
         dbHelper: CoreDataHelper,
         generalInfoDao: GeneralInfoDao
     ) -> EncryptionValidationResult {
-        // No previous encryption - nothing to validate
+        // Detect orphaned canary: canary exists but level says unencrypted
+        // This can happen if Keychain level was cleared but database/key wasn't
+        if previousLevel == .none,
+           let storedCanary = generalInfoDao.stringValue(info: .encryptionCanary) {
+            
+            // Try to validate canary with current key (might be existing valid key)
+            if let key = currentKey {
+                let cipher = DefaultCipher(cipherKey: key)
+                if let decrypted = cipher.decrypt(storedCanary),
+                   decrypted == kEncryptionCanaryValue {
+                    // Canary validates! Data is encrypted with current key
+                    // Restore encryption level to match reality
+                    Logger.w("Encryption level was lost but canary validates. Restoring encryption state")
+                    setCurrentEncryptionLevel(.aes128Cbc, for: dbKey)
+                    return EncryptionValidationResult(cipherKey: key, cipher: cipher, recoveryPerformed: false)
+                }
+            }
+            
+            // Either no key or canary doesn't validate - data is encrypted with unknown key
+            Logger.w("Encryption canary exists but cannot be validated. Initiating recovery")
+            let (newKey, newCipher) = performRecovery(dbKey: dbKey, targetLevel: targetLevel, dbHelper: dbHelper)
+            return EncryptionValidationResult(cipherKey: newKey, cipher: newCipher, recoveryPerformed: true)
+        }
+        
+        // No previous encryption and no orphaned canary - nothing to validate
         guard previousLevel != .none else {
             let cipher = currentKey.map { DefaultCipher(cipherKey: $0) }
             return EncryptionValidationResult(cipherKey: currentKey, cipher: cipher, recoveryPerformed: false)

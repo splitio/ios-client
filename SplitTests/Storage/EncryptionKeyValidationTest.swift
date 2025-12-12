@@ -718,6 +718,170 @@ class EncryptionKeyValidationTest: XCTestCase {
         XCTAssertEqual(-1, generalInfoDao.longValue(info: .ruleBasedSegmentsChangeNumber),
                       "ruleBasedSegmentsChangeNumber should be reset to -1 after recovery")
     }
+    
+    // MARK: - Orphaned Canary Tests (Level Lost)
+    
+    /// Test: When encryption level is lost from Keychain but key and canary are still valid,
+    /// the system should detect this and NOT corrupt data during migration.
+    /// This tests the full flow including handleEncryptionMigration.
+    func testLevelLostButKeyAndCanaryValidShouldNotCorruptData() {
+        let dbKey = "test_level_lost_key_valid_\(UUID().uuidString.prefix(8))"
+        
+        // Setup: Create a properly encrypted database with key, level, and canary
+        let originalKey = generateTestKey()
+        let cipher = DefaultCipher(cipherKey: originalKey)
+        
+        // Store key and level in Keychain
+        secureStorage.set(item: originalKey.base64EncodedString(), for: .dbEncryptionKey(dbKey))
+        secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(dbKey))
+        
+        // Insert encrypted data
+        dbHelper.performAndWait {
+            if let entity = dbHelper.create(entity: .split) as? SplitEntity {
+                entity.name = cipher.encrypt("test_split") ?? ""
+                entity.body = cipher.encrypt("{\"name\":\"test_split\",\"status\":\"ACTIVE\"}") ?? ""
+                entity.updatedAt = Date().unixTimestamp()
+            }
+        }
+        dbHelper.save()
+        
+        // Store canary with the valid key
+        DbEncryptionManager.storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+        
+        // Wait for writes
+        let writeExp = expectation(description: "Data written")
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+            writeExp.fulfill()
+        }
+        wait(for: [writeExp], timeout: 3)
+        
+        // Verify canary exists and data is decryptable
+        XCTAssertNotNil(generalInfoDao.stringValue(info: .encryptionCanary), "Canary should exist")
+        
+        // Simulate ONLY the encryption level being deleted (key is still there)
+        secureStorage.remove(item: .dbEncryptionLevel(dbKey))
+        
+        // Verify level is now .none but key still exists
+        XCTAssertNil(secureStorage.getInt(item: .dbEncryptionLevel(dbKey)), "Level should be nil (deleted)")
+        XCTAssertNotNil(secureStorage.getString(item: .dbEncryptionKey(dbKey)), "Key should still exist")
+        
+        // Simulate the FULL initialization flow:
+        // 1. validateAndRecoverEncryptionKey (with previousLevel = .none since it's lost)
+        let result = DbEncryptionManager.validateAndRecoverEncryptionKey(
+            dbKey: dbKey,
+            previousLevel: .none, // Level was lost. This is what SDK would read from Keychain
+            targetLevel: .aes128Cbc, // Encryption enabled
+            currentKey: originalKey, // Valid key that matches the canary
+            dbHelper: dbHelper,
+            generalInfoDao: generalInfoDao
+        )
+        
+        // 2. handleEncryptionMigration (if recovery wasn't performed)
+        if !result.recoveryPerformed {
+            try? DbEncryptionManager.handleEncryptionMigration(
+                dbKey: dbKey,
+                targetLevel: .aes128Cbc,
+                cipher: result.cipher,
+                cipherKey: result.cipherKey,
+                dbHelper: dbHelper,
+                generalInfoDao: generalInfoDao
+            )
+        }
+        
+        // Verify data is still decryptable with the ORIGINAL key
+        let verifyExp = expectation(description: "Verify data still decryptable")
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+            self.dbHelper.performAndWait {
+                let splits = self.dbHelper.fetch(entity: .split).compactMap { $0 as? SplitEntity }
+                XCTAssertEqual(1, splits.count, "Data should be preserved")
+                
+                if let split = splits.first {
+                    // This is the critical assertion:
+                    // If handleEncryptionMigration double-encrypted the data,
+                    // decrypting with originalKey will produce garbage (not "test_split")
+                    let decryptedName = cipher.decrypt(split.name)
+                    XCTAssertEqual("test_split", decryptedName, 
+                                   "Data should still be decryptable with original key")
+                    
+                    let decryptedBody = cipher.decrypt(split.body)
+                    XCTAssertNotNil(decryptedBody, "Body should be decryptable")
+                    if let body = decryptedBody {
+                        XCTAssertTrue(body.contains("test_split"), 
+                                      "Body should contain expected content")
+                    }
+                }
+            }
+            verifyExp.fulfill()
+        }
+        wait(for: [verifyExp], timeout: 3)
+    }
+    
+    /// Test: When encryption level is lost and key is lost (both deleted),
+    /// but canary still exists, recovery should be triggered.
+    func testLevelAndKeyBothLostButCanaryExistsShouldTriggerRecovery() {
+        let dbKey = "test_level_and_key_lost_\(UUID().uuidString.prefix(8))"
+        
+        // Setup: Create a properly encrypted database with key, level, and canary
+        let originalKey = generateTestKey()
+        let cipher = DefaultCipher(cipherKey: originalKey)
+        
+        // Store key and level in Keychain
+        secureStorage.set(item: originalKey.base64EncodedString(), for: .dbEncryptionKey(dbKey))
+        secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(dbKey))
+        
+        // Insert encrypted data
+        dbHelper.performAndWait {
+            if let entity = dbHelper.create(entity: .split) as? SplitEntity {
+                entity.name = cipher.encrypt("test_split") ?? ""
+                entity.body = cipher.encrypt("{\"name\":\"test_split\",\"status\":\"ACTIVE\"}") ?? ""
+                entity.updatedAt = Date().unixTimestamp()
+            }
+        }
+        dbHelper.save()
+        
+        // Store canary with the valid key
+        DbEncryptionManager.storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+        
+        // Wait for writes
+        let writeExp = expectation(description: "Data written")
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+            writeExp.fulfill()
+        }
+        wait(for: [writeExp], timeout: 3)
+        
+        // Verify canary exists
+        XCTAssertNotNil(generalInfoDao.stringValue(info: .encryptionCanary), "Canary should exist")
+        
+        // Simulate BOTH level AND key being deleted
+        secureStorage.remove(item: .dbEncryptionLevel(dbKey))
+        secureStorage.remove(item: .dbEncryptionKey(dbKey))
+        
+        // Call validateAndRecoverEncryptionKey
+        // A new key will be generated since the old one is gone
+        let result = DbEncryptionManager.validateAndRecoverEncryptionKey(
+            dbKey: dbKey,
+            previousLevel: .none, // Level was lost
+            targetLevel: .aes128Cbc, // Want encryption enabled
+            currentKey: nil, // Key will be generated fresh
+            dbHelper: dbHelper,
+            generalInfoDao: generalInfoDao
+        )
+        
+        // EXPECTED BEHAVIOR: Canary exists but can't be validated with new key -> recovery
+        XCTAssertTrue(result.recoveryPerformed, 
+                      "Recovery SHOULD be triggered when both level and key are lost but canary exists")
+        
+        // Verify data was cleared
+        let verifyExp = expectation(description: "Verify data cleared")
+        DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
+            self.dbHelper.performAndWait {
+                let splits = self.dbHelper.fetch(entity: .split).compactMap { $0 as? SplitEntity }
+                XCTAssertEqual(0, splits.count, "Data should be cleared during recovery")
+            }
+            verifyExp.fulfill()
+        }
+        wait(for: [verifyExp], timeout: 3)
+    }
 
     // MARK: - Helpers
     
