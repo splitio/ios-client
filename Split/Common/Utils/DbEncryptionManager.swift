@@ -201,44 +201,57 @@ struct DbEncryptionManager {
         dbHelper: CoreDataHelper,
         generalInfoDao: GeneralInfoDao
     ) -> EncryptionValidationResult {
-        var cipherKey = currentKey
+        // No previous encryption - nothing to validate
         guard previousLevel != .none else {
-            return EncryptionValidationResult(cipherKey: cipherKey, recoveryPerformed: false)
+            return EncryptionValidationResult(cipherKey: currentKey, recoveryPerformed: false)
         }
-        let keyToValidate = cipherKey ?? currentEncryptionKey(for: dbKey)
-        guard let keyToValidate = keyToValidate else {
-            // If we previously had encryption enabled but can't get a key to validate,
-            // treat this as invalid and trigger recovery
-            if previousLevel != .none {
-                Logger.w("Encryption was previously enabled but no key available for validation - initiating recovery")
-                deleteEncryptionCanary(dbHelper: dbHelper)
-                clearAllEncryptedEntities(dbHelper: dbHelper)
-                cipherKey = replaceEncryptionKey(for: dbKey)
-                if targetLevel != .none, let newKey = cipherKey {
-                    storeEncryptionCanary(cipherKey: newKey, dbHelper: dbHelper)
-                    setCurrentEncryptionLevel(targetLevel, for: dbKey)
-                } else {
-                    setCurrentEncryptionLevel(.none, for: dbKey)
-                }
-                return EncryptionValidationResult(cipherKey: cipherKey, recoveryPerformed: true)
+        
+        let keyToValidate = currentKey ?? currentEncryptionKey(for: dbKey)
+        
+        // Check if key is missing or invalid
+        let needsRecovery: Bool
+        if let key = keyToValidate {
+            needsRecovery = !isEncryptionKeyValid(
+                cipherKey: key,
+                generalInfoDao: generalInfoDao,
+                dbHelper: dbHelper,
+                previousEncryptionLevel: previousLevel
+            )
+            if needsRecovery {
+                Logger.w("Encryption key validation failed - initiating recovery")
             }
-            return EncryptionValidationResult(cipherKey: cipherKey, recoveryPerformed: false)
+        } else {
+            Logger.w("Encryption was previously enabled but no key available - initiating recovery")
+            needsRecovery = true
         }
-        guard !isEncryptionKeyValid(cipherKey: keyToValidate, generalInfoDao: generalInfoDao,
-                                    dbHelper: dbHelper, previousEncryptionLevel: previousLevel) else {
-            return EncryptionValidationResult(cipherKey: cipherKey, recoveryPerformed: false)
+        
+        guard needsRecovery else {
+            return EncryptionValidationResult(cipherKey: currentKey, recoveryPerformed: false)
         }
-        Logger.w("Encryption key validation failed - initiating recovery")
+        
+        let newKey = performRecovery(dbKey: dbKey, targetLevel: targetLevel, dbHelper: dbHelper)
+        return EncryptionValidationResult(cipherKey: newKey, recoveryPerformed: true)
+    }
+    
+    /// Performs recovery by clearing data and generating a new encryption key
+    private static func performRecovery(
+        dbKey: String,
+        targetLevel: SplitEncryptionLevel,
+        dbHelper: CoreDataHelper
+    ) -> Data? {
         deleteEncryptionCanary(dbHelper: dbHelper)
         clearAllEncryptedEntities(dbHelper: dbHelper)
-        cipherKey = replaceEncryptionKey(for: dbKey)
-        if targetLevel != .none, let newKey = cipherKey {
-            storeEncryptionCanary(cipherKey: newKey, dbHelper: dbHelper)
+        
+        let newKey = replaceEncryptionKey(for: dbKey)
+        
+        if targetLevel != .none, let key = newKey {
+            storeEncryptionCanary(cipherKey: key, dbHelper: dbHelper)
             setCurrentEncryptionLevel(targetLevel, for: dbKey)
         } else {
             setCurrentEncryptionLevel(.none, for: dbKey)
         }
-        return EncryptionValidationResult(cipherKey: cipherKey, recoveryPerformed: true)
+        
+        return newKey
     }
     
     /// Handles encryption migration when levels change
