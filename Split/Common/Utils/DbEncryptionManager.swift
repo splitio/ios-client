@@ -108,26 +108,26 @@ struct DbEncryptionManager {
         // If canary exists, use it for validation
         if let storedCanary = generalInfoDao.stringValue(info: .encryptionCanary) {
             guard let decrypted = cipher.decrypt(storedCanary) else {
-                Logger.w("Encryption canary decryption failed - key may be invalid")
+                Logger.w("Encryption canary decryption failed. Key may be invalid")
                 return false
             }
             
             let isValid = decrypted == kEncryptionCanaryValue
             if !isValid {
-                Logger.w("Encryption canary mismatch - key is invalid")
+                Logger.w("Encryption canary mismatch. Key is invalid")
             }
             return isValid
         }
         
-        // No canary exists...
+        // No canary exists:
         // If previously encrypted and we have dbHelper, validate by decrypting actual data
         // This handles legacy installations (pre-canary) with potentially corrupted keys
         if previousEncryptionLevel != .none, let dbHelper = dbHelper {
-            Logger.d("No canary found for previously encrypted database - validating by decrypting data")
+            Logger.d("No canary found for previously encrypted database. Validating by decrypting data")
             return validateKeyByDecryptingData(cipher: cipher, dbHelper: dbHelper)
         }
         
-        // First time setup or no dbHelper provided - assume valid
+        // First time setup or no dbHelper provided. Assume valid
         return true
     }
     
@@ -144,7 +144,7 @@ struct DbEncryptionManager {
         var isValid = true
         
         dbHelper.performAndWait {
-            // Try to decrypt a split (if any exist)
+            // Try to decrypt a flag (if any exist)
             let splits = dbHelper.fetch(entity: .split).compactMap { $0 as? SplitEntity }
             if let split = splits.first {
                 // If body exists (non-empty), try to decrypt it
@@ -154,7 +154,7 @@ struct DbEncryptionManager {
                     guard let decrypted = cipher.decrypt(encryptedBody),
                           let data = decrypted.data(using: .utf8),
                           (try? JSONSerialization.jsonObject(with: data)) != nil else {
-                        Logger.w("Failed to decrypt existing split data - key is invalid")
+                        Logger.w("Failed to decrypt existing split data. Key is invalid")
                         isValid = false
                         return
                     }
@@ -168,14 +168,12 @@ struct DbEncryptionManager {
     
     // MARK: - Recovery & Migration
     
-    /// Result of encryption key validation and recovery process
     struct EncryptionValidationResult {
         let cipherKey: Data?
         let cipher: Cipher?
         let recoveryPerformed: Bool
     }
     
-    /// Validates encryption key and performs recovery if needed
     static func validateAndRecoverEncryptionKey(
         dbKey: String,
         previousLevel: SplitEncryptionLevel,
@@ -194,7 +192,7 @@ struct DbEncryptionManager {
         
         // Check if key is missing or invalid
         guard let key = keyToValidate else {
-            Logger.w("Encryption was previously enabled but no key available - initiating recovery")
+            Logger.w("Encryption was previously enabled but no key available. Initiating recovery")
             let (newKey, newCipher) = performRecovery(dbKey: dbKey, targetLevel: targetLevel, dbHelper: dbHelper)
             return EncryptionValidationResult(cipherKey: newKey, cipher: newCipher, recoveryPerformed: true)
         }
@@ -208,7 +206,7 @@ struct DbEncryptionManager {
         )
         
         guard isValid else {
-            Logger.w("Encryption key validation failed - initiating recovery")
+            Logger.w("Encryption key validation failed. Initiating recovery")
             let (newKey, newCipher) = performRecovery(dbKey: dbKey, targetLevel: targetLevel, dbHelper: dbHelper)
             return EncryptionValidationResult(cipherKey: newKey, cipher: newCipher, recoveryPerformed: true)
         }
@@ -216,7 +214,6 @@ struct DbEncryptionManager {
         return EncryptionValidationResult(cipherKey: currentKey, cipher: cipher, recoveryPerformed: false)
     }
     
-    /// Performs recovery by clearing data and generating a new encryption key
     private static func performRecovery(
         dbKey: String,
         targetLevel: SplitEncryptionLevel,
@@ -272,15 +269,13 @@ struct DbEncryptionManager {
         }
     }
     
-    /// Clears all encrypted entities from CoreData and resets change numbers (synchronous).
+    /// Clears all encrypted entities from CoreData and resets change numbers.
     /// Follows DbCipher pattern - direct CoreDataHelper access during initialization.
     /// Called when encryption key is invalid and data cannot be recovered.
     /// - Parameter dbHelper: CoreDataHelper for database operations
     static func clearAllEncryptedEntities(dbHelper: CoreDataHelper) {
         Logger.w("Clearing all encrypted entities due to invalid encryption key")
 
-        // Same pattern as DbCipher.apply() - direct CoreDataHelper access
-        // because this runs BEFORE Storage classes are created
         dbHelper.performAndWait {
             // Clear encrypted entities (same list as DbCipher operates on)
             dbHelper.deleteAll(entity: .split)
@@ -306,8 +301,11 @@ struct DbEncryptionManager {
 
         Logger.d("All encrypted entities cleared and change numbers reset")
     }
+}
 
-    /// Helper to synchronously update a GeneralInfo long value
+// MARK: - GeneralInfo Helpers
+extension DbEncryptionManager {
+    
     private static func updateGeneralInfoLongValue(
         dbHelper: CoreDataHelper,
         info: GeneralInfo,
@@ -316,7 +314,6 @@ struct DbEncryptionManager {
         updateGeneralInfoEntity(dbHelper: dbHelper, info: info, stringValue: "", longValue: value)
     }
     
-    /// Helper to synchronously update a GeneralInfo string value
     private static func updateGeneralInfoStringValue(
         dbHelper: CoreDataHelper,
         info: GeneralInfo,
@@ -325,7 +322,6 @@ struct DbEncryptionManager {
         updateGeneralInfoEntity(dbHelper: dbHelper, info: info, stringValue: value, longValue: 0)
     }
     
-    /// Helper to synchronously update a GeneralInfo entity
     private static func updateGeneralInfoEntity(
         dbHelper: CoreDataHelper,
         info: GeneralInfo,
