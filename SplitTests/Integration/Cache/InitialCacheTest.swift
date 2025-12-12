@@ -24,8 +24,11 @@ class InitialCacheTest: XCTestCase {
     var receivedChangeNumber: [Int64]!
     var cachedSplit: Split?
     var splitsQueryString = ""
+    var secureStorage: SecureStorageStub!
 
     override func setUp() {
+        secureStorage = SecureStorageStub()
+        GlobalSecureStorage.testStorage = secureStorage
         receivedChangeNumber = Array(repeating: 0, count: 100)
         globalCacheReadyFired = Atomic(false)
         globalReadyFired = Atomic(false)
@@ -493,6 +496,7 @@ class InitialCacheTest: XCTestCase {
     }
     
     override func tearDown() {
+        GlobalSecureStorage.testStorage = nil
         IntegrationCoreDataHelper.stopObservingChanges()
     }
 }

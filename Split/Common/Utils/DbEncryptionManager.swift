@@ -74,23 +74,7 @@ struct DbEncryptionManager {
         }
 
         dbHelper.performAndWait {
-            let predicate = NSPredicate(format: "name == %@", GeneralInfo.encryptionCanary.rawValue)
-            let entities = dbHelper.fetch(entity: .generalInfo, where: predicate)
-                .compactMap { $0 as? GeneralInfoEntity }
-
-            let entity: GeneralInfoEntity
-            if let existing = entities.first {
-                entity = existing
-            } else if let new = dbHelper.create(entity: .generalInfo) as? GeneralInfoEntity {
-                entity = new
-            } else {
-                Logger.e("Failed to create GeneralInfoEntity for canary")
-                return
-            }
-
-            entity.name = GeneralInfo.encryptionCanary.rawValue
-            entity.stringValue = encryptedCanary
-            entity.updatedAt = Date().unixTimestamp()
+            updateGeneralInfoStringValue(dbHelper: dbHelper, info: .encryptionCanary, value: encryptedCanary)
         }
         dbHelper.save()
         Logger.d("Encryption canary stored successfully")
@@ -329,6 +313,25 @@ struct DbEncryptionManager {
         info: GeneralInfo,
         value: Int64
     ) {
+        updateGeneralInfoEntity(dbHelper: dbHelper, info: info, stringValue: "", longValue: value)
+    }
+    
+    /// Helper to synchronously update a GeneralInfo string value
+    private static func updateGeneralInfoStringValue(
+        dbHelper: CoreDataHelper,
+        info: GeneralInfo,
+        value: String
+    ) {
+        updateGeneralInfoEntity(dbHelper: dbHelper, info: info, stringValue: value, longValue: 0)
+    }
+    
+    /// Helper to synchronously update a GeneralInfo entity
+    private static func updateGeneralInfoEntity(
+        dbHelper: CoreDataHelper,
+        info: GeneralInfo,
+        stringValue: String,
+        longValue: Int64
+    ) {
         let predicate = NSPredicate(format: "name == %@", info.rawValue)
         let entities = dbHelper.fetch(entity: .generalInfo, where: predicate)
             .compactMap { $0 as? GeneralInfoEntity }
@@ -344,8 +347,8 @@ struct DbEncryptionManager {
         }
 
         entity.name = info.rawValue
-        entity.stringValue = ""
-        entity.longValue = value
+        entity.stringValue = stringValue
+        entity.longValue = longValue
         entity.updatedAt = Date().unixTimestamp()
     }
 }
