@@ -56,21 +56,18 @@ struct DbEncryptionManager {
     
     /// Removes invalid key from Keychain and generates a fresh one
     static func replaceEncryptionKey(for dbKey: String) -> Data? {
-        Logger.w("Replacing encryption key for dbKey: \(dbKey)")
+        Logger.w("Replacing encryption key")
         GlobalSecureStorage.shared.remove(item: .dbEncryptionKey(dbKey))
         return currentEncryptionKey(for: dbKey)
     }
     
     // MARK: - Encryption Canary Operations
-    // Note: These use CoreDataHelper directly for synchronous writes during initialization.
-    // This ensures canary is persisted before SDK ready fires.
 
-    /// Stores a new encryption canary encrypted with the provided key (synchronous)
+    /// Stores a new encryption canary encrypted with the provided cipher
     static func storeEncryptionCanary(
-        cipherKey: Data,
+        cipher: Cipher,
         dbHelper: CoreDataHelper
     ) {
-        let cipher = DefaultCipher(cipherKey: cipherKey)
         guard let encryptedCanary = cipher.encrypt(kEncryptionCanaryValue) else {
             Logger.e("Failed to encrypt canary value")
             return
@@ -110,23 +107,22 @@ struct DbEncryptionManager {
     
     // MARK: - Key Validation
     
-    /// Validates that the provided key can decrypt the stored canary.
+    /// Validates that the provided cipher can decrypt the stored canary.
     /// For legacy installations (pre-canary), validates by attempting to decrypt actual data.
     /// - Parameters:
-    ///   - cipherKey: The encryption key to validate
+    ///   - cipher: The cipher to validate
     ///   - generalInfoDao: DAO for accessing GeneralInfo (canary storage)
     ///   - dbHelper: Optional CoreDataHelper for legacy validation (decrypting actual data)
     ///   - previousEncryptionLevel: The encryption level from previous run (for legacy detection)
     /// - Returns: `true` if validation passes, `false` if key is invalid
     static func isEncryptionKeyValid(
-        cipherKey: Data,
+        cipher: Cipher,
         generalInfoDao: GeneralInfoDao,
         dbHelper: CoreDataHelper? = nil,
         previousEncryptionLevel: SplitEncryptionLevel = .none
     ) -> Bool {
         // If canary exists, use it for validation
         if let storedCanary = generalInfoDao.stringValue(info: .encryptionCanary) {
-            let cipher = DefaultCipher(cipherKey: cipherKey)
             guard let decrypted = cipher.decrypt(storedCanary) else {
                 Logger.w("Encryption canary decryption failed - key may be invalid")
                 return false
@@ -144,21 +140,23 @@ struct DbEncryptionManager {
         // This handles legacy installations (pre-canary) with potentially corrupted keys
         if previousEncryptionLevel != .none, let dbHelper = dbHelper {
             Logger.d("No canary found for previously encrypted database - validating by decrypting data")
-            return validateKeyByDecryptingData(cipherKey: cipherKey, dbHelper: dbHelper)
+            return validateKeyByDecryptingData(cipher: cipher, dbHelper: dbHelper)
         }
         
         // First time setup or no dbHelper provided - assume valid
         return true
     }
     
-    /// Validates key by attempting to decrypt existing data (for pre-canary/legacy installations)
+    /// Validates cipher by attempting to decrypt existing data (for pre-canary/legacy installations)
+    /// - Parameters:
+    ///   - cipher: The cipher to validate
+    ///   - dbHelper: CoreDataHelper for database operations
     /// - Returns: `true` if no encrypted data exists OR data decrypts successfully
     /// - Returns: `false` if encrypted data exists but decryption fails
     static func validateKeyByDecryptingData(
-        cipherKey: Data,
+        cipher: Cipher,
         dbHelper: CoreDataHelper
     ) -> Bool {
-        let cipher = DefaultCipher(cipherKey: cipherKey)
         var isValid = true
         
         dbHelper.performAndWait {
@@ -189,6 +187,7 @@ struct DbEncryptionManager {
     /// Result of encryption key validation and recovery process
     struct EncryptionValidationResult {
         let cipherKey: Data?
+        let cipher: Cipher?
         let recoveryPerformed: Bool
     }
     
@@ -203,34 +202,34 @@ struct DbEncryptionManager {
     ) -> EncryptionValidationResult {
         // No previous encryption - nothing to validate
         guard previousLevel != .none else {
-            return EncryptionValidationResult(cipherKey: currentKey, recoveryPerformed: false)
+            let cipher = currentKey.map { DefaultCipher(cipherKey: $0) }
+            return EncryptionValidationResult(cipherKey: currentKey, cipher: cipher, recoveryPerformed: false)
         }
         
         let keyToValidate = currentKey ?? currentEncryptionKey(for: dbKey)
         
         // Check if key is missing or invalid
-        let needsRecovery: Bool
-        if let key = keyToValidate {
-            needsRecovery = !isEncryptionKeyValid(
-                cipherKey: key,
-                generalInfoDao: generalInfoDao,
-                dbHelper: dbHelper,
-                previousEncryptionLevel: previousLevel
-            )
-            if needsRecovery {
-                Logger.w("Encryption key validation failed - initiating recovery")
-            }
-        } else {
+        guard let key = keyToValidate else {
             Logger.w("Encryption was previously enabled but no key available - initiating recovery")
-            needsRecovery = true
+            let (newKey, newCipher) = performRecovery(dbKey: dbKey, targetLevel: targetLevel, dbHelper: dbHelper)
+            return EncryptionValidationResult(cipherKey: newKey, cipher: newCipher, recoveryPerformed: true)
         }
         
-        guard needsRecovery else {
-            return EncryptionValidationResult(cipherKey: currentKey, recoveryPerformed: false)
+        let cipher = DefaultCipher(cipherKey: key)
+        let isValid = isEncryptionKeyValid(
+            cipher: cipher,
+            generalInfoDao: generalInfoDao,
+            dbHelper: dbHelper,
+            previousEncryptionLevel: previousLevel
+        )
+        
+        guard isValid else {
+            Logger.w("Encryption key validation failed - initiating recovery")
+            let (newKey, newCipher) = performRecovery(dbKey: dbKey, targetLevel: targetLevel, dbHelper: dbHelper)
+            return EncryptionValidationResult(cipherKey: newKey, cipher: newCipher, recoveryPerformed: true)
         }
         
-        let newKey = performRecovery(dbKey: dbKey, targetLevel: targetLevel, dbHelper: dbHelper)
-        return EncryptionValidationResult(cipherKey: newKey, recoveryPerformed: true)
+        return EncryptionValidationResult(cipherKey: currentKey, cipher: cipher, recoveryPerformed: false)
     }
     
     /// Performs recovery by clearing data and generating a new encryption key
@@ -238,26 +237,28 @@ struct DbEncryptionManager {
         dbKey: String,
         targetLevel: SplitEncryptionLevel,
         dbHelper: CoreDataHelper
-    ) -> Data? {
+    ) -> (Data?, Cipher?) {
         deleteEncryptionCanary(dbHelper: dbHelper)
         clearAllEncryptedEntities(dbHelper: dbHelper)
         
-        let newKey = replaceEncryptionKey(for: dbKey)
-        
-        if targetLevel != .none, let key = newKey {
-            storeEncryptionCanary(cipherKey: key, dbHelper: dbHelper)
-            setCurrentEncryptionLevel(targetLevel, for: dbKey)
-        } else {
+        // Only generate new key if encryption will be enabled
+        guard targetLevel != .none,
+              let newKey = replaceEncryptionKey(for: dbKey) else {
             setCurrentEncryptionLevel(.none, for: dbKey)
+            return (nil, nil)
         }
         
-        return newKey
+        let cipher = DefaultCipher(cipherKey: newKey)
+        storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+        setCurrentEncryptionLevel(targetLevel, for: dbKey)
+        return (newKey, cipher)
     }
     
     /// Handles encryption migration when levels change
     static func handleEncryptionMigration(
         dbKey: String,
         targetLevel: SplitEncryptionLevel,
+        cipher: Cipher?,
         cipherKey: Data?,
         dbHelper: CoreDataHelper,
         generalInfoDao: GeneralInfoDao
@@ -270,16 +271,20 @@ struct DbEncryptionManager {
             dbCipher.apply()
             setCurrentEncryptionLevel(targetLevel, for: dbKey)
             if targetLevel != .none {
-                storeEncryptionCanary(cipherKey: dbCipherKey, dbHelper: dbHelper)
+                let cipherToUse = cipher ?? DefaultCipher(cipherKey: dbCipherKey)
+                storeEncryptionCanary(cipher: cipherToUse, dbHelper: dbHelper)
             } else {
                 deleteEncryptionCanary(dbHelper: dbHelper)
             }
         }
         // Edge case: Encryption enabled, levels match, but no canary
         if targetLevel != .none,
-           generalInfoDao.stringValue(info: .encryptionCanary) == nil,
-           let key = cipherKey ?? currentEncryptionKey(for: dbKey) {
-            storeEncryptionCanary(cipherKey: key, dbHelper: dbHelper)
+           generalInfoDao.stringValue(info: .encryptionCanary) == nil {
+            if let cipher = cipher {
+                storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+            } else if let key = cipherKey ?? currentEncryptionKey(for: dbKey) {
+                storeEncryptionCanary(cipher: DefaultCipher(cipherKey: key), dbHelper: dbHelper)
+            }
         }
     }
     

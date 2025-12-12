@@ -42,18 +42,22 @@ struct SplitDatabaseHelper {
             dbKey: dbKey, previousLevel: previousEncryptionLevel, targetLevel: encryptionLevel,
             currentKey: cipherKey, dbHelper: dbHelper, generalInfoDao: generalInfoDao)
         cipherKey = validationResult.cipherKey
+        var cipher = validationResult.cipher
 
         // Handle migration if recovery wasn't performed
         if !validationResult.recoveryPerformed {
             try DbEncryptionManager.handleEncryptionMigration(dbKey: dbKey, targetLevel: encryptionLevel,
-                                          cipherKey: cipherKey, dbHelper: dbHelper,
+                                          cipher: cipher, cipherKey: cipherKey, dbHelper: dbHelper,
                                           generalInfoDao: generalInfoDao)
         }
 
         if splitDatabase == nil {
+            // Create cipher only if needed and not already created
+            if cipher == nil, encryptionLevel != .none, let key = cipherKey {
+                cipher = DefaultCipher(cipherKey: key)
+            }
             splitDatabase = try openDatabase(dataFolderName: databaseName,
-                                             cipherKey: cipherKey,
-                                             encryptionLevel: encryptionLevel,
+                                             cipher: cipher,
                                              dbHelper: dbHelper)
         }
 
@@ -118,13 +122,10 @@ struct SplitDatabaseHelper {
     }
 
     static func openDatabase(dataFolderName: String,
-                             cipherKey: Data?,
-                             encryptionLevel: SplitEncryptionLevel,
+                             cipher: Cipher?,
                              dbHelper: CoreDataHelper) throws -> SplitDatabase {
 
-        return CoreDataSplitDatabase(coreDataHelper: dbHelper,
-                                     cipher: createCipher(level: encryptionLevel,
-                                                          cipherKey: cipherKey))
+        return CoreDataSplitDatabase(coreDataHelper: dbHelper, cipher: cipher)
     }
 
     static func openPersistentSplitsStorage(database: SplitDatabase) -> PersistentSplitsStorage {
@@ -214,17 +215,6 @@ struct SplitDatabaseHelper {
         }
         let range = NSRange(location: 0, length: string.count)
         return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
-    }
-
-    static func createCipher(level: SplitEncryptionLevel, cipherKey: Data?) -> Cipher? {
-        if level == .none {
-            return nil
-        }
-        guard let cipherKey = cipherKey else {
-            return nil
-        }
-
-        return DefaultCipher(cipherKey: cipherKey)
     }
 
     static func buildDbKey(prefix: String?, sdkKey: String) -> String {
