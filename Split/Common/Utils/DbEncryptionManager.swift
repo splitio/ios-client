@@ -83,7 +83,7 @@ struct DbEncryptionManager {
     /// Deletes the encryption canary (synchronous)
     static func deleteEncryptionCanary(dbHelper: CoreDataHelper) {
         dbHelper.performAndWait {
-            dbHelper.delete(entity: .generalInfo, by: "name", values: [GeneralInfo.encryptionCanary.rawValue])
+            deleteGeneralInfoValue(dbHelper: dbHelper, info: .encryptionCanary)
         }
         dbHelper.save()
         Logger.d("Encryption canary deleted")
@@ -305,6 +305,13 @@ struct DbEncryptionManager {
 
 // MARK: - GeneralInfo Helpers
 extension DbEncryptionManager {
+    
+    private static func deleteGeneralInfoValue(
+        dbHelper: CoreDataHelper,
+        info: GeneralInfo
+    ) {
+        dbHelper.delete(entity: .generalInfo, by: "name", values: [info.rawValue])
+    }
     
     private static func updateGeneralInfoLongValue(
         dbHelper: CoreDataHelper,
