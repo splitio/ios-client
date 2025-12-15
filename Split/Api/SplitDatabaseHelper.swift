@@ -13,9 +13,22 @@ struct SplitDatabaseHelper {
     static private let kDbExt = ["", "-shm", "-wal"]
     static private let kExpirationPeriod = ServiceConstants.recordedDataExpirationPeriodInSeconds
     
-    /// Lock to prevent concurrent storage container. This is a safeguard
-    /// for concurrent initialization of SDK instances using the same SDK key + prefix
-    static private let storageLock = NSLock()
+    /// Lock to prevent concurrent storage container creation per dbKey.
+    /// This avoids issues in concurrent initialization of SDK instances using the same SDK key + prefix,
+    /// while still allowing different dbKeys to initialize in parallel.
+    static private let storageLockMapGuard = NSLock()
+    static private var storageLockMap: [String: NSLock] = [:]
+    
+    static private func storageLock(for dbKey: String) -> NSLock {
+        storageLockMapGuard.lock()
+        defer { storageLockMapGuard.unlock() }
+        if let lock = storageLockMap[dbKey] {
+            return lock
+        }
+        let lock = NSLock()
+        storageLockMap[dbKey] = lock
+        return lock
+    }
 
     static func buildStorageContainer(splitClientConfig: SplitClientConfig,
                                       apiKey: String,
@@ -23,10 +36,12 @@ struct SplitDatabaseHelper {
                                       databaseName: String,
                                       telemetryStorage: TelemetryStorage?,
                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
-        storageLock.lock()
-        defer { storageLock.unlock() }
-        
         let dbKey = buildDbKey(prefix: splitClientConfig.prefix, sdkKey: apiKey)
+        
+        let lock = storageLock(for: dbKey)
+        lock.lock()
+        defer { lock.unlock() }
+        
         let previousEncryptionLevel = DbEncryptionManager.currentEncryptionLevel(dbKey: dbKey)
         var splitDatabase = testDatabase
         var dbHelper: CoreDataHelper?
