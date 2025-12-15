@@ -45,47 +45,47 @@ class EncryptionKeyValidationTest: XCTestCase {
         super.tearDown()
     }
     
-    // MARK: - Canary Storage Tests
+    // MARK: - Verifier Storage Tests
 
-    func testGeneralInfoEnumHasEncryptionCanaryCase() {
-        let info = GeneralInfo.encryptionCanary
-        XCTAssertEqual("encryptionCanary", info.rawValue)
+    func testGeneralInfoEnumHasEncryptionVerifierCase() {
+        let info = GeneralInfo.encryptionVerifier
+        XCTAssertEqual("encryptionVerifier", info.rawValue)
     }
     
-    func testCanStoreCanaryInGeneralInfo() {
-        let canaryValue = "encrypted_test_canary"
+    func testCanStoreVerifierInGeneralInfo() {
+        let verifierValue = "encrypted_test_verifier"
         
-        generalInfoDao.update(info: .encryptionCanary, stringValue: canaryValue)
+        generalInfoDao.update(info: .encryptionVerifier, stringValue: verifierValue)
         
         // Use expectation for async operation
-        let exp = expectation(description: "Canary stored")
+        let exp = expectation(description: "Verifier stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            let retrieved = self.generalInfoDao.stringValue(info: .encryptionCanary)
-            XCTAssertEqual(canaryValue, retrieved)
+            let retrieved = self.generalInfoDao.stringValue(info: .encryptionVerifier)
+            XCTAssertEqual(verifierValue, retrieved)
             exp.fulfill()
         }
         wait(for: [exp], timeout: 3)
     }
     
-    func testRetrieveCanaryWhenNoneExistsReturnsNil() {
-        let retrieved = generalInfoDao.stringValue(info: .encryptionCanary)
+    func testRetrieveVerifierWhenNoneExistsReturnsNil() {
+        let retrieved = generalInfoDao.stringValue(info: .encryptionVerifier)
         XCTAssertNil(retrieved)
     }
 
-    func testCanDeleteCanaryFromGeneralInfo() {
-        generalInfoDao.update(info: .encryptionCanary, stringValue: "test")
+    func testCanDeleteVerifierFromGeneralInfo() {
+        generalInfoDao.update(info: .encryptionVerifier, stringValue: "test")
         
-        let storeExp = expectation(description: "Canary stored")
+        let storeExp = expectation(description: "Verifier stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
             storeExp.fulfill()
         }
         wait(for: [storeExp], timeout: 3)
         
-        generalInfoDao.delete(info: .encryptionCanary)
+        generalInfoDao.delete(info: .encryptionVerifier)
         
-        let deleteExp = expectation(description: "Canary deleted")
+        let deleteExp = expectation(description: "Verifier deleted")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            let retrieved = self.generalInfoDao.stringValue(info: .encryptionCanary)
+            let retrieved = self.generalInfoDao.stringValue(info: .encryptionVerifier)
             XCTAssertNil(retrieved)
             deleteExp.fulfill()
         }
@@ -93,14 +93,14 @@ class EncryptionKeyValidationTest: XCTestCase {
     }
     
     // MARK: - Key Validation Logic Tests
-    func testValidKeyPassesCanaryCheck() {
+    func testValidKeyPassesVerifierCheck() {
         let key = generateTestKey()
         let cipher = DefaultCipher(cipherKey: key)
         
-        // Store canary encrypted with this key
-        DbEncryptionManager.storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+        // Store verifier encrypted with this key
+        DbEncryptionManager.storeEncryptionVerifier(cipher: cipher, dbHelper: dbHelper)
         
-        let exp = expectation(description: "Canary stored")
+        let exp = expectation(description: "Verifier stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
             // Validate with same cipher
             let isValid = DbEncryptionManager.isEncryptionKeyValid(cipher: cipher, generalInfoDao: self.generalInfoDao)
@@ -110,79 +110,79 @@ class EncryptionKeyValidationTest: XCTestCase {
         wait(for: [exp], timeout: 3)
     }
 
-    func testNoCanaryPassesValidation() {
+    func testNoVerifierPassesValidation() {
         let key = generateTestKey()
         let cipher = DefaultCipher(cipherKey: key)
         
-        // No canary stored - first time setup
+        // No verifier stored - first time setup
         let isValid = DbEncryptionManager.isEncryptionKeyValid(cipher: cipher, generalInfoDao: generalInfoDao)
         
-        XCTAssertTrue(isValid, "First time setup (no canary) should pass validation")
+        XCTAssertTrue(isValid, "First time setup (no verifier) should pass validation")
     }
 
-    func testDifferentKeyFailsCanaryCheck() {
+    func testDifferentKeyFailsVerifierCheck() {
         let originalKey = generateTestKey()
         let differentKey = generateTestKey()
         let originalCipher = DefaultCipher(cipherKey: originalKey)
         let differentCipher = DefaultCipher(cipherKey: differentKey)
         
-        // Store canary with original cipher
-        DbEncryptionManager.storeEncryptionCanary(cipher: originalCipher, dbHelper: dbHelper)
+        // Store verifier with original cipher
+        DbEncryptionManager.storeEncryptionVerifier(cipher: originalCipher, dbHelper: dbHelper)
         
-        let exp = expectation(description: "Canary stored")
+        let exp = expectation(description: "Verifier stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
             // Validate with different cipher
             let isValid = DbEncryptionManager.isEncryptionKeyValid(cipher: differentCipher, generalInfoDao: self.generalInfoDao)
-            XCTAssertFalse(isValid, "Different key should fail canary validation")
+            XCTAssertFalse(isValid, "Different key should fail verifier validation")
             exp.fulfill()
         }
         wait(for: [exp], timeout: 3)
     }
     
-    func testCorruptedCanaryFailsValidation() {
+    func testCorruptedVerifierFailsValidation() {
         let key = generateTestKey()
         let cipher = DefaultCipher(cipherKey: key)
         
         // Store garbage that can't be decrypted
-        generalInfoDao.update(info: .encryptionCanary, stringValue: "not_valid_encrypted_base64_data!!!")
+        generalInfoDao.update(info: .encryptionVerifier, stringValue: "not_valid_encrypted_base64_data!!!")
         
-        let exp = expectation(description: "Canary stored")
+        let exp = expectation(description: "Verifier stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
             let isValid = DbEncryptionManager.isEncryptionKeyValid(cipher: cipher, generalInfoDao: self.generalInfoDao)
-            XCTAssertFalse(isValid, "Corrupted canary should fail validation")
+            XCTAssertFalse(isValid, "Corrupted verifier should fail validation")
             exp.fulfill()
         }
         wait(for: [exp], timeout: 3)
     }
     
-    func testTamperedCanaryFailsValidation() {
+    func testTamperedVerifierFailsValidation() {
         let key = generateTestKey()
         let cipher = DefaultCipher(cipherKey: key)
         
-        // Store canary with wrong content (encrypted but not the expected constant)
-        let wrongCanary = cipher.encrypt("WRONG_CONSTANT_VALUE")!
-        generalInfoDao.update(info: .encryptionCanary, stringValue: wrongCanary)
+        // Store verifier with wrong content (encrypted but not the expected constant)
+        let wrongVerifier = cipher.encrypt("WRONG_CONSTANT_VALUE")!
+        generalInfoDao.update(info: .encryptionVerifier, stringValue: wrongVerifier)
         
-        let exp = expectation(description: "Canary stored")
+        let exp = expectation(description: "Verifier stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
             let isValid = DbEncryptionManager.isEncryptionKeyValid(cipher: cipher, generalInfoDao: self.generalInfoDao)
-            XCTAssertFalse(isValid, "Tampered canary (wrong decrypted value) should fail validation")
+            XCTAssertFalse(isValid, "Tampered verifier (wrong decrypted value) should fail validation")
             exp.fulfill()
         }
         wait(for: [exp], timeout: 3)
     }
     
-    // MARK: - Canary Operations Tests
+    // MARK: - Verifier Operations Tests
     
-    func testStoreEncryptionCanaryCreatesValidCanary() {
+    func testStoreEncryptionVerifierCreatesValidVerifier() {
         let key = generateTestKey()
         let cipher = DefaultCipher(cipherKey: key)
 
-        // Store canary (synchronous)
-        DbEncryptionManager.storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+        // Store verifier (synchronous)
+        DbEncryptionManager.storeEncryptionVerifier(cipher: cipher, dbHelper: dbHelper)
 
         // Verify immediately - operation is synchronous
-        let stored = generalInfoDao.stringValue(info: .encryptionCanary)
+        let stored = generalInfoDao.stringValue(info: .encryptionVerifier)
         XCTAssertNotNil(stored)
 
         // Verify it's encrypted (not plain text)
@@ -192,19 +192,19 @@ class EncryptionKeyValidationTest: XCTestCase {
         XCTAssertTrue(DbEncryptionManager.isEncryptionKeyValid(cipher: cipher, generalInfoDao: generalInfoDao))
     }
 
-    /// Test deleteEncryptionCanary removes the canary
-    func testDeleteEncryptionCanaryRemovesCanary() {
+    /// Test deleteEncryptionVerifier removes the verifier
+    func testDeleteEncryptionVerifierRemovesVerifier() {
         let key = generateTestKey()
         let cipher = DefaultCipher(cipherKey: key)
 
-        // Store canary (synchronous)
-        DbEncryptionManager.storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+        // Store verifier (synchronous)
+        DbEncryptionManager.storeEncryptionVerifier(cipher: cipher, dbHelper: dbHelper)
 
-        // Delete canary (synchronous)
-        DbEncryptionManager.deleteEncryptionCanary(dbHelper: dbHelper)
+        // Delete verifier (synchronous)
+        DbEncryptionManager.deleteEncryptionVerifier(dbHelper: dbHelper)
 
         // Verify immediately - operation is synchronous
-        let stored = generalInfoDao.stringValue(info: .encryptionCanary)
+        let stored = generalInfoDao.stringValue(info: .encryptionVerifier)
         XCTAssertNil(stored)
     }
     
@@ -367,14 +367,14 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
     }
     
-    // MARK: - Legacy Installation Tests (Pre-Canary)
-    // (because they were installed before the canary feature was added)
+    // MARK: - Legacy Installation Tests (Pre-Verifier)
+    // (because they were installed before the verifier feature was added)
     
     func testLegacyInstallationWithValidDataPassesValidation() {
         let key = generateTestKey()
         let cipher = DefaultCipher(cipherKey: key)
         
-        // Simulate legacy installation: encrypted data exists but no canary
+        // Simulate legacy installation: encrypted data exists but no verifier
         dbHelper.performAndWait {
             if let entity = dbHelper.create(entity: .split) as? SplitEntity {
                 entity.name = cipher.encrypt("test_split") ?? ""
@@ -386,7 +386,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         
         let exp = expectation(description: "Data inserted")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            // No canary exists, but data was encrypted with this key
+            // No verifier exists, but data was encrypted with this key
             // previousEncryptionLevel indicates encryption was enabled before
             let isValid = DbEncryptionManager.isEncryptionKeyValid(
                 cipher: cipher,
@@ -400,7 +400,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         wait(for: [exp], timeout: 3)
     }
     
-    /// Test: Legacy installation with encrypted data, no canary, WRONG key
+    /// Test: Legacy installation with encrypted data, no verifier, WRONG key
     /// Should fail validation because decryption fails
     func testLegacyInstallationWithWrongKeyFailsValidation() {
         let originalKey = generateTestKey()
@@ -420,7 +420,7 @@ class EncryptionKeyValidationTest: XCTestCase {
         
         let exp = expectation(description: "Data inserted")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            // No canary exists, data encrypted with original key, validating with wrong key
+            // No verifier exists, data encrypted with original key, validating with wrong key
             let isValid = DbEncryptionManager.isEncryptionKeyValid(
                 cipher: wrongCipher,
                 generalInfoDao: self.generalInfoDao,
@@ -433,13 +433,13 @@ class EncryptionKeyValidationTest: XCTestCase {
         wait(for: [exp], timeout: 3)
     }
     
-    /// Test: Legacy installation with no data and no canary (empty database)
+    /// Test: Legacy installation with no data and no verifier (empty database)
     /// Should pass validation (truly first time setup)
     func testLegacyInstallationWithNoDataPassesValidation() {
         let key = generateTestKey()
         let cipher = DefaultCipher(cipherKey: key)
         
-        // No data, no canary - but previousEncryptionLevel says encryption was enabled
+        // No data, no verifier - but previousEncryptionLevel says encryption was enabled
         // This could happen if encryption was enabled but no data was ever cached
         let isValid = DbEncryptionManager.isEncryptionKeyValid(
             cipher: cipher,
@@ -507,8 +507,8 @@ class EncryptionKeyValidationTest: XCTestCase {
         wait(for: [exp], timeout: 3)
     }
 
-    func testMissingCanaryWhenLevelsMatchStoresCanaryUsingCurrentKey() {
-        let dbKey = "test_missing_canary_\(UUID().uuidString.prefix(8))"
+    func testMissingVerifierWhenLevelsMatchStoresVerifierUsingCurrentKey() {
+        let dbKey = "test_missing_verifier_\(UUID().uuidString.prefix(8))"
         let originalKey = generateTestKey()
         let originalCipher = DefaultCipher(cipherKey: originalKey)
 
@@ -516,11 +516,11 @@ class EncryptionKeyValidationTest: XCTestCase {
         secureStorage.set(item: originalKey.base64EncodedString(), for: .dbEncryptionKey(dbKey))
         secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(dbKey))
 
-        // Verify no canary exists initially
-        XCTAssertNil(generalInfoDao.stringValue(info: .encryptionCanary))
+        // Verify no verifier exists initially
+        XCTAssertNil(generalInfoDao.stringValue(info: .encryptionVerifier))
 
         // Call handleEncryptionMigration with same target level but no cipher parameter
-        // This simulates the case where levels match but no canary exists
+        // This simulates the case where levels match but no verifier exists
         do {
             try DbEncryptionManager.handleEncryptionMigration(
                 dbKey: dbKey,
@@ -534,18 +534,18 @@ class EncryptionKeyValidationTest: XCTestCase {
             XCTFail("handleEncryptionMigration should not throw: \(error)")
         }
 
-        // Verify canary was stored using the key from currentEncryptionKey(for:)
-        let exp = expectation(description: "Canary stored")
+        // Verify verifier was stored using the key from currentEncryptionKey(for:)
+        let exp = expectation(description: "Verifier stored")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            let storedCanary = self.generalInfoDao.stringValue(info: .encryptionCanary)
-            XCTAssertNotNil(storedCanary, "Canary should be stored when missing and levels match")
+            let storedVerifier = self.generalInfoDao.stringValue(info: .encryptionVerifier)
+            XCTAssertNotNil(storedVerifier, "Verifier should be stored when missing and levels match")
 
-            // Verify the canary can be decrypted with the original cipher
+            // Verify the verifier can be decrypted with the original cipher
             let isValid = DbEncryptionManager.isEncryptionKeyValid(
                 cipher: originalCipher,
                 generalInfoDao: self.generalInfoDao
             )
-            XCTAssertTrue(isValid, "Stored canary should be valid with the original key")
+            XCTAssertTrue(isValid, "Stored verifier should be valid with the original key")
             exp.fulfill()
         }
         wait(for: [exp], timeout: 3)
@@ -587,8 +587,8 @@ class EncryptionKeyValidationTest: XCTestCase {
 
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
 
-        // Verify no canary exists (legacy installation scenario)
-        XCTAssertNil(generalInfoDao.stringValue(info: .encryptionCanary))
+        // Verify no verifier exists (legacy installation scenario)
+        XCTAssertNil(generalInfoDao.stringValue(info: .encryptionVerifier))
 
         // Call validateAndRecoverEncryptionKey
         // Since key was deleted, currentEncryptionKey(for:) will generate a NEW key
@@ -609,11 +609,11 @@ class EncryptionKeyValidationTest: XCTestCase {
         XCTAssertNotNil(result.cipherKey, "New cipher key should be generated during recovery")
         XCTAssertNotEqual(originalKey, result.cipherKey, "New key should be different from deleted original key")
 
-        // Verify canary was stored with the new key
+        // Verify verifier was stored with the new key
         let verifyExp = expectation(description: "Verify recovery state")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            let storedCanary = generalInfoDao.stringValue(info: .encryptionCanary)
-            XCTAssertNotNil(storedCanary, "Canary should be stored after recovery")
+            let storedVerifier = generalInfoDao.stringValue(info: .encryptionVerifier)
+            XCTAssertNotNil(storedVerifier, "Verifier should be stored after recovery")
 
             // Verify encrypted data was cleared
             self.dbHelper.performAndWait {
@@ -621,13 +621,13 @@ class EncryptionKeyValidationTest: XCTestCase {
                 XCTAssertEqual(0, splits.count, "Encrypted data should be cleared during recovery")
             }
 
-            // Verify the canary can be decrypted with the new cipher
+            // Verify the verifier can be decrypted with the new cipher
             if let newCipher = result.cipher {
                 let isValid = DbEncryptionManager.isEncryptionKeyValid(
                     cipher: newCipher,
                     generalInfoDao: generalInfoDao
                 )
-                XCTAssertTrue(isValid, "Stored canary should be valid with the new key")
+                XCTAssertTrue(isValid, "Stored verifier should be valid with the new key")
             }
             verifyExp.fulfill()
         }
@@ -719,15 +719,15 @@ class EncryptionKeyValidationTest: XCTestCase {
                       "ruleBasedSegmentsChangeNumber should be reset to -1 after recovery")
     }
     
-    // MARK: - Orphaned Canary Tests (Level Lost)
+    // MARK: - Orphaned Verifier Tests (Level Lost)
     
-    /// Test: When encryption level is lost from Keychain but key and canary are still valid,
+    /// Test: When encryption level is lost from Keychain but key and verifier are still valid,
     /// the system should detect this and NOT corrupt data during migration.
     /// This tests the full flow including handleEncryptionMigration.
-    func testLevelLostButKeyAndCanaryValidShouldNotCorruptData() {
+    func testLevelLostButKeyAndVerifierValidShouldNotCorruptData() {
         let dbKey = "test_level_lost_key_valid_\(UUID().uuidString.prefix(8))"
         
-        // Setup: Create a properly encrypted database with key, level, and canary
+        // Setup: Create a properly encrypted database with key, level, and verifier
         let originalKey = generateTestKey()
         let cipher = DefaultCipher(cipherKey: originalKey)
         
@@ -745,8 +745,8 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         dbHelper.save()
         
-        // Store canary with the valid key
-        DbEncryptionManager.storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+        // Store verifier with the valid key
+        DbEncryptionManager.storeEncryptionVerifier(cipher: cipher, dbHelper: dbHelper)
         
         // Wait for writes
         let writeExp = expectation(description: "Data written")
@@ -755,8 +755,8 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [writeExp], timeout: 3)
         
-        // Verify canary exists and data is decryptable
-        XCTAssertNotNil(generalInfoDao.stringValue(info: .encryptionCanary), "Canary should exist")
+        // Verify verifier exists and data is decryptable
+        XCTAssertNotNil(generalInfoDao.stringValue(info: .encryptionVerifier), "Verifier should exist")
         
         // Simulate ONLY the encryption level being deleted (key is still there)
         secureStorage.remove(item: .dbEncryptionLevel(dbKey))
@@ -771,7 +771,7 @@ class EncryptionKeyValidationTest: XCTestCase {
             dbKey: dbKey,
             previousLevel: .none, // Level was lost. This is what SDK would read from Keychain
             targetLevel: .aes128Cbc, // Encryption enabled
-            currentKey: originalKey, // Valid key that matches the canary
+            currentKey: originalKey, // Valid key that matches the verifier
             dbHelper: dbHelper,
             generalInfoDao: generalInfoDao
         )
@@ -817,11 +817,11 @@ class EncryptionKeyValidationTest: XCTestCase {
     }
     
     /// Test: When encryption level is lost and key is lost (both deleted),
-    /// but canary still exists, recovery should be triggered.
-    func testLevelAndKeyBothLostButCanaryExistsShouldTriggerRecovery() {
+    /// but verifier still exists, recovery should be triggered.
+    func testLevelAndKeyBothLostButVerifierExistsShouldTriggerRecovery() {
         let dbKey = "test_level_and_key_lost_\(UUID().uuidString.prefix(8))"
         
-        // Setup: Create a properly encrypted database with key, level, and canary
+        // Setup: Create a properly encrypted database with key, level, and verifier
         let originalKey = generateTestKey()
         let cipher = DefaultCipher(cipherKey: originalKey)
         
@@ -839,8 +839,8 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         dbHelper.save()
         
-        // Store canary with the valid key
-        DbEncryptionManager.storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+        // Store verifier with the valid key
+        DbEncryptionManager.storeEncryptionVerifier(cipher: cipher, dbHelper: dbHelper)
         
         // Wait for writes
         let writeExp = expectation(description: "Data written")
@@ -849,8 +849,8 @@ class EncryptionKeyValidationTest: XCTestCase {
         }
         wait(for: [writeExp], timeout: 3)
         
-        // Verify canary exists
-        XCTAssertNotNil(generalInfoDao.stringValue(info: .encryptionCanary), "Canary should exist")
+        // Verify verifier exists
+        XCTAssertNotNil(generalInfoDao.stringValue(info: .encryptionVerifier), "Verifier should exist")
         
         // Simulate BOTH level AND key being deleted
         secureStorage.remove(item: .dbEncryptionLevel(dbKey))
@@ -867,9 +867,9 @@ class EncryptionKeyValidationTest: XCTestCase {
             generalInfoDao: generalInfoDao
         )
         
-        // EXPECTED BEHAVIOR: Canary exists but can't be validated with new key -> recovery
+        // EXPECTED BEHAVIOR: Verifier exists but can't be validated with new key -> recovery
         XCTAssertTrue(result.recoveryPerformed, 
-                      "Recovery SHOULD be triggered when both level and key are lost but canary exists")
+                      "Recovery SHOULD be triggered when both level and key are lost but verifier exists")
         
         // Verify data was cleared
         let verifyExp = expectation(description: "Verify data cleared")

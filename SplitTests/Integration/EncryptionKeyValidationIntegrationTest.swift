@@ -95,10 +95,10 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         XCTAssertNotNil(newKeyString)
         XCTAssertNotEqual(originalKey.base64EncodedString(), newKeyString)
 
-        // Canary should exist with new key (synchronous write during init)
+        // Verifier should exist with new key (synchronous write during init)
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
-        let canary = generalInfoDao.stringValue(info: .encryptionCanary)
-        XCTAssertNotNil(canary, "Canary should exist after recovery")
+        let verifier = generalInfoDao.stringValue(info: .encryptionVerifier)
+        XCTAssertNotNil(verifier, "Verifier should exist after recovery")
 
         // SDK should be functional - verify it can return treatments
         let treatment = factory.client.getTreatment("FACUNDO_TEST")
@@ -131,10 +131,10 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         wait(for: [readyExp], timeout: 10)
         
         // 4. Verify recovery happened
-        // New canary should be stored (old one couldn't be decrypted) - synchronous write during init
+        // New verifier should be stored (old one couldn't be decrypted) - synchronous write during init
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
-        let canary = generalInfoDao.stringValue(info: .encryptionCanary)
-        XCTAssertNotNil(canary, "Canary should exist after recovery")
+        let verifier = generalInfoDao.stringValue(info: .encryptionVerifier)
+        XCTAssertNotNil(verifier, "Verifier should exist after recovery")
 
         // SDK should be functional - verify it can return treatments
         let treatment = factory.client.getTreatment("FACUNDO_TEST")
@@ -203,10 +203,10 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
         
-        // Verify no canary exists
-        let checkExp = expectation(description: "Check no canary")
+        // Verify no verifier exists
+        let checkExp = expectation(description: "Check no verifier")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertNil(generalInfoDao.stringValue(info: .encryptionCanary))
+            XCTAssertNil(generalInfoDao.stringValue(info: .encryptionVerifier))
             checkExp.fulfill()
         }
         wait(for: [checkExp], timeout: 3)
@@ -215,10 +215,10 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         let factory2 = createFactory(encryptionEnabled: true)
         waitForReady(factory: factory2)
         
-        // 3. Verify canary now exists
-        let verifyExp = expectation(description: "Canary exists")
+        // 3. Verify verifier now exists
+        let verifyExp = expectation(description: "Verifier exists")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertNotNil(generalInfoDao.stringValue(info: .encryptionCanary))
+            XCTAssertNotNil(generalInfoDao.stringValue(info: .encryptionVerifier))
             verifyExp.fulfill()
         }
         wait(for: [verifyExp], timeout: 3)
@@ -235,10 +235,10 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
         
-        // Verify canary exists
-        let checkExp = expectation(description: "Check canary exists")
+        // Verify verifier exists
+        let checkExp = expectation(description: "Check verifier exists")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertNotNil(generalInfoDao.stringValue(info: .encryptionCanary))
+            XCTAssertNotNil(generalInfoDao.stringValue(info: .encryptionVerifier))
             checkExp.fulfill()
         }
         wait(for: [checkExp], timeout: 3)
@@ -247,10 +247,10 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         let factory = createFactory(encryptionEnabled: false)
         waitForReady(factory: factory)
         
-        // 3. Verify canary is removed
-        let verifyExp = expectation(description: "Canary removed")
+        // 3. Verify verifier is removed
+        let verifyExp = expectation(description: "Verifier removed")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertNil(generalInfoDao.stringValue(info: .encryptionCanary))
+            XCTAssertNil(generalInfoDao.stringValue(info: .encryptionVerifier))
             verifyExp.fulfill()
         }
         wait(for: [verifyExp], timeout: 3)
@@ -258,16 +258,16 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         factory.client.destroy()
     }
     
-    // MARK: - Legacy Installation Tests (Pre-Canary)
+    // MARK: - Legacy Installation Tests (Pre-Verifier)
     
-    /// Test: Legacy installation (pre-canary) with corrupted key triggers recovery
-    /// Simulates existing installation that was encrypted before canary feature was added
+    /// Test: Legacy installation (pre-verifier) with corrupted key triggers recovery
+    /// Simulates existing installation that was encrypted before verifier feature was added
     func testLegacyInstallationWithCorruptedKeyTriggersRecovery() {
         let dbKey = SplitDatabaseHelper.buildDbKey(prefix: nil, sdkKey: apiKey)
         let originalKey = DefaultKeyGenerator().generateKey(size: ServiceConstants.aes128KeyLength)!
         let cipher = DefaultCipher(cipherKey: originalKey)
         
-        // 1. Simulate legacy installation: encrypted data but NO canary
+        // 1. Simulate legacy installation: encrypted data but NO verifier
         dbHelper.performAndWait {
             if let entity = dbHelper.create(entity: .split) as? SplitEntity {
                 entity.name = cipher.encrypt("test_split") ?? ""
@@ -281,9 +281,9 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         secureStorage.set(item: originalKey.base64EncodedString(), for: .dbEncryptionKey(dbKey))
         secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(dbKey))
         
-        // Verify no canary exists (legacy installation)
+        // Verify no verifier exists (legacy installation)
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
-        XCTAssertNil(generalInfoDao.stringValue(info: .encryptionCanary), "Legacy installation should have no canary")
+        XCTAssertNil(generalInfoDao.stringValue(info: .encryptionVerifier), "Legacy installation should have no verifier")
         
         // 2. Simulate key corruption: replace with a different key
         let corruptedKey = DefaultKeyGenerator().generateKey(size: ServiceConstants.aes128KeyLength)!
@@ -300,11 +300,11 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         wait(for: [readyExp], timeout: 10)
         
         // 4. Verify recovery happened
-        // New canary should be stored
-        let verifyExp = expectation(description: "Verify canary")
+        // New verifier should be stored
+        let verifyExp = expectation(description: "Verify verifier")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            let canary = generalInfoDao.stringValue(info: .encryptionCanary)
-            XCTAssertNotNil(canary, "Canary should exist after recovery")
+            let verifier = generalInfoDao.stringValue(info: .encryptionVerifier)
+            XCTAssertNotNil(verifier, "Verifier should exist after recovery")
             verifyExp.fulfill()
         }
         wait(for: [verifyExp], timeout: 3)
@@ -322,7 +322,7 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         let originalKey = DefaultKeyGenerator().generateKey(size: ServiceConstants.aes128KeyLength)!
         let cipher = DefaultCipher(cipherKey: originalKey)
         
-        // 1. Simulate legacy installation: encrypted data but NO canary
+        // 1. Simulate legacy installation: encrypted data but NO verifier
         dbHelper.performAndWait {
             if let entity = dbHelper.create(entity: .split) as? SplitEntity {
                 entity.name = cipher.encrypt("legacy_split") ?? ""
@@ -336,9 +336,9 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         secureStorage.set(item: originalKey.base64EncodedString(), for: .dbEncryptionKey(dbKey))
         secureStorage.set(item: SplitEncryptionLevel.aes128Cbc.rawValue, for: .dbEncryptionLevel(dbKey))
         
-        // Verify no canary exists (legacy installation)
+        // Verify no verifier exists (legacy installation)
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
-        XCTAssertNil(generalInfoDao.stringValue(info: .encryptionCanary), "Legacy installation should have no canary")
+        XCTAssertNil(generalInfoDao.stringValue(info: .encryptionVerifier), "Legacy installation should have no verifier")
         
         // Verify split exists directly via CoreDataHelper (splitDao might filter encrypted splits)
         let verifySplitExp = expectation(description: "Verify split exists")
@@ -362,11 +362,11 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         wait(for: [readyExp], timeout: 10)
         
         // 3. Verify NO recovery happened - data should still be there
-        // Canary should now be stored (for future validations)
+        // Verifier should now be stored (for future validations)
         let verifyExp = expectation(description: "Verify state")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            let canary = generalInfoDao.stringValue(info: .encryptionCanary)
-            XCTAssertNotNil(canary, "Canary should be stored after successful validation")
+            let verifier = generalInfoDao.stringValue(info: .encryptionVerifier)
+            XCTAssertNotNil(verifier, "Verifier should be stored after successful validation")
             verifyExp.fulfill()
         }
         wait(for: [verifyExp], timeout: 3)
@@ -396,10 +396,10 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
         
-        // 4. Verify recovery: data cleared, no canary, SDK functional
+        // 4. Verify recovery: data cleared, no verifier, SDK functional
         let verifyExp = expectation(description: "Verify state")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertNil(generalInfoDao.stringValue(info: .encryptionCanary))
+            XCTAssertNil(generalInfoDao.stringValue(info: .encryptionVerifier))
             verifyExp.fulfill()
         }
         wait(for: [verifyExp], timeout: 3)

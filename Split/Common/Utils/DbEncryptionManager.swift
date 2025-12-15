@@ -12,7 +12,7 @@ struct DbEncryptionManager {
     
     // MARK: - Constants
     
-    private static let kEncryptionCanaryValue = "SPLIT_ENC_CHECK"
+    private static let kEncryptionVerifierValue = "SPLIT_ENC_CHECK"
     
     // MARK: - Encryption Level Management
     
@@ -61,41 +61,41 @@ struct DbEncryptionManager {
         return currentEncryptionKey(for: dbKey)
     }
     
-    // MARK: - Encryption Canary Operations
+    // MARK: - Encryption Verifier Operations
 
-    /// Stores a new encryption canary encrypted with the provided cipher
-    static func storeEncryptionCanary(
+    /// Stores a new encryption verifier encrypted with the provided cipher
+    static func storeEncryptionVerifier(
         cipher: Cipher,
         dbHelper: CoreDataHelper
     ) {
-        guard let encryptedCanary = cipher.encrypt(kEncryptionCanaryValue) else {
-            Logger.e("Failed to encrypt canary value")
+        guard let encryptedVerifier = cipher.encrypt(kEncryptionVerifierValue) else {
+            Logger.e("Failed to encrypt verifier value")
             return
         }
 
         dbHelper.performAndWait {
-            updateGeneralInfoStringValue(dbHelper: dbHelper, info: .encryptionCanary, value: encryptedCanary)
+            updateGeneralInfoStringValue(dbHelper: dbHelper, info: .encryptionVerifier, value: encryptedVerifier)
         }
         dbHelper.save()
-        Logger.d("Encryption canary stored successfully")
+        Logger.d("Encryption verifier stored successfully")
     }
 
-    /// Deletes the encryption canary (synchronous)
-    static func deleteEncryptionCanary(dbHelper: CoreDataHelper) {
+    /// Deletes the encryption verifier (synchronous)
+    static func deleteEncryptionVerifier(dbHelper: CoreDataHelper) {
         dbHelper.performAndWait {
-            deleteGeneralInfoValue(dbHelper: dbHelper, info: .encryptionCanary)
+            deleteGeneralInfoValue(dbHelper: dbHelper, info: .encryptionVerifier)
         }
         dbHelper.save()
-        Logger.d("Encryption canary deleted")
+        Logger.d("Encryption verifier deleted")
     }
     
     // MARK: - Key Validation
     
-    /// Validates that the provided cipher can decrypt the stored canary.
-    /// For legacy installations (pre-canary), validates by attempting to decrypt actual data.
+    /// Validates that the provided cipher can decrypt the stored verifier.
+    /// For legacy installations (pre-verifier), validates by attempting to decrypt actual data.
     /// - Parameters:
     ///   - cipher: The cipher to validate
-    ///   - generalInfoDao: DAO for accessing GeneralInfo (canary storage)
+    ///   - generalInfoDao: DAO for accessing GeneralInfo (verifier storage)
     ///   - dbHelper: Optional CoreDataHelper for legacy validation (decrypting actual data)
     ///   - previousEncryptionLevel: The encryption level from previous run (for legacy detection)
     /// - Returns: `true` if validation passes, `false` if key is invalid
@@ -105,25 +105,25 @@ struct DbEncryptionManager {
         dbHelper: CoreDataHelper? = nil,
         previousEncryptionLevel: SplitEncryptionLevel = .none
     ) -> Bool {
-        // If canary exists, use it for validation
-        if let storedCanary = generalInfoDao.stringValue(info: .encryptionCanary) {
-            guard let decrypted = cipher.decrypt(storedCanary) else {
-                Logger.w("Encryption canary decryption failed. Key may be invalid")
+        // If verifier exists, use it for validation
+        if let storedVerifier = generalInfoDao.stringValue(info: .encryptionVerifier) {
+            guard let decrypted = cipher.decrypt(storedVerifier) else {
+                Logger.w("Encryption verifier decryption failed. Key may be invalid")
                 return false
             }
             
-            let isValid = decrypted == kEncryptionCanaryValue
+            let isValid = decrypted == kEncryptionVerifierValue
             if !isValid {
-                Logger.w("Encryption canary mismatch. Key is invalid")
+                Logger.w("Encryption verifier mismatch. Key is invalid")
             }
             return isValid
         }
         
-        // No canary exists:
+        // No verifier exists:
         // If previously encrypted and we have dbHelper, validate by decrypting actual data
-        // This handles legacy installations (pre-canary) with potentially corrupted keys
+        // This handles legacy installations (pre-verifier) with potentially corrupted keys
         if previousEncryptionLevel != .none, let dbHelper = dbHelper {
-            Logger.d("No canary found for previously encrypted database. Validating by decrypting data")
+            Logger.d("No verifier found for previously encrypted database. Validating by decrypting data")
             return validateKeyByDecryptingData(cipher: cipher, dbHelper: dbHelper)
         }
         
@@ -131,7 +131,7 @@ struct DbEncryptionManager {
         return true
     }
     
-    /// Validates cipher by attempting to decrypt existing data (for pre-canary/legacy installations)
+    /// Validates cipher by attempting to decrypt existing data (for pre-verifier/legacy installations)
     /// - Parameters:
     ///   - cipher: The cipher to validate
     ///   - dbHelper: CoreDataHelper for database operations
@@ -182,31 +182,31 @@ struct DbEncryptionManager {
         dbHelper: CoreDataHelper,
         generalInfoDao: GeneralInfoDao
     ) -> EncryptionValidationResult {
-        // Detect orphaned canary: canary exists but level says unencrypted
+        // Detect orphaned verifier: verifier exists but level says unencrypted
         // This can happen if Keychain level was cleared but database/key wasn't
         if previousLevel == .none,
-           let storedCanary = generalInfoDao.stringValue(info: .encryptionCanary) {
+           let storedVerifier = generalInfoDao.stringValue(info: .encryptionVerifier) {
             
-            // Try to validate canary with current key (might be existing valid key)
+            // Try to validate verifier with current key (might be existing valid key)
             if let key = currentKey {
                 let cipher = DefaultCipher(cipherKey: key)
-                if let decrypted = cipher.decrypt(storedCanary),
-                   decrypted == kEncryptionCanaryValue {
-                    // Canary validates! Data is encrypted with current key
+                if let decrypted = cipher.decrypt(storedVerifier),
+                   decrypted == kEncryptionVerifierValue {
+                    // Verifier validates! Data is encrypted with current key
                     // Restore encryption level to match reality
-                    Logger.w("Encryption level was lost but canary validates. Restoring encryption state")
+                    Logger.w("Encryption level was lost but verifier validates. Restoring encryption state")
                     setCurrentEncryptionLevel(.aes128Cbc, for: dbKey)
                     return EncryptionValidationResult(cipherKey: key, cipher: cipher, recoveryPerformed: false)
                 }
             }
             
-            // Either no key or canary doesn't validate - data is encrypted with unknown key
-            Logger.w("Encryption canary exists but cannot be validated. Initiating recovery")
+            // Either no key or verifier doesn't validate - data is encrypted with unknown key
+            Logger.w("Encryption verifier exists but cannot be validated. Initiating recovery")
             let (newKey, newCipher) = performRecovery(dbKey: dbKey, targetLevel: targetLevel, dbHelper: dbHelper)
             return EncryptionValidationResult(cipherKey: newKey, cipher: newCipher, recoveryPerformed: true)
         }
         
-        // No previous encryption and no orphaned canary - nothing to validate
+        // No previous encryption and no orphaned verifier - nothing to validate
         guard previousLevel != .none else {
             let cipher = currentKey.map { DefaultCipher(cipherKey: $0) }
             return EncryptionValidationResult(cipherKey: currentKey, cipher: cipher, recoveryPerformed: false)
@@ -243,7 +243,7 @@ struct DbEncryptionManager {
         targetLevel: SplitEncryptionLevel,
         dbHelper: CoreDataHelper
     ) -> (Data?, Cipher?) {
-        deleteEncryptionCanary(dbHelper: dbHelper)
+        deleteEncryptionVerifier(dbHelper: dbHelper)
         clearAllEncryptedEntities(dbHelper: dbHelper)
         
         // Only generate new key if encryption will be enabled
@@ -254,7 +254,7 @@ struct DbEncryptionManager {
         }
         
         let cipher = DefaultCipher(cipherKey: newKey)
-        storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+        storeEncryptionVerifier(cipher: cipher, dbHelper: dbHelper)
         setCurrentEncryptionLevel(targetLevel, for: dbKey)
         return (newKey, cipher)
     }
@@ -277,18 +277,18 @@ struct DbEncryptionManager {
             setCurrentEncryptionLevel(targetLevel, for: dbKey)
             if targetLevel != .none {
                 let cipherToUse = cipher ?? DefaultCipher(cipherKey: dbCipherKey)
-                storeEncryptionCanary(cipher: cipherToUse, dbHelper: dbHelper)
+                storeEncryptionVerifier(cipher: cipherToUse, dbHelper: dbHelper)
             } else {
-                deleteEncryptionCanary(dbHelper: dbHelper)
+                deleteEncryptionVerifier(dbHelper: dbHelper)
             }
         }
-        // Edge case: Encryption enabled, levels match, but no canary
+        // Edge case: Encryption enabled, levels match, but no verifier
         if targetLevel != .none,
-           generalInfoDao.stringValue(info: .encryptionCanary) == nil {
+           generalInfoDao.stringValue(info: .encryptionVerifier) == nil {
             if let cipher = cipher {
-                storeEncryptionCanary(cipher: cipher, dbHelper: dbHelper)
+                storeEncryptionVerifier(cipher: cipher, dbHelper: dbHelper)
             } else if let key = cipherKey ?? currentEncryptionKey(for: dbKey) {
-                storeEncryptionCanary(cipher: DefaultCipher(cipherKey: key), dbHelper: dbHelper)
+                storeEncryptionVerifier(cipher: DefaultCipher(cipherKey: key), dbHelper: dbHelper)
             }
         }
     }
