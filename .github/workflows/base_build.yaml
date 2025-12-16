@@ -14,13 +14,13 @@ on:
 
 jobs:
   build:
-    runs-on: [macos-14]
+    runs-on: [macos-latest]
 
     steps:
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: 15.4.0
+          xcode-version: 16
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
         uses: sersoft-gmbh/xcodebuild-action@v3
         with:
           action: build
-          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO
+          build-settings: ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO SWIFT_VERSION=5.9
           configuration: Debug
           derived-data-path: "${{ github.workspace }}/SplitApp"
           destination: ${{ inputs.destination }}

@@ -94,6 +94,7 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
         statsRecorder.queue = DispatchQueue(label: "pepe")
         let queue = DispatchQueue(label: "concurrent-test", attributes: .concurrent)
         let group = DispatchGroup()
+        let expectation = self.expectation(description: "Concurrent flush finished")
 
         for _ in 0..<6 {
             group.enter()
@@ -110,6 +111,9 @@ class TelemetryStatsRecorderWorkerTests: XCTestCase {
             XCTAssertEqual(6, self.mySegmentsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.myLargeSegmentsStorage.getCountCalledCount)
             XCTAssertEqual(6, self.telemetryStorage.popTagsCallCount)
+            expectation.fulfill()
         }
+        
+        waitForExpectations(timeout: 5)
     }
 }
