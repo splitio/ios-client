@@ -20,6 +20,8 @@ class MySegmentsStorageStub: MySegmentsStorage {
     var getCountByKeyCalledCount = 0
     var getCountCalledCount = 0
     var changeNumber: Int64 = -1
+    
+    var lock = NSLock()
 
     var keys: Set<String> {
         return Set(segments.keys.map { $0 })
@@ -69,6 +71,8 @@ class MySegmentsStorageStub: MySegmentsStorage {
     }
 
     func getCount() -> Int {
+        lock.lock()
+        defer { lock.unlock() }
         getCountCalledCount+=1
         var count = 0
         for (_, value) in segments {

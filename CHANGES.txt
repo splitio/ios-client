@@ -1,3 +1,6 @@
+3.5.0: (Dec 11, 2025)
+- Added Status Handler to Certificate Pinning. This allows to observe the status of a pinning verification, whether it succeeds or not. Read more in our docs.
+
 3.4.2: (oct. 22, 2025)
 - Fixed streaming reconnection after connection was interrupted.
 
