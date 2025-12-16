@@ -539,6 +539,7 @@
 		95649FBA2603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95649FB92603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift */; };
 		95649FBE260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95649FBD260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift */; };
 		9566744729F03662001B4FA5 /* DbCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8229D23F9600A1B2F9 /* DbCipher.swift */; };
+		CD311117BB394A70AD6057CD04272DF2 /* DbEncryptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */; };
 		9566744829F03675001B4FA5 /* SplitEncryptionLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */; };
 		956816BE2836C91B00206FC5 /* UniqueKeyTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956816BD2836C91B00206FC5 /* UniqueKeyTracker.swift */; };
 		9569E1CB2784C00B006FC7E5 /* TelemetryConfigHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9569E1CA2784C00B006FC7E5 /* TelemetryConfigHelper.swift */; };
@@ -1090,6 +1091,8 @@
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
 		C514F6B62BEA6F1F00C8DF78 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */; };
 		C526DE4C2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C526DE4B2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift */; };
+		C52C57292EEB41350064D049 /* EncryptionKeyValidationIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52C57282EEB41350064D049 /* EncryptionKeyValidationIntegrationTest.swift */; };
+		C52C572B2EEB41450064D049 /* EncryptionKeyValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52C572A2EEB41450064D049 /* EncryptionKeyValidationTest.swift */; };
 		C539CAB62D88C1F10050C732 /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
 		C539CABE2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */; };
 		C539CABF2D88C7410050C732 /* RuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */; };
@@ -1755,6 +1758,7 @@
 		956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsChangesCheckerTest.swift; sourceTree = "<group>"; };
 		956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsChangeChecker.swift; sourceTree = "<group>"; };
 		95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEncryptionLevel.swift; sourceTree = "<group>"; };
+		5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbEncryptionManager.swift; sourceTree = "<group>"; };
 		95715A8229D23F9600A1B2F9 /* DbCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbCipher.swift; sourceTree = "<group>"; };
 		95715A8429D353C100A1B2F9 /* DbCipherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbCipherTest.swift; sourceTree = "<group>"; };
 		95715A9429DB0ED800A1B2F9 /* InitDbCipherTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitDbCipherTest.swift; sourceTree = "<group>"; };
@@ -1994,6 +1998,8 @@
 		95F8F06728170473009E09B1 /* multi_client_test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = multi_client_test.json; sourceTree = "<group>"; };
 		C514F6B52BEA6F1F00C8DF78 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
 		C526DE4B2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsPropertiesE2ETest.swift; sourceTree = "<group>"; };
+		C52C57282EEB41350064D049 /* EncryptionKeyValidationIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionKeyValidationIntegrationTest.swift; sourceTree = "<group>"; };
+		C52C572A2EEB41450064D049 /* EncryptionKeyValidationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionKeyValidationTest.swift; sourceTree = "<group>"; };
 		C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegment.swift; sourceTree = "<group>"; };
 		C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentsStorage.swift; sourceTree = "<group>"; };
 		C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsStorage.swift; sourceTree = "<group>"; };
@@ -2604,6 +2610,7 @@
 				9595911026DFFF87009E7944 /* CompressionUtil.swift */,
 				95125624276B72B60091895B /* Stopwatch.swift */,
 				95715A8229D23F9600A1B2F9 /* DbCipher.swift */,
+				5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */,
 				C5A3F51E2BEBD893009FACD3 /* Spec.swift */,
 				95F7BC182C36DE2300C5F2E4 /* FileUtil.swift */,
 			);
@@ -2669,6 +2676,7 @@
 		5905D4E3255B2373006DA3B1 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				C52C572A2EEB41450064D049 /* EncryptionKeyValidationTest.swift */,
 				599407DF22403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift */,
 				59F65F002562FF71005FE8C9 /* EventDaoTest.swift */,
 				95BC77ED28368FF1008E14BF /* UniqueKeyDaoTest.swift */,
@@ -3066,6 +3074,7 @@
 		599A6E3222FC67BF00D3D68C /* Integration */ = {
 			isa = PBXGroup;
 			children = (
+				C52C57282EEB41350064D049 /* EncryptionKeyValidationIntegrationTest.swift */,
 				C55E82D82EE8E8A300777A06 /* CertificatePinning */,
 				952FA1382A320B5900264AB5 /* Api */,
 				952FA1372A320B3300264AB5 /* Recorder */,
@@ -4225,6 +4234,7 @@
 				9519A93827DE2AE600278AEC /* ByKeyFacade.swift in Sources */,
 				C5A3F51F2BEBD893009FACD3 /* Spec.swift in Sources */,
 				95715A8329D23F9600A1B2F9 /* DbCipher.swift in Sources */,
+				CD311117BB394A70AD6057CD04272DF2 /* DbEncryptionManager.swift in Sources */,
 				595AD25724E56E6200A7B750 /* EventStreamParser.swift in Sources */,
 				3B6DEF2820EA6AE50067435E /* Impression.swift in Sources */,
 				9500D9A92C59297400383593 /* HostDomainFilter.swift in Sources */,
@@ -4795,6 +4805,7 @@
 				95715A9729DB16A000A1B2F9 /* SecureStorageStub.swift in Sources */,
 				955423A726794C58002278D5 /* LRUCacheTest.swift in Sources */,
 				596A7B622343F848004F6139 /* MySegmentUpadatedTest.swift in Sources */,
+				C52C57292EEB41350064D049 /* EncryptionKeyValidationIntegrationTest.swift in Sources */,
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				95B180272763DA0E002DC9DF /* HttpTelemetryConfigRecorderTest.swift in Sources */,
 				C5977C202BF29F5B003E293A /* EqualToSemverMatcherTest.swift in Sources */,
@@ -4838,6 +4849,7 @@
 				9560354927D100A500E35BC8 /* ByKeyMySegmentsStorageTests.swift in Sources */,
 				C5977C572BF53D60003E293A /* UnsupportedMatcherIntegrationTest.swift in Sources */,
 				95B1800527626C70002DC9DF /* TelemetryConfigRecorderWorkerTests.swift in Sources */,
+				C52C572B2EEB41450064D049 /* EncryptionKeyValidationTest.swift in Sources */,
 				95ABF4C6293522D6006ED016 /* EventsTrackerTest.swift in Sources */,
 				C53F3C472DCB956900655753 /* SplitsSyncHelperTest.swift in Sources */,
 				95ABF4C829352425006ED016 /* EventValidatorStub.swift in Sources */,
@@ -5169,6 +5181,7 @@
 				95B02D9B28D0BDC30030EC8B /* DataResult.swift in Sources */,
 				958AD2132CA457C100E3DD43 /* RetryableSegmentsSyncWorker.swift in Sources */,
 				9566744729F03662001B4FA5 /* DbCipher.swift in Sources */,
+				CD311117BB394A70AD6057CD04272DF2 /* DbEncryptionManager.swift in Sources */,
 				95B02D9C28D0BDC30030EC8B /* ServiceEndpoints.swift in Sources */,
 				95B02D9D28D0BDC30030EC8B /* Endpoint.swift in Sources */,
 				95B02D9E28D0BDC30030EC8B /* EndpointFactory.swift in Sources */,
