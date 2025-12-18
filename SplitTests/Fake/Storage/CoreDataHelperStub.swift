@@ -11,6 +11,7 @@ class CoreDataHelperStub: CoreDataHelper {
     
     var shouldFailOnSave = false
     var saveError: Error = NSError(domain: "TestCoreData", code: 500, userInfo: [NSLocalizedDescriptionKey: "Simulated save failure"])
+    var rollbackCalled = false
     
     init() {
         let model = NSManagedObjectModel()
@@ -38,6 +39,10 @@ class CoreDataHelperStub: CoreDataHelper {
             throw saveError
         }
         // Success
+    }
+
+    override func rollback() {
+        rollbackCalled = true
     }
 }
 

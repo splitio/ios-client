@@ -80,5 +80,26 @@ class CoreDataHelperTests: XCTestCase {
         // Context without persistent store should not throw when there are no changes
         XCTAssertNoThrow(try invalidHelper.saveWithErrorHandling())
     }
+
+    func testRollbackClearsInvalidPendingChangesAndAllowsNextSave() {
+        // Create an invalid entity that will cause a validation failure on save.
+        coreDataHelper.performAndWait {
+            _ = self.coreDataHelper.create(entity: .generalInfo)
+        }
+
+        XCTAssertThrowsError(try coreDataHelper.saveWithErrorHandling())
+
+        // Rollback should clear the invalid pending changes so future saves can succeed.
+        coreDataHelper.rollback()
+
+        coreDataHelper.performAndWait {
+            if let entity = self.coreDataHelper.create(entity: .generalInfo) as? GeneralInfoEntity {
+                entity.name = "post_rollback_ok"
+                entity.stringValue = "value"
+            }
+        }
+
+        XCTAssertNoThrow(try coreDataHelper.saveWithErrorHandling())
+    }
 }
 

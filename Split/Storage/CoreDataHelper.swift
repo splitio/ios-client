@@ -122,6 +122,14 @@ class CoreDataHelper {
         }
     }
 
+    /// Roll back any unsaved changes in the managed object context.
+    /// Useful after a failed save(), to prevent the context from keeping invalid pending changes.
+    func rollback() {
+        managedObjectContext.performAndWait {
+            self.managedObjectContext.rollback()
+        }
+    }
+
     private func delete(entity: CoreDataEntity, predicate: NSPredicate? = nil) {
 
         managedObjectContext.performAndWait {
