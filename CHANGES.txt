@@ -1,3 +1,6 @@
+3.5.1: (Dec 17, 2025)
+- Fixed issue in encryption mode where SDK cache functionality could not be recovered if the encryption key was removed.
+
 3.5.0: (Dec 11, 2025)
 - Added Status Handler to Certificate Pinning. This allows to observe the status of a pinning verification, whether it succeeds or not. Read more in our docs.
 
