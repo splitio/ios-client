@@ -243,14 +243,19 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         }
         wait(for: [checkExp], timeout: 3)
         
-        // 2. Disable encryption
+        // 2. Create a fresh dbHelper
+        dbHelper = IntegrationCoreDataHelper.get(databaseName: testDbName,
+                                                  dispatchQueue: DispatchQueue.global())
+        let freshGeneralInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
+        
+        // 3. Disable encryption
         let factory = createFactory(encryptionEnabled: false)
         waitForReady(factory: factory)
         
-        // 3. Verify verifier is removed
+        // 4. Verify verifier is removed
         let verifyExp = expectation(description: "Verifier removed")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1.0) {
-            XCTAssertNil(generalInfoDao.stringValue(info: .encryptionVerifier))
+            XCTAssertNil(freshGeneralInfoDao.stringValue(info: .encryptionVerifier))
             verifyExp.fulfill()
         }
         wait(for: [verifyExp], timeout: 3)
