@@ -312,7 +312,6 @@ class BackgroundSyncSplitsStorage: SyncSplitsStorage {
     }
 
     func update(splitChange: ProcessedSplitChange) -> Bool {
-        // Background sync doesn't use the breaker - it just persists directly
         // If persistence fails, it will be logged but won't trigger breaker
         persistentStorage.update(splitChange: splitChange, onFailure: nil)
         return true
