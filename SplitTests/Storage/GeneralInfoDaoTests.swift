@@ -63,6 +63,47 @@ class GeneralInfoDaoTest: XCTestCase {
         
         XCTAssertEqual(data, segmentsInUse)
     }
+    
+    func testTransactionalUpdateDoesNotSaveUntilCallerSaves() {
+        guard let coreDataDao = generalInfoDao as? CoreDataGeneralInfoDao else {
+            XCTFail("Expected CoreDataGeneralInfoDao")
+            return
+        }
+        
+        coreDataDao.coreDataHelper.performAndWait {
+            coreDataDao.transactionalUpdate(info: .splitsChangeNumber, longValue: 999)
+        }
+        
+        // Value should be in context but we need to save to persist
+        coreDataDao.coreDataHelper.save()
+        
+        let savedValue = generalInfoDao.longValue(info: .splitsChangeNumber)
+        XCTAssertEqual(999, savedValue)
+    }
+    
+    func testTransactionalUpdateUpdatesExistingValue() {
+        guard let coreDataDao = generalInfoDao as? CoreDataGeneralInfoDao else {
+            XCTFail("Expected CoreDataGeneralInfoDao")
+            return
+        }
+        
+        // Create initial value
+        generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 100)
+        
+        // Wait for async save to complete
+        let exp = expectation(description: "wait for save")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { exp.fulfill() }
+        wait(for: [exp], timeout: 1.0)
+        
+        // Transactionally update
+        coreDataDao.coreDataHelper.performAndWait {
+            coreDataDao.transactionalUpdate(info: .splitsUpdateTimestamp, longValue: 200)
+        }
+        coreDataDao.coreDataHelper.save()
+        
+        let updatedValue = generalInfoDao.longValue(info: .splitsUpdateTimestamp)
+        XCTAssertEqual(200, updatedValue)
+    }
 
     override func tearDown() {
     }

@@ -154,6 +154,85 @@ class SplitDaoTest: XCTestCase {
         return (name: name, body: body)
     }
     
+    func testTransactionalInsertOrUpdateDoesNotSaveUntilCallerSaves() {
+        guard let coreDataDao = splitDao as? CoreDataSplitDao else {
+            XCTFail("Expected CoreDataSplitDao")
+            return
+        }
+        
+        let newSplits = [newSplit(name: "transactional_split_1", trafficType: "user")]
+        
+        coreDataDao.coreDataHelper.performAndWait {
+            try? coreDataDao.transactionalInsertOrUpdate(splits: newSplits)
+        }
+        
+        // Save manually
+        coreDataDao.coreDataHelper.save()
+        
+        let allSplits = splitDao.getAll()
+        let found = allSplits.first { $0.name == "transactional_split_1" }
+        
+        XCTAssertNotNil(found)
+        XCTAssertEqual("user", found?.trafficTypeName)
+    }
+    
+    func testTransactionalInsertOrUpdateUpdatesExisting() {
+        guard let coreDataDao = splitDao as? CoreDataSplitDao else {
+            XCTFail("Expected CoreDataSplitDao")
+            return
+        }
+        
+        // feat_0 was created in setUp
+        let updatedSplit = newSplit(name: "feat_0", trafficType: "updated_type")
+        
+        coreDataDao.coreDataHelper.performAndWait {
+            try? coreDataDao.transactionalInsertOrUpdate(splits: [updatedSplit])
+        }
+        coreDataDao.coreDataHelper.save()
+        
+        let allSplits = splitDao.getAll()
+        let found = allSplits.first { $0.name == "feat_0" }
+        
+        XCTAssertNotNil(found)
+        XCTAssertEqual("updated_type", found?.trafficTypeName)
+    }
+    
+    func testTransactionalDeleteDoesNotSaveUntilCallerSaves() {
+        guard let coreDataDao = splitDao as? CoreDataSplitDao else {
+            XCTFail("Expected CoreDataSplitDao")
+            return
+        }
+        
+        let beforeCount = splitDao.getAll().count
+        
+        coreDataDao.coreDataHelper.performAndWait {
+            coreDataDao.transactionalDelete(["feat_0", "feat_1"])
+        }
+        coreDataDao.coreDataHelper.save()
+        
+        let afterCount = splitDao.getAll().count
+        
+        XCTAssertEqual(beforeCount - 2, afterCount)
+    }
+    
+    func testTransactionalDeleteWithEmptyArrayDoesNothing() {
+        guard let coreDataDao = splitDao as? CoreDataSplitDao else {
+            XCTFail("Expected CoreDataSplitDao")
+            return
+        }
+        
+        let beforeCount = splitDao.getAll().count
+        
+        coreDataDao.coreDataHelper.performAndWait {
+            coreDataDao.transactionalDelete([])
+        }
+        coreDataDao.coreDataHelper.save()
+        
+        let afterCount = splitDao.getAll().count
+        
+        XCTAssertEqual(beforeCount, afterCount)
+    }
+    
     private func createSplits() -> [Split] {
         return SplitTestHelper.createSplits(namePrefix: "feat_", count: 10)
     }

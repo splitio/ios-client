@@ -19,10 +19,25 @@ class CoreDataHelperTests: XCTestCase {
     
     func testSaveWithErrorHandlingSucceedsWhenChangesExist() {
         coreDataHelper.performAndWait {
-            _ = self.coreDataHelper.create(entity: .generalInfo)
+            if let entity = self.coreDataHelper.create(entity: .generalInfo) as? GeneralInfoEntity {
+                entity.name = "test_info"
+                entity.stringValue = "test_value"
+            }
         }
         
         XCTAssertNoThrow(try coreDataHelper.saveWithErrorHandling())
+    }
+    
+    func testSaveWithErrorHandlingThrowsOnValidationError() {
+        coreDataHelper.performAndWait {
+            // Create entity without required 'name' field to trigger validation error
+            _ = self.coreDataHelper.create(entity: .generalInfo)
+        }
+        
+        XCTAssertThrowsError(try coreDataHelper.saveWithErrorHandling()) { error in
+            let nsError = error as NSError
+            XCTAssertEqual(NSValidationMissingMandatoryPropertyError, nsError.code)
+        }
     }
     
     func testSaveWithErrorHandlingSucceedsWhenNoChanges() {
