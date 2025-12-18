@@ -65,6 +65,21 @@ class PersistentSplitsStorageTransactionalTests: XCTestCase {
         XCTAssertNotNil(reportedError, "Error should be reported")
     }
 
+    func testRollbackIsInvokedOnSaveError() {
+        coreDataHelperStub.shouldFailOnSave = true
+
+        let change = ProcessedSplitChange(
+            activeSplits: [createSplit(name: "split1")],
+            archivedSplits: [],
+            changeNumber: 100,
+            updateTimestamp: 1000
+        )
+
+        splitsStorage.update(splitChange: change, onFailure: { _ in })
+
+        XCTAssertTrue(coreDataHelperStub.rollbackCalled, "Rollback should be invoked when transactional save fails")
+    }
+
     func testNilFailureCallbackIsHandled() {
         let change = ProcessedSplitChange(
             activeSplits: [createSplit(name: "split1")],

@@ -38,8 +38,9 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
     }
 
     func update(splitChange: ProcessedSplitChange, onFailure: ((Error) -> Void)? = nil) {
-        // Execute transactionally: all operations must succeed or all must fail
-        coreDataHelper.performAndWait { [weak self] in
+        // This is intentionally async to avoid blocking the caller thread.
+        // All operations must succeed or all must fail.
+        coreDataHelper.perform { [weak self] in
             guard let self = self else { return }
             
             do {
@@ -55,6 +56,8 @@ class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
                 try self.coreDataHelper.saveWithErrorHandling()
             } catch {
                 Logger.e("Transactional flags update failed: \(error.localizedDescription)")
+                // Rollback to avoid leaving invalid pending changes in the shared context,
+                self.coreDataHelper.rollback()
                 onFailure?(error)
             }
         }
