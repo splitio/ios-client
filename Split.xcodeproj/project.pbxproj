@@ -539,7 +539,6 @@
 		95649FBA2603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95649FB92603F89E006D5E0C /* SplitsBgSyncWorkerTest.swift */; };
 		95649FBE260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95649FBD260405C7006D5E0C /* MySegmentsBgSyncWorkerTest.swift */; };
 		9566744729F03662001B4FA5 /* DbCipher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8229D23F9600A1B2F9 /* DbCipher.swift */; };
-		CD311117BB394A70AD6057CD04272DF2 /* DbEncryptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */; };
 		9566744829F03675001B4FA5 /* SplitEncryptionLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */; };
 		956816BE2836C91B00206FC5 /* UniqueKeyTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956816BD2836C91B00206FC5 /* UniqueKeyTracker.swift */; };
 		9569E1CB2784C00B006FC7E5 /* TelemetryConfigHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9569E1CA2784C00B006FC7E5 /* TelemetryConfigHelper.swift */; };
@@ -1093,6 +1092,10 @@
 		C526DE4C2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C526DE4B2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift */; };
 		C52C57292EEB41350064D049 /* EncryptionKeyValidationIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52C57282EEB41350064D049 /* EncryptionKeyValidationIntegrationTest.swift */; };
 		C52C572B2EEB41450064D049 /* EncryptionKeyValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52C572A2EEB41450064D049 /* EncryptionKeyValidationTest.swift */; };
+		C53207E72EF44A0700418BB1 /* DbEncryptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */; };
+		C53207E92EF44A2100418BB1 /* PersistenceBreakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207E82EF44A2100418BB1 /* PersistenceBreakerTests.swift */; };
+		C53207EB2EF44A2F00418BB1 /* PersistenceBreaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207EA2EF44A2F00418BB1 /* PersistenceBreaker.swift */; };
+		C53207EC2EF44A2F00418BB1 /* PersistenceBreaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207EA2EF44A2F00418BB1 /* PersistenceBreaker.swift */; };
 		C539CAB62D88C1F10050C732 /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
 		C539CABE2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */; };
 		C539CABF2D88C7410050C732 /* RuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */; };
@@ -1196,6 +1199,7 @@
 		C5E9675F2D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */; };
 		C5E967602D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */; };
 		C5E967622D395DAA00112DAC /* RolloutCacheManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967612D395DAA00112DAC /* RolloutCacheManagerTest.swift */; };
+		CD311117BB394A70AD6057CD04272DF2 /* DbEncryptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1572,6 +1576,7 @@
 		59FB7C34220329B900ECC96A /* SplitFactoryBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitFactoryBuilderTests.swift; sourceTree = "<group>"; };
 		59FB7C3B2203795F00ECC96A /* LocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
+		5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbEncryptionManager.swift; sourceTree = "<group>"; };
 		5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitschanges_no_segments.json; sourceTree = "<group>"; };
 		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
@@ -1758,7 +1763,6 @@
 		956D17D0260D266E0037F575 /* SplitsChangesCheckerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsChangesCheckerTest.swift; sourceTree = "<group>"; };
 		956D17D6260D28320037F575 /* MySegmentsChangeChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MySegmentsChangeChecker.swift; sourceTree = "<group>"; };
 		95715A8029D22C1B00A1B2F9 /* SplitEncryptionLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEncryptionLevel.swift; sourceTree = "<group>"; };
-		5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbEncryptionManager.swift; sourceTree = "<group>"; };
 		95715A8229D23F9600A1B2F9 /* DbCipher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbCipher.swift; sourceTree = "<group>"; };
 		95715A8429D353C100A1B2F9 /* DbCipherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbCipherTest.swift; sourceTree = "<group>"; };
 		95715A9429DB0ED800A1B2F9 /* InitDbCipherTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitDbCipherTest.swift; sourceTree = "<group>"; };
@@ -2000,6 +2004,8 @@
 		C526DE4B2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsPropertiesE2ETest.swift; sourceTree = "<group>"; };
 		C52C57282EEB41350064D049 /* EncryptionKeyValidationIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionKeyValidationIntegrationTest.swift; sourceTree = "<group>"; };
 		C52C572A2EEB41450064D049 /* EncryptionKeyValidationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionKeyValidationTest.swift; sourceTree = "<group>"; };
+		C53207E82EF44A2100418BB1 /* PersistenceBreakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceBreakerTests.swift; sourceTree = "<group>"; };
+		C53207EA2EF44A2F00418BB1 /* PersistenceBreaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceBreaker.swift; sourceTree = "<group>"; };
 		C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegment.swift; sourceTree = "<group>"; };
 		C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentsStorage.swift; sourceTree = "<group>"; };
 		C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsStorage.swift; sourceTree = "<group>"; };
@@ -2637,6 +2643,7 @@
 		3B6DEF0720EA6AE40067435E /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				C53207EA2EF44A2F00418BB1 /* PersistenceBreaker.swift */,
 				C5A501C72D88A15600206F82 /* RuleBasedSegments */,
 				955E122F2BFBC90700AE6D10 /* HashedImpression */,
 				952E266E2833E4210015D633 /* UniqueKeys */,
@@ -2676,6 +2683,7 @@
 		5905D4E3255B2373006DA3B1 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				C53207E82EF44A2100418BB1 /* PersistenceBreakerTests.swift */,
 				C52C572A2EEB41450064D049 /* EncryptionKeyValidationTest.swift */,
 				599407DF22403BE9003B85CC /* SplitsStorageTrafficTypesTests.swift */,
 				59F65F002562FF71005FE8C9 /* EventDaoTest.swift */,
@@ -4416,6 +4424,7 @@
 				5905D4D82555FE74006DA3B1 /* SplitDatabase.swift in Sources */,
 				952FA12B2A2E593900264AB5 /* SplitComponentCatalog.swift in Sources */,
 				5BD767402E64B6F800F9EFBD /* FallbackTreatmentsCalculator.swift in Sources */,
+				C53207EB2EF44A2F00418BB1 /* PersistenceBreaker.swift in Sources */,
 				59B2042724F4171E0092F2E9 /* SyncUpdateWorker.swift in Sources */,
 				955428D6256810D300331356 /* ImpressionDao.swift in Sources */,
 				950B7417268F4716005FD649 /* ImpressionsMode.swift in Sources */,
@@ -4656,6 +4665,7 @@
 				9502B7B42837E70200B779C0 /* UniqueTrackerTest.swift in Sources */,
 				952BF5F8278DF57D00FF6181 /* TelemetryIntegrationTest.swift in Sources */,
 				59F4AAA124FFC94100A1C69A /* NotificationManagerKeeperTest.swift in Sources */,
+				C53207E92EF44A2100418BB1 /* PersistenceBreakerTests.swift in Sources */,
 				955E12372BFCDEAC00AE6D10 /* HashedImpressionDaoMock.swift in Sources */,
 				95ABF4FC29369B73006ED016 /* TelemetrySynchronizerStub.swift in Sources */,
 				5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */,
@@ -5181,7 +5191,8 @@
 				95B02D9B28D0BDC30030EC8B /* DataResult.swift in Sources */,
 				958AD2132CA457C100E3DD43 /* RetryableSegmentsSyncWorker.swift in Sources */,
 				9566744729F03662001B4FA5 /* DbCipher.swift in Sources */,
-				CD311117BB394A70AD6057CD04272DF2 /* DbEncryptionManager.swift in Sources */,
+				C53207E72EF44A0700418BB1 /* DbEncryptionManager.swift in Sources */,
+				C53207EC2EF44A2F00418BB1 /* PersistenceBreaker.swift in Sources */,
 				95B02D9C28D0BDC30030EC8B /* ServiceEndpoints.swift in Sources */,
 				95B02D9D28D0BDC30030EC8B /* Endpoint.swift in Sources */,
 				95B02D9E28D0BDC30030EC8B /* EndpointFactory.swift in Sources */,
