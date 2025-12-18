@@ -132,10 +132,7 @@ class DefaultSplitsStorage: SplitsStorage {
     func clear() {
         inMemorySplits.removeAll()
         changeNumber = -1
-        // Only call persistence if breaker allows
-        if persistenceBreaker.isPersistenceEnabled {
-            persistentStorage.clear()
-        }
+        persistentStorage.clear()
     }
 
     func getCount() -> Int {
