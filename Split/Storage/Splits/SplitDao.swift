@@ -16,6 +16,14 @@ protocol SplitDao {
     func delete(_ splits: [String])
     func deleteAll()
     func syncInsertOrUpdate(split: Split)
+
+    /// Synchronous insert/update for use in transactions
+    /// Caller must call coreDataHelper.saveWithErrorHandling()
+    func transactionalInsertOrUpdate(splits: [Split])
+
+    /// Synchronous delete for use in transactions
+    /// Caller must call coreDataHelper.saveWithErrorHandling()
+    func transactionalDelete(_ splitNames: [String])
 }
 
 class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
@@ -110,6 +118,33 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
             }
             self.coreDataHelper.deleteAll(entity: .split)
         }
+    }
+
+    /// Synchronous insert/update that does NOT save
+    func transactionalInsertOrUpdate(splits: [Split]) {
+        let parsed = self.encoder.encode(splits)
+        for (name, json) in parsed {
+            if let obj = self.getBy(name: name) ?? self.coreDataHelper.create(entity: .split) as? SplitEntity {
+                obj.name = name
+                obj.body = json
+                obj.updatedAt = Date.now()
+                // Do NOT save here. Caller should save the entire transaction
+            }
+        }
+    }
+
+    /// Synchronous delete that does NOT save
+    func transactionalDelete(_ splitNames: [String]) {
+        if splitNames.count == 0 {
+            return
+        }
+
+        var names = splitNames
+        if let cipher = self.cipher {
+            names = splitNames.map { cipher.encrypt($0) ?? $0 }
+        }
+        self.coreDataHelper.delete(entity: .split, by: "name", values: names)
+        // Do NOT save here. Caller should save the entire transaction
     }
 
     private func insertOrUpdate(_ split: Split) {

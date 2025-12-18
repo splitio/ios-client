@@ -31,7 +31,7 @@ class PersistentSplitsStorageTest: XCTestCase {
         let archivedSplits = [newSplit(name: "ar1", trafficType: "t2", status: .archived), newSplit(name: "ar2", trafficType: "t2", status: .archived)]
         let change = ProcessedSplitChange(activeSplits: activeSplits, archivedSplits: archivedSplits, changeNumber: 100, updateTimestamp: 200)
         
-        splitsStorage.update(splitChange: change)
+        splitsStorage.update(splitChange: change, onFailure: nil)
         
         XCTAssertEqual(3, splitDao.insertedSplits.count)
         XCTAssertEqual(2, splitDao.deletedSplits?.count)

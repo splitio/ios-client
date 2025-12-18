@@ -36,18 +36,21 @@ class DefaultSplitsStorage: SplitsStorage {
     private var trafficTypes: SynchronizedDictionary<String, Int>
     private let flagSetsCache: FlagSetsCache
     private let generalInfoStorage: GeneralInfoStorage
+    private let persistenceBreaker: PersistenceBreaker
     
     private(set) var changeNumber: Int64 = -1
     private(set) var updateTimestamp: Int64 = -1
 
     init(persistentSplitsStorage: PersistentSplitsStorage,
          flagSetsCache: FlagSetsCache,
-         GeneralInfoStorage: GeneralInfoStorage) {
+         generalInfoStorage: GeneralInfoStorage,
+         persistenceBreaker: PersistenceBreaker) {
         self.persistentStorage = persistentSplitsStorage
         self.inMemorySplits = SynchronizedDictionary()
         self.trafficTypes = SynchronizedDictionary()
         self.flagSetsCache = flagSetsCache
-        self.generalInfoStorage = GeneralInfoStorage
+        self.generalInfoStorage = generalInfoStorage
+        self.persistenceBreaker = persistenceBreaker
     }
 
     func loadLocal() {
@@ -86,26 +89,39 @@ class DefaultSplitsStorage: SplitsStorage {
 
     func update(splitChange: ProcessedSplitChange) -> Bool {
         
-        // Process
+        // Process in-memory updates (always happens)
         let updated = processUpdated(splits: splitChange.activeSplits, active: true)
         let removed = processUpdated(splits: splitChange.archivedSplits, active: false)
 
-        // Update
+        // Update in-memory metadata (always happens)
         changeNumber = splitChange.changeNumber
         updateTimestamp = splitChange.updateTimestamp
-        persistentStorage.update(splitChange: splitChange)
+
+        // Attempt persistence only if breaker allows
+        if persistenceBreaker.isPersistenceEnabled {
+            persistentStorage.update(splitChange: splitChange, onFailure: { [weak self] _ in
+                // On first failure, disable persistence for remainder of session
+                self?.persistenceBreaker.disable()
+            })
+        }
 
         return updated || removed
     }
 
     func update(bySetsFilter filter: SplitFilter?) {
-        self.persistentStorage.update(bySetsFilter: filter)
+        // Only call persistence if breaker allows
+        if persistenceBreaker.isPersistenceEnabled {
+            self.persistentStorage.update(bySetsFilter: filter)
+        }
     }
 
     func updateWithoutChecks(split: Split) {
         if let splitName = split.name?.lowercased() {
             inMemorySplits.setValue(split, forKey: splitName)
-            persistentStorage.update(split: split)
+            // Only call persistence if breaker allows
+            if persistenceBreaker.isPersistenceEnabled {
+                persistentStorage.update(split: split)
+            }
         }
     }
 
@@ -296,7 +312,8 @@ class BackgroundSyncSplitsStorage: SyncSplitsStorage {
     }
 
     func update(splitChange: ProcessedSplitChange) -> Bool {
-        persistentStorage.update(splitChange: splitChange)
+        // If persistence fails, it will be logged but won't trigger breaker
+        persistentStorage.update(splitChange: splitChange, onFailure: nil)
         return true
     }
 
