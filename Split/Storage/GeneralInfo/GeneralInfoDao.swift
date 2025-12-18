@@ -28,6 +28,10 @@ protocol GeneralInfoDao {
     func stringValue(info: GeneralInfo) -> String?
     func longValue(info: GeneralInfo) -> Int64?
     func delete(info: GeneralInfo)
+
+    /// Synchronous update for use in transactions.
+    /// Caller must call coreDataHelper.saveWithErrorHandling() after all ops
+    func transactionalUpdate(info: GeneralInfo, longValue: Int64)
 }
 
 class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
@@ -83,6 +87,17 @@ class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
             }
             self.coreDataHelper.delete(entity: .generalInfo, by: "name", values: [info.rawValue])
             self.coreDataHelper.save()
+        }
+    }
+
+    /// Synchronous update that does NOT save. Caller must save. For use in transactions
+    func transactionalUpdate(info: GeneralInfo, longValue: Int64) {
+        if let obj = get(for: info) ?? coreDataHelper.create(entity: .generalInfo) as? GeneralInfoEntity {
+            obj.name = info.rawValue
+            obj.stringValue = ""
+            obj.longValue = longValue
+            obj.updatedAt = Date().unixTimestamp()
+            // Not saving. Caller will save the entire transaction
         }
     }
 

@@ -37,7 +37,7 @@ struct CoreDataDaoProviderMock: DaoProvider {
     var ruleBasedSegmentDao: RuleBasedSegmentDao = RuleBasedSegmentDaoStub()
 }
 
-class SplitDatabaseStub: SplitDatabase {
+class SplitDatabaseStub: SplitDatabase, TestSplitDatabase {
 
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
@@ -51,7 +51,10 @@ class SplitDatabaseStub: SplitDatabase {
     var uniqueKeyDao: UniqueKeyDao
     var ruleBasedSegmentDao: RuleBasedSegmentDao
     
-    init(daoProvider: DaoProvider) {
+    // TestSplitDatabase conformance
+    var coreDataHelper: CoreDataHelper
+    
+    init(daoProvider: DaoProvider, coreDataHelper: CoreDataHelper? = nil) {
         self.eventDao = daoProvider.eventDao
         self.impressionDao = daoProvider.impressionDao
         self.impressionsCountDao = daoProvider.impressionsCountDao
@@ -63,5 +66,6 @@ class SplitDatabaseStub: SplitDatabase {
         self.uniqueKeyDao = daoProvider.uniqueKeyDao
         self.hashedImpressionDao = daoProvider.hashedImpressionDao
         self.ruleBasedSegmentDao = daoProvider.ruleBasedSegmentDao
+        self.coreDataHelper = coreDataHelper ?? CoreDataHelperStub()
     }
 }
