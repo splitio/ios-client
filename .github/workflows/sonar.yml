@@ -5,6 +5,10 @@ on:
     branches:
       - "**"
 
+  merge:
+    branches:
+      - "**"
+
 # Cancel in-progress runs when a new workflow with the same group is triggered
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -13,7 +17,7 @@ concurrency:
 jobs:
   build-and-collect-coverage:
     name: Build & Collect Coverage
-    runs-on: macos-latest
+    runs-on: macos-15-xlarge
     timeout-minutes: 15
     steps:
       - name: Checkout
@@ -28,7 +32,7 @@ jobs:
             -project Split.xcodeproj \
             -scheme Split \
             -testPlan "SplitiOSFull" \
-            -destination 'platform=iOS Simulator,OS=18.4,name=iPhone 16 Pro Max' \
+            -destination 'platform=iOS Simulator,OS=18.5,name=iPhone 16' \
             -enableCodeCoverage YES \
             -resultBundlePath build/Logs/Test/TestResults.xcresult \
             -derivedDataPath build
