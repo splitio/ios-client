@@ -163,7 +163,7 @@ class SplitDaoTest: XCTestCase {
         let newSplits = [newSplit(name: "transactional_split_1", trafficType: "user")]
         
         coreDataDao.coreDataHelper.performAndWait {
-            try? coreDataDao.transactionalInsertOrUpdate(splits: newSplits)
+            coreDataDao.transactionalInsertOrUpdate(splits: newSplits)
         }
         
         // Save manually
@@ -186,7 +186,7 @@ class SplitDaoTest: XCTestCase {
         let updatedSplit = newSplit(name: "feat_0", trafficType: "updated_type")
         
         coreDataDao.coreDataHelper.performAndWait {
-            try? coreDataDao.transactionalInsertOrUpdate(splits: [updatedSplit])
+            coreDataDao.transactionalInsertOrUpdate(splits: [updatedSplit])
         }
         coreDataDao.coreDataHelper.save()
         

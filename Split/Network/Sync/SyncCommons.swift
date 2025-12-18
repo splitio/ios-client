@@ -26,6 +26,7 @@ struct SplitStorageContainer {
     let generalInfoStorage: GeneralInfoStorage
     let ruleBasedSegmentsStorage: RuleBasedSegmentsStorage
     let persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage
+    let targetingRulesPersistenceBreaker: PersistenceBreaker
 }
 
 protocol ImpressionLogger {

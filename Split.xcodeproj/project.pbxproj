@@ -1098,6 +1098,8 @@
 		C53207EC2EF44A2F00418BB1 /* PersistenceBreaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207EA2EF44A2F00418BB1 /* PersistenceBreaker.swift */; };
 		C53207EE2EF452C000418BB1 /* CoreDataHelperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207ED2EF452C000418BB1 /* CoreDataHelperStub.swift */; };
 		C53207F12EF456AF00418BB1 /* CoreDataHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207F02EF456AF00418BB1 /* CoreDataHelperTests.swift */; };
+		C53207F42EF45BC600418BB1 /* PersistentSplitsStorageTransactionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207F22EF45BC600418BB1 /* PersistentSplitsStorageTransactionalTests.swift */; };
+		C53207F52EF45BC600418BB1 /* SplitsPersistenceBreakerIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207F32EF45BC600418BB1 /* SplitsPersistenceBreakerIntegrationTest.swift */; };
 		C539CAB62D88C1F10050C732 /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
 		C539CABE2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */; };
 		C539CABF2D88C7410050C732 /* RuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */; };
@@ -2010,6 +2012,8 @@
 		C53207EA2EF44A2F00418BB1 /* PersistenceBreaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceBreaker.swift; sourceTree = "<group>"; };
 		C53207ED2EF452C000418BB1 /* CoreDataHelperStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataHelperStub.swift; sourceTree = "<group>"; };
 		C53207F02EF456AF00418BB1 /* CoreDataHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataHelperTests.swift; sourceTree = "<group>"; };
+		C53207F22EF45BC600418BB1 /* PersistentSplitsStorageTransactionalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentSplitsStorageTransactionalTests.swift; sourceTree = "<group>"; };
+		C53207F32EF45BC600418BB1 /* SplitsPersistenceBreakerIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsPersistenceBreakerIntegrationTest.swift; sourceTree = "<group>"; };
 		C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegment.swift; sourceTree = "<group>"; };
 		C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentsStorage.swift; sourceTree = "<group>"; };
 		C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsStorage.swift; sourceTree = "<group>"; };
@@ -2687,6 +2691,8 @@
 		5905D4E3255B2373006DA3B1 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				C53207F22EF45BC600418BB1 /* PersistentSplitsStorageTransactionalTests.swift */,
+				C53207F32EF45BC600418BB1 /* SplitsPersistenceBreakerIntegrationTest.swift */,
 				C53207F02EF456AF00418BB1 /* CoreDataHelperTests.swift */,
 				C53207E82EF44A2100418BB1 /* PersistenceBreakerTests.swift */,
 				C52C572A2EEB41450064D049 /* EncryptionKeyValidationTest.swift */,
@@ -4776,6 +4782,8 @@
 				592C6AC4211B718E002D120C /* RegexTest.swift in Sources */,
 				9500D9922C56F9BA00383593 /* HostDomainFilterTests.swift in Sources */,
 				95F3F0282590D81B00084AF8 /* ImpressionsRecorderWorkerTests.swift in Sources */,
+				C53207F42EF45BC600418BB1 /* PersistentSplitsStorageTransactionalTests.swift in Sources */,
+				C53207F52EF45BC600418BB1 /* SplitsPersistenceBreakerIntegrationTest.swift in Sources */,
 				955E12312BFBEA8600AE6D10 /* HashedImpressionDaoTest.swift in Sources */,
 				95342E992A4C71300045B201 /* FeatureFlagsPayloadDecoderMock.swift in Sources */,
 				9577A8472683B8C800D92AE1 /* HttpImpressionsCountRecorderTests.swift in Sources */,
