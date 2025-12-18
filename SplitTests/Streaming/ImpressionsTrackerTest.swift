@@ -361,7 +361,8 @@ class ImpressionsTrackerTest: XCTestCase {
                                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
                                                      generalInfoStorage: GeneralInfoStorageMock(),
                                                      ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
-                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
+                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub(),
+                                                     targetingRulesPersistenceBreaker: DefaultPersistenceBreaker())
 
         let apiFacade = try! SplitApiFacade.builder()
             .setUserKey("userKey")

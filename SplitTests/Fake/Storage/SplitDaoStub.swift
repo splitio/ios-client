@@ -39,7 +39,7 @@ class SplitDaoStub: SplitDao {
         deleteAllCalled = true
     }
     
-    func transactionalInsertOrUpdate(splits: [Split]) throws {
+    func transactionalInsertOrUpdate(splits: [Split]) {
         insertedSplits = splits
     }
     

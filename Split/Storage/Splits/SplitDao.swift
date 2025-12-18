@@ -19,7 +19,7 @@ protocol SplitDao {
 
     /// Synchronous insert/update for use in transactions
     /// Caller must call coreDataHelper.saveWithErrorHandling()
-    func transactionalInsertOrUpdate(splits: [Split]) throws
+    func transactionalInsertOrUpdate(splits: [Split])
 
     /// Synchronous delete for use in transactions
     /// Caller must call coreDataHelper.saveWithErrorHandling()
@@ -121,7 +121,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
     }
 
     /// Synchronous insert/update that does NOT save
-    func transactionalInsertOrUpdate(splits: [Split]) throws {
+    func transactionalInsertOrUpdate(splits: [Split]) {
         let parsed = self.encoder.encode(splits)
         for (name, json) in parsed {
             if let obj = self.getBy(name: name) ?? self.coreDataHelper.create(entity: .split) as? SplitEntity {

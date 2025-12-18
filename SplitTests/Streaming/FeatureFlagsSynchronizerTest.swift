@@ -79,7 +79,8 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
                                                      generalInfoStorage: self.generalInfoStorage!,
                                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
-                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
+                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub(),
+                                                     targetingRulesPersistenceBreaker: DefaultPersistenceBreaker())
 
         splitConfig =  SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled
