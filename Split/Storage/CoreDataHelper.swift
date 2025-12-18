@@ -64,6 +64,24 @@ class CoreDataHelper {
         }
     }
 
+    /// Save with error handling. Throws errors to caller
+    /// Used for transactional operations that need to handle persistence failures
+    func saveWithErrorHandling() throws {
+        var thrownError: Error?
+        managedObjectContext.performAndWait {
+            do {
+                if self.managedObjectContext.hasChanges {
+                    try self.managedObjectContext.save()
+                }
+            } catch {
+                thrownError = error
+            }
+        }
+        if let error = thrownError {
+            throw error
+        }
+    }
+
     func generateId() -> String {
         return UUID().uuidString
     }

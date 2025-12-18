@@ -1096,6 +1096,7 @@
 		C53207E92EF44A2100418BB1 /* PersistenceBreakerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207E82EF44A2100418BB1 /* PersistenceBreakerTests.swift */; };
 		C53207EB2EF44A2F00418BB1 /* PersistenceBreaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207EA2EF44A2F00418BB1 /* PersistenceBreaker.swift */; };
 		C53207EC2EF44A2F00418BB1 /* PersistenceBreaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207EA2EF44A2F00418BB1 /* PersistenceBreaker.swift */; };
+		C53207EE2EF452C000418BB1 /* CoreDataHelperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207ED2EF452C000418BB1 /* CoreDataHelperStub.swift */; };
 		C539CAB62D88C1F10050C732 /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
 		C539CABE2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */; };
 		C539CABF2D88C7410050C732 /* RuleBasedSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */; };
@@ -2006,6 +2007,7 @@
 		C52C572A2EEB41450064D049 /* EncryptionKeyValidationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EncryptionKeyValidationTest.swift; sourceTree = "<group>"; };
 		C53207E82EF44A2100418BB1 /* PersistenceBreakerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceBreakerTests.swift; sourceTree = "<group>"; };
 		C53207EA2EF44A2F00418BB1 /* PersistenceBreaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceBreaker.swift; sourceTree = "<group>"; };
+		C53207ED2EF452C000418BB1 /* CoreDataHelperStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataHelperStub.swift; sourceTree = "<group>"; };
 		C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegment.swift; sourceTree = "<group>"; };
 		C539CABC2D88C7410050C732 /* PersistentRuleBasedSegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentRuleBasedSegmentsStorage.swift; sourceTree = "<group>"; };
 		C539CABD2D88C7410050C732 /* RuleBasedSegmentsStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsStorage.swift; sourceTree = "<group>"; };
@@ -2727,6 +2729,7 @@
 		5905D4E6255B23C8006DA3B1 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
+				C53207ED2EF452C000418BB1 /* CoreDataHelperStub.swift */,
 				C539CAC22D88C7570050C732 /* PersistentRuleBasedSegmentsStorageStub.swift */,
 				C539CAC32D88C7570050C732 /* RuleBasedSegmentsStorageStub.swift */,
 				C5A501D82D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift */,
@@ -4819,6 +4822,7 @@
 				5982D938219F57BE00230F44 /* FileHelper.swift in Sources */,
 				95B180272763DA0E002DC9DF /* HttpTelemetryConfigRecorderTest.swift in Sources */,
 				C5977C202BF29F5B003E293A /* EqualToSemverMatcherTest.swift in Sources */,
+				C53207EE2EF452C000418BB1 /* CoreDataHelperStub.swift in Sources */,
 				C5A7D5532DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift in Sources */,
 				59ED408424EAB8C900EF7B09 /* PushNotificationManagerTest.swift in Sources */,
 				95F7BC292C46A4C800C5F2E4 /* SecurityHelper.swift in Sources */,
