@@ -38,4 +38,12 @@ class SplitDaoStub: SplitDao {
     func deleteAll() {
         deleteAllCalled = true
     }
+    
+    func transactionalInsertOrUpdate(splits: [Split]) {
+        insertedSplits = splits
+    }
+    
+    func transactionalDelete(_ splitNames: [String]) {
+        deletedSplits = splitNames
+    }
 }

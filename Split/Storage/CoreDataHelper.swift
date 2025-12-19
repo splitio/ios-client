@@ -64,6 +64,24 @@ class CoreDataHelper {
         }
     }
 
+    /// Save with error handling. Throws errors to caller
+    /// Used for transactional operations that need to handle persistence failures
+    func saveWithErrorHandling() throws {
+        var thrownError: Error?
+        managedObjectContext.performAndWait {
+            do {
+                if self.managedObjectContext.hasChanges {
+                    try self.managedObjectContext.save()
+                }
+            } catch {
+                thrownError = error
+            }
+        }
+        if let error = thrownError {
+            throw error
+        }
+    }
+
     func generateId() -> String {
         return UUID().uuidString
     }
@@ -101,6 +119,14 @@ class CoreDataHelper {
     func performAndWait(_ operation: Operation) {
         managedObjectContext.performAndWait {
             operation()
+        }
+    }
+
+    /// Roll back any unsaved changes in the managed object context.
+    /// Useful after a failed save(), to prevent the context from keeping invalid pending changes.
+    func rollback() {
+        managedObjectContext.performAndWait {
+            self.managedObjectContext.rollback()
         }
     }
 
