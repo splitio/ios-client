@@ -38,3 +38,6 @@ Carthage/
 .build/
 Split.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 release_type
+
+## Sweetpad
+buildServer.json
