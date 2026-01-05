@@ -69,7 +69,8 @@ class SynchronizerTest: XCTestCase {
                                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
                                                      generalInfoStorage: GeneralInfoStorageMock(),
                                                      ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
-                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
+                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub(),
+                                                     targetingRulesPersistenceBreaker: DefaultPersistenceBreaker())
 
         splitConfig =  SplitClientConfig()
         splitConfig.syncEnabled = syncEnabled

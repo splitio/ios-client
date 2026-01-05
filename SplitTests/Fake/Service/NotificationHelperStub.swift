@@ -23,7 +23,7 @@ class NotificationHelperStub: NotificationHelper, @unchecked Sendable {
     }
 
     func post(notification: AppNotification, info: AnyObject?) {
-        executeActions(for: AppNotification.pinnedCredentialValidationFail, info: info)
+        executeActions(for: notification, info: info)
     }
 
     private func executeActions(for notification: AppNotification, info: AnyObject?) {

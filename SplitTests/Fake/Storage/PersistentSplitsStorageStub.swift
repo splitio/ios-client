@@ -43,7 +43,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage, @unchecked Sendable 
         self.init(delegate: nil)
     }
 
-    func update(splitChange: ProcessedSplitChange) {
+    func update(splitChange: ProcessedSplitChange, onFailure: ((Error) -> Void)? = nil) {
         processedSplitChange = splitChange
         changeNumber = splitChange.changeNumber
         updateCalled = true

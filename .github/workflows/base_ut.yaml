@@ -42,7 +42,7 @@ jobs:
             set -o pipefail
             xcodebuild test \
               -project Split.xcodeproj \
-              -scheme ${{ inputs.scheme }} \
+              -scheme Split \
               -destination '${{ inputs.destination }}' \
               -testPlan ${{ inputs.test-plan }} \
               -sdk iphonesimulator \

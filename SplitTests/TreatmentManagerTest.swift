@@ -73,7 +73,8 @@ class TreatmentManagerTest: XCTestCase {
                                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
                                                      generalInfoStorage: GeneralInfoStorageMock(),
                                                      ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
-                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
+                                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub(),
+                                                     targetingRulesPersistenceBreaker: DefaultPersistenceBreaker())
         }
     }
 

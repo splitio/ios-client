@@ -74,7 +74,6 @@
         "HttpImpressionsRecorderTests",
         "HttpMySegmentsFetcherTest",
         "HttpRequestListTest",
-        "HttpRequestManagerTests",
         "HttpResponseTest",
         "HttpSplitFetcherTests",
         "HttpStreamRequestTest",

@@ -5,7 +5,7 @@
 //  Created by Sebastian Arrubia on 4/16/18.
 //
 //  Update: Replacing timer by blocking queue. 05-10-2021
-
+//
 import Foundation
 
 protocol SplitEventsManager: AnyObject, Sendable {

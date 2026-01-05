@@ -34,4 +34,8 @@ class GeneralInfoDaoStub: GeneralInfoDao, @unchecked Sendable {
         updatedString.removeValue(forKey: info.rawValue)
         updatedLong.removeValue(forKey: info.rawValue)
     }
+    
+    func transactionalUpdate(info: GeneralInfo, longValue: Int64) {
+        updatedLong[info.rawValue] = longValue
+    }
 }
