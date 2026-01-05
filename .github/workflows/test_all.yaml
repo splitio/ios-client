@@ -38,3 +38,4 @@ jobs:
     with:
       test-plan: ${{ matrix.plan }}
       destination: 'platform=iOS Simulator,OS=18.5,name=iPhone 16'
+      scheme: ${{ matrix.scheme }}
