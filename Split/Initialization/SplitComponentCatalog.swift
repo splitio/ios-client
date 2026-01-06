@@ -13,7 +13,7 @@ class SplitComponentCatalog {
 
     func get<T>(for classType: T) -> Any? {
         // If component exists, return it
-        return components[String(describing: classType.self)]
+        components[String(describing: classType.self)]
     }
 
     // This function is implemented using generics
@@ -31,7 +31,7 @@ class SplitComponentCatalog {
     }
 
     func get(byName name: String) -> Any? {
-        return components[name]
+        components[name]
     }
 
     func clear() {

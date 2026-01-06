@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SplitChangeProcessorStub: SplitChangeProcessor {
+class SplitChangeProcessorStub: SplitChangeProcessor, @unchecked Sendable {
     var processedSplitChange: ProcessedSplitChange = ProcessedSplitChange(activeSplits: [], archivedSplits: [],
                                                                           changeNumber: -1, updateTimestamp: -1)
     var splitChange: SplitChange?

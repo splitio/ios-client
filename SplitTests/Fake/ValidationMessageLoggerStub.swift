@@ -14,7 +14,7 @@ struct WarningMessageItemStub {
     var message: String
 }
 
-class ValidationMessageLoggerStub: ValidationMessageLogger {
+class ValidationMessageLoggerStub: ValidationMessageLogger, @unchecked Sendable {
     
     var errorTag: String?
     var errorMessage: String?

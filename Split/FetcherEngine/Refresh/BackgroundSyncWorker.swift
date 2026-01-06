@@ -42,7 +42,7 @@ class BackgroundMySegmentsSyncWorker: BackgroundSyncWorker {
     }
 }
 
-class BackgroundSplitsSyncWorker: BackgroundSyncWorker {
+class BackgroundSplitsSyncWorker: BackgroundSyncWorker, @unchecked Sendable {
 
     private let splitFetcher: HttpSplitFetcher
     private let persistenSplitsStorage: PersistentSplitsStorage

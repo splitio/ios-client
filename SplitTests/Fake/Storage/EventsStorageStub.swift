@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class EventsStorageStub: EventsStorage {
+class EventsStorageStub: EventsStorage, @unchecked Sendable {
 
     var enablePersistenceCalled = false
     var enablePersistenceValue: Bool?

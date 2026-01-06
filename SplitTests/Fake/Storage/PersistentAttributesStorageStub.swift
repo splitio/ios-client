@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PersistentAttributesStorageStub: PersistentAttributesStorage {
+class PersistentAttributesStorageStub: PersistentAttributesStorage, @unchecked Sendable {
     var attributes = [String: [String: Any]]()
     func set(_ attributes: [String : Any], forKey key: String) {
         self.attributes[key] = attributes

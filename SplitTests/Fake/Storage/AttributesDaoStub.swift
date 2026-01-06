@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class AttributesDaoStub: AttributesDao {
+class AttributesDaoStub: AttributesDao, @unchecked Sendable {
     var attributes =  [String: [String: Any]]()
     func getBy(userKey: String) -> [String: Any]? {
         return attributes[userKey]

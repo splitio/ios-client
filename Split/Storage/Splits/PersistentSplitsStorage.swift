@@ -21,7 +21,7 @@ protocol PersistentSplitsStorage {
     func clear()
 }
 
-class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
+class DefaultPersistentSplitsStorage: PersistentSplitsStorage, @unchecked Sendable {
 
     private let splitDao: SplitDao
     private let generalInfoDao: GeneralInfoDao

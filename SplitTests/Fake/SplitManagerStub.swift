@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SplitManagerStub: SplitManager, Destroyable {
+class SplitManagerStub: SplitManager, Destroyable, @unchecked Sendable {
     var splits: [SplitView]
     var splitNames: [String]
     

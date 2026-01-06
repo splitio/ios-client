@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HttpTaskMock: HttpTask {
+class HttpTaskMock: HttpTask, @unchecked Sendable {
     var identifier: Int = -1
 
     init(identifier: Int) {

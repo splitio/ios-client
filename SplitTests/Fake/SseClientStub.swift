@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SseClientMock: SseClient {
+class SseClientMock: SseClient, @unchecked Sendable {
 
     var token: String?
     var channels: [String]?

@@ -25,7 +25,7 @@ struct SplitApiFacade {
     let uniqueKeysRecorder: HttpUniqueKeysRecorder
 }
 
-class SplitApiFacadeBuilder {
+class SplitApiFacadeBuilder: @unchecked Sendable {
 
     private var userKey: String?
     private var splitConfig: SplitClientConfig?

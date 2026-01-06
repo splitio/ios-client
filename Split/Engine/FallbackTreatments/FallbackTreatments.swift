@@ -82,8 +82,8 @@ import Foundation
             
             // Merge
             var merged = byFlag
-            for (k, v) in byFlagFallbacks {
-                merged[k] = v
+            for (key, value) in byFlagFallbacks {
+                merged[key] = value
             }
             
             // Sanitize final map

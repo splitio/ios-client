@@ -7,7 +7,7 @@
 
 import Foundation
 
-class DefaultTreatmentManager: TreatmentManager {
+class DefaultTreatmentManager: TreatmentManager, @unchecked Sendable {
 
     private let key: Key
     private let telemetryProducer: TelemetryProducer?

@@ -10,7 +10,7 @@ import Foundation
 
 @testable import Split
 
-class PeriodicTimerStub: PeriodicTimer {
+class PeriodicTimerStub: PeriodicTimer, @unchecked Sendable {
 
     var stopCallCount = 0
     var destroyCallCount = 0

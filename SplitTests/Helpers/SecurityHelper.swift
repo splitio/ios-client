@@ -120,13 +120,13 @@ class SecurityHelper  {
 
 }
 
-class ChallengeSenderMock: NSObject, URLAuthenticationChallengeSender {
+class ChallengeSenderMock: NSObject, URLAuthenticationChallengeSender, @unchecked Sendable {
     func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {}
     func continueWithoutCredential(for challenge: URLAuthenticationChallenge) {}
     func cancel(_ challenge: URLAuthenticationChallenge) {}
 }
 
-class ProtectionSpaceMock: URLProtectionSpace {
+class ProtectionSpaceMock: URLProtectionSpace, @unchecked Sendable {
 
     var serverTrustMock: SecTrust?
     init(host: String, secTrust: SecTrust) {

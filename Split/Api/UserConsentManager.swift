@@ -13,7 +13,7 @@ protocol UserConsentManager: AnyObject {
     func getStatus() -> UserConsent
 }
 
-class DefaultUserConsentManager: UserConsentManager {
+class DefaultUserConsentManager: UserConsentManager, @unchecked Sendable {
     private let splitConfig: SplitClientConfig
     private let impressionsStorage: ImpressionsStorage
     private let eventsStorage: EventsStorage

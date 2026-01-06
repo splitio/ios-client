@@ -8,11 +8,11 @@
 
 import Foundation
 
-struct WeakFactory {
+struct WeakFactory: @unchecked Sendable {
     private(set) weak var factory: SplitFactory?
 }
 
-class FactoryRegistry {
+class FactoryRegistry: @unchecked Sendable {
 
     private var queue: DispatchQueue
     private var weakFactories: [String: [WeakFactory]]

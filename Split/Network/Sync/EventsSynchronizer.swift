@@ -18,7 +18,7 @@ protocol EventsSynchronizer {
     func destroy()
 }
 
-class DefaultEventsSynchronizer: EventsSynchronizer {
+class DefaultEventsSynchronizer: EventsSynchronizer, @unchecked Sendable {
 
     private let syncWorkerFactory: SyncWorkerFactory
     private let eventsSyncHelper: EventsRecorderSyncHelper

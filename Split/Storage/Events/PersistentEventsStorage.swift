@@ -17,7 +17,7 @@ protocol PersistentEventsStorage {
     func setActive(_ events: [EventDTO])
 }
 
-class DefaultEventsStorage: PersistentEventsStorage {
+class DefaultEventsStorage: PersistentEventsStorage, @unchecked Sendable {
 
     private let eventDao: EventDao
     private let expirationPeriod: Int64

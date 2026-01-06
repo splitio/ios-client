@@ -8,9 +8,8 @@
 
 import Foundation
 
-class ConcurrentSet<T: Hashable> {
-    private var queue = DispatchQueue(label: "Split.ConcurrentSet",
-                                      attributes: .concurrent)
+class ConcurrentSet<T: Hashable & Sendable>: @unchecked Sendable {
+    private var queue = DispatchQueue(label: "Split.ConcurrentSet", attributes: .concurrent)
     private var items: Set<T> = Set<T>()
     private var capacity: Int = -1
 

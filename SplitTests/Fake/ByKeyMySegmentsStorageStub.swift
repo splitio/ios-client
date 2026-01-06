@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage {
+class ByKeyMySegmentsStorageStub: ByKeyMySegmentsStorage, @unchecked Sendable {
 
     var segments: Set = ["s1", "s2", "s3"]
     var updatedSegments: [String]?

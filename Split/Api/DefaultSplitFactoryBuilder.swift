@@ -15,7 +15,7 @@ import Foundation
 /// The idea is to avoid some boilerplate code when creating the factory.
 /// For now it's just the defaul factory.
 ///
-@objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder {
+@objc public class DefaultSplitFactoryBuilder: NSObject, SplitFactoryBuilder, @unchecked Sendable {
 
     private var matchingKey: String?
     private var bucketingKey: String?
@@ -33,10 +33,12 @@ import Foundation
         (Singleton pattern) and reusing it throughout your application.
     """
 
-    private static let  factoryMonitor: FactoryMonitor = {
-        return DefaultFactoryMonitor()
-    }()
-
+    #if swift(>=6.0)
+        nonisolated(unsafe) private static let factoryMonitor: FactoryMonitor = { DefaultFactoryMonitor() }()
+    #else
+        private static let factoryMonitor: FactoryMonitor = { DefaultFactoryMonitor() }()
+    #endif
+    
     public override init() {
         keyValidator = DefaultKeyValidator()
         apiKeyValidator = DefaultApiKeyValidator()

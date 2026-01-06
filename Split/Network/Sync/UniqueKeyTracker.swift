@@ -14,7 +14,7 @@ protocol UniqueKeyTracker: AnyObject {
     func clear()
 }
 
-class DefaultUniqueKeyTracker: UniqueKeyTracker {
+class DefaultUniqueKeyTracker: UniqueKeyTracker, @unchecked Sendable {
 
     private let uniqueKeyStorage: PersistentUniqueKeysStorage
     private let inMemoryKeys = SynchronizedDictionarySet<String, String>()

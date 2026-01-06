@@ -19,7 +19,7 @@ protocol PushNotificationManager {
     func reset()
 }
 
-class DefaultPushNotificationManager: PushNotificationManager {
+class DefaultPushNotificationManager: PushNotificationManager, @unchecked Sendable {
 
     private let kSseKeepAliveTimeInSeconds = 70
     private let kReconnectTimeBeforeTokenExpInASeconds: Int64 = 600

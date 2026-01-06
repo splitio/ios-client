@@ -14,7 +14,7 @@ protocol PeriodicTimer {
     func handler( _ handler: @escaping () -> Void)
 }
 
-class DefaultPeriodicTimer: PeriodicTimer {
+class DefaultPeriodicTimer: PeriodicTimer, @unchecked Sendable {
 
     private let deadLineInSecs: Int
     private let intervalInSecs: Int
@@ -70,7 +70,7 @@ protocol PeriodicSyncWorker {
     func destroy()
 }
 
-class BasePeriodicSyncWorker: PeriodicSyncWorker {
+class BasePeriodicSyncWorker: PeriodicSyncWorker, @unchecked Sendable {
 
     private var fetchTimer: PeriodicTimer
     private let fetchQueue = DispatchQueue.general
@@ -137,7 +137,7 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker {
     }
 }
 
-class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
+class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker, @unchecked Sendable {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
@@ -189,7 +189,7 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker {
     }
 }
 
-class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker {
+class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker, @unchecked Sendable {
 
     private let mySegmentsStorage: ByKeyMySegmentsStorage
     private let myLargeSegmentsStorage: ByKeyMySegmentsStorage

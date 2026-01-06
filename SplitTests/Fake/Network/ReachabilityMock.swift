@@ -8,7 +8,7 @@
 
 @testable import Split
 
-class ReachabilityMock: HostReachabilityChecker {
+class ReachabilityMock: HostReachabilityChecker, @unchecked Sendable {
     func isReachable(path url: String) -> Bool {
         return true
     }

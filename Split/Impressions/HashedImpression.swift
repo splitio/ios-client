@@ -8,7 +8,7 @@
 
 import Foundation
 
-class HashedImpression {
+class HashedImpression: @unchecked Sendable {
     let impressionHash: UInt32
     let time: Int64
     let createdAt: Int64

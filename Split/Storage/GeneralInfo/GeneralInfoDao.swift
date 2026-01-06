@@ -34,7 +34,7 @@ protocol GeneralInfoDao {
     func transactionalUpdate(info: GeneralInfo, longValue: Int64)
 }
 
-class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao {
+class CoreDataGeneralInfoDao: BaseCoreDataDao, GeneralInfoDao, @unchecked Sendable {
 
     func update(info: GeneralInfo, stringValue: String) {
         executeAsync { [weak self] in

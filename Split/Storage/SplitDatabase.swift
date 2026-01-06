@@ -43,11 +43,11 @@ class BaseCoreDataDao {
 }
 
 // Dirty but necessary for testing
-protocol TestSplitDatabase {
+protocol TestSplitDatabase: Sendable {
     var coreDataHelper: CoreDataHelper { get }
 }
 
-protocol SplitDatabase {
+protocol SplitDatabase: Sendable {
     var splitDao: SplitDao { get }
     var mySegmentsDao: MySegmentsDao { get }
     var myLargeSegmentsDao: MySegmentsDao { get }
@@ -61,7 +61,7 @@ protocol SplitDatabase {
     var ruleBasedSegmentDao: RuleBasedSegmentDao { get }
 }
 
-class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase {
+class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase, @unchecked Sendable {
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
     var myLargeSegmentsDao: MySegmentsDao

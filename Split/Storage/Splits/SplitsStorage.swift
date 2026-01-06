@@ -12,7 +12,7 @@ protocol SyncSplitsStorage: RolloutDefinitionsCache {
     func update(splitChange: ProcessedSplitChange) -> Bool
 }
 
-protocol SplitsStorage: SyncSplitsStorage {
+protocol SplitsStorage: SyncSplitsStorage, Sendable {
     var changeNumber: Int64 { get }
     var updateTimestamp: Int64 { get }
 
@@ -29,7 +29,7 @@ protocol SplitsStorage: SyncSplitsStorage {
     func forceParsing()
 }
 
-class DefaultSplitsStorage: SplitsStorage {
+class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
 
     private var persistentStorage: PersistentSplitsStorage
     private var inMemorySplits: SynchronizedDictionary<String, Split>
@@ -84,7 +84,7 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func getAll() -> [String: Split] {
-        return inMemorySplits.all
+        inMemorySplits.all
     }
 
     func update(splitChange: ProcessedSplitChange) -> Bool {
@@ -111,7 +111,7 @@ class DefaultSplitsStorage: SplitsStorage {
     func update(bySetsFilter filter: SplitFilter?) {
         // Only call persistence if breaker allows
         if persistenceBreaker.isPersistenceEnabled {
-            self.persistentStorage.update(bySetsFilter: filter)
+            persistentStorage.update(bySetsFilter: filter)
         }
     }
 
@@ -126,7 +126,7 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func isValidTrafficType(name: String) -> Bool {
-        return trafficTypes.value(forKey: name) != nil
+        trafficTypes.value(forKey: name) != nil
     }
 
     func clear() {
@@ -136,7 +136,7 @@ class DefaultSplitsStorage: SplitsStorage {
     }
 
     func getCount() -> Int {
-        return inMemorySplits.count
+        inMemorySplits.count
     }
     
     private func processUpdated(splits: [Split], active: Bool) -> Bool {
@@ -247,13 +247,11 @@ class DefaultSplitsStorage: SplitsStorage {
         var segmentsInUse: Int64 = 0
         let activeSplits = persistentStorage.getSplitsSnapshot().splits.filter( { $0.status == .active } )
         
-        if activeSplits.count > 0 {
-            for i in 0...activeSplits.count-1 {
-                guard let splitName = activeSplits[i].name else { continue }
-                let parsedSplit = parseSplit(activeSplits[i])
-                segmentsInUse += updateSegmentsCount(split: parsedSplit)
-                inMemorySplits.setValue(parsedSplit, forKey: splitName)
-            }
+        for split in activeSplits {
+            guard let splitName = split.name else { continue }
+            let parsedSplit = parseSplit(split)
+            segmentsInUse += updateSegmentsCount(split: parsedSplit)
+            inMemorySplits.setValue(parsedSplit, forKey: splitName)
         }
         
         generalInfoStorage.setSegmentsInUse(segmentsInUse)

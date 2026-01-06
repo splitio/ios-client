@@ -9,7 +9,7 @@
 @testable import Split
 import Foundation
 
-class SplitDaoStub: SplitDao {
+class SplitDaoStub: SplitDao, @unchecked Sendable {
     var insertedSplits = [Split]()
     var splits = [Split]()
     var deletedSplits: [String]?

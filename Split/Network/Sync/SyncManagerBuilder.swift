@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SyncManagerBuilder {
+class SyncManagerBuilder: @unchecked Sendable {
 
     private var userKey: String?
     private var splitConfig: SplitClientConfig?

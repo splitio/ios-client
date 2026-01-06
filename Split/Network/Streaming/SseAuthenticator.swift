@@ -54,7 +54,7 @@ protocol SseAuthenticator {
     func authenticate(userKeys: [String]) -> SseAuthenticationResult
 }
 
-class DefaultSseAuthenticator: SseAuthenticator {
+class DefaultSseAuthenticator: SseAuthenticator, @unchecked Sendable {
 
     private let restClient: RestClientSseAuthenticator
     private let syncHelper: SyncHelper

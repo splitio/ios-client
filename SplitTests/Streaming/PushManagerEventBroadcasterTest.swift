@@ -11,12 +11,27 @@ import Foundation
 import XCTest
 @testable import Split
 
-class PushManagerEventBroadcasterTest: XCTestCase {
+class PushManagerEventBroadcasterTest: XCTestCase, @unchecked Sendable {
 
     var channel: SyncEventBroadcaster!
     override func setUp() {
         channel = DefaultSyncEventBroadcaster()
     }
+    
+    // Event 1
+    let lock = DispatchQueue(label: "lock1")
+    var e1: SyncStatusEvent?
+    func setE1(_ val: SyncStatusEvent) { lock.sync { e1 = val } }
+    
+    // Event 2
+    let lock2 = DispatchQueue(label: "lock2")
+    var e2: SyncStatusEvent?
+    func setE2(_ val: SyncStatusEvent) { lock.sync { e2 = val } }
+    
+    // Event 3
+    let lock3 = DispatchQueue(label: "lock3")
+    var e3: SyncStatusEvent?
+    func setE3(_ val: SyncStatusEvent) { lock.sync { e3 = val } }
 
     func testRegister() {
         // Test that all registered handler
@@ -24,22 +39,19 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         let exp1 = XCTestExpectation(description: "exp1")
         let exp2 = XCTestExpectation(description: "exp2")
         let exp3 = XCTestExpectation(description: "exp3")
-        var e1: SyncStatusEvent?
-        var e2: SyncStatusEvent?
-        var e3: SyncStatusEvent?
 
         channel.register(handler: { event in
-            e1 = event
+            self.e1 = event
             exp1.fulfill()
         })
 
         channel.register(handler: { event in
-            e2 = event
+            self.e2 = event
             exp2.fulfill()
         })
 
         channel.register(handler: { event in
-            e3 = event
+            self.e3 = event
             exp3.fulfill()
         })
 
@@ -53,16 +65,23 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         XCTAssertEqual(.pushSubsystemDown, e3)
 
     }
+    
+    let lockCount = DispatchQueue(label: "lock")
+    var count = 0
+    func countSet(_ val: Int) {
+        lockCount.sync { count = val }
+    }
+    func countGet() -> Int {
+        lockCount.sync { count }
+    }
 
     func testStop() {
         // Test that no handler receives event
         // after channel is stopped
         let exp1 = XCTestExpectation(description: "exp1")
 
-        var count = 0
-
         channel.register(handler: { event in
-            count+=1
+            self.count+=1
         })
 
         DispatchQueue.test.asyncAfter(deadline: DispatchTime.now() + 0.2) {
@@ -81,10 +100,7 @@ class PushManagerEventBroadcasterTest: XCTestCase {
         wait(for: [exp1], timeout: 5.0)
 
         XCTAssertEqual(1, count)
-
     }
 
-    override func tearDown() {
-
-    }
+    override func tearDown() {}
 }

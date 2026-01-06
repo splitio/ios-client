@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class FlagSetsValidatorMock: FlagSetsValidator {
+class FlagSetsValidatorMock: FlagSetsValidator, @unchecked Sendable {
     var validateOnEvaluatioResults = [String]()
     func validateOnEvaluation(_ values: [String], calledFrom method: String, setsInFilter: [String]) -> [String] {
         let set1 = Set(validateOnEvaluatioResults)

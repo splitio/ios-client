@@ -14,7 +14,7 @@ protocol PersistentAttributesStorage {
     func clear(forKey key: String)
 }
 
-class DefaultPersistentAttributesStorage: PersistentAttributesStorage {
+class DefaultPersistentAttributesStorage: PersistentAttributesStorage, @unchecked Sendable {
 
     private let attributesDao: AttributesDao
 

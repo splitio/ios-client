@@ -9,7 +9,12 @@ import Foundation
 
 struct TimeChecker {
 
-    private static var startTime: Int64 = 0
+    #if swift(>=6.0)
+        nonisolated(unsafe) private static var startTime: Int64 = 0
+    #else
+        private static var startTime: Int64 = 0
+    #endif
+    
     private static let tag = "[SPTPRF] "
     private static let showTimestamp = true
     private static let showSinceMsg = true
@@ -65,7 +70,7 @@ class DefaultLogPrinter: LogPrinter {
     }
 }
 
-class Logger {
+class Logger: @unchecked Sendable {
     var printer: LogPrinter = DefaultLogPrinter()
     private let tag: String = "SplitSDK"
 

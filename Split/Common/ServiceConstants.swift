@@ -11,7 +11,11 @@ import Foundation
 struct ServiceConstants {
 
     // Created for testing purposes only
-    static var values: Values?
+    #if swift(>=6.0)
+        nonisolated(unsafe) static var values: Values?
+    #else
+        static var values: Values?
+    #endif
 
     static let estimatedImpressionSizeInBytes = 150
     // Estimated size of a UniqueKey having a key of 100 chars and
@@ -40,7 +44,11 @@ struct ServiceConstants {
 
     static let defaultLocalhostRefreshRate = 10
     static var maxSyncPeriodInMillis: Int64 {
+        #if DEBUG
         return values?.maxSyncPeriodInMillis ?? (defaultSseConnectionDelayInSecs * 1000)
+        #else
+        return defaultSseConnectionDelayInSecs * 1000
+        #endif
     }
 
     static let defaultSegmentsChangeNumber: Int64 = -1

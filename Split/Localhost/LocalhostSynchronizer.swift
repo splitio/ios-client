@@ -8,7 +8,7 @@
 
 import Foundation
 
-class LocalhostSynchronizer: FeatureFlagsSynchronizer {
+class LocalhostSynchronizer: FeatureFlagsSynchronizer, @unchecked Sendable {
 
     private let featureFlagsStorage: SplitsStorage
     private let featureFlagsDataSource: LocalhostDataSource

@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class ImpressionsStorageStub: ImpressionsStorage {
+class ImpressionsStorageStub: ImpressionsStorage, @unchecked Sendable {
 
     var enablePersistenceCalled = false
     var enablePersistenceValue: Bool?

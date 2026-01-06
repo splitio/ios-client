@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class UniqueKeyTrackerStub: UniqueKeyTracker {
+class UniqueKeyTrackerStub: UniqueKeyTracker, @unchecked Sendable {
     var trackedKeys = [String: Set<String>]()
     var savedKeys = [[String: Set<String>]]()
 

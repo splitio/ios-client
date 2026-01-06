@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 import XCTest
 
-class TelemetryStorageStub: TelemetryStorage {
+class TelemetryStorageStub: TelemetryStorage, @unchecked Sendable {
 
     var nonReadyUsageCallCount = 0
     var popTagsCallCount = 0
@@ -27,7 +27,7 @@ class TelemetryStorageStub: TelemetryStorage {
     var methodLatencies = [TelemetryMethod: Int]()
     var impressions = [TelemetryImpressionsDataType: Int]()
     var events = [TelemetryEventsDataType: Int]()
-
+    
     var lock = NSLock()
     
     var isFactoryDataRecorded = Atomic<Bool>(false)

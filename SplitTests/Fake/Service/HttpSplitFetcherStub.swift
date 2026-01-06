@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HttpSplitFetcherStub: HttpSplitFetcher {
+class HttpSplitFetcherStub: HttpSplitFetcher, @unchecked Sendable {
     var splitChanges = [TargetingRulesChange?]()
     var httpError: HttpError?
     var hitIndex = 0

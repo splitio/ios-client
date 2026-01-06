@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol RetryableSyncWorker {
+protocol RetryableSyncWorker: Sendable {
     typealias SyncCompletion = (Bool) -> Void
     typealias ErrorHandler = (Error) -> Void
     var completion: SyncCompletion? { get set }
@@ -23,7 +23,7 @@ protocol RetryableSyncWorker {
 /// This class retryies when fetching is not possible do to
 /// nettwork connection and http server errors
 ///
-class BaseRetryableSyncWorker: RetryableSyncWorker {
+class BaseRetryableSyncWorker: RetryableSyncWorker, @unchecked Sendable {
 
     var completion: SyncCompletion?
     var errorHandler: ErrorHandler?
@@ -100,7 +100,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker {
     }
 }
 
-class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
+class RetryableSplitsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
 
     private let splitFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage
@@ -156,7 +156,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker {
     }
 }
 
-class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker {
+class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker, @unchecked Sendable {
 
     private let splitsFetcher: HttpSplitFetcher
     private let splitsStorage: SplitsStorage

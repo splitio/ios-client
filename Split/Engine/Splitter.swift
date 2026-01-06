@@ -12,11 +12,10 @@ protocol SplitterProtocol {
     func getBucket(seed: Int, key: String, algo: Algorithm) -> Int64
 }
 
-class Splitter: SplitterProtocol {
+class Splitter: SplitterProtocol, @unchecked Sendable {
 
     static let shared: Splitter = {
-        let instance = Splitter()
-        return instance
+        Splitter()
     }()
 
     func getTreatment(key: Key, seed: Int, attributes: [String: Any]?,

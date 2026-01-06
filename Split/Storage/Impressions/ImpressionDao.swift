@@ -17,7 +17,7 @@ protocol ImpressionDao {
     func delete(_ impressions: [KeyImpression])
 }
 
-class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao {
+class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao, @unchecked Sendable {
 
     private let cipher: Cipher?
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {

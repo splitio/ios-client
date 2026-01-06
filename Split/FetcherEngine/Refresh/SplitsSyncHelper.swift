@@ -16,7 +16,7 @@ struct SyncResult {
     let rbsUpdated: Bool
 }
 
-class SplitsSyncHelper {
+class SplitsSyncHelper: @unchecked Sendable {
 
     struct FetchResult {
         let till: Int64

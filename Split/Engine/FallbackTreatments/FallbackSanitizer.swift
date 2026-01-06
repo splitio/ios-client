@@ -37,16 +37,16 @@ final class FallbackSanitizer: NSObject {
         
         var sanitizedByFlag: [String: FallbackTreatment] = [:]
         
-        for (flag, t) in byFlagFallbacks {
+        for (flag, treatment) in byFlagFallbacks {
             guard isValidFlagName(flag) else {
                 Logger.e("Fallback treatments - Discarded flag '\(flag)': \(FallbackDiscardReason.flagName.rawValue)")
                 continue
             }
-            guard isValidTreatment(t) else {
+            guard isValidTreatment(treatment) else {
                 Logger.e("Fallback treatments - Discarded treatment for flag '\(flag)': \(FallbackDiscardReason.treatment.rawValue)")
                 continue
             }
-            sanitizedByFlag[flag] = t
+            sanitizedByFlag[flag] = treatment
         }
         return sanitizedByFlag
     }
@@ -55,15 +55,15 @@ final class FallbackSanitizer: NSObject {
         name.count <= 100 && !(name.contains(" "))
     }
     
-    private static func isValidTreatment(_ t: FallbackTreatment) -> Bool {
+    private static func isValidTreatment(_ fallback: FallbackTreatment) -> Bool {
 
         // Length constraint
-        if t.treatment.count > 100 {
+        if fallback.treatment.count > 100 {
             return false
         }
         
         // Regxep (content constraint)
-        let range = NSRange(t.treatment.startIndex..<t.treatment.endIndex, in: t.treatment)
-        return regex?.firstMatch(in: t.treatment, range: range)?.range == range
+        let range = NSRange(fallback.treatment.startIndex..<fallback.treatment.endIndex, in: fallback.treatment)
+        return regex?.firstMatch(in: fallback.treatment, range: range)?.range == range
     }
 }

@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HttpTelemetryStatsRecorderStub: HttpTelemetryStatsRecorder {
+class HttpTelemetryStatsRecorderStub: HttpTelemetryStatsRecorder, @unchecked Sendable {
 
     var queue: DispatchQueue?
     var endpointAvailable = true

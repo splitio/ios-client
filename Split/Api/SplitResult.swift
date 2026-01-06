@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc open class SplitResult: NSObject {
+@objc open class SplitResult: NSObject, @unchecked Sendable {
     @objc public var treatment: String
     @objc public var config: String?
 

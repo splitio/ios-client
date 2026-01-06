@@ -3,7 +3,7 @@
 
 @testable import Split
 
-class PrerequisitesMatcherMock: BaseMatcher, MatcherProtocol {
+class PrerequisitesMatcherMock: BaseMatcher, MatcherProtocol, @unchecked Sendable {
 
     private let returnValue: Bool
 

@@ -9,7 +9,7 @@
 import XCTest
 @testable import Split
 
-class StreamingSplitsSyncTest: XCTestCase {
+class StreamingSplitsSyncTest: XCTestCase, @unchecked Sendable {
     var httpClient: HttpClient!
     let apiKey = IntegrationHelper.dummyApiKey
     let userKey = IntegrationHelper.dummyUserKey

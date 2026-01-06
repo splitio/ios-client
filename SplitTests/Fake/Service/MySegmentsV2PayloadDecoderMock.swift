@@ -9,7 +9,7 @@
 
 import Foundation
 
-class SegmentsPayloadDecoderMock: SegmentsPayloadDecoder {
+class SegmentsPayloadDecoderMock: SegmentsPayloadDecoder, @unchecked Sendable {
 
     var hashedKey: UInt64 = 1
     var decodedString: String?

@@ -19,7 +19,7 @@ protocol PeriodicTask {
     func stop()
 }
 
-class PeriodicTaskExecutor: PeriodicTask {
+class PeriodicTaskExecutor: PeriodicTask, @unchecked Sendable {
 
     private var dispatchGroup: DispatchGroup?
     private var firstExecutionWindow: Int = 0

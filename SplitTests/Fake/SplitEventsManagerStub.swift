@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 import XCTest
-class SplitEventsManagerStub: SplitEventsManager {
+class SplitEventsManagerStub: SplitEventsManager, @unchecked Sendable {
 
     var splitsLoadedEventFiredCount = 0
     var splitsKilledEventFiredCount = 0

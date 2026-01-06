@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class KeyValueStorageMock: KeyValueStorage {
+class KeyValueStorageMock: KeyValueStorage, @unchecked Sendable {
     private var storage: [String: Any] = [:]
 
     func set<T: Encodable>(item: T, for key: SecureItem) {
