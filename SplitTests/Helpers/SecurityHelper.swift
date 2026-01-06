@@ -126,7 +126,7 @@ class ChallengeSenderMock: NSObject, URLAuthenticationChallengeSender, @unchecke
     func cancel(_ challenge: URLAuthenticationChallenge) {}
 }
 
-class ProtectionSpaceMock: URLProtectionSpace {
+class ProtectionSpaceMock: URLProtectionSpace, @unchecked Sendable {
 
     var serverTrustMock: SecTrust?
     init(host: String, secTrust: SecTrust) {

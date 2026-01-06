@@ -146,7 +146,7 @@ class HttpRequestManagerTests: XCTestCase, @unchecked Sendable {
     }
 }
 
-class URLTaskMock: URLSessionDataTask {
+class URLTaskMock: URLSessionDataTask, @unchecked Sendable {
     private var _taskIdentifier: Int
 
     init(taskIdentifier: Int = 0) {
@@ -162,7 +162,7 @@ class URLTaskMock: URLSessionDataTask {
     }
 }
 
-class ErrorCapturingHttpRequestMock: HttpRequestMock {
+class ErrorCapturingHttpRequestMock: HttpRequestMock, @unchecked Sendable {
     var completedError: Error?
 
     override func complete(error: HttpError?) {
