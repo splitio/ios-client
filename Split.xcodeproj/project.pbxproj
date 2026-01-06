@@ -827,6 +827,8 @@
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
+		5BFA8DDD2F0D7956004EAE86 /* SplitFlakyTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5BFA8DDC2F0D7956004EAE86 /* SplitFlakyTests.xctestplan */; };
+		5BFA8DDE2F0D7956004EAE86 /* SplitFlakyTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5BFA8DDC2F0D7956004EAE86 /* SplitFlakyTests.xctestplan */; };
 		9500D9922C56F9BA00383593 /* HostDomainFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */; };
 		9500D9A92C59297400383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
 		9500D9AA2C59382000383593 /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9A82C59297400383593 /* HostDomainFilter.swift */; };
@@ -2068,6 +2070,7 @@
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
+		5BFA8DDC2F0D7956004EAE86 /* SplitFlakyTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitFlakyTests.xctestplan; sourceTree = "<group>"; };
 		9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilterTests.swift; sourceTree = "<group>"; };
 		9500D9A82C59297400383593 /* HostDomainFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilter.swift; sourceTree = "<group>"; };
 		9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v5.xcdatamodel; sourceTree = "<group>"; };
@@ -2658,6 +2661,7 @@
 				95DF58F72BEC5432009220B8 /* SplitiOSUnit_3.xctestplan */,
 				95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */,
 				5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */,
+				5BFA8DDC2F0D7956004EAE86 /* SplitFlakyTests.xctestplan */,
 				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
@@ -4523,6 +4527,7 @@
 				592C6AE9211CBBB0002D120C /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
 				95F7BC072C1CE84500C5F2E4 /* rsa_4096_pub.der in Resources */,
 				95F7BC0D2C2A1F3700C5F2E4 /* ed25519-cert.der in Resources */,
+				5BFA8DDE2F0D7956004EAE86 /* SplitFlakyTests.xctestplan in Resources */,
 				59FB7C2C2202467C00ECC96A /* localhost_2.splits in Resources */,
 				95F7BC152C346BB400C5F2E4 /* ec_256v1_cert.der in Resources */,
 				95F7BBEA2C1A3D4100C5F2E4 /* apple_public_key.pem in Resources */,
@@ -4614,6 +4619,7 @@
 				5B3C17B12ED76BAD0068D623 /* murmur3-sample-data-non-alpha-numeric-v2.csv in Resources */,
 				5B3C17B22ED76BAD0068D623 /* rsa_4096_pub.der in Resources */,
 				5B3C17B32ED76BAD0068D623 /* ed25519-cert.der in Resources */,
+				5BFA8DDD2F0D7956004EAE86 /* SplitFlakyTests.xctestplan in Resources */,
 				5B3C17B42ED76BAD0068D623 /* localhost_2.splits in Resources */,
 				5B3C17B52ED76BAD0068D623 /* ec_256v1_cert.der in Resources */,
 				5B3C17B62ED76BAD0068D623 /* apple_public_key.pem in Resources */,
