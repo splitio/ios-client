@@ -199,7 +199,11 @@
         "SplitIntegrationTests\/testReadyMyLargeSegmentsEnabledNoWaitMls()",
         "SplitIntegrationTests\/testReadyMyLargeSegmentsEnabledWaitMls()",
         "SplitIntegrationTests\/testReadyNoRef()",
-        "StreamingControlTest\/testControl()"
+        "StreamingControlTest\/testControl()",
+        "TelemetryIntegrationTest\/testStreamingTelemetry()",
+        "UserConsentModeDebugTest\/testUserConsentGranted()",
+        "UserConsentModeNoneTest\/testUserConsentGranted()",
+        "UserConsentModeOptimizedTest\/testUserConsentGranted()"
       ],
       "target" : {
         "containerPath" : "container:Split.xcodeproj",
@@ -395,7 +399,11 @@
         "SplitIntegrationTests\/testReadyMyLargeSegmentsEnabledNoWaitMls()",
         "SplitIntegrationTests\/testReadyMyLargeSegmentsEnabledWaitMls()",
         "SplitIntegrationTests\/testReadyNoRef()",
-        "StreamingControlTest\/testControl()"
+        "StreamingControlTest\/testControl()",
+        "TelemetryIntegrationTest\/testStreamingTelemetry()",
+        "UserConsentModeDebugTest\/testUserConsentGranted()",
+        "UserConsentModeNoneTest\/testUserConsentGranted()",
+        "UserConsentModeOptimizedTest\/testUserConsentGranted()"
       ],
       "target" : {
         "containerPath" : "container:Split.xcodeproj",
