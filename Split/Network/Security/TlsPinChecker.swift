@@ -70,7 +70,7 @@ enum CredentialValidationResult: CaseIterable {
     }
 }
 
-@objc public enum CertificatePinningStatus: Int, CustomStringConvertible {
+@objc public enum CertificatePinningStatus: Int, CustomStringConvertible, Sendable {
     case success, failed, defaultHandling
 
     public var description: String {
