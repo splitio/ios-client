@@ -30,7 +30,8 @@ jobs:
           SplitiOSUnit_5,
           SemVer,
           SplitPushManagerUT,
-          SplitStreamingUT
+          SplitStreamingUT,
+          SplitFlakyTests
         ]
         scheme: [SplitTestsSwift5, SplitTestsSwift6]
       fail-fast: false

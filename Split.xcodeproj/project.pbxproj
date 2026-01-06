@@ -812,6 +812,8 @@
 		5B3C17FF2ED76BAD0068D623 /* ed25519-pub.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC0C2C2A1F3600C5F2E4 /* ed25519-pub.der */; };
 		5B48D8172DEA2CED00351925 /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5B7E60112F0C472B003B32B9 /* CoreDataHelperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53207ED2EF452C000418BB1 /* CoreDataHelperStub.swift */; };
+		5B7E60142F0D67C9003B32B9 /* SplitFlakyTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5B7E60132F0D67C9003B32B9 /* SplitFlakyTests.xctestplan */; };
+		5B7E60152F0D67C9003B32B9 /* SplitFlakyTests.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5B7E60132F0D67C9003B32B9 /* SplitFlakyTests.xctestplan */; };
 		5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */; };
 		5BD75F832E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */; };
 		5BD75FB02E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */; };
@@ -2056,6 +2058,7 @@
 		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B3C18042ED76BAD0068D623 /* SplitTestsSwift6.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitTestsSwift6.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B3C18052ED76BAE0068D623 /* SplitTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SplitTests copy-Info.plist"; path = "/Users/martin/Desktop/Code/ios-client/SplitTests copy-Info.plist"; sourceTree = "<absolute>"; };
+		5B7E60132F0D67C9003B32B9 /* SplitFlakyTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitFlakyTests.xctestplan; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
 		5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit_5.xctestplan; sourceTree = "<group>"; };
 		5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatments.swift; sourceTree = "<group>"; };
@@ -2659,6 +2662,7 @@
 				95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */,
 				5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */,
 				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
+				5B7E60132F0D67C9003B32B9 /* SplitFlakyTests.xctestplan */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
 				956E418E271DC8F1008B4DB6 /* Splitlib */,
@@ -4561,6 +4565,7 @@
 				95F7BBFB2C1C953000C5F2E4 /* ec_secp521r1_pub.der in Resources */,
 				599EA58C226903DF006CBA89 /* localhost.yaml in Resources */,
 				C5977C062BF273A3003E293A /* valid_semantic_versions.csv in Resources */,
+				5B7E60152F0D67C9003B32B9 /* SplitFlakyTests.xctestplan in Resources */,
 				95F7BBDB2C1A27C200C5F2E4 /* rsa_4096_public_01.pem in Resources */,
 				5982D92F219C83D000230F44 /* legacy_1_short.csv in Resources */,
 				95DF58FA2BEE5140009220B8 /* SplitiOSUnit_4.xctestplan in Resources */,
@@ -4652,6 +4657,7 @@
 				5B3C17D72ED76BAD0068D623 /* ec_secp521r1_pub.der in Resources */,
 				5B3C17D82ED76BAD0068D623 /* localhost.yaml in Resources */,
 				5B3C17D92ED76BAD0068D623 /* valid_semantic_versions.csv in Resources */,
+				5B7E60142F0D67C9003B32B9 /* SplitFlakyTests.xctestplan in Resources */,
 				5B3C17DA2ED76BAD0068D623 /* rsa_4096_public_01.pem in Resources */,
 				5B3C17DB2ED76BAD0068D623 /* legacy_1_short.csv in Resources */,
 				5B3C17DC2ED76BAD0068D623 /* SplitiOSUnit_4.xctestplan in Resources */,
