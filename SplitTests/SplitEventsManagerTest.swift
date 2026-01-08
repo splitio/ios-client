@@ -336,8 +336,7 @@ class SplitEventsManagerTest: XCTestCase, @unchecked Sendable {
     }
 }
 
-class TestTask: SplitEventTask, @unchecked Sendable {
-
+class TestTask: SplitEventActionTask, @unchecked Sendable {
     var taskTriggered = false
     let label: String
     var exp: XCTestExpectation?
