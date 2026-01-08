@@ -8,6 +8,9 @@
 import Foundation
 
 class Spec {
-
-    static var flagsSpec = "1.3"
+    #if swift(>=6.0)
+        nonisolated(unsafe) static var flagsSpec = "1.3"
+    #else
+        static var flagsSpec = "1.3"
+    #endif
 }

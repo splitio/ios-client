@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 
 
-class HashedImpressionDaoMock: HashedImpressionDao {
+class HashedImpressionDaoMock: HashedImpressionDao, @unchecked Sendable {
     var items = [UInt32: HashedImpression]()
     func update(_ hashes: [HashedImpression]) {
         hashes.forEach {

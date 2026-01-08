@@ -8,6 +8,33 @@
 
 import Foundation
 
+//MARK: Solving Swift 6 stricter casting
+#if swift(>=6.0)
+    typealias AnySplitApiRestClient = DefaultRestClient
+    typealias AnySynchronizer = DefaultSynchronizer
+    typealias AnySyncManager = DefaultSyncManager
+    typealias AnyImpressionTracker = DefaultImpressionsTracker
+    typealias AnySplitEventsManagerCoordinator = MainSplitEventsManager
+    typealias AnySyncEventBroadcaster = DefaultSyncEventBroadcaster
+    typealias AnyByKeyFacade = DefaultByKeyFacade
+    typealias AnyEventsTracker = DefaultEventsTracker
+    typealias AnySyncWorkerFactory = DefaultSyncWorkerFactory
+    typealias AnySplitManager = DefaultSplitManager
+    typealias AnyPropertyValidator = DefaultPropertyValidator
+#else
+    typealias AnySplitApiRestClient = SplitApiRestClient
+    typealias AnySynchronizer = Synchronizer
+    typealias AnySyncManager = SyncManager
+    typealias AnyImpressionTracker = ImpressionsTracker
+    typealias AnySplitEventsManagerCoordinator = SplitEventsManagerCoordinator
+    typealias AnySyncEventBroadcaster = SyncEventBroadcaster
+    typealias AnyByKeyFacade = ByKeyFacade
+    typealias AnyEventsTracker = EventsTracker
+    typealias AnySyncWorkerFactory = SyncWorkerFactory
+    typealias AnySplitManager = SplitManager
+    typealias AnyPropertyValidator = PropertyValidator
+#endif
+
 enum ComponentError: Error {
     case notFound(name: String)
     case buildFailed(name: String)
@@ -46,7 +73,7 @@ class SplitComponentFactory {
     }
 
     func getSplitEventsManagerCoordinator() -> SplitEventsManagerCoordinator {
-        if let obj = catalog.get(for: SplitEventsManagerCoordinator.self) as? SplitEventsManagerCoordinator {
+        if let obj = catalog.get(for: AnySplitEventsManagerCoordinator.self) as? SplitEventsManagerCoordinator {
             return obj
         }
         let component: SplitEventsManagerCoordinator = MainSplitEventsManager()
@@ -55,7 +82,7 @@ class SplitComponentFactory {
     }
 
     func getSplitManager() throws -> SplitManager {
-        if let obj = catalog.get(for: SplitManager.self) as? SplitManager {
+        if let obj = catalog.get(for: AnySplitManager.self) as? SplitManager {
             return obj
         }
         let storageContainer = try getSplitStorageContainer()
@@ -140,7 +167,7 @@ class SplitComponentFactory {
     }
 
     func getSynchronizer() throws -> Synchronizer {
-        if let obj = catalog.get(for: Synchronizer.self) as? Synchronizer {
+        if let obj = catalog.get(for: AnySynchronizer.self) as? Synchronizer {
             return obj
         }
         throw ComponentError.notFound(name: "Synchronizer")
@@ -165,7 +192,7 @@ class SplitComponentFactory {
     }
 
     func getByKeyFacade() -> ByKeyFacade {
-        if let obj = catalog.get(for: ByKeyFacade.self) as? ByKeyFacade {
+        if let obj = catalog.get(for: AnyByKeyFacade.self) as? ByKeyFacade {
             return obj
         }
         let component: ByKeyFacade = DefaultByKeyFacade()
@@ -189,7 +216,7 @@ class SplitComponentFactory {
     }
 
     func getSyncManager() throws -> SyncManager {
-        if let obj = catalog.get(for: SyncManager.self) as? SyncManager {
+        if let obj = catalog.get(for: AnySyncManager.self) as? SyncManager {
             return obj
         }
         throw ComponentError.notFound(name: "Sync manager")
@@ -214,7 +241,7 @@ class SplitComponentFactory {
     }
 
     func getSyncEventBroadcaster() throws -> SyncEventBroadcaster {
-        if let obj = catalog.get(for: SyncEventBroadcaster.self) as? SyncEventBroadcaster {
+        if let obj = catalog.get(for: AnySyncEventBroadcaster.self) as? SyncEventBroadcaster {
             return obj
         }
         let component: SyncEventBroadcaster = DefaultSyncEventBroadcaster()
@@ -223,7 +250,7 @@ class SplitComponentFactory {
     }
 
     func getSyncWorkerFactory() throws -> SyncWorkerFactory {
-        if let obj = catalog.get(for: SyncWorkerFactory.self) as? SyncWorkerFactory {
+        if let obj = catalog.get(for: AnySyncWorkerFactory.self) as? SyncWorkerFactory {
             return obj
         }
         throw ComponentError.notFound(name: "Sync worker factory")
@@ -365,7 +392,7 @@ extension SplitComponentFactory {
     }
 
     func getEventsTracker() throws -> EventsTracker {
-        if let obj = catalog.get(for: EventsTracker.self) as? EventsTracker {
+        if let obj = catalog.get(for: AnyEventsTracker.self) as? EventsTracker {
             return obj
         }
         return try buildEventsTracker()
@@ -382,14 +409,14 @@ extension SplitComponentFactory {
     }
 
     func getPropertyValidator() -> PropertyValidator {
-        if let obj = catalog.get(for: PropertyValidator.self) as? PropertyValidator {
+        if let obj = catalog.get(for: AnyPropertyValidator.self) as? PropertyValidator {
             return obj
         }
         return buildPropertyValidator(validationLogger: validationLogger)
     }
 
     func getImpressionsTracker() throws -> ImpressionsTracker {
-        if let obj = catalog.get(for: ImpressionsTracker.self) as? ImpressionsTracker {
+        if let obj = catalog.get(for: AnyImpressionTracker.self) as? ImpressionsTracker {
             return obj
         }
         throw ComponentError.notFound(name: "ImpressionsTracker")
@@ -398,7 +425,7 @@ extension SplitComponentFactory {
 
 extension SplitComponentFactory {
     func getRestClient() throws -> SplitApiRestClient {
-        if let obj = catalog.get(for: SplitApiRestClient.self) as? SplitApiRestClient {
+        if let obj = catalog.get(for: AnySplitApiRestClient.self) as? SplitApiRestClient {
             return obj
         }
         throw ComponentError.notFound(name: "Rest client")

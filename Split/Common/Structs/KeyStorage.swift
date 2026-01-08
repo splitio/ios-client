@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SplitKeyDictionary<T> {
+class SplitKeyDictionary<T>: @unchecked Sendable {
 
     private var queue: DispatchQueue = DispatchQueue(label: "split-key-dictionary",
                                                      target: .global())

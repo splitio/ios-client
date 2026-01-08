@@ -16,13 +16,13 @@ struct SseClientConstants {
 }
 
 protocol SseClient: AnyObject {
-    typealias CompletionHandler = (Bool) -> Void
+    typealias CompletionHandler = @Sendable (Bool) -> Void
     func connect(token: String, channels: [String], completion: @escaping CompletionHandler)
     func disconnect()
     var isConnectionOpened: Bool { get }
 }
 
-class DefaultSseClient: SseClient {
+class DefaultSseClient: SseClient, @unchecked Sendable {
 
     ///
     /// NOTE:

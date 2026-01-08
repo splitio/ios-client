@@ -12,7 +12,7 @@ protocol HttpEventsRecorder {
     func execute(_ items: [EventDTO]) throws
 }
 
-class DefaultHttpEventsRecorder: HttpEventsRecorder {
+class DefaultHttpEventsRecorder: HttpEventsRecorder, @unchecked Sendable {
 
     private let restClient: RestClientTrackEvents
     private let syncHelper: SyncHelper

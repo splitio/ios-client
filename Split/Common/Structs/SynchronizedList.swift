@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SynchronizedList<T> {
+class SynchronizedList<T>: @unchecked Sendable {
     private var queue: DispatchQueue
     private var items: [T]
     private var capacity: Int

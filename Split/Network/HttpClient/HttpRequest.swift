@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol HttpRequest {
+protocol HttpRequest: Sendable {
     typealias RequestCompletionHandler = (HttpResponse) -> Void
     typealias RequestErrorHandler = (HttpError) -> Void
 
@@ -33,7 +33,7 @@ protocol HttpDataReceivingRequest {
 }
 
 // MARK: BaseHttpRequest
-class BaseHttpRequest: HttpRequest {
+class BaseHttpRequest: HttpRequest, @unchecked Sendable {
 
     private(set) var responseCode: Int = 1
     private(set) var url: URL

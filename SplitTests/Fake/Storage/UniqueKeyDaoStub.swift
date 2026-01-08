@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class UniqueKeyDaoStub: UniqueKeyDao {
+class UniqueKeyDaoStub: UniqueKeyDao, @unchecked Sendable {
 
     var insertedKeys = [UniqueKey]()
     var getByKeys = [UniqueKey]()

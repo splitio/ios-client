@@ -8,7 +8,7 @@
 import Foundation
 @testable import Split
 
-class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer {
+class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer, @unchecked Sendable {
    var loadCalled = false
     func load() {
         loadCalled = true

@@ -26,7 +26,7 @@ protocol SegmentsChecker {
 }
 
 // One instance per factory
-class DefaultMySegmentsStorage: MySegmentsStorage {
+class DefaultMySegmentsStorage: MySegmentsStorage, @unchecked Sendable {
 
     private var inMemoryMySegments: SynchronizedDictionarySet<String, String> = SynchronizedDictionarySet()
     private let persistenStorage: PersistentMySegmentsStorage

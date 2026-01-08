@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SplitsStorageStub: SplitsStorage {
+class SplitsStorageStub: SplitsStorage, @unchecked Sendable {
 
     var updatedSplitChange: ProcessedSplitChange? = nil
     
@@ -23,6 +23,8 @@ class SplitsStorageStub: SplitsStorage {
     var flagsSpec: String = ""
     
     var segmentsInUse: Int64 = 0
+    
+    var lock = NSLock()
 
     var loadLocalCalled = false
     var clearCalledTimes = 0
@@ -44,7 +46,7 @@ class SplitsStorageStub: SplitsStorage {
     }
     
     func get(name: String) -> Split? {
-        return inMemorySplits.value(forKey: name.lowercased())
+        inMemorySplits.value(forKey: name.lowercased())
     }
     
     func getMany(splits: [String]) -> [String : Split] {
@@ -53,7 +55,7 @@ class SplitsStorageStub: SplitsStorage {
     }
     
     func getAll() -> [String : Split] {
-        return inMemorySplits.all
+        inMemorySplits.all
     }
 
     var updateSplitChangeCalled = false
@@ -85,7 +87,7 @@ class SplitsStorageStub: SplitsStorage {
     }
 
     func update(filterQueryString: String) {
-        self.splitsFilterQueryString = filterQueryString
+        splitsFilterQueryString = filterQueryString
     }
 
     func updateWithoutChecks(split: Split) {
@@ -103,6 +105,8 @@ class SplitsStorageStub: SplitsStorage {
     }
     
     func clear() {
+        lock.lock()
+        defer { lock.unlock() }
         clearCalledTimes+=1
         inMemorySplits.removeAll()
     }
@@ -112,12 +116,16 @@ class SplitsStorageStub: SplitsStorage {
     }
 
     func getCount() -> Int {
+        lock.lock()
+        defer { lock.unlock() }
         getCountCalledCount+=1
         return inMemorySplits.count
     }
 
     var updateBySetsFilterCount = 0
     func update(bySetsFilter: SplitFilter?) {
+        lock.lock()
+        defer { lock.unlock() }
         updateBySetsFilterCount+=1
     }
     

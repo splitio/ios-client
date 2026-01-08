@@ -21,7 +21,7 @@ enum CoreDataEntity: String {
     case ruleBasedSegment = "RuleBasedSegment"
 }
 
-class CoreDataHelper {
+class CoreDataHelper: @unchecked Sendable {
     typealias Operation = () -> Void
     private let managedObjectContext: NSManagedObjectContext
     private let persistentCoordinator: NSPersistentStoreCoordinator
@@ -33,7 +33,11 @@ class CoreDataHelper {
     }
 
     func create(entity: CoreDataEntity) -> NSManagedObject {
+        #if swift(>=6.0)
+        nonisolated(unsafe) var obj: NSManagedObject!
+        #else
         var obj: NSManagedObject!
+        #endif
 
         managedObjectContext.performAndWait {
             obj = NSEntityDescription.insertNewObject(forEntityName: entity.rawValue,
@@ -87,7 +91,11 @@ class CoreDataHelper {
     }
 
     func fetch(entity: CoreDataEntity, where predicate: NSPredicate? = nil, rowLimit: Int? = nil) -> [Any] {
+        #if swift(>=6.0)
+        nonisolated(unsafe) var entities = [Any]()
+        #else
         var entities = [Any]()
+        #endif
         managedObjectContext.performAndWait {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity.rawValue)
             if let rowLimit = rowLimit {

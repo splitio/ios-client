@@ -10,7 +10,7 @@ import XCTest
 import Foundation
 @testable import Split
 
-class HttpMySegmentsFetcherStub: HttpMySegmentsFetcher {
+class HttpMySegmentsFetcherStub: HttpMySegmentsFetcher, @unchecked Sendable {
     var fetchMySegmentsCount = 0
     private var segmentsIndex = AtomicInt(-1)
     var segments: [AllSegmentsChange?]?

@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SplitsUpdateWorkerMock: SplitsUpdateWorker {
+class SplitsUpdateWorkerMock: SplitsUpdateWorker, @unchecked Sendable {
     var processCalled = false
     var throwException = false
     override func process(notification: TargetingRuleUpdateNotification) throws {
@@ -20,7 +20,7 @@ class SplitsUpdateWorkerMock: SplitsUpdateWorker {
     }
 }
 
-class SegmentsUpdateWorkerMock: SegmentsUpdateWorker {
+class SegmentsUpdateWorkerMock: SegmentsUpdateWorker, @unchecked Sendable {
     var processCalled = false
     var throwException = false
     override func process(notification: MembershipsUpdateNotification) throws {
@@ -31,7 +31,7 @@ class SegmentsUpdateWorkerMock: SegmentsUpdateWorker {
     }
 }
 
-class SplitKillWorkerMock: SplitKillWorker {
+class SplitKillWorkerMock: SplitKillWorker, @unchecked Sendable {
     var processCalled = false
     var throwException = false
     override func process(notification: SplitKillNotification) throws {

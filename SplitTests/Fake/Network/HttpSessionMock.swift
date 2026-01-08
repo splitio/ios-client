@@ -9,12 +9,12 @@
 import Foundation
 @testable import Split
 
-class HttpSessionMock: HttpSession {
+class HttpSessionMock: HttpSession, @unchecked Sendable {
 
     func finalize() {
     }
 
-    private (set) var dataTaskCallCount: Int = 0
+    private(set) var dataTaskCallCount: Int = 0
     func startTask(with request: HttpRequest) -> HttpTask? {
         dataTaskCallCount+=1
         return HttpTaskMock(identifier: 100)

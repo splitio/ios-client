@@ -18,7 +18,7 @@ protocol EventsTracker: AnyObject {
                isSdkReady: Bool) -> Bool
 }
 
-class DefaultEventsTracker: EventsTracker {
+class DefaultEventsTracker: EventsTracker, @unchecked Sendable {
 
     private let config: SplitClientConfig
     private let eventValidator: EventValidator

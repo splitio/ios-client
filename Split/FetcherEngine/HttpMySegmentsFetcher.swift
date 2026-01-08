@@ -12,7 +12,7 @@ protocol HttpMySegmentsFetcher {
     func execute(userKey: String, till: Int64?, headers: [String: String]?) throws -> AllSegmentsChange?
 }
 
-class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher {
+class DefaultHttpMySegmentsFetcher: HttpMySegmentsFetcher, @unchecked Sendable {
     private let syncHelper: SyncHelper
     private var resource: Resource = .mySegments
     private let restClient: RestClientMySegments

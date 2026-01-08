@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PersistentSplitsStorageStub: PersistentSplitsStorage {
+class PersistentSplitsStorageStub: PersistentSplitsStorage, @unchecked Sendable {
 
     var changeNumber: Int64 = -1
     var updateTimestamp: Int64 = 0

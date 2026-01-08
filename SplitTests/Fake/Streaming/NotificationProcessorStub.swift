@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SseNotificationProcessorStub: SseNotificationProcessor {
+class SseNotificationProcessorStub: SseNotificationProcessor, @unchecked Sendable {
     var processCalled = false
     func process(_ notification: IncomingNotification) {
         processCalled = true

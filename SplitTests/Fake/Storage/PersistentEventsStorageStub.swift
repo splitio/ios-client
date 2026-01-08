@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PersistentEventsStorageStub: PersistentEventsStorage {
+class PersistentEventsStorageStub: PersistentEventsStorage, @unchecked Sendable {
 
 
     var storedEvents = [String: EventDTO]()

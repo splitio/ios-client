@@ -11,7 +11,9 @@ import Foundation
 import XCTest
 @testable import Split
 
-class ImpressionsObserverTest: XCTestCase {
+extension DefaultImpressionsObserver: @unchecked @retroactive Sendable {}
+
+class ImpressionsObserverTest: XCTestCase, @unchecked Sendable {
 
     var storage = HashedImpressionsStorageMock()
 

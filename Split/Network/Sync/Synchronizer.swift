@@ -44,7 +44,7 @@ protocol Synchronizer: ImpressionLogger {
     func disableTelemetry()
 }
 
-class DefaultSynchronizer: Synchronizer {
+class DefaultSynchronizer: Synchronizer, @unchecked Sendable {
 
     private let splitConfig: SplitClientConfig
     private let splitStorageContainer: SplitStorageContainer

@@ -35,7 +35,7 @@ protocol TimersManager {
     func destroy()
 }
 
-class DefaultTimersManager: TimersManager {
+class DefaultTimersManager: TimersManager, @unchecked Sendable {
     private let timers = ConcurrentDictionary<TimerName, CancellableTask>()
     private let taskExecutor = TaskExecutor()
 

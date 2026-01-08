@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class ReconnectBackoffCounterStub: ReconnectBackoffCounter {
+class ReconnectBackoffCounterStub: ReconnectBackoffCounter, @unchecked Sendable {
     var resetCounterCalled = false
     var retryCallCount = 0
     var nextRetryTime: Double = 1

@@ -13,7 +13,7 @@ protocol HttpTelemetryStatsRecorder {
     func execute(_ stats: TelemetryStats) throws
 }
 
-class DefaultHttpTelemetryStatsRecorder: HttpTelemetryStatsRecorder {
+class DefaultHttpTelemetryStatsRecorder: HttpTelemetryStatsRecorder, @unchecked Sendable {
 
     private let restClient: RestClientTelemetryStats
     private let syncHelper: SyncHelper

@@ -14,7 +14,7 @@ protocol PersistentHashedImpressionsStorage {
     func getAll() -> [HashedImpression]
 }
 
-class DefaultPersistentHashedImpressionsStorage: PersistentHashedImpressionsStorage {
+class DefaultPersistentHashedImpressionsStorage: PersistentHashedImpressionsStorage, @unchecked Sendable {
 
     private let hashedImpressionDao: HashedImpressionDao
 

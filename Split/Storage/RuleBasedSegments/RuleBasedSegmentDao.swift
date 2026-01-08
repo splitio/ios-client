@@ -18,7 +18,7 @@ protocol RuleBasedSegmentDao {
     func syncInsertOrUpdate(segment: RuleBasedSegment)
 }
 
-class CoreDataRuleBasedSegmentDao: BaseCoreDataDao, RuleBasedSegmentDao {
+class CoreDataRuleBasedSegmentDao: BaseCoreDataDao, RuleBasedSegmentDao, @unchecked Sendable {
     private let decoder: RuleBasedSegmentsDecoder
     private let encoder: RuleBasedSegmentsEncoder
     private var cipher: Cipher?

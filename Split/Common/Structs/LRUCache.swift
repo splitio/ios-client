@@ -8,7 +8,7 @@
 
 import Foundation
 
-class LRUCache<K: Hashable, E> {
+class LRUCache<K: Hashable & Sendable, E: Sendable>: @unchecked Sendable {
     /// Elements queue tracks objects usage
     /// first element is last used
     /// last element is least used

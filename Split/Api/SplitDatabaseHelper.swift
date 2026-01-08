@@ -17,7 +17,12 @@ struct SplitDatabaseHelper {
     /// This avoids issues in concurrent initialization of SDK instances using the same SDK key + prefix,
     /// while still allowing different dbKeys to initialize in parallel.
     static private let storageLockMapGuard = NSLock()
+    
+    #if swift(>=6.0)
+    nonisolated(unsafe) static private var storageLockMap: [String: NSLock] = [:]
+    #else
     static private var storageLockMap: [String: NSLock] = [:]
+    #endif
     
     static private func storageLock(for dbKey: String) -> NSLock {
         storageLockMapGuard.lock()

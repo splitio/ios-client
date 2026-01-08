@@ -12,7 +12,7 @@ import Foundation
 /// Retrieves segments changes or a user key
 /// Also triggers MY SEGMENTS READY event when first fetch is succesful
 ///
-class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker {
+class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
 
     private let telemetryProducer: TelemetryRuntimeProducer?
     private let avoidCache: Bool

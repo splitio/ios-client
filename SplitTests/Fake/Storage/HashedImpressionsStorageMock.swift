@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HashedImpressionsStorageMock: HashedImpressionsStorage {
+class HashedImpressionsStorageMock: HashedImpressionsStorage, @unchecked Sendable {
     let queue = DispatchQueue(label: "test", target: .global())
     var items = [UInt32: Int64]()
 

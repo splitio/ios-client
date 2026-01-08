@@ -17,7 +17,7 @@ protocol ByKeyMySegmentsStorage: SegmentsChecker {
 }
 
 // One instance per client
-class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage {
+class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage, @unchecked Sendable {
 
     private let mySegmentsStorage: MySegmentsStorage
     private let userKey: String

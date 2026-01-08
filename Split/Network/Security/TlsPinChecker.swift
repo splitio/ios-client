@@ -70,7 +70,7 @@ enum CredentialValidationResult: CaseIterable {
     }
 }
 
-@objc public enum CertificatePinningStatus: Int, CustomStringConvertible {
+@objc public enum CertificatePinningStatus: Int, CustomStringConvertible, Sendable {
     case success, failed, defaultHandling
 
     public var description: String {
@@ -156,7 +156,7 @@ struct CertSpki {
     }
 }
 
-protocol TlsPinChecker {
+protocol TlsPinChecker: Sendable {
     func check(credential: AnyObject) -> CredentialValidationResult
 }
 

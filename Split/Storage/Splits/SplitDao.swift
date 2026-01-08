@@ -26,7 +26,7 @@ protocol SplitDao {
     func transactionalDelete(_ splitNames: [String])
 }
 
-class CoreDataSplitDao: BaseCoreDataDao, SplitDao {
+class CoreDataSplitDao: BaseCoreDataDao, SplitDao, @unchecked Sendable {
     private let decoder: SplitsDecoder
     private let encoder: SplitsEncoder
     private var cipher: Cipher?

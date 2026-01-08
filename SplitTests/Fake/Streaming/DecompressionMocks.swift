@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class CompressionProviderMock: CompressionProvider {
+class CompressionProviderMock: CompressionProvider, @unchecked Sendable {
     var decompressorCalled = false
     func decompressor(for type: CompressionType) -> CompressionUtil {
         decompressorCalled = true
@@ -17,7 +17,7 @@ class CompressionProviderMock: CompressionProvider {
     }
 }
 
-class CompressionUtilMock: CompressionUtil {
+class CompressionUtilMock: CompressionUtil, @unchecked Sendable {
     var decompressCalled = false
     func decompress(data: Data) throws -> Data {
         decompressCalled = true

@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc class Treatment: NSObject, Codable {
+@objc class Treatment: NSObject, Codable, @unchecked Sendable {
     var name: String!
     var treatment: String!
 }

@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class TreatmentManagerMock: TreatmentManager {
+class TreatmentManagerMock: TreatmentManager, @unchecked Sendable {
     let fSplits = ["split1", "split2"]
     
     // Track method calls with evaluationOptions

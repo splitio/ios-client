@@ -40,7 +40,7 @@ class OutdatedSplitProxyHandler {
         case recovery
     }
 
-    private static let PREVIOUS_SPEC = "1.2"
+    private static let previousSpecVersion = "1.2"
 
     private let latestSpec: String
     private let previousSpec: String
@@ -57,7 +57,10 @@ class OutdatedSplitProxyHandler {
     ///   - generalInfoStorage: The general info storage
     ///   - proxyCheckIntervalMillis: The custom proxy check interval
     convenience init(flagSpec: String, generalInfoStorage: GeneralInfoStorage, proxyCheckIntervalMillis: Int64) {
-        self.init(flagSpec: flagSpec, previousSpec: OutdatedSplitProxyHandler.PREVIOUS_SPEC, generalInfoStorage: generalInfoStorage, proxyCheckIntervalMillis: proxyCheckIntervalMillis)
+        self.init(flagSpec: flagSpec,
+                  previousSpec: OutdatedSplitProxyHandler.previousSpecVersion,
+                  generalInfoStorage: generalInfoStorage,
+                  proxyCheckIntervalMillis: proxyCheckIntervalMillis)
     }
 
     /// Initializes a new OutdatedSplitProxyHandler with custom previous spec.

@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class HttpRequestManagerTests: XCTestCase {
+class HttpRequestManagerTests: XCTestCase, @unchecked Sendable {
     var reqManager: HttpRequestManager!
     var pinChecker: PinCheckerMock!
     var notificationHelper = NotificationHelperStub()
@@ -18,6 +18,20 @@ class HttpRequestManagerTests: XCTestCase {
     let hostName = "www.test.com"
     let certName = "rsa_4096_cert.pem"
     var dummyChallenge: URLAuthenticationChallenge!
+    
+    // Notifications concurrently safe
+    let lock = DispatchQueue(label: "lock")
+    var notifications = [String]()
+    func appendNotifications(_ v: String) {
+        lock.sync { notifications.append(v) }
+    }
+    
+    // Results concurrently safe
+    let lock2 = DispatchQueue(label: "lock2")
+    var results = [CredentialValidationResult: URLSession.AuthChallengeDisposition]()
+    func appendResults(_ k: CredentialValidationResult, _ v: URLSession.AuthChallengeDisposition) {
+        lock2.sync { results[k] = v }
+    }
 
     override func setUp() {
         dummyChallenge = securityHelper.createAuthChallenge(host: hostName, certName: certName)
@@ -28,21 +42,22 @@ class HttpRequestManagerTests: XCTestCase {
         let request = URLRequest(url: URL(string: hostName)!)
         let task = URLSession.shared.dataTask(with: request)
         let manager = createRequestManager()
-        var notifications = [String]()
-        var results = [CredentialValidationResult: URLSession.AuthChallengeDisposition]()
+        let notificationsQueue = DispatchQueue(label: "notifications.queue")
         
         notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { info in
             guard let info = info as? String else {
                 XCTFail()
                 return
             }
-            notifications.append(info)
+            notificationsQueue.sync {
+                self.appendNotifications(info)
+            }
         }
         
         // MARK: Pinning status handler
-        var statuses = [CertificatePinningStatus]()
-        var reasons = [String]()
-        var host: String?
+        nonisolated(unsafe) var statuses = [CertificatePinningStatus]()
+        nonisolated(unsafe) var reasons = [String]()
+        nonisolated(unsafe) var host: String?
 
         notificationHelper.addObserver(for: .pinnedCredentialStatus) { info in
             guard let info = info as? CertificatePinningCompleteStatus else {
@@ -57,7 +72,7 @@ class HttpRequestManagerTests: XCTestCase {
         // MARK: Inject data
         for result in CredentialValidationResult.allCases {
             manager.urlSession?(URLSession.shared, task: task, didReceive: dummyChallenge) {disposition,_ in
-                results[result] = disposition
+                self.appendResults(result, disposition)
                 exp.fulfill()
             }
         }
@@ -131,7 +146,7 @@ class HttpRequestManagerTests: XCTestCase {
     }
 }
 
-class URLTaskMock: URLSessionDataTask {
+class URLTaskMock: URLSessionDataTask, @unchecked Sendable {
     private var _taskIdentifier: Int
 
     init(taskIdentifier: Int = 0) {
@@ -147,7 +162,7 @@ class URLTaskMock: URLSessionDataTask {
     }
 }
 
-class ErrorCapturingHttpRequestMock: HttpRequestMock {
+class ErrorCapturingHttpRequestMock: HttpRequestMock, @unchecked Sendable {
     var completedError: Error?
 
     override func complete(error: HttpError?) {

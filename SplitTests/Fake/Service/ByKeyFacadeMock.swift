@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class ByKeyFacadeMock: ByKeyFacade {
+class ByKeyFacadeMock: ByKeyFacade, @unchecked Sendable {
 
     var stopSyncCalled = false
     var components = [Key: ByKeyComponentGroup]()

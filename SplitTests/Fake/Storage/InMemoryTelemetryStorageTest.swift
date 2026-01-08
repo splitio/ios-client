@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class InMemoryTelemetryStorageTest: XCTestCase {
+class InMemoryTelemetryStorageTest: XCTestCase, @unchecked Sendable {
 
     var storage: TelemetryStorage!
 

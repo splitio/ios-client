@@ -21,7 +21,7 @@ protocol FeatureFlagsSynchronizer {
     func destroy()
 }
 
-class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer {
+class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Sendable {
 
     private var storageContainer: SplitStorageContainer
     private var splitsSyncWorker: RetryableSyncWorker!

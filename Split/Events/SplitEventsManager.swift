@@ -8,7 +8,7 @@
 //
 import Foundation
 
-protocol SplitEventsManager: AnyObject {
+protocol SplitEventsManager: AnyObject, Sendable {
     func register(event: SplitEvent, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
     func start()
@@ -16,7 +16,7 @@ protocol SplitEventsManager: AnyObject {
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
 }
 
-class DefaultSplitEventsManager: SplitEventsManager {
+class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
     private let readingRefreshTime: Int
 
     private var sdkReadyTimeStart: Int64

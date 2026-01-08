@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class FlagSetsCacheMock: FlagSetsCache {
+class FlagSetsCacheMock: FlagSetsCache, @unchecked Sendable {
     var setsInFilter: Set<String>?
 
 

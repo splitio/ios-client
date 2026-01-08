@@ -8,7 +8,7 @@
 
 import Foundation
 
-@objc class DependencyMatcherData: NSObject, Codable {
+@objc class DependencyMatcherData: NSObject, Codable, @unchecked Sendable {
     var split: String?
     var treatments: [String]?
 }

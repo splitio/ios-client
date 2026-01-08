@@ -19,7 +19,7 @@ protocol ByKeyAttributesStorage {
     func destroy()
 }
 
-class DefaultByKeyAttributesStorage: ByKeyAttributesStorage {
+class DefaultByKeyAttributesStorage: ByKeyAttributesStorage, @unchecked Sendable {
 
     private let attributesStorage: AttributesStorage
     private let userKey: String

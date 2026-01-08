@@ -12,7 +12,7 @@ import Foundation
 /// Swift doesn't allow dynamic dispatch
 /// when using protocols. So, using this implementation to allow easy UT creation
 ///
-class UpdateWorker<T: NotificationTypeField> {
+class UpdateWorker<T: NotificationTypeField>: @unchecked Sendable {
     let processQueue: DispatchQueue
 
     init(queueName: String) {
@@ -24,7 +24,7 @@ class UpdateWorker<T: NotificationTypeField> {
     }
 }
 
-class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
+class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification>, @unchecked Sendable {
 
     private let synchronizer: Synchronizer
     private let splitsStorage: SplitsStorage
@@ -204,7 +204,7 @@ class SplitsUpdateWorker: UpdateWorker<TargetingRuleUpdateNotification> {
     }
 }
 
-class SplitKillWorker: UpdateWorker<SplitKillNotification> {
+class SplitKillWorker: UpdateWorker<SplitKillNotification>, @unchecked Sendable {
 
     private let synchronizer: Synchronizer
     private let splitsStorage: SplitsStorage

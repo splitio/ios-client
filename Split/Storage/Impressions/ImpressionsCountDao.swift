@@ -17,7 +17,7 @@ protocol ImpressionsCountDao {
     func delete(_ counts: [ImpressionsCountPerFeature])
 }
 
-class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao {
+class CoreDataImpressionsCountDao: BaseCoreDataDao, ImpressionsCountDao, @unchecked Sendable {
 
     private let cipher: Cipher?
     init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {

@@ -15,7 +15,7 @@ protocol EventsStorage {
 }
 
 // TODO: Rename persistent and this one
-class MainEventsStorage: EventsStorage {
+class MainEventsStorage: EventsStorage, @unchecked Sendable {
     private let persistentStorage: PersistentEventsStorage
     private let events = SynchronizedList<EventDTO>()
     private let isPersistenceEnabled: Atomic<Bool>

@@ -36,7 +36,7 @@ struct ValidationConfig {
     ///
     let maxEventPropertiesCount = 300
 
-    static var `default`: ValidationConfig = {
+    static let `default`: ValidationConfig = {
         return ValidationConfig()
     }()
 }

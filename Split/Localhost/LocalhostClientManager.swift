@@ -7,9 +7,9 @@
 
 import Foundation
 
-class LocalhostClientManager: SplitClientManager {
+class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
 
-    struct LocalhostComponentsGroup {
+    struct LocalhostComponentsGroup: @unchecked Sendable {
         let client: SplitClient
         let eventsManager: SplitEventsManager
     }
@@ -29,7 +29,13 @@ class LocalhostClientManager: SplitClientManager {
     private let splitManager: SplitManager
     weak var splitFactory: SplitFactory?
 
-    init(config: SplitClientConfig, key: Key, splitManager: SplitManager, splitsStorage: SplitsStorage, synchronizer: FeatureFlagsSynchronizer, eventsManagerCoordinator: SplitEventsManagerCoordinator, factory: SplitFactory) {
+    init(config: SplitClientConfig,
+         key: Key,
+         splitManager: SplitManager,
+         splitsStorage: SplitsStorage,
+         synchronizer: FeatureFlagsSynchronizer,
+         eventsManagerCoordinator: SplitEventsManagerCoordinator,
+         factory: SplitFactory) {
 
         self.defaultKey = key
         self.config = config

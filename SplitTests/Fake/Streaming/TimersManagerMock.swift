@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class TimersManagerMock: TimersManager {
+class TimersManagerMock: TimersManager, @unchecked Sendable {
 
     private var timersAdded = Set<TimerName>()
     private var timersCancelled = Set<TimerName>()

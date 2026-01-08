@@ -8,7 +8,7 @@
 
 import Foundation
 
-class TelemetryStatsRecorderWorker: RecorderWorker {
+class TelemetryStatsRecorderWorker: RecorderWorker, @unchecked Sendable {
 
     private let telemetryConsumer: TelemetryConsumer
     private let statsRecorder: HttpTelemetryStatsRecorder

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class EventsRecorderWorker: RecorderWorker {
+class EventsRecorderWorker: RecorderWorker, @unchecked Sendable {
 
     private let persistentEventsStorage: PersistentEventsStorage
     private let eventsRecorder: HttpEventsRecorder

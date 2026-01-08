@@ -7,15 +7,27 @@
 //
 import Foundation
 
-class GlobalSecureStorage: KeyValueStorage {
+class GlobalSecureStorage: KeyValueStorage, @unchecked Sendable {
 
-    private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+    #if swift(>=6.0)
+        nonisolated(unsafe) private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+    #else
+        private static let prodStorage: KeyValueStorage = GlobalSecureStorage()
+    #endif
 
     // Only for testing
-    static var testStorage: KeyValueStorage?
+    #if swift(>=6.0)
+        nonisolated(unsafe) static var testStorage: KeyValueStorage?
+    #else
+        static var testStorage: KeyValueStorage?
+    #endif
 
     static var shared: KeyValueStorage {
+        #if DEBUG
         return testStorage ?? prodStorage
+        #else
+        return prodStorage
+        #endif
     }
 
     func set<T: Encodable>(item: T, for key: SecureItem) {

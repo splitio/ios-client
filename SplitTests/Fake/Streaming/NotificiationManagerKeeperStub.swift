@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class NotificationManagerKeeperStub: NotificationManagerKeeper {
+class NotificationManagerKeeperStub: NotificationManagerKeeper, @unchecked Sendable {
     private var publishersCount: Int = 0
     var isStreamingActive: Bool = true
 

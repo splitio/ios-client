@@ -12,7 +12,7 @@ protocol HttpUniqueKeysRecorder {
     func execute(_ uniqueKeys: UniqueKeys) throws
 }
 
-class DefaultHttpUniqueKeysRecorder: HttpUniqueKeysRecorder {
+class DefaultHttpUniqueKeysRecorder: HttpUniqueKeysRecorder, @unchecked Sendable {
 
     private let restClient: RestClientUniqueKeys
     private let syncHelper: SyncHelper

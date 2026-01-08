@@ -9,7 +9,7 @@ import Foundation
 /**
  Default implementation of SplitManager protocol
  */
-public class DefaultSplitFactory: NSObject, SplitFactory {
+public class DefaultSplitFactory: NSObject, SplitFactory, @unchecked Sendable {
 
     private static let kInitErrorMessage = "Something happened on Split init and the client couldn't be created"
 

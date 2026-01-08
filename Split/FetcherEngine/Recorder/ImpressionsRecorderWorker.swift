@@ -8,7 +8,7 @@
 
 import Foundation
 
-class ImpressionsRecorderWorker: RecorderWorker {
+class ImpressionsRecorderWorker: RecorderWorker, @unchecked Sendable {
 
     private let persistentImpressionsStorage: PersistentImpressionsStorage
     private let impressionsRecorder: HttpImpressionsRecorder

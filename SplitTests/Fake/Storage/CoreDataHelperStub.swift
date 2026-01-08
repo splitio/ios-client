@@ -7,7 +7,7 @@ import Foundation
 import CoreData
 @testable import Split
 
-class CoreDataHelperStub: CoreDataHelper {
+class CoreDataHelperStub: CoreDataHelper, @unchecked Sendable {
     
     var shouldFailOnSave = false
     var saveError: Error = NSError(domain: "TestCoreData", code: 500, userInfo: [NSLocalizedDescriptionKey: "Simulated save failure"])

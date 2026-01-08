@@ -9,7 +9,7 @@
 import Foundation
 
 // swiftlint:disable cyclomatic_complexity function_body_length inclusive_language
-class Matcher: NSObject, Codable {
+class Matcher: NSObject, Codable, @unchecked Sendable {
 
     var keySelector: KeySelector?
     var matcherType: MatcherType?
