@@ -9,7 +9,7 @@
 @testable import Split
 import Foundation
 
-class ImpressionsCountDaoStub: ImpressionsCountDao {
+class ImpressionsCountDaoStub: ImpressionsCountDao, @unchecked Sendable {
 
     var insertedCounts = [ImpressionsCountPerFeature]()
     var getByCounts = [ImpressionsCountPerFeature]()

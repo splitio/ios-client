@@ -57,13 +57,13 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
          splitsFileName: String,
          bundle: Bundle) throws {
 
-        self.fileName = splitsFileName
+        fileName = splitsFileName
         self.fileStorage = fileStorage
-        self.refreshInterval = Self.sanitizeRefreshInterval(config.refreshInterval)
-        if !self.setup(bundle: bundle, dataFolderName: dataFolderName) {
+        refreshInterval = Self.sanitizeRefreshInterval(config.refreshInterval)
+        if !setup(bundle: bundle, dataFolderName: dataFolderName) {
             throw GenericError.unknown(message: "Could setup localhost file loader.")
         }
-        self.taskExecutor = self.createTaskExecutor()
+        taskExecutor = createTaskExecutor()
     }
 
     func start() {
@@ -87,7 +87,7 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
     }
 
     private static func sanitizeRefreshInterval(_ refreshInterval: Int) -> Int {
-        return refreshInterval > 0 ? refreshInterval : ServiceConstants.defaultLocalhostRefreshRate
+        refreshInterval > 0 ? refreshInterval : ServiceConstants.defaultLocalhostRefreshRate
     }
 
     private func createTaskExecutor() -> PeriodicTaskExecutor {
@@ -124,7 +124,7 @@ class FeatureFlagsFileLoader: LocalhostDataSource {
     }
 
     private func isSupportedExtensionType(_ type: String) -> Bool {
-        return LocalhostFile.extensions.filter({ $0 == type.lowercased() }).count == 1
+        LocalhostFile.extensions.filter({ $0 == type.lowercased() }).count == 1
     }
 
     private func validateAndCopyFile(bundle: Bundle) -> FileInfo? {

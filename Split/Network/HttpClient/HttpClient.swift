@@ -26,6 +26,7 @@ struct HttpCode {
     static let requestTimeOut = 408
     static let uriTooLong = 414
     static let internalServerError = 500
+    static let networkLost = -1005
 }
 
 // MARK: HttpMethod
@@ -70,10 +71,10 @@ enum HttpMethod: String, CustomStringConvertible {
 // MARK: HttpSession Delegate
 typealias HttpHeaders = [String: String]
 
-class HttpSessionConfig {
+class HttpSessionConfig: @unchecked Sendable {
     static let kDefaultConnectionTimeout: TimeInterval = 30
 
-    static let  `default`: HttpSessionConfig = {
+    static let `default`: HttpSessionConfig = {
         return HttpSessionConfig()
     }()
     var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
@@ -98,12 +99,14 @@ extension HttpClient {
     }
 }
 
-class DefaultHttpClient {
+class DefaultHttpClient: @unchecked Sendable {
 
-    static let shared: HttpClient = {
-        return DefaultHttpClient()
-    }()
-
+    #if swift(>=6.0)
+        nonisolated(unsafe) static let shared: HttpClient = { DefaultHttpClient() }()
+    #else
+        static let shared: HttpClient = { DefaultHttpClient() }()
+    #endif
+    
     private var testSession: HttpSession?
     private var testRequestManager: HttpRequestManager?
 

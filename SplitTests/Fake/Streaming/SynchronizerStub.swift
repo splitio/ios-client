@@ -15,7 +15,7 @@ struct ForceMySegmentsParams {
     let delay: Int64
 }
 
-class SynchronizerStub: Synchronizer {
+class SynchronizerStub: Synchronizer, @unchecked Sendable {
     var disableSdkCalled = false
     var disableEventsCalled = false
     var disableTelemetryCalled = false

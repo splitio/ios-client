@@ -1,3 +1,18 @@
+3.5.2: (Dec 18, 2025)
+- Fixed issue where targeting rules cache integrity could be lost if a SQLite write failed.
+
+3.5.1: (Dec 17, 2025)
+- Fixed issue in encryption mode where SDK cache functionality could not be recovered if the encryption key was removed.
+
+3.5.0: (Dec 11, 2025)
+- Added Status Handler to Certificate Pinning. This allows to observe the status of a pinning verification, whether it succeeds or not. Read more in our docs.
+
+3.4.2: (oct. 22, 2025)
+- Fixed streaming reconnection after connection was interrupted.
+
+3.4.1: (Sep 25, 2025)
+- Modified SplitEventsManager to not rely on BlockingQueue
+
 3.4.0: (sept. 23, 2025)
 - Added new configuration for Fallback Treatments, which allows setting a treatment value and optional config to be returned in place of "control", either globally or by flag. Read more in our docs.
 

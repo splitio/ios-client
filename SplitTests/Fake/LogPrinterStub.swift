@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class LogPrinterStub: LogPrinter {
+class LogPrinterStub: LogPrinter, @unchecked Sendable {
 
     private(set) var logs = [String]()
 

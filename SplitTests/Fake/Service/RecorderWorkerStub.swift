@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class RecorderWorkerStub: RecorderWorker {
+class RecorderWorkerStub: RecorderWorker, @unchecked Sendable {
     var flushCalled = false
     var flushCallCount = 0
     var expectation: XCTestExpectation?

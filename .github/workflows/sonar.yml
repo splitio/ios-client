@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - "**"
+  push:
+    branches:
+      - master
 
 # Cancel in-progress runs when a new workflow with the same group is triggered
 concurrency:
@@ -13,7 +16,7 @@ concurrency:
 jobs:
   build-and-collect-coverage:
     name: Build & Collect Coverage
-    runs-on: macos-15
+    runs-on: macos-15-xlarge
     timeout-minutes: 15
     steps:
       - name: Checkout
@@ -28,7 +31,7 @@ jobs:
             -project Split.xcodeproj \
             -scheme Split \
             -testPlan "SplitiOSFull" \
-            -destination 'platform=iOS Simulator,OS=18.4,name=iPhone 16' \
+            -destination 'platform=iOS Simulator,OS=18.5,name=iPhone 16' \
             -enableCodeCoverage YES \
             -resultBundlePath build/Logs/Test/TestResults.xcresult \
             -derivedDataPath build
@@ -133,8 +136,9 @@ jobs:
           echo "📄 Sample of coverage XML:"
           head -n 20 sonarqube-generic-coverage.xml
 
-      - name: Run SonarQube scan
-        uses: sonarsource/sonarqube-scan-action@v5
+      - name: Run SonarQube scan (Pull Request)
+        if: github.event_name == 'pull_request'
+        uses: sonarsource/sonarqube-scan-action@v7
         with:
           projectBaseDir: .
           args: >
@@ -150,7 +154,6 @@ jobs:
             -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift
             -Dsonar.qualitygate.wait=true
             -Dsonar.qualitygate.timeout=300
-            -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift
             -Dsonar.new.code.ignore.list.patterns=**/*.generated.swift
             -Dsonar.qualitygate.ignoreSmallChanges=false
             -Dsonar.newCode.referenceBranch=${{ github.event.pull_request.base.ref }}
@@ -159,6 +162,31 @@ jobs:
             -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
             -Dsonar.pullrequest.branch=${{ github.event.pull_request.head.ref }}
             -Dsonar.pullrequest.base=${{ github.event.pull_request.base.ref }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}
+
+      - name: Run SonarQube scan (Branch)
+        if: github.event_name == 'push'
+        uses: sonarsource/sonarqube-scan-action@v7
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=splitio_ios-client
+            -Dsonar.projectName=${{ github.event.repository.name }}
+            -Dsonar.c.file.suffixes=-
+            -Dsonar.cpp.file.suffixes=-
+            -Dsonar.objc.file.suffixes=-
+            -Dsonar.coverageReportPaths=sonarqube-generic-coverage.xml
+            -Dsonar.verbose=true
+            -Dsonar.sources=Split
+            -Dsonar.exclusions=**/Tests/**,**/*.generated.swift
+            -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.qualitygate.timeout=300
+            -Dsonar.new.code.ignore.list.patterns=**/*.generated.swift
+            -Dsonar.qualitygate.ignoreSmallChanges=false
+            -Dsonar.branch.name=${{ github.ref_name }}
         env:
           SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONARQUBE_HOST }}

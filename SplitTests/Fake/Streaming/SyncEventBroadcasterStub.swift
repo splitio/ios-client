@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SyncEventBroadcasterStub: SyncEventBroadcaster {
+class SyncEventBroadcasterStub: SyncEventBroadcaster, @unchecked Sendable {
     var registeredHandler: IncomingMessageHandler?
     var pushExpectationCallCount = 0
     var pushExpectationTriggerCallCount = 1

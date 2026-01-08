@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage {
+class RuleBasedSegmentsStorageStub: RuleBasedSegmentsStorage, @unchecked Sendable {
 
     var segments = [String: RuleBasedSegment]()
     var changeNumber: Int64 = -1

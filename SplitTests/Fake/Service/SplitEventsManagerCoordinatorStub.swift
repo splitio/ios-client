@@ -10,7 +10,7 @@ import Foundation
 
 @testable import Split
 
-class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator {
+class SplitEventsManagerCoordinatorStub: SplitEventsManagerCoordinator, @unchecked Sendable {
 
     var managers = [Key: SplitEventsManager]()
 

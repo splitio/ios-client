@@ -15,7 +15,7 @@ protocol HashedImpressionDao {
     func delete(_ hashes: [HashedImpression])
 }
 
-class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao {
+class CoreDataHashedImpressionDao: BaseCoreDataDao, HashedImpressionDao, @unchecked Sendable {
 
     override init(coreDataHelper: CoreDataHelper) {
         super.init(coreDataHelper: coreDataHelper)

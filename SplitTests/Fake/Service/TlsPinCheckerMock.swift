@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PinCheckerMock: TlsPinChecker {
+class PinCheckerMock: TlsPinChecker, @unchecked Sendable {
     var pinResults = [CredentialValidationResult]()
     private var respIndex = -1
 

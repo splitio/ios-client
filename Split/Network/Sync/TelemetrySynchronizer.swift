@@ -17,7 +17,7 @@ protocol TelemetrySynchronizer {
     func destroy()
 }
 
-class DefaultTelemetrySynchronizer: TelemetrySynchronizer {
+class DefaultTelemetrySynchronizer: TelemetrySynchronizer, @unchecked Sendable {
 
     private let configRecorderWorker: RecorderWorker
     private let statsRecorderWorker: RecorderWorker

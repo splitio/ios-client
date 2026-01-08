@@ -9,7 +9,7 @@
 import Foundation
 
 protocol PersistentSplitsStorage {
-    func update(splitChange: ProcessedSplitChange)
+    func update(splitChange: ProcessedSplitChange, onFailure: ((Error) -> Void)?)
     func update(split: Split)
     func update(bySetsFilter: SplitFilter?)
     func getBySetsFilter() -> SplitFilter?
@@ -21,21 +21,46 @@ protocol PersistentSplitsStorage {
     func clear()
 }
 
-class DefaultPersistentSplitsStorage: PersistentSplitsStorage {
+class DefaultPersistentSplitsStorage: PersistentSplitsStorage, @unchecked Sendable {
 
     private let splitDao: SplitDao
     private let generalInfoDao: GeneralInfoDao
+    private let coreDataHelper: CoreDataHelper
 
     init(database: SplitDatabase) {
         self.splitDao = database.splitDao
         self.generalInfoDao = database.generalInfoDao
+        if let testDb = database as? TestSplitDatabase {
+            self.coreDataHelper = testDb.coreDataHelper
+        } else {
+            fatalError("Database must provide CoreDataHelper for transactional operations")
+        }
     }
 
-    func update(splitChange: ProcessedSplitChange) {
-        splitDao.insertOrUpdate(splits: splitChange.activeSplits)
-        splitDao.delete(splitChange.archivedSplits.compactMap { return $0.name })
-        generalInfoDao.update(info: .splitsChangeNumber, longValue: splitChange.changeNumber)
-        generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: splitChange.updateTimestamp)
+    func update(splitChange: ProcessedSplitChange, onFailure: ((Error) -> Void)? = nil) {
+        // This is intentionally async to avoid blocking the caller thread.
+        // All operations must succeed or all must fail.
+        coreDataHelper.perform { [weak self] in
+            guard let self = self else { return }
+            
+            do {
+                // All operations within this block happen in the same CoreData context
+                self.splitDao.transactionalInsertOrUpdate(splits: splitChange.activeSplits)
+                let archivedNames = splitChange.archivedSplits.compactMap { $0.name }
+                self.splitDao.transactionalDelete(archivedNames)
+                
+                self.generalInfoDao.transactionalUpdate(info: .splitsChangeNumber, longValue: splitChange.changeNumber)
+                self.generalInfoDao.transactionalUpdate(info: .splitsUpdateTimestamp, longValue: splitChange.updateTimestamp)
+                
+                // Save everything as one transaction
+                try self.coreDataHelper.saveWithErrorHandling()
+            } catch {
+                Logger.e("Transactional flags update failed: \(error.localizedDescription)")
+                // Rollback to avoid leaving invalid pending changes in the shared context,
+                self.coreDataHelper.rollback()
+                onFailure?(error)
+            }
+        }
     }
 
     func update(split: Split) {

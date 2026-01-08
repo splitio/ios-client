@@ -20,9 +20,9 @@ protocol HttpRequestManager {
     func destroy()
 }
 
-class DefaultHttpRequestManager: NSObject {
-    private var requests = HttpRequestList()
-    private var authenticator: SplitHttpsAuthenticator?
+final class DefaultHttpRequestManager: NSObject, @unchecked Sendable {
+    private let requests = HttpRequestList()
+    private let authenticator: SplitHttpsAuthenticator?
 
     private let pinChecker: TlsPinChecker?
 
@@ -76,7 +76,7 @@ extension DefaultHttpRequestManager: URLSessionTaskDelegate {
             case HttpCode.requestTimeOut:
                 httpError = HttpError.requestTimeOut
             case -1005:
-                httpError = HttpError.clientRelated(code: 400, internalCode: -1)
+                httpError = HttpError.networkLost(code: -1005)
             default:
                 httpError = HttpError.unknown(code: -1, message: error.localizedDescription)
             }
@@ -152,26 +152,33 @@ extension DefaultHttpRequestManager {
                    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
 
         // Validate the server trust using the PinValidator
-        let checkResult = pinChecker.check(credential: challenge)
+        var checkResult = pinChecker.check(credential: challenge)
+        var finalStatus: CertificatePinningStatus
+        
         switch checkResult {
-        case .success:
-            guard let serverTrust = challenge.protectionSpace.serverTrust else {
-                // This shouldn't happen
+            case .success:
+                guard let serverTrust = challenge.protectionSpace.serverTrust else {
+                    // This shouldn't happen
+                    completionHandler(.cancelAuthenticationChallenge, nil)
+                    finalStatus = .failed
+                    checkResult = .unavailableServerTrust
+                    break
+                }
+                let credential = URLCredential(trust: serverTrust)
+                completionHandler(.useCredential, credential)
+                finalStatus = .success
+            
+            case .error, .invalidChain, .credentialNotPinned, .spkiError, .invalidCredential, .invalidParameter, .unavailableServerTrust:
+                notificationHelper?.post(notification: .pinnedCredentialValidationFail, info: challenge.protectionSpace.host as AnyObject)
                 completionHandler(.cancelAuthenticationChallenge, nil)
-                return
-            }
-            let credential = URLCredential(trust: serverTrust)
-            completionHandler(.useCredential, credential)
+                finalStatus = .failed
 
-        case .error, .invalidChain, .credentialNotPinned, .spkiError,
-                .invalidCredential, .invalidParameter, .unavailableServerTrust:
-            notificationHelper?.post(notification: .pinnedCredentialValidationFail,
-                                     info: challenge.protectionSpace.host as AnyObject)
-            completionHandler(.cancelAuthenticationChallenge, nil)
-
-        case .noServerTrustMethod, .noPinsForDomain:
-            completionHandler(.performDefaultHandling, nil)
-            return
+            case .noServerTrustMethod, .noPinsForDomain:
+                completionHandler(.performDefaultHandling, nil)
+                finalStatus = .defaultHandling
         }
+        
+        // Finally we trigger the complete-status handler (host, success/fail, reason)
+        notificationHelper?.post(notification: .pinnedCredentialStatus, info: CertificatePinningCompleteStatus(host: challenge.protectionSpace.host, status: finalStatus, reason: checkResult.description) as AnyObject)
     }
 }

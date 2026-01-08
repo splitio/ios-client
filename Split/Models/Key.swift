@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class Key: NSObject {
+public class Key: NSObject, @unchecked Sendable {
 
     public let matchingKey: String
     public let bucketingKey: String?

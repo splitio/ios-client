@@ -8,7 +8,7 @@
 import Foundation
 @testable import Split
 
-class RuleBasedSegmentChangeProcessorStub: RuleBasedSegmentChangeProcessor {
+class RuleBasedSegmentChangeProcessorStub: RuleBasedSegmentChangeProcessor, @unchecked Sendable {
     var processedRuleBasedSegmentsChange: ProcessedRuleBasedSegmentChange = ProcessedRuleBasedSegmentChange(activeSegments: [], archivedSegments: [], changeNumber: -1, updateTimestamp: -1)
 
     var segmentChange: RuleBasedSegmentChange?

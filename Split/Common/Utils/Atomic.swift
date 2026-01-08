@@ -8,7 +8,7 @@
 
 import Foundation
 
-final class Atomic<T> {
+final class Atomic<T>: @unchecked Sendable {
 //    private let queue = DispatchQueue(label: "split-atomic", target: DispatchQueue.general)
     private var currentValue: T
 
@@ -51,7 +51,7 @@ final class Atomic<T> {
     }
 }
 
-final class AtomicInt {
+final class AtomicInt: @unchecked Sendable {
     private var curValue: Int
     private var lock = NSLock()
 

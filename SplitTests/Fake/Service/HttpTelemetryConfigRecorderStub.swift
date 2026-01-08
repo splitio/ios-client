@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class HttpTelemetryConfigRecorderStub: HttpTelemetryConfigRecorder {
+class HttpTelemetryConfigRecorderStub: HttpTelemetryConfigRecorder, @unchecked Sendable {
 
     var configSent: TelemetryConfig?
     var errorOccurredCallCount = -1

@@ -37,7 +37,7 @@ class ReachabilityWrapper: HostReachabilityChecker {
     }
 }
 
-class DefaultRestClient: SplitApiRestClient {
+class DefaultRestClient: SplitApiRestClient, @unchecked Sendable {
     // MARK: - Private Properties
     private let httpClient: HttpClient
     let endpointFactory: EndpointFactory

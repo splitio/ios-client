@@ -5,7 +5,7 @@ import Foundation
 // All events (internal & external) support metadata.
 // Internal errors are propagated to the customer as events "(.sdkError)".
 // The error info will travel as the event metadata.
-@objc public enum EventMetadataType: Int {
+@objc public enum EventMetadataType: Int, Sendable {
     case errorFeatureFlagsSync
     case errorSegmentsSync
     case errorAuth
@@ -28,7 +28,7 @@ import Foundation
     }
 }
 
-@objc public class EventMetadata: NSObject {
+@objc public final class EventMetadata: NSObject, Sendable {
     @objc public let type: EventMetadataType
     @objc public let data: [String]
     

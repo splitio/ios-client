@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class NotificationHelperStub: NotificationHelper {
+class NotificationHelperStub: NotificationHelper, @unchecked Sendable {
     private let queue = DispatchQueue(label: UUID.init().uuidString, attributes: .concurrent)
     private var actions = [String: [ObserverAction]]()
 
@@ -23,7 +23,7 @@ class NotificationHelperStub: NotificationHelper {
     }
 
     func post(notification: AppNotification, info: AnyObject?) {
-        executeActions(for: AppNotification.pinnedCredentialValidationFail, info: info)
+        executeActions(for: notification, info: info)
     }
 
     private func executeActions(for notification: AppNotification, info: AnyObject?) {

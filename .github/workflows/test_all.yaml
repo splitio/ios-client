@@ -30,10 +30,13 @@ jobs:
           SplitiOSUnit_5,
           SemVer,
           SplitPushManagerUT,
-          SplitStreamingUT
+          SplitStreamingUT,
+          SplitFlakyTests
         ]
+        scheme: [SplitTestsSwift5, SplitTestsSwift6]
       fail-fast: false
     uses: ./.github/workflows/base_ut.yaml
     with:
       test-plan: ${{ matrix.plan }}
-      destination: 'platform=iOS Simulator,OS=17.2,name=iPhone 15'
+      destination: 'platform=iOS Simulator,OS=18.5,name=iPhone 16'
+      scheme: ${{ matrix.scheme }}

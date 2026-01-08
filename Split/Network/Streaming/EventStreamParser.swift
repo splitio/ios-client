@@ -8,7 +8,7 @@
 
 import Foundation
 
-class EventStreamParser {
+class EventStreamParser: @unchecked Sendable {
     static let kIdField = "id"
     static let kDataField = "data"
     static let kEventField = "event"

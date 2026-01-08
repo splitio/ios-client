@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class ClientManagerMock: SplitClientManager {
+class ClientManagerMock: SplitClientManager, @unchecked Sendable {
     var splitFactory: SplitFactory? = SplitFactoryStub(apiKey: "apiKey")
 
     var defaultClient: SplitClient?

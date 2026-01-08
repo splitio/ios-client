@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SplitEventActionTask: SplitEventTask {
+class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
 
     private var eventHandler: SplitAction?
     private var eventHandlerWithMetadata: SplitActionWithMetadata?

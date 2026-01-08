@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol SplitEventTask {
+protocol SplitEventTask: Sendable {
     var event: SplitEvent { get }
     var runInBackground: Bool { get }
     func takeQueue() -> DispatchQueue?

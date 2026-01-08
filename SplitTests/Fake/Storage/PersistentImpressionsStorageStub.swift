@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PersistentImpressionsStorageStub: PersistentImpressionsStorage {
+class PersistentImpressionsStorageStub: PersistentImpressionsStorage, @unchecked Sendable {
 
 
 

@@ -15,7 +15,7 @@ protocol PersistentRuleBasedSegmentsStorage {
     func getChangeNumber() -> Int64
 }
 
-class DefaultPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage {
+class DefaultPersistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorage, @unchecked Sendable {
 
     private let ruleBasedSegmentDao: RuleBasedSegmentDao
     private let generalInfoStorage: GeneralInfoStorage

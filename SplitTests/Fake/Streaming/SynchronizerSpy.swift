@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SynchronizerSpy: Synchronizer {
+class SynchronizerSpy: Synchronizer, @unchecked Sendable {
     var splitSynchronizer: Synchronizer
 
     var loadAndSynchronizeSplitsCalled = false

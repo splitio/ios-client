@@ -13,8 +13,7 @@ protocol SplitEventsManagerCoordinator: SplitEventsManager {
     func remove(forKey key: Key)
 }
 
-class MainSplitEventsManager: SplitEventsManagerCoordinator {
-    
+class MainSplitEventsManager: SplitEventsManagerCoordinator, @unchecked Sendable {
     private var defaultManager: SplitEventsManager?
     private var managers = [Key: SplitEventsManager]()
     private var triggered = Set<SplitInternalEvent>()

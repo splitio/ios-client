@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class ImpressionsTrackerStub: ImpressionsTracker {
+class ImpressionsTrackerStub: ImpressionsTracker, @unchecked Sendable {
     var isTrackingEnabled: Bool = true
     var startCalled = false
     func start() {

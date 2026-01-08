@@ -22,6 +22,7 @@ archives
 /DerivedData3/
 /Build/
 changelog.properties
+xcframework
 
 ## CocoaPods
 Pods/
@@ -37,3 +38,6 @@ Carthage/
 .build/
 Split.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 release_type
+
+## Sweetpad
+buildServer.json

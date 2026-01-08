@@ -27,7 +27,7 @@ protocol GeneralInfoStorage {
     func setSegmentsInUse(_ count: Int64)
 }
 
-class DefaultGeneralInfoStorage: GeneralInfoStorage {
+class DefaultGeneralInfoStorage: GeneralInfoStorage, @unchecked Sendable {
 
     private let generalInfoDao: GeneralInfoDao
     private var queue = DispatchQueue(label: "io.split.DefaultGeneralInfoStorage")

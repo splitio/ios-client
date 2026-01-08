@@ -8,9 +8,9 @@
 
 import Foundation
 #if os(iOS) || os(tvOS)
-import BackgroundTasks
+@preconcurrency import BackgroundTasks
 
-@objc public class SplitBgSynchronizer: NSObject {
+@objc public class SplitBgSynchronizer: NSObject, @unchecked Sendable {
 
     @objc public static let shared = SplitBgSynchronizer()
 
@@ -129,7 +129,7 @@ import BackgroundTasks
     }
 }
 
-struct BackgroundSyncExecutor {
+struct BackgroundSyncExecutor: @unchecked Sendable {
     private let splitDatabase: SplitDatabase
     private let splitsSyncWorker: BackgroundSyncWorker
     private let eventsRecorderWorker: RecorderWorker
@@ -147,8 +147,10 @@ struct BackgroundSyncExecutor {
         self.mapKey = SplitDatabaseHelper.buildDbKey(prefix: prefix, sdkKey: apiKey)
         self.userKeys = userKeys
 
-        let cipherKey = SplitDatabaseHelper.currentEncryptionKey(for: mapKey)
-        let encryptionLevel = SplitDatabaseHelper.currentEncryptionLevel(dbKey: mapKey)
+        let encryptionLevel = DbEncryptionManager.currentEncryptionLevel(dbKey: mapKey)
+        let cipher: Cipher? = encryptionLevel != .none
+            ? DbEncryptionManager.currentEncryptionKey(for: mapKey).map { DefaultCipher(cipherKey: $0) }
+            : nil
 
         let databaseName = SplitDatabaseHelper.databaseName(prefix: prefix,
                                                             apiKey: apiKey) ?? ServiceConstants.defaultDataFolder
@@ -158,8 +160,7 @@ struct BackgroundSyncExecutor {
         }
 
         guard let splitDatabase = try? SplitDatabaseHelper.openDatabase(dataFolderName: databaseName,
-                                                                        cipherKey: cipherKey,
-                                                                        encryptionLevel: encryptionLevel,
+                                                                        cipher: cipher,
                                                                         dbHelper: dbHelper) else {
             throw GenericError.couldNotCreateCache
         }

@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class SseClientTest: XCTestCase {
+class SseClientTest: XCTestCase, @unchecked Sendable {
     var httpClient: HttpClientMock!
     var sseClient: DefaultSseClient!
     var streamRequest: HttpStreamRequestMock!
@@ -19,6 +19,17 @@ class SseClientTest: XCTestCase {
     let sseAuthToken = "SSE_AUTH_TOKEN"
     let sseChannels = ["channel1", "channel2"]
     var sseHandler: SseHandlerStub!
+    
+    let lock = DispatchQueue(label: "lock")
+    var connected = false
+
+    func connectedGet() -> Bool {
+        lock.sync { connected }
+    }
+
+    func connectedSet(_ val: Bool) {
+        lock.sync { connected = val }
+    }
 
     override func setUp() {
         sseHandler = SseHandlerStub()
@@ -37,10 +48,10 @@ class SseClientTest: XCTestCase {
         let conExp = XCTestExpectation(description: "conn")
         let reqExp = XCTestExpectation(description: "req")
         httpClient.streamReqExp = reqExp
-        var connected = false
+        connectedSet(false)
 
         self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
-            connected = success
+            self.connectedSet(success)
             conExp.fulfill()
         }
 
@@ -106,9 +117,9 @@ class SseClientTest: XCTestCase {
         // On response will be called with an error http code so OnErrorHandler has to be executed
         let reqExp = XCTestExpectation(description: "req")
         httpClient.streamReqExp = reqExp
-        var connected = false
+        connectedSet(false)
         self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
-            connected = success
+            self.connectedSet(success)
         }
 
         sleep(1)
@@ -151,9 +162,9 @@ class SseClientTest: XCTestCase {
         httpClient.streamReqExp = reqExp
         sseHandler.errorExpectation = errExp
 
-        var connected = false
+        connectedSet(false)
         self.sseClient.connect(token: self.sseAuthToken, channels: self.sseChannels) { success in
-            connected = success
+            self.connectedSet(success)
             conExp.fulfill()
         }
 

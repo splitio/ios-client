@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class InternalSplitClientStub: InternalSplitClient {
+class InternalSplitClientStub: InternalSplitClient, @unchecked Sendable {
 
     var splitsStorage: SplitsStorage?
     var mySegmentsStorage: MySegmentsStorage?

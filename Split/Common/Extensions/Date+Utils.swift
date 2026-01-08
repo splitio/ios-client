@@ -56,7 +56,7 @@ extension Date {
         return seconds / 86400
     }
 
-    private static var formatter: DateFormatter = {
+    private static let formatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd-MM-yyyy HH:mm:ss.SSS"
         return formatter

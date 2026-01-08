@@ -16,7 +16,7 @@ protocol HttpDataRequest: HttpRequest, HttpDataReceivingRequest {
 }
 
 // MARK: HttpDataRequest
-class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest {
+class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest, @unchecked Sendable {
 
     private(set) var data: Data?
 

@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class ImpressionsObserverMock: ImpressionsObserver {
+class ImpressionsObserverMock: ImpressionsObserver, @unchecked Sendable {
 
     var testAndSetCalled = false
     func testAndSet(impression: KeyImpression) -> Int64? {

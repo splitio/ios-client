@@ -5,10 +5,10 @@
 //  Created by Sebastian Arrubia on 4/16/18.
 //
 //  Update: Replacing timer by blocking queue. 05-10-2021
-
+//
 import Foundation
 
-protocol SplitEventsManager: AnyObject {
+protocol SplitEventsManager: AnyObject, Sendable {
     func register(event: SplitEvent, task: SplitEventTask)
     func notifyInternalEvent(_ event: SplitInternalEvent)
     func notifyInternalEvent(_ event: SplitInternalEventWithMetadata)
@@ -17,8 +17,7 @@ protocol SplitEventsManager: AnyObject {
     func eventAlreadyTriggered(event: SplitEvent) -> Bool
 }
 
-class DefaultSplitEventsManager: SplitEventsManager {
-    
+class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
     private let readingRefreshTime: Int
 
     private var sdkReadyTimeStart: Int64

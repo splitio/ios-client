@@ -11,7 +11,7 @@ import XCTest
 
 @testable import Split
 
-class RetryableSyncWorkerStub: RetryableSyncWorker {
+class RetryableSyncWorkerStub: RetryableSyncWorker, @unchecked Sendable {
 
     var completion: SyncCompletion?
     var errorHandler: ErrorHandler?
@@ -33,7 +33,7 @@ class RetryableSyncWorkerStub: RetryableSyncWorker {
     }
 }
 
-class PeriodicSyncWorkerStub: PeriodicSyncWorker {
+class PeriodicSyncWorkerStub: PeriodicSyncWorker, @unchecked Sendable {
 
     var startCalled = false
     var stopCalled = false
@@ -62,7 +62,7 @@ class PeriodicSyncWorkerStub: PeriodicSyncWorker {
     }
 }
 
-class RetryableMySegmentsSyncWorkerStub: RetryableSyncWorker {
+class RetryableMySegmentsSyncWorkerStub: RetryableSyncWorker, @unchecked Sendable {
 
     var errorHandler: ErrorHandler?
 

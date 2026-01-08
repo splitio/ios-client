@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class AnyValueValidatorStub: AnyValueValidator {
+class AnyValueValidatorStub: AnyValueValidator, @unchecked Sendable {
     var isListResult = true
     var isPrimitiveValueResult = true
     var lastValueChecked: Any?

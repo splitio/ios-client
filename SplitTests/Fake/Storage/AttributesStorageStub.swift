@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class AttributesStorageStub: AttributesStorage {
+class AttributesStorageStub: AttributesStorage, @unchecked Sendable {
     var persistedAttributes = [String: [String: Any]]()
     private var attributes = [String: [String: Any]]()
 

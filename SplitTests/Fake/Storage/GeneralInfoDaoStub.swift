@@ -9,7 +9,7 @@
 @testable import Split
 import Foundation
 
-class GeneralInfoDaoStub: GeneralInfoDao {
+class GeneralInfoDaoStub: GeneralInfoDao, @unchecked Sendable {
 
     var updatedString = [String: String]()
     var updatedLong = [String: Int64]()
@@ -33,5 +33,9 @@ class GeneralInfoDaoStub: GeneralInfoDao {
     func delete(info: GeneralInfo) {
         updatedString.removeValue(forKey: info.rawValue)
         updatedLong.removeValue(forKey: info.rawValue)
+    }
+    
+    func transactionalUpdate(info: GeneralInfo, longValue: Int64) {
+        updatedLong[info.rawValue] = longValue
     }
 }

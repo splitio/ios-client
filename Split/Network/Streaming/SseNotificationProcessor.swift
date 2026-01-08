@@ -12,7 +12,7 @@ protocol SseNotificationProcessor {
     func process(_ notification: IncomingNotification)
 }
 
-class DefaultSseNotificationProcessor: SseNotificationProcessor {
+class DefaultSseNotificationProcessor: SseNotificationProcessor, @unchecked Sendable {
 
     private let sseNotificationParser: SseNotificationParser
     private let splitsUpdateWorker: SplitsUpdateWorker

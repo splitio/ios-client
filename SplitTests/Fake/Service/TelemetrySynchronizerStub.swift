@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class TelemetrySynchronizerStub: TelemetrySynchronizer {
+class TelemetrySynchronizerStub: TelemetrySynchronizer, @unchecked Sendable {
     var synchronizeConfigCalled = false
     var synchronizeStatsCalled = false
     var startCalled = false

@@ -14,7 +14,7 @@ protocol NotificationManagerKeeper {
     func handleIncomingControl(notification: ControlNotification)
 }
 
-class DefaultNotificationManagerKeeper: NotificationManagerKeeper {
+class DefaultNotificationManagerKeeper: NotificationManagerKeeper, @unchecked Sendable {
 
     struct PublishersInfo {
         var count: Int

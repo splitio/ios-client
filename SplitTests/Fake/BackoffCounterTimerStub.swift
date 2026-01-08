@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class BackoffCounterTimerStub: BackoffCounterTimer {
+class BackoffCounterTimerStub: BackoffCounterTimer, @unchecked Sendable {
 
     var scheduleCalled = false
     func schedule(handler: @escaping () -> Void) {

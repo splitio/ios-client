@@ -14,13 +14,13 @@ class IntegrationHelper {
         ServiceEndpoints.builder().set(sdkEndpoint: mockEndPoint).set(eventsEndpoint: mockEndPoint).build()
     }
 
-    static var dummyApiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+    static let dummyApiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
 
-    static var dummyFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
+    static let dummyFolderName = "2a1099049fd8653247c5ea42bOIajMRhH0R0FcBwJZM4ca7zj6HAq1ZDS"
 
-    static var dummyUserKey = "CUSTOMER_ID"
+    static let dummyUserKey = "CUSTOMER_ID"
 
-    static var mockEndPoint = "http://localhost:8080"
+    static let mockEndPoint = "http://localhost:8080"
 
     static var emptyMySegments: String {
           """
@@ -35,7 +35,7 @@ class IntegrationHelper {
           """
     }
 
-    static var emptySplitChanges = "{\"ff\": {\"d\":[], \"s\": 9567456937865, \"t\": 9567456937869 }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": -1 }}"
+    static let emptySplitChanges = "{\"ff\": {\"d\":[], \"s\": 9567456937865, \"t\": 9567456937869 }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": -1 }}"
 
     static func emptySplitChanges(since: Int, till: Int) -> String {
         "{\"ff\": {\"d\":[], \"s\": \(since), \"t\": \(till) }, \"rbs\": {\"d\":[], \"s\": \(since), \"t\": \(till) }}"
@@ -221,7 +221,7 @@ class IntegrationHelper {
         }
     }
 
-    static var dummyCipherKey = String("11F17550-01EA-45").dataBytes!
+    static let dummyCipherKey = String("11F17550-01EA-45").dataBytes!
 }
     
 // MARK: Simplest SDK Factory

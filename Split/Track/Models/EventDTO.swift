@@ -8,7 +8,7 @@
 import Foundation
 
 // TODO: Rename to Event
-class EventDTO: DynamicCodable {
+class EventDTO: DynamicCodable, @unchecked Sendable {
     var storageId: String?
     var key: String?
     var eventTypeId: String

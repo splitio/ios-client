@@ -37,7 +37,7 @@ struct CoreDataDaoProviderMock: DaoProvider {
     var ruleBasedSegmentDao: RuleBasedSegmentDao = RuleBasedSegmentDaoStub()
 }
 
-class SplitDatabaseStub: SplitDatabase {
+class SplitDatabaseStub: SplitDatabase, TestSplitDatabase, @unchecked Sendable {
 
     var splitDao: SplitDao
     var mySegmentsDao: MySegmentsDao
@@ -51,17 +51,21 @@ class SplitDatabaseStub: SplitDatabase {
     var uniqueKeyDao: UniqueKeyDao
     var ruleBasedSegmentDao: RuleBasedSegmentDao
     
-    init(daoProvider: DaoProvider) {
-        self.eventDao = daoProvider.eventDao
-        self.impressionDao = daoProvider.impressionDao
-        self.impressionsCountDao = daoProvider.impressionsCountDao
-        self.splitDao = daoProvider.splitDao
-        self.generalInfoDao = daoProvider.generalInfoDao
-        self.mySegmentsDao = daoProvider.mySegmentsDao
-        self.myLargeSegmentsDao = daoProvider.myLargeSegmentsDao
-        self.attributesDao = daoProvider.attributesDao
-        self.uniqueKeyDao = daoProvider.uniqueKeyDao
-        self.hashedImpressionDao = daoProvider.hashedImpressionDao
-        self.ruleBasedSegmentDao = daoProvider.ruleBasedSegmentDao
+    // TestSplitDatabase conformance
+    var coreDataHelper: CoreDataHelper
+    
+    init(daoProvider: DaoProvider, coreDataHelper: CoreDataHelper? = nil) {
+        eventDao = daoProvider.eventDao
+        impressionDao = daoProvider.impressionDao
+        impressionsCountDao = daoProvider.impressionsCountDao
+        splitDao = daoProvider.splitDao
+        generalInfoDao = daoProvider.generalInfoDao
+        mySegmentsDao = daoProvider.mySegmentsDao
+        myLargeSegmentsDao = daoProvider.myLargeSegmentsDao
+        attributesDao = daoProvider.attributesDao
+        uniqueKeyDao = daoProvider.uniqueKeyDao
+        hashedImpressionDao = daoProvider.hashedImpressionDao
+        ruleBasedSegmentDao = daoProvider.ruleBasedSegmentDao
+        self.coreDataHelper = coreDataHelper ?? CoreDataHelperStub()
     }
 }

@@ -198,7 +198,8 @@ struct TestingHelper {
                                      hashedImpressionsStorage: HashedImpressionsStorageMock(),
                                      generalInfoStorage: GeneralInfoStorageMock(),
                                      ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub(),
-                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub())
+                                     persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub(),
+                                     targetingRulesPersistenceBreaker: DefaultPersistenceBreaker())
     }
 
     static func createApiFacade() -> SplitApiFacade {

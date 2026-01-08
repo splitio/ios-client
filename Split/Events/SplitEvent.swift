@@ -7,7 +7,7 @@
 
 import Foundation
 
-@objcMembers public class SplitEventWithMetadata: NSObject {
+@objcMembers public final class SplitEventWithMetadata: NSObject, Sendable {
     let type: SplitEvent
     let metadata: EventMetadata?
     
@@ -17,7 +17,7 @@ import Foundation
     }
 }
 
-@objc public enum SplitEvent: Int {
+@objc public enum SplitEvent: Int, Sendable {
     case sdkReady
     case sdkReadyTimedOut
     case sdkReadyFromCache

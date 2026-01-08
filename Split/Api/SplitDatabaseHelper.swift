@@ -12,42 +12,27 @@ struct SplitDatabaseHelper {
     static private let kDbMagicCharsCount = 4
     static private let kDbExt = ["", "-shm", "-wal"]
     static private let kExpirationPeriod = ServiceConstants.recordedDataExpirationPeriodInSeconds
-
-    static func currentEncryptionLevel(dbKey: String) -> SplitEncryptionLevel {
-        let rawValue = GlobalSecureStorage.shared.getInt(item: .dbEncryptionLevel(dbKey))
-        ?? SplitEncryptionLevel.none.rawValue
-        return SplitEncryptionLevel(rawValue: rawValue) ?? .none
-    }
-
-    static func setCurrentEncryptionLevel(_ level: SplitEncryptionLevel, for apiKey: String) {
-        GlobalSecureStorage.shared.set(item: level.rawValue, for: .dbEncryptionLevel(apiKey))
-    }
-
-    static func currentEncryptionKey(for dbKey: String) -> Data? {
-
-        // If there is a stored key, let's use it
-        if let encKey = GlobalSecureStorage.shared.getString(item: .dbEncryptionKey(dbKey)) {
-            return Base64Utils.decodeBase64NoPadding(encKey)
+    
+    /// Lock to prevent concurrent storage container creation per dbKey.
+    /// This avoids issues in concurrent initialization of SDK instances using the same SDK key + prefix,
+    /// while still allowing different dbKeys to initialize in parallel.
+    static private let storageLockMapGuard = NSLock()
+    
+    #if swift(>=6.0)
+    nonisolated(unsafe) static private var storageLockMap: [String: NSLock] = [:]
+    #else
+    static private var storageLockMap: [String: NSLock] = [:]
+    #endif
+    
+    static private func storageLock(for dbKey: String) -> NSLock {
+        storageLockMapGuard.lock()
+        defer { storageLockMapGuard.unlock() }
+        if let lock = storageLockMap[dbKey] {
+            return lock
         }
-
-        // If not, try to create a new one
-        if let newKey = DefaultKeyGenerator().generateKey(size: ServiceConstants.aes128KeyLength) {
-            setCurrentEncryptionKey(newKey, for: dbKey)
-            return newKey
-        }
-
-        // If creation fails (even thought it shouldn't) let's use the api key
-        if let newKey = dbKey.dataBytes {
-            setCurrentEncryptionKey(newKey, for: dbKey)
-            return dbKey.dataBytes
-        }
-
-        // If everything fails
-        return nil
-    }
-
-    static func setCurrentEncryptionKey(_ keyBytes: Data, for apiKey: String) {
-        GlobalSecureStorage.shared.set(item: keyBytes.base64EncodedString(options: []), for: .dbEncryptionKey(apiKey))
+        let lock = NSLock()
+        storageLockMap[dbKey] = lock
+        return lock
     }
 
     static func buildStorageContainer(splitClientConfig: SplitClientConfig,
@@ -56,9 +41,13 @@ struct SplitDatabaseHelper {
                                       databaseName: String,
                                       telemetryStorage: TelemetryStorage?,
                                       testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
-
         let dbKey = buildDbKey(prefix: splitClientConfig.prefix, sdkKey: apiKey)
-        let previousEncryptionLevel = currentEncryptionLevel(dbKey: dbKey)
+        
+        let lock = storageLock(for: dbKey)
+        lock.lock()
+        defer { lock.unlock() }
+        
+        let previousEncryptionLevel = DbEncryptionManager.currentEncryptionLevel(dbKey: dbKey)
         var splitDatabase = testDatabase
         var dbHelper: CoreDataHelper?
         if let testDb = testDatabase as? TestSplitDatabase {
@@ -66,32 +55,35 @@ struct SplitDatabaseHelper {
         } else {
             dbHelper = CoreDataHelperBuilder.build(databaseName: databaseName)
         }
-
         guard let dbHelper = dbHelper else {
             Logger.e("Error creating database helper")
             throw GenericError.couldNotCreateCache
         }
-
         let encryptionLevel: SplitEncryptionLevel = splitClientConfig.encryptionEnabled ? .aes128Cbc : .none
-        var cipherKey: Data?
-        if encryptionLevel != .none {
-            cipherKey = currentEncryptionKey(for: dbKey)
-        }
+        var cipherKey: Data? = encryptionLevel != .none ? DbEncryptionManager.currentEncryptionKey(for: dbKey) : nil
+        let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
 
-        if previousEncryptionLevel != encryptionLevel,
-           let dbCipherKey = cipherKey ?? currentEncryptionKey(for: dbKey) {
-            let dbCipher = try DbCipher(cipherKey: dbCipherKey,
-                                        from: previousEncryptionLevel,
-                                        to: encryptionLevel,
-                                        coreDataHelper: dbHelper)
-            dbCipher.apply()
-            setCurrentEncryptionLevel(encryptionLevel, for: dbKey)
+        // Validate encryption key and recover if needed
+        let validationResult = DbEncryptionManager.validateAndRecoverEncryptionKey(
+            dbKey: dbKey, previousLevel: previousEncryptionLevel, targetLevel: encryptionLevel,
+            currentKey: cipherKey, dbHelper: dbHelper, generalInfoDao: generalInfoDao)
+        cipherKey = validationResult.cipherKey
+        var cipher = validationResult.cipher
+
+        // Handle migration if recovery wasn't performed
+        if !validationResult.recoveryPerformed {
+            try DbEncryptionManager.handleEncryptionMigration(dbKey: dbKey, targetLevel: encryptionLevel,
+                                          cipher: cipher, cipherKey: cipherKey, dbHelper: dbHelper,
+                                          generalInfoDao: generalInfoDao)
         }
 
         if splitDatabase == nil {
+            // Create cipher only if needed and not already created
+            if cipher == nil, encryptionLevel != .none, let key = cipherKey {
+                cipher = DefaultCipher(cipherKey: key)
+            }
             splitDatabase = try openDatabase(dataFolderName: databaseName,
-                                             cipherKey: cipherKey,
-                                             encryptionLevel: encryptionLevel,
+                                             cipher: cipher,
                                              dbHelper: dbHelper)
         }
 
@@ -104,7 +96,13 @@ struct SplitDatabaseHelper {
         DefaultFlagSetsCache(setsInFilter: splitClientConfig.bySetsFilter()?.values.asSet())
         let persistentSplitsStorage = DefaultPersistentSplitsStorage(database: splitDatabase)
         let generalInfoStorage = openGeneralInfoStorage(database: splitDatabase)
-        let splitsStorage = openSplitsStorage(database: splitDatabase, flagSetsCache: flagSetsCache, generalInfoStorage: generalInfoStorage)
+
+        // Create shared persistence breaker for targeting rules (splits + RBS)
+        let targetingRulesPersistenceBreaker = DefaultPersistenceBreaker()
+        let splitsStorage = openSplitsStorage(database: splitDatabase,
+                                              flagSetsCache: flagSetsCache,
+                                              generalInfoStorage: generalInfoStorage,
+                                              persistenceBreaker: targetingRulesPersistenceBreaker)
 
         let persistentImpressionsStorage = openPersistentImpressionsStorage(database: splitDatabase)
         let impressionsStorage = openImpressionsStorage(persistentStorage: persistentImpressionsStorage)
@@ -152,17 +150,15 @@ struct SplitDatabaseHelper {
                                      hashedImpressionsStorage: hashedImpressionsStorage,
                                      generalInfoStorage: generalInfoStorage,
                                      ruleBasedSegmentsStorage: ruleBasedSegmentsStorage,
-                                     persistentRuleBasedSegmentsStorage: persistentRuleBasedSegmentsStorage)
+                                     persistentRuleBasedSegmentsStorage: persistentRuleBasedSegmentsStorage,
+                                     targetingRulesPersistenceBreaker: targetingRulesPersistenceBreaker)
     }
 
     static func openDatabase(dataFolderName: String,
-                             cipherKey: Data?,
-                             encryptionLevel: SplitEncryptionLevel,
+                             cipher: Cipher?,
                              dbHelper: CoreDataHelper) throws -> SplitDatabase {
 
-        return CoreDataSplitDatabase(coreDataHelper: dbHelper,
-                                     cipher: createCipher(level: encryptionLevel,
-                                                          cipherKey: cipherKey))
+        return CoreDataSplitDatabase(coreDataHelper: dbHelper, cipher: cipher)
     }
 
     static func openPersistentSplitsStorage(database: SplitDatabase) -> PersistentSplitsStorage {
@@ -174,9 +170,11 @@ struct SplitDatabaseHelper {
     }
 
     static func openSplitsStorage(database: SplitDatabase,
-                                  flagSetsCache: FlagSetsCache, generalInfoStorage: GeneralInfoStorage) -> SplitsStorage {
+                                  flagSetsCache: FlagSetsCache, generalInfoStorage: GeneralInfoStorage,
+                                  persistenceBreaker: PersistenceBreaker) -> SplitsStorage {
         return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database),
-                                    flagSetsCache: flagSetsCache, GeneralInfoStorage: generalInfoStorage)
+                                    flagSetsCache: flagSetsCache, generalInfoStorage: generalInfoStorage,
+                                    persistenceBreaker: persistenceBreaker)
     }
 
     static func openPersistentMySegmentsStorage(database: SplitDatabase) -> PersistentMySegmentsStorage {
@@ -252,17 +250,6 @@ struct SplitDatabaseHelper {
         }
         let range = NSRange(location: 0, length: string.count)
         return regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
-    }
-
-    static func createCipher(level: SplitEncryptionLevel, cipherKey: Data?) -> Cipher? {
-        if level == .none {
-            return nil
-        }
-        guard let cipherKey = cipherKey else {
-            return nil
-        }
-
-        return DefaultCipher(cipherKey: cipherKey)
     }
 
     static func buildDbKey(prefix: String?, sdkKey: String) -> String {

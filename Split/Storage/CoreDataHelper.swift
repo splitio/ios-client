@@ -21,7 +21,7 @@ enum CoreDataEntity: String {
     case ruleBasedSegment = "RuleBasedSegment"
 }
 
-class CoreDataHelper {
+class CoreDataHelper: @unchecked Sendable {
     typealias Operation = () -> Void
     private let managedObjectContext: NSManagedObjectContext
     private let persistentCoordinator: NSPersistentStoreCoordinator
@@ -33,7 +33,11 @@ class CoreDataHelper {
     }
 
     func create(entity: CoreDataEntity) -> NSManagedObject {
+        #if swift(>=6.0)
+        nonisolated(unsafe) var obj: NSManagedObject!
+        #else
         var obj: NSManagedObject!
+        #endif
 
         managedObjectContext.performAndWait {
             obj = NSEntityDescription.insertNewObject(forEntityName: entity.rawValue,
@@ -64,12 +68,34 @@ class CoreDataHelper {
         }
     }
 
+    /// Save with error handling. Throws errors to caller
+    /// Used for transactional operations that need to handle persistence failures
+    func saveWithErrorHandling() throws {
+        var thrownError: Error?
+        managedObjectContext.performAndWait {
+            do {
+                if self.managedObjectContext.hasChanges {
+                    try self.managedObjectContext.save()
+                }
+            } catch {
+                thrownError = error
+            }
+        }
+        if let error = thrownError {
+            throw error
+        }
+    }
+
     func generateId() -> String {
         return UUID().uuidString
     }
 
     func fetch(entity: CoreDataEntity, where predicate: NSPredicate? = nil, rowLimit: Int? = nil) -> [Any] {
+        #if swift(>=6.0)
+        nonisolated(unsafe) var entities = [Any]()
+        #else
         var entities = [Any]()
+        #endif
         managedObjectContext.performAndWait {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: entity.rawValue)
             if let rowLimit = rowLimit {
@@ -101,6 +127,14 @@ class CoreDataHelper {
     func performAndWait(_ operation: Operation) {
         managedObjectContext.performAndWait {
             operation()
+        }
+    }
+
+    /// Roll back any unsaved changes in the managed object context.
+    /// Useful after a failed save(), to prevent the context from keeping invalid pending changes.
+    func rollback() {
+        managedObjectContext.performAndWait {
+            self.managedObjectContext.rollback()
         }
     }
 

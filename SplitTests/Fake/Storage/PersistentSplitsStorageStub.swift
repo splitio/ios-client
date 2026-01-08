@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PersistentSplitsStorageStub: PersistentSplitsStorage {
+class PersistentSplitsStorageStub: PersistentSplitsStorage, @unchecked Sendable {
 
     var changeNumber: Int64 = -1
     var updateTimestamp: Int64 = 0
@@ -43,7 +43,7 @@ class PersistentSplitsStorageStub: PersistentSplitsStorage {
         self.init(delegate: nil)
     }
 
-    func update(splitChange: ProcessedSplitChange) {
+    func update(splitChange: ProcessedSplitChange, onFailure: ((Error) -> Void)? = nil) {
         processedSplitChange = splitChange
         changeNumber = splitChange.changeNumber
         updateCalled = true

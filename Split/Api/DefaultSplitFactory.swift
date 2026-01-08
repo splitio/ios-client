@@ -3,15 +3,13 @@
 //  Split
 //
 //  Created by Brian Sztamfater on 27/9/17.
-//
-//
 
 import Foundation
 
 /**
  Default implementation of SplitManager protocol
  */
-public class DefaultSplitFactory: NSObject, SplitFactory {
+public class DefaultSplitFactory: NSObject, SplitFactory, @unchecked Sendable {
 
     private static let kInitErrorMessage = "Something happened on Split init and the client couldn't be created"
 
@@ -21,7 +19,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     // Not using default implementation in protocol
     // extension due to Objc interoperability
     @objc public static var sdkVersion: String {
-        return Version.semantic
+        Version.semantic
     }
 
     @objc public var userConsent: UserConsent {
@@ -47,25 +45,17 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     public var version: String {
-        return Version.sdk
+        Version.sdk
     }
 
+    // MARK: Initializer
     init(_ params: SplitFactoryParams) throws {
         super.init()
-
-        HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
-        if let pinningConfig = params.config.certificatePinningConfig {
-            let notificationHelper = params.notificationHelper ?? DefaultNotificationHelper.instance
-            HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
-            HttpSessionConfig.default.notificationHelper = notificationHelper
-            if let handler = pinningConfig.failureHandler {
-                notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { host in
-                    handler(host as? String ?? "Unknown")
-                }
-            }
-            savePins(pinningConfig.pins, apiKey: params.apiKey)
-        }
-
+        
+        // Certificate Pinning
+        setupCertificatePinning(params)
+        
+        // Components
         let components = SplitComponentFactory(splitClientConfig: params.config,
                                                apiKey: params.apiKey,
                                                userKey: params.key.matchingKey)
@@ -85,10 +75,10 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         let rolloutCacheManager = DefaultRolloutCacheManager(generalInfoStorage: storageContainer.generalInfoStorage,
                                                              rolloutCacheConfiguration: rolloutCacheConfig,
                                                              storages: storageContainer.splitsStorage,
-                                                                    storageContainer.mySegmentsStorage,
-                                                                    storageContainer.myLargeSegmentsStorage,
-                                                                    storageContainer.ruleBasedSegmentsStorage)
-
+                                                             storageContainer.mySegmentsStorage,
+                                                             storageContainer.myLargeSegmentsStorage,
+                                                             storageContainer.ruleBasedSegmentsStorage)
+        
         defaultManager = try components.getSplitManager()
         _ = try components.buildRestClient(
             httpClient: params.httpClient ?? DefaultHttpClient.shared,
@@ -139,11 +129,11 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
     }
 
     public func client(matchingKey: String) -> SplitClient {
-        return client(key: Key(matchingKey: matchingKey))
+        client(key: Key(matchingKey: matchingKey))
     }
 
     public func client(matchingKey: String, bucketingKey: String?) -> SplitClient {
-        return client(key: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
+        client(key: Key(matchingKey: matchingKey, bucketingKey: bucketingKey))
     }
 
     public func setUserConsent(enabled: Bool) {
@@ -155,11 +145,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         userConsentManager.set(newMode)
     }
 
-    private func setupBgSync(config: SplitClientConfig,
-                             apiKey: String,
-                             userKey: String,
-                             storageContainer: SplitStorageContainer) {
-#if os(iOS)
+    private func setupBgSync(config: SplitClientConfig, apiKey: String, userKey: String, storageContainer: SplitStorageContainer) {
+        #if os(iOS)
         let dbKey = SplitDatabaseHelper.buildDbKey(prefix: config.prefix, sdkKey: apiKey)
         if config.synchronizeInBackground {
             SplitBgSynchronizer.shared.register(dbKey: dbKey, prefix: config.prefix, userKey: userKey)
@@ -167,10 +154,40 @@ public class DefaultSplitFactory: NSObject, SplitFactory {
         } else {
             SplitBgSynchronizer.shared.unregister(dbKey: dbKey, userKey: userKey)
         }
-#endif
+        #endif
     }
+}
 
-    func savePins(_ pins: [CredentialPin], apiKey: String) {
-        GlobalSecureStorage.shared.set(item: pins, for: .pinsConfig(apiKey))
+// MARK: Certificate Pinning
+extension DefaultSplitFactory {
+
+    func setupCertificatePinning(_ params: SplitFactoryParams) {
+        
+        if let pinningConfig = params.config.certificatePinningConfig {
+            
+            // 1. Setup Notificator
+            let notificationHelper = params.notificationHelper ?? DefaultNotificationHelper.instance
+            HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
+            HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
+            HttpSessionConfig.default.notificationHelper = notificationHelper
+            
+            // 2. Connect Failure Handler
+            if let handler = pinningConfig.failureHandler {
+                notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { host in
+                    handler(host as? String ?? "Unknown")
+                }
+            }
+            
+            // 3. Connect Status Handler
+            if let handler = pinningConfig.statusHandler {
+                notificationHelper.addObserver(for: .pinnedCredentialStatus) { completeStatus in
+                    guard let status = completeStatus as? CertificatePinningCompleteStatus else { return }
+                    handler(status.host, status.status, status.reason)
+                }
+            }
+            
+            // 4. Save Pins
+            GlobalSecureStorage.shared.set(item: pinningConfig.pins, for: .pinsConfig(params.apiKey))
+        }
     }
 }

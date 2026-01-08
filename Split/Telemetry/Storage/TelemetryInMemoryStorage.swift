@@ -8,7 +8,7 @@
 
 import Foundation
 
-class InMemoryTelemetryStorage: TelemetryStorage {
+class InMemoryTelemetryStorage: TelemetryStorage, @unchecked Sendable {
 
     private static let kQueuePrefix = "split-telemetry"
     private let queue = DispatchQueue(label: "split-telemetry")

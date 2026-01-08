@@ -17,7 +17,7 @@ protocol PersistentImpressionsStorage {
     func setActive(_ impressions: [KeyImpression])
 }
 
-class DefaultImpressionsStorage: PersistentImpressionsStorage {
+class DefaultImpressionsStorage: PersistentImpressionsStorage, @unchecked Sendable {
 
     private let impressionDao: ImpressionDao
     private let expirationPeriod: Int64

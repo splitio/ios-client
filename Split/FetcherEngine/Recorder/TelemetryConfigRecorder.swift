@@ -12,7 +12,7 @@ protocol HttpTelemetryConfigRecorder {
     func execute(_ config: TelemetryConfig) throws
 }
 
-class DefaultHttpTelemetryConfigRecorder: HttpTelemetryConfigRecorder {
+class DefaultHttpTelemetryConfigRecorder: HttpTelemetryConfigRecorder, @unchecked Sendable {
 
     private let restClient: RestClientTelemetryConfig
     private let syncHelper: SyncHelper

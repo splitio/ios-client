@@ -37,7 +37,7 @@ import Foundation
  * (22) 4,987.89
  * (23) 7,481.83
  */
-class LatencyCounter {
+class LatencyCounter: @unchecked Sendable {
 
     // Removed first bucket (1000) for practical
     // reasons

@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SseClientFactoryStub: SseClientFactory {
+class SseClientFactoryStub: SseClientFactory, @unchecked Sendable {
 
 
     var clients = [SseClientMock]()

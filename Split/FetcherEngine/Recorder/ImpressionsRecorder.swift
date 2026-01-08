@@ -12,7 +12,7 @@ protocol HttpImpressionsRecorder {
     func execute(_ items: [ImpressionsTest]) throws
 }
 
-class DefaultHttpImpressionsRecorder: HttpImpressionsRecorder {
+class DefaultHttpImpressionsRecorder: HttpImpressionsRecorder, @unchecked Sendable {
 
     private let restClient: RestClientImpressions
     private let syncHelper: SyncHelper

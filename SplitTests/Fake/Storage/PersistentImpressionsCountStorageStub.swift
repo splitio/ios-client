@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PersistentImpressionsCountStorageStub: PersistentImpressionsCountStorage {
+class PersistentImpressionsCountStorageStub: PersistentImpressionsCountStorage, @unchecked Sendable {
 
 
     var storedImpressions = [String: ImpressionsCountPerFeature]()

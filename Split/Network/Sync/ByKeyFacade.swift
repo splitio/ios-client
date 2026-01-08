@@ -42,7 +42,7 @@ struct ByKeyComponentGroup {
     let attributesStorage: ByKeyAttributesStorage
 }
 
-class DefaultByKeyFacade: ByKeyFacade {
+class DefaultByKeyFacade: ByKeyFacade, @unchecked Sendable {
 
     private let byKeyComponents = SplitKeyDictionary<ByKeyComponentGroup>()
     private var isPollingEnabled = Atomic(false)

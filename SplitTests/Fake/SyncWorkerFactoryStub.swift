@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SyncWorkerFactoryStub: SyncWorkerFactory {
+class SyncWorkerFactoryStub: SyncWorkerFactory, @unchecked Sendable {
 
     var impressionsRecorderWorker = RecorderWorkerStub()
     var periodicImpressionsRecorderWorker = PeriodicRecorderWorkerStub()

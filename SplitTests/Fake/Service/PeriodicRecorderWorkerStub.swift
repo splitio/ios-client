@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class PeriodicRecorderWorkerStub: PeriodicRecorderWorker {
+class PeriodicRecorderWorkerStub: PeriodicRecorderWorker, @unchecked Sendable {
 
     var startCalled = false
     var resumeCalled = false

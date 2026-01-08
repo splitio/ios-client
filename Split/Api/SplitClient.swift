@@ -73,7 +73,7 @@ public typealias SplitActionWithMetadata = (EventMetadata) -> Void
     // MARK: Client lifecycle
     func flush()
     func destroy()
-    func destroy(completion: (() -> Void)?)
+    func destroy(completion: (@Sendable () -> Void)?)
 
     @objc(trackWithTrafficType:eventType:properties:) func track(trafficType: String,
                                                                  eventType: String,

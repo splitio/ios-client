@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class SplitClientStub: SplitClient {
+class SplitClientStub: SplitClient, @unchecked Sendable {
 
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return SplitConstants.control

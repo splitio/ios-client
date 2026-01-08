@@ -79,7 +79,7 @@ protocol RecorderFlushChecker {
     func update(count: Int, bytes: Int)
 }
 
-class DefaultRecorderFlushChecker: RecorderFlushChecker {
+class DefaultRecorderFlushChecker: RecorderFlushChecker, @unchecked Sendable {
 
     private let maxQueueSize: Int
     private let maxQueueSizeInBytes: Int

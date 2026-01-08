@@ -22,7 +22,7 @@ enum SyncStatusEvent: Equatable {
 }
 
 protocol SyncEventBroadcaster {
-    typealias IncomingMessageHandler = (SyncStatusEvent) -> Void
+    typealias IncomingMessageHandler = @Sendable (SyncStatusEvent) -> Void
     func push(event: SyncStatusEvent)
     func register(handler: @escaping IncomingMessageHandler)
     func destroy()
@@ -32,7 +32,7 @@ protocol SyncEventBroadcaster {
 /// Component to allow push notification manager to comunicate status events
 /// to other components
 ///
-class DefaultSyncEventBroadcaster: SyncEventBroadcaster {
+class DefaultSyncEventBroadcaster: SyncEventBroadcaster, @unchecked Sendable {
     let messageQueue = DispatchQueue(label: "split-sync-event-broadcaster",
                                      attributes: .concurrent)
     var handlers = [IncomingMessageHandler]()

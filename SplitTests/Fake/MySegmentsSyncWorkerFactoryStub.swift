@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class MySegmentsSyncWorkerFactoryStub: MySegmentsSyncWorkerFactory {
+class MySegmentsSyncWorkerFactoryStub: MySegmentsSyncWorkerFactory, @unchecked Sendable {
 
     private var mySegmentsSyncWorkers = [String: RetryableMySegmentsSyncWorkerStub]()
     var periodicMySegmentsSyncWorker = PeriodicSyncWorkerStub()

@@ -24,12 +24,13 @@ import WatchKit
 import TVUIKit
 #endif
 
-typealias ObserverAction = (AnyObject?) -> Void
+typealias ObserverAction = @Sendable (AnyObject?) -> Void
 
 enum AppNotification: String {
     case didEnterBackground
     case didBecomeActive
     case pinnedCredentialValidationFail
+    case pinnedCredentialStatus
 }
 
 /// ** NotificationHelper **
@@ -38,13 +39,13 @@ enum AppNotification: String {
 /// The main goal is to replace @obj functions based handler with Swift closures,
 /// that way the code becomes streight and simple.
 
-protocol NotificationHelper {
+protocol NotificationHelper: Sendable {
     func addObserver(for notification: AppNotification, action: @escaping ObserverAction)
     func removeAllObservers()
     func post(notification: AppNotification, info: AnyObject?)
 }
 
-class DefaultNotificationHelper: NotificationHelper {
+class DefaultNotificationHelper: NotificationHelper, @unchecked Sendable {
 
     private let queue = DispatchQueue(label: "split-notification-helper", attributes: .concurrent)
     private var actions = [String: [ObserverAction]]()
@@ -140,6 +141,6 @@ class DefaultNotificationHelper: NotificationHelper {
     }
 
     func post(notification: AppNotification, info: AnyObject?) {
-        executeActions(for: AppNotification.pinnedCredentialValidationFail, info: info)
+        executeActions(for: notification, info: info)
     }
 }

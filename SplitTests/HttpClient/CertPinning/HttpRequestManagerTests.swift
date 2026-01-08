@@ -10,7 +10,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class HttpRequestManagerTests: XCTestCase {
+class HttpRequestManagerTests: XCTestCase, @unchecked Sendable {
     var reqManager: HttpRequestManager!
     var pinChecker: PinCheckerMock!
     var notificationHelper = NotificationHelperStub()
@@ -18,6 +18,20 @@ class HttpRequestManagerTests: XCTestCase {
     let hostName = "www.test.com"
     let certName = "rsa_4096_cert.pem"
     var dummyChallenge: URLAuthenticationChallenge!
+    
+    // Notifications concurrently safe
+    let lock = DispatchQueue(label: "lock")
+    var notifications = [String]()
+    func appendNotifications(_ v: String) {
+        lock.sync { notifications.append(v) }
+    }
+    
+    // Results concurrently safe
+    let lock2 = DispatchQueue(label: "lock2")
+    var results = [CredentialValidationResult: URLSession.AuthChallengeDisposition]()
+    func appendResults(_ k: CredentialValidationResult, _ v: URLSession.AuthChallengeDisposition) {
+        lock2.sync { results[k] = v }
+    }
 
     override func setUp() {
         dummyChallenge = securityHelper.createAuthChallenge(host: hostName, certName: certName)
@@ -28,20 +42,37 @@ class HttpRequestManagerTests: XCTestCase {
         let request = URLRequest(url: URL(string: hostName)!)
         let task = URLSession.shared.dataTask(with: request)
         let manager = createRequestManager()
-        var notifications = [String]()
-        var results = [CredentialValidationResult: URLSession.AuthChallengeDisposition]()
-
+        let notificationsQueue = DispatchQueue(label: "notifications.queue")
+        
         notificationHelper.addObserver(for: .pinnedCredentialValidationFail) { info in
             guard let info = info as? String else {
                 XCTFail()
                 return
             }
-            notifications.append(info)
+            notificationsQueue.sync {
+                self.appendNotifications(info)
+            }
         }
         
+        // MARK: Pinning status handler
+        nonisolated(unsafe) var statuses = [CertificatePinningStatus]()
+        nonisolated(unsafe) var reasons = [String]()
+        nonisolated(unsafe) var host: String?
+
+        notificationHelper.addObserver(for: .pinnedCredentialStatus) { info in
+            guard let info = info as? CertificatePinningCompleteStatus else {
+                XCTFail()
+                return
+            }
+            statuses.append(info.status)
+            reasons.append(info.reason)
+            host = info.host 
+        }
+        
+        // MARK: Inject data
         for result in CredentialValidationResult.allCases {
             manager.urlSession?(URLSession.shared, task: task, didReceive: dummyChallenge) {disposition,_ in
-                results[result] = disposition
+                self.appendResults(result, disposition)
                 exp.fulfill()
             }
         }
@@ -64,6 +95,21 @@ class HttpRequestManagerTests: XCTestCase {
         }
 
         XCTAssertEqual(notifications[0], hostName)
+        
+        // Statuses
+        XCTAssertEqual(reasons[0], CredentialValidationResult.success.description)
+        XCTAssertEqual(reasons[1], CredentialValidationResult.error.description)
+        XCTAssertEqual(reasons[2], CredentialValidationResult.noPinsForDomain.description)
+        XCTAssertEqual(reasons[3], CredentialValidationResult.invalidChain.description)
+        XCTAssertEqual(reasons[4], CredentialValidationResult.credentialNotPinned.description)
+        XCTAssertEqual(reasons[5], CredentialValidationResult.spkiError.description)
+        XCTAssertEqual(reasons[6], CredentialValidationResult.noServerTrustMethod.description)
+        XCTAssertEqual(reasons[7], CredentialValidationResult.unavailableServerTrust.description)
+        XCTAssertEqual(reasons[8], CredentialValidationResult.invalidCredential.description)
+        XCTAssertEqual(reasons[9], CredentialValidationResult.invalidParameter.description)
+        XCTAssertEqual(statuses[0], CertificatePinningStatus.success)
+        XCTAssertEqual(statuses[9], CertificatePinningStatus.failed)
+        XCTAssertEqual(host, "www.test.com")
     }
 
     func testNetworkConnectionLostErrorMapping() {
@@ -76,19 +122,20 @@ class HttpRequestManagerTests: XCTestCase {
 
         manager.addRequest(request)
         manager.urlSession(URLSession.shared, task: URLTaskMock(taskIdentifier: taskId), didCompleteWithError: networkError)
-
+        
+        var ok = false
         XCTAssertNotNil(request.completedError)
         if let error = request.completedError as? HttpError {
             switch error {
-            case .clientRelated(let code, let internalCode):
-                XCTAssertEqual(code, 400, "Error code should be 400")
-                XCTAssertEqual(internalCode, -1, "Internal code should be -1")
+            case .networkLost:
+                ok = true
             default:
-                XCTFail("Expected clientRelated error with code 400 but got \(error)")
+                XCTFail("Expected networkLost error")
             }
         } else {
             XCTFail("Expected HttpError but got \(String(describing: request.completedError))")
         }
+        XCTAssertTrue(ok)
     }
 
     func createRequestManager() -> URLSessionTaskDelegate {
@@ -99,7 +146,7 @@ class HttpRequestManagerTests: XCTestCase {
     }
 }
 
-class URLTaskMock: URLSessionDataTask {
+class URLTaskMock: URLSessionDataTask, @unchecked Sendable {
     private var _taskIdentifier: Int
 
     init(taskIdentifier: Int = 0) {
@@ -115,7 +162,7 @@ class URLTaskMock: URLSessionDataTask {
     }
 }
 
-class ErrorCapturingHttpRequestMock: HttpRequestMock {
+class ErrorCapturingHttpRequestMock: HttpRequestMock, @unchecked Sendable {
     var completedError: Error?
 
     override func complete(error: HttpError?) {
