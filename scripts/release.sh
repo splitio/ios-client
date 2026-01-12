@@ -97,6 +97,7 @@ if [ "$IS_RC" = false ]; then
   done
   
   # Create the new entry
+  CURRENT_DATE=$(LC_ALL=C date "+%b %-d, %Y")
   NEW_ENTRY="$VERSION: ($CURRENT_DATE)"
   if [ -n "$CHANGES" ]; then
     NEW_ENTRY="$NEW_ENTRY\n$CHANGES"
