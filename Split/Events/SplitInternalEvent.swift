@@ -21,9 +21,9 @@ enum SplitInternalEvent {
 
 struct SplitInternalEventWithMetadata {
     let type: SplitInternalEvent
-    let metadata: SplitMetadata?
+    let metadata: SplitEventMetadata?
     
-    init(_ type: SplitInternalEvent, metadata: SplitMetadata? = nil) {
+    init(_ type: SplitInternalEvent, metadata: SplitEventMetadata? = nil) {
         self.type = type
         self.metadata = metadata
     }
