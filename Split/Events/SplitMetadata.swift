@@ -2,6 +2,8 @@
 
 import Foundation
 
+protocol SplitMetadata {}
+
 // MARK: UPDATE
 /// Represents the type of SDK update that triggered a metadata callback.
 ///
@@ -27,7 +29,7 @@ import Foundation
 /// - The type of update that occurred (flags or segments)
 /// - The specific flags affected
 ///
-@objc public class SdkUpdateMetadata: NSObject {
+@objc public class SdkUpdateMetadata: NSObject, SplitMetadata {
     
     @objc public private(set) var type: SdkUpdateMetadataType
     
@@ -50,7 +52,7 @@ import Foundation
 /// - The timestamp of the last successful update.
 /// - Whether the data was loaded from the initial cache.
 ///
-@objc public class SdkReadyMetadata: NSObject {
+@objc public class SdkReadyMetadata: NSObject, SplitMetadata {
     
     /// Timestamp (in milliseconds since epoch) of the last successful SDK update.
     ///
@@ -76,7 +78,7 @@ import Foundation
 /// - The SDK initialized using previously stored data.
 /// - No fresh data has been fetched from the network yet.
 ///
-@objc public class SdkReadyFromCacheMetadata: NSObject {
+@objc public class SdkReadyFromCacheMetadata: NSObject, SplitMetadata {
     
     /// Indicates whether this SDK initialization corresponds to a fresh install.
     @objc public private(set) var isInitialCacheLoad: Bool = false
