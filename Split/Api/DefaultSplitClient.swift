@@ -69,7 +69,7 @@ extension DefaultSplitClient {
         guard let factory = clientManager?.splitFactory else {
             return
         }
-        
+
         let task = SplitEventActionTask(action: action, event: event,
                                         runInBackground: runInBackground,
                                         factory: factory,
