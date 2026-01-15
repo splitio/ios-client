@@ -36,7 +36,7 @@ import Foundation
         fatalError("Use SDK-provided instances only")
     }
     
-    internal init(type: SplitEvent, metadata: EventMetadata) {
+    internal init(type: SplitEvent, metadata: EventMetadata? = nil) {
         self.type = type
         self.metadata = metadata
     }
