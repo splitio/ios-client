@@ -316,29 +316,21 @@ class SplitEventsManagerTest: XCTestCase, @unchecked Sendable {
     }
 }
 
-class TestTask: SplitEventTask, @unchecked Sendable {
-
-    var event: SplitEvent = .sdkReady
-
-    var runInBackground: Bool = false
-
-    var queue: DispatchQueue?
+class TestTask: SplitEventActionTask, @unchecked Sendable {
     
     var taskTriggered = false
     let label: String
     var exp: XCTestExpectation?
-    init(exp: XCTestExpectation?, label: String = "") {
+    init(exp: XCTestExpectation?, label: String = "", action: SplitActionWithMetadata? = nil, metadata: EventMetadata? = nil) {
         self.exp = exp
         self.label = label
+        super.init(action: action ?? { _ in }, event: .sdkReady, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
     }
 
-    func takeQueue() -> DispatchQueue? {
-        return nil
-    }
-
-    func run() {
+    override func run(_ metadata: EventMetadata?) {
         print("run: \(self.label)")
         taskTriggered = true
+        super.run(metadata)
         if let exp = self.exp {
             exp.fulfill()
         }
