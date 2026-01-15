@@ -2,7 +2,7 @@
 
 import Foundation
 
-protocol EventMetadata {}
+@objc protocol EventMetadata: Sendable {}
 
 // MARK: UPDATE
 /// Represents the type of SDK update that triggered a metadata callback.
@@ -15,7 +15,7 @@ protocol EventMetadata {}
 /// - segmentsUpdate:
 ///   One or more user segments were updated.
 ///
-@objc public enum SdkUpdateMetadataType: Int {
+@objc public enum SdkUpdateMetadataType: Int, Sendable {
     case FLAGS_UPDATE
     case SEGMENTS_UPDATE
 }
@@ -29,16 +29,22 @@ protocol EventMetadata {}
 /// - The type of update that occurred (flags or segments)
 /// - The specific flags affected
 ///
-@objc public class SdkUpdateMetadata: NSObject, EventMetadata {
+@objcMembers public final class SdkUpdateMetadata: NSObject, EventMetadata {
     
-    @objc public private(set) var type: SdkUpdateMetadataType
+    public let type: SdkUpdateMetadataType
     
     /// The names of the entities affected by the update.
-    @objc public private(set) var names: [String] = []
+    public let names: [String]
     
     @available(*, unavailable)
-    override init() {
+    public override init() {
         fatalError("Use SDK-provided instances only")
+    }
+    
+    internal init(type: SdkUpdateMetadataType, names: [String]) {
+        self.type = type
+        self.names = names
+        super.init()
     }
 }
 
@@ -52,19 +58,25 @@ protocol EventMetadata {}
 /// - The timestamp of the last successful update.
 /// - Whether the data was loaded from the initial cache.
 ///
-@objc public class SdkReadyMetadata: NSObject, EventMetadata {
+@objcMembers public final class SdkReadyMetadata: NSObject, EventMetadata {
     
     /// Timestamp (in milliseconds since epoch) of the last successful SDK update.
     ///
     /// A value of `-1` indicates that no update has occurred yet.
-    @objc public private(set) var lastUpdateTimestamp: Int64 = -1
+    public let lastUpdateTimestamp: Int64
     
     /// Indicates whether this SDK initialization corresponds to a fresh install.
-    @objc public private(set) var isInitialCacheLoad: Bool = false
+    public let isInitialCacheLoad: Bool
     
     @available(*, unavailable)
-    override init() {
+    public override init() {
         fatalError("Use SDK-provided instances only")
+    }
+    
+    internal init(lastUpdateTimestamp: Int64, isInitialCacheLoad: Bool) {
+        self.isInitialCacheLoad = isInitialCacheLoad
+        self.lastUpdateTimestamp = lastUpdateTimestamp
+        super.init()
     }
 }
 
@@ -78,13 +90,18 @@ protocol EventMetadata {}
 /// - The SDK initialized using previously stored data.
 /// - No fresh data has been fetched from the network yet.
 ///
-@objc public class SdkReadyFromCacheMetadata: NSObject, EventMetadata {
+@objcMembers public final class SdkReadyFromCacheMetadata: NSObject, EventMetadata {
     
     /// Indicates whether this SDK initialization corresponds to a fresh install.
-    @objc public private(set) var isInitialCacheLoad: Bool = false
+    public let isInitialCacheLoad: Bool
     
     @available(*, unavailable)
-    override init() {
+    public override init() {
         fatalError("Use SDK-provided instances only")
+    }
+    
+    internal init(isInitialCacheLoad: Bool) {
+        self.isInitialCacheLoad = isInitialCacheLoad
+        super.init()
     }
 }
