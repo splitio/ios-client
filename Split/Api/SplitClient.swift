@@ -9,7 +9,7 @@
 import Foundation
 
 public typealias SplitAction = () -> Void
-public typealias SplitActionWithMetadata = (EventMetadata) -> Void
+public typealias SplitActionWithMetadata<T: EventMetadata> = (T) -> Void
 
 @objc public protocol SplitClient {
 
