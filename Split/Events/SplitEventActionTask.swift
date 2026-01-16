@@ -13,7 +13,7 @@ class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
 
     init<T: EventMetadata>(action: @escaping SplitActionWithMetadata<T>, event: SplitEvent, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
         self.eventHandlerWithMetadata = { metadata in
-        guard let typed = metadata as? T else { return }
+            guard let typed = metadata as? T else { return }
             action(typed)
         }
         self.event = event

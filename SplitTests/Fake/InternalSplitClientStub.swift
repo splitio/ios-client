@@ -10,7 +10,7 @@ import Foundation
 @testable import Split
 
 class InternalSplitClientStub: InternalSplitClient, @unchecked Sendable {
-
+    
     var splitsStorage: SplitsStorage?
     var mySegmentsStorage: MySegmentsStorage?
     var myLargeSegmentsStorage: MySegmentsStorage?
@@ -95,14 +95,17 @@ class InternalSplitClientStub: InternalSplitClient, @unchecked Sendable {
         return ["": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
+    
+    func onSdkReady(action: @escaping (SdkReadyMetadata) -> Void) {}
+    
+    func onSdkReadyFromCache(action: @escaping (SdkReadyFromCacheMetadata) -> Void) {}
+    
+    func onSdkUpdate(action: @escaping (SdkUpdateMetadata) -> Void) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
         return true

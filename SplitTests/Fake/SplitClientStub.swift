@@ -94,6 +94,12 @@ class SplitClientStub: SplitClient, @unchecked Sendable {
 
     func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
     }
+    
+    func onSdkReady(action: @escaping (SdkReadyMetadata) -> Void) {}
+    
+    func onSdkReadyFromCache(action: @escaping (SdkReadyFromCacheMetadata) -> Void) {}
+    
+    func onSdkUpdate(action: @escaping (SdkUpdateMetadata) -> Void) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
         return true

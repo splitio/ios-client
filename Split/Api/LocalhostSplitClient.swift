@@ -117,6 +117,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         return results
     }
 
+    // MARK: Events
     public func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
         on(event: event, runInBackground: runInBackground, queue: nil, execute: action)
     }
@@ -140,7 +141,15 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
             eventsManager.register(event: event, task: task)
         }
     }
+    
+    // MARK: Events with Metadata
+    public func onSdkReady(action: @escaping (SdkReadyMetadata) -> Void) {}
+    
+    public func onSdkReadyFromCache(action: @escaping (SdkReadyFromCacheMetadata) -> Void) {}
+    
+    public func onSdkUpdate(action: @escaping (SdkUpdateMetadata) -> Void) {}
 
+    // MARK: Track
     public func track(trafficType: String, eventType: String) -> Bool {
         true
     }

@@ -37,6 +37,14 @@ public typealias SplitActionWithMetadata<T: EventMetadata> = (T) -> Void
     func on(event: SplitEvent, execute action: @escaping SplitAction)
     func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
+    
+    // MARK: Events with Metadata
+    @objc(onSdkReady:)
+    func onSdkReady(action: @escaping (SdkReadyMetadata) -> Void)
+    @objc(onSdkReadyFromCache:)
+    func onSdkReadyFromCache(action: @escaping (SdkReadyFromCacheMetadata) -> Void)
+    @objc(onSdkUpdate:)
+    func onSdkUpdate(action: @escaping (SdkUpdateMetadata) -> Void)
 
     // MARK: Track feature
     func track(trafficType: String, eventType: String) -> Bool

@@ -87,6 +87,28 @@ extension DefaultSplitClient {
         }
         eventsManager.register(event: event, task: task)
     }
+    
+    // MARK: Events Listeners with Medatadata
+    @objc(onSdkReady:)
+    public func onSdkReady(action: @escaping (SdkReadyMetadata) -> Void) {
+        registerEvent(.sdkReady, action: action)
+    }
+    
+    @objc(onSdkReadyFromCache:)
+    public func onSdkReadyFromCache(action: @escaping (SdkReadyFromCacheMetadata) -> Void) {
+        registerEvent(.sdkReadyFromCache, action: action)
+    }
+    
+    @objc(onSdkUpdate:)
+    public func onSdkUpdate(action: @escaping (SdkUpdateMetadata) -> Void) {
+        registerEvent(.sdkUpdated, action: action)
+    }
+    
+    private func registerEvent<T: EventMetadata>(_ event: SplitEvent, action: @escaping (T) -> Void) {
+        guard let factory = clientManager?.splitFactory else { return }
+        let task = SplitEventActionTask(action: action, event: event, runInBackground: true, factory: factory, queue: nil)
+        eventsManager.register(event: event, task: task)
+    }
 }
 
 // MARK: Treatment / Evaluation
