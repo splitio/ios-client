@@ -41,20 +41,21 @@ import Foundation
 ///
 
 public final class LocalhostSplitClient: NSObject, SplitClient {
-
+    
     private let splitsStorage: SplitsStorage
     private let mySegmentsStorage = EmptyMySegmentsStorage()
 
     private let eventsManager: SplitEventsManager?
     private var evaluator: Evaluator
     private let key: Key
-    weak var clientManger: SplitClientManager?
+    weak var clientManager: SplitClientManager?
+    @objc public var listener: SplitClientEventListener?
 
     init(key: Key, splitsStorage: SplitsStorage, clientManager: SplitClientManager?, eventsManager: SplitEventsManager? = nil, evaluator: Evaluator) {
         self.eventsManager = eventsManager
         self.key = key
         self.splitsStorage = splitsStorage
-        self.clientManger = clientManager
+        self.clientManager = clientManager
 
         self.evaluator = evaluator
         super.init()
@@ -132,7 +133,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
 
     private func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
 
-        guard let factory = clientManger?.splitFactory else { return }
+        guard let factory = clientManager?.splitFactory else { return }
         if let eventsManager = self.eventsManager {
             let task = SplitEventActionTask(action: action, event: event,
                                             runInBackground: runInBackground,
@@ -142,12 +143,26 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         }
     }
     
-    // MARK: Events with Metadata
-    public func onSdkReady(action: @escaping (SdkReadyMetadata) -> Void) {}
+    // MARK: Events Listeners with Medatadata
+    @objc public func addEventsListener(_ listener: SplitClientEventListener) {
+        if let l = listener.onSdkReady {
+            registerEvent(.sdkReady, action: l)
+        }
+
+        if let l = listener.onSdkReadyFromCache {
+            registerEvent(.sdkReadyFromCache, action: l)
+        }
+
+        if let l = listener.onSdkUpdate {
+            registerEvent(.sdkUpdated, action: l)
+        }
+    }
     
-    public func onSdkReadyFromCache(action: @escaping (SdkReadyFromCacheMetadata) -> Void) {}
-    
-    public func onSdkUpdate(action: @escaping (SdkUpdateMetadata) -> Void) {}
+    private func registerEvent<T: EventMetadata>(_ event: SplitEvent, action: @escaping (T) -> Void) {
+        guard let factory = clientManager?.splitFactory else { return }
+        let task = SplitEventActionTask(action: action, event: event, runInBackground: true, factory: factory, queue: nil)
+        eventsManager?.register(event: event, task: task)
+    }
 
     // MARK: Track
     public func track(trafficType: String, eventType: String) -> Bool {

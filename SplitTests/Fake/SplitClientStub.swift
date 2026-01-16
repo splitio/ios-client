@@ -11,6 +11,8 @@ import Foundation
 
 class SplitClientStub: SplitClient, @unchecked Sendable {
 
+    @objc public var listener: SplitClientEventListener?
+
     func getTreatment(_ split: String, attributes: [String : Any]?) -> String {
         return SplitConstants.control
     }
@@ -94,12 +96,9 @@ class SplitClientStub: SplitClient, @unchecked Sendable {
 
     func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
     }
-    
-    func onSdkReady(action: @escaping (SdkReadyMetadata) -> Void) {}
-    
-    func onSdkReadyFromCache(action: @escaping (SdkReadyFromCacheMetadata) -> Void) {}
-    
-    func onSdkUpdate(action: @escaping (SdkUpdateMetadata) -> Void) {}
+
+    func addEventsListener(_ listener: SplitClientEventListener) {
+    }
 
     func track(trafficType: String, eventType: String) -> Bool {
         return true

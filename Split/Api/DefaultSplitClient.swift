@@ -6,7 +6,7 @@ import Foundation
 typealias DestroyHandler = () -> Void
 
 public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClient, @unchecked Sendable {
-
+    
     private var storageContainer: SplitStorageContainer
     private var key: Key
     private let config: SplitClientConfig
@@ -17,6 +17,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
     private var isClientDestroyed = false
     private let eventsTracker: EventsTracker
     private weak var clientManager: SplitClientManager?
+    @objc public var listener: SplitClientEventListener?
 
     var initStopwatch: Stopwatch?
 
@@ -89,19 +90,18 @@ extension DefaultSplitClient {
     }
     
     // MARK: Events Listeners with Medatadata
-    @objc(onSdkReady:)
-    public func onSdkReady(action: @escaping (SdkReadyMetadata) -> Void) {
-        registerEvent(.sdkReady, action: action)
-    }
-    
-    @objc(onSdkReadyFromCache:)
-    public func onSdkReadyFromCache(action: @escaping (SdkReadyFromCacheMetadata) -> Void) {
-        registerEvent(.sdkReadyFromCache, action: action)
-    }
-    
-    @objc(onSdkUpdate:)
-    public func onSdkUpdate(action: @escaping (SdkUpdateMetadata) -> Void) {
-        registerEvent(.sdkUpdated, action: action)
+    @objc public func addEventsListener(_ listener: SplitClientEventListener) {
+        if let l = listener.onSdkReady {
+            registerEvent(.sdkReady, action: l)
+        }
+
+        if let l = listener.onSdkReadyFromCache {
+            registerEvent(.sdkReadyFromCache, action: l)
+        }
+
+        if let l = listener.onSdkUpdate {
+            registerEvent(.sdkUpdated, action: l)
+        }
     }
     
     private func registerEvent<T: EventMetadata>(_ event: SplitEvent, action: @escaping (T) -> Void) {

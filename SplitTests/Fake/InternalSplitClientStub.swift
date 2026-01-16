@@ -14,6 +14,7 @@ class InternalSplitClientStub: InternalSplitClient, @unchecked Sendable {
     var splitsStorage: SplitsStorage?
     var mySegmentsStorage: MySegmentsStorage?
     var myLargeSegmentsStorage: MySegmentsStorage?
+    var listener: SplitClientEventListener?
 
     init(splitsStorage: SplitsStorage?,
          mySegmentsStorage: MySegmentsStorage?,
@@ -101,11 +102,7 @@ class InternalSplitClientStub: InternalSplitClient, @unchecked Sendable {
 
     func on(event: SplitEvent, execute action: @escaping SplitAction) {}
     
-    func onSdkReady(action: @escaping (SdkReadyMetadata) -> Void) {}
-    
-    func onSdkReadyFromCache(action: @escaping (SdkReadyFromCacheMetadata) -> Void) {}
-    
-    func onSdkUpdate(action: @escaping (SdkUpdateMetadata) -> Void) {}
+    func addEventsListener(_ listener: SplitClientEventListener) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
         return true

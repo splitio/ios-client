@@ -60,13 +60,11 @@ class FailedClient: SplitClient {
 
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
     
-    // MARK: Events with Metadata
-    func onSdkReady(action: @escaping (SdkReadyMetadata) -> Void) {}
-    
-    func onSdkReadyFromCache(action: @escaping (SdkReadyFromCacheMetadata) -> Void) {}
-    
-    func onSdkUpdate(action: @escaping (SdkUpdateMetadata) -> Void) {}
+    // MARK: Events Listeners with Medatadata
+    var listener: (any SplitClientEventListener)?
+    @objc public func addEventsListener(_ listener: SplitClientEventListener) {}
 
+    // MARK: Track
     func track(trafficType: String, eventType: String) -> Bool {
         false
     }
