@@ -97,7 +97,7 @@ class SplitClientStub: SplitClient, @unchecked Sendable {
     func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
     }
 
-    func addEventsListener(_ listener: SplitClientEventListener) {
+    func addEventsListener(listener: SplitClientEventListener) {
     }
 
     func track(trafficType: String, eventType: String) -> Bool {

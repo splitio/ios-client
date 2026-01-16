@@ -144,7 +144,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
     
     // MARK: Events Listeners with Medatadata
-    @objc public func addEventsListener(_ listener: SplitClientEventListener) {
+    @objc public func addEventsListener(listener: SplitClientEventListener) {
         if let l = listener.onSdkReady {
             registerEvent(.sdkReady, action: l)
         }

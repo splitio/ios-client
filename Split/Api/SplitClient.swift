@@ -50,7 +50,7 @@ public typealias SplitActionWithMetadata<T: EventMetadata> = (T) -> Void
     // MARK: Events with Metadata
     @objc var listener: SplitClientEventListener? { get set }
     @objc(addEventsListener:)
-    func addEventsListener(_ listener: SplitClientEventListener)
+    func addEventsListener(listener: SplitClientEventListener)
 
     // MARK: Track feature
     func track(trafficType: String, eventType: String) -> Bool
