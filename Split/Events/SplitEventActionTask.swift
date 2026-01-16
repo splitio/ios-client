@@ -12,6 +12,13 @@ class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
     var factory: SplitFactory
 
     init<T: EventMetadata>(action: @escaping SplitActionWithMetadata<T>, event: SplitEvent, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
+        
+        self.event = event
+        self.runInBackground = runInBackground
+        self.queue = queue
+        self.factory = factory
+        
+        // Metadata: "swap" for concrete type and ensure type is correct for this event
         self.eventHandlerWithMetadata = { metadata in
             guard let typed = metadata as? T else {
                 Logger.e("Wrong metadata type for this event (\(event.toString())).")
@@ -19,10 +26,6 @@ class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
             }
             action(typed)
         }
-        self.event = event
-        self.runInBackground = runInBackground
-        self.queue = queue
-        self.factory = factory
     }
       
     init(action: @escaping SplitAction, event: SplitEvent, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
