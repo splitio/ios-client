@@ -6,7 +6,7 @@ import Foundation
 typealias DestroyHandler = () -> Void
 
 public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClient, @unchecked Sendable {
-
+    
     private var storageContainer: SplitStorageContainer
     private var key: Key
     private let config: SplitClientConfig
@@ -17,6 +17,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
     private var isClientDestroyed = false
     private let eventsTracker: EventsTracker
     private weak var clientManager: SplitClientManager?
+    @objc public var listener: SplitClientEventListener?
 
     var initStopwatch: Stopwatch?
 
@@ -85,6 +86,27 @@ extension DefaultSplitClient {
                      "which has already fired and won’t be emitted again. The callback won’t be executed.")
             return
         }
+        eventsManager.register(event: event, task: task)
+    }
+    
+    // MARK: Events Listeners with Medatadata
+    @objc public func addEventsListener(listener: SplitClientEventListener) {
+        if let l = listener.onSdkReady {
+            registerEvent(.sdkReady, action: l)
+        }
+
+        if let l = listener.onSdkReadyFromCache {
+            registerEvent(.sdkReadyFromCache, action: l)
+        }
+
+        if let l = listener.onSdkUpdate {
+            registerEvent(.sdkUpdated, action: l)
+        }
+    }
+    
+    private func registerEvent<T: EventMetadata>(_ event: SplitEvent, action: @escaping (T) -> Void) {
+        guard let factory = clientManager?.splitFactory else { return }
+        let task = SplitEventActionTask(action: action, event: event, runInBackground: true, factory: factory, queue: nil)
         eventsManager.register(event: event, task: task)
     }
 }

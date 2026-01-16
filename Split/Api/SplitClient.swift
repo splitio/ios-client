@@ -11,6 +11,15 @@ import Foundation
 public typealias SplitAction = () -> Void
 public typealias SplitActionWithMetadata<T: EventMetadata> = (T) -> Void
 
+@objc public protocol SplitClientEventListener: AnyObject {
+    @objc(onSdkReady:)
+    optional func onSdkReady(_ metadata: SdkReadyMetadata)
+    @objc(onSdkReadyFromCache:)
+    optional func onSdkReadyFromCache(_ metadata: SdkReadyFromCacheMetadata)
+    @objc(onSdkUpdate:)
+    optional func onSdkUpdate(_ metadata: SdkUpdateMetadata)
+}
+
 @objc public protocol SplitClient {
 
     // MARK: Evaluation feature
@@ -37,6 +46,11 @@ public typealias SplitActionWithMetadata<T: EventMetadata> = (T) -> Void
     func on(event: SplitEvent, execute action: @escaping SplitAction)
     func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
+    
+    // MARK: Events with Metadata
+    @objc var listener: SplitClientEventListener? { get set }
+    @objc(addEventsListener:)
+    func addEventsListener(listener: SplitClientEventListener)
 
     // MARK: Track feature
     func track(trafficType: String, eventType: String) -> Bool
