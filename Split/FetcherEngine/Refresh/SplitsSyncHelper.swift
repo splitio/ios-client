@@ -12,7 +12,7 @@ struct SyncResult {
     let success: Bool
     let changeNumber: Int64
     let rbChangeNumber: Int64?
-    let featureFlagsUpdated: Bool
+    let featureFlagsUpdated: [String]
     let rbsUpdated: Bool
 }
 
@@ -21,7 +21,7 @@ class SplitsSyncHelper: @unchecked Sendable {
     struct FetchResult {
         let till: Int64
         let rbTill: Int64?
-        let featureFlagsUpdated: Bool
+        let featureFlagsUpdated: [String]
         let rbsUpdated: Bool
     }
 
@@ -163,7 +163,7 @@ class SplitsSyncHelper: @unchecked Sendable {
         return SyncResult(success: false,
                           changeNumber: nextSince,
                           rbChangeNumber: nextRbSince,
-                          featureFlagsUpdated: false,
+                          featureFlagsUpdated: [],
                           rbsUpdated: false)
     }
 
@@ -177,7 +177,7 @@ class SplitsSyncHelper: @unchecked Sendable {
         var firstFetch = true
         var nextSince = since
         var nextRbSince = rbSince
-        var featureFlagsUpdated = false
+        var featureFlagsUpdated: [String] = []
         var rbsUpdated = false
         while true {
             clearCache = clearCache && firstFetch
@@ -203,8 +203,9 @@ class SplitsSyncHelper: @unchecked Sendable {
             }
             firstFetch = false
             
-            if splitsStorage.update(splitChange: splitChangeProcessor.process(targetingRulesChange.featureFlags)) {
-                featureFlagsUpdated = true
+            let processedFlags = splitChangeProcessor.process(targetingRulesChange.featureFlags)
+            if splitsStorage.update(splitChange: processedFlags) {
+                featureFlagsUpdated = processedFlags.activeSplits.compactMap(\.name) + processedFlags.archivedSplits.compactMap(\.name)
             }
             
             let processedChange = ruleBasedSegmentsChangeProcessor.process(targetingRulesChange.ruleBasedSegments)

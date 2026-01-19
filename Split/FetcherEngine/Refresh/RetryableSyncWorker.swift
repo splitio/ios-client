@@ -79,10 +79,12 @@ class BaseRetryableSyncWorker: RetryableSyncWorker, @unchecked Sendable {
         }
     }
 
-    func notifyUpdate(_ events: [SplitInternalEvent]) {
-        events.forEach {
-            eventsManager.notifyInternalEvent($0)
-        }
+    func notifyUpdate(_ event: SplitInternalEvent) {
+        notifyUpdate(SplitInternalEventWithMetadata(event, metadata: nil))
+    }
+    
+    func notifyUpdate(_ event: SplitInternalEventWithMetadata) {
+        eventsManager.notifyInternalEvent(event)
     }
 
     func isSdkReadyTriggered() -> Bool {
@@ -140,10 +142,11 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
             let changeNumber = splitsStorage.changeNumber
             let rbChangeNumber = ruleBasedSegmentsStorage.changeNumber
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
+
             if result.success {
-                if !isSdkReadyTriggered() ||
-                    result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                if !isSdkReadyTriggered() || !result.featureFlagsUpdated.isEmpty {
+                    let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated))
+                    notifyUpdate(event)
                 }
                 resetBackoffCounter()
                 return true
@@ -217,8 +220,9 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker, @unchecked Sendable 
                                              clearBeforeUpdate: false,
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
-                if result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                if !result.featureFlagsUpdated.isEmpty {
+                    let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated))
+                    notifyUpdate(event)
                 }
                 resetBackoffCounter()
                 return true

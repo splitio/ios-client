@@ -130,10 +130,13 @@ class BasePeriodicSyncWorker: PeriodicSyncWorker, @unchecked Sendable {
         Logger.i("Fetch from remote not implemented")
     }
 
-    func notifyUpdate(_ events: [SplitInternalEvent]) {
-        events.forEach {
-            eventsManager.notifyInternalEvent($0)
-        }
+    func notifyUpdate(_ event: SplitInternalEvent) {
+        let withMetadata = SplitInternalEventWithMetadata(event, metadata: nil)
+        notifyUpdate(withMetadata)
+    }
+    
+    func notifyUpdate(_ event: SplitInternalEventWithMetadata) {
+        eventsManager.notifyInternalEvent(event)
     }
 }
 
@@ -183,8 +186,9 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker, @unchecked Sendable {
         guard let result = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber) else {
             return
         }
-        if result.success, result.featureFlagsUpdated || result.rbsUpdated {
-            notifyUpdate([.splitsUpdated])
+        if result.success, !result.featureFlagsUpdated.isEmpty || result.rbsUpdated {
+            let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated))
+            notifyUpdate(event)
         }
     }
 }
@@ -226,7 +230,8 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker, @unchecked Sendable 
             if result.success {
                 if  result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
-                    notifyUpdate([.mySegmentsUpdated])
+                    var event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+                    notifyUpdate(event)
                 }
             }
         } catch {

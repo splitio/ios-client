@@ -9,7 +9,6 @@
 import Foundation
 
 public typealias SplitAction = () -> Void
-public typealias SplitActionWithMetadata<T: EventMetadata> = (T) -> Void
 
 @objc public protocol SplitClientEventListener: AnyObject {
     @objc(onSdkReady:)

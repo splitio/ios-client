@@ -2,6 +2,8 @@
 
 import Foundation
 
+internal typealias SplitActionWithMetadata<T: EventMetadata> = (T) -> ()
+
 class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
 
     private var eventHandler: SplitAction?

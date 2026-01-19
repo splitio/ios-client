@@ -236,9 +236,9 @@ class SynchronizerStub: Synchronizer, @unchecked Sendable {
         notifyMySegmentsUpdatedCalled = true
     }
 
-    var notifyFeatureFlagsUpdatedCalled = true
-    func notifyFeatureFlagsUpdated() {
-        notifyFeatureFlagsUpdatedCalled = true
+    var notifyFeatureFlagsUpdatedCalled: [String] = []
+    func notifyFeatureFlagsUpdated(flagsList: [String]) {
+        notifyFeatureFlagsUpdatedCalled = flagsList
     }
 
     func notifySplitKilled() {

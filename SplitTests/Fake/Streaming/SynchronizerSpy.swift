@@ -205,9 +205,9 @@ class SynchronizerSpy: Synchronizer, @unchecked Sendable {
         splitSynchronizer.notifyLargeSegmentsUpdated(forKey: key)
     }
 
-    var notifyFeatureFlagsUpdatedCalled = false
-    func notifyFeatureFlagsUpdated() {
-        notifyFeatureFlagsUpdatedCalled = true
+    var notifyFeatureFlagsUpdatedCalled: [String] = []
+    func notifyFeatureFlagsUpdated(flagsList: [String]) {
+        notifyFeatureFlagsUpdatedCalled = flagsList
     }
 
     func notifySplitKilled() {
