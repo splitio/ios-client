@@ -186,9 +186,18 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker, @unchecked Sendable {
         guard let result = try? syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber) else {
             return
         }
-        if result.success, !result.featureFlagsUpdated.isEmpty || result.rbsUpdated {
-            let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated))
-            notifyUpdate(event)
+        if result.success {
+    
+            if !result.featureFlagsUpdated.isEmpty {
+                let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated))
+                notifyUpdate(event)
+                return // Avoid duplicate notification
+            }
+            
+            if result.rbsUpdated {
+                let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+                notifyUpdate(event)
+            }
         }
     }
 }

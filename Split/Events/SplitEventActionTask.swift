@@ -42,6 +42,9 @@ class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
         
         if let metadata = metadata {
             eventHandlerWithMetadata?.execute(metadata)
+            //do {
+            // try ... // TODO: CONFORM TO THROW
+            //}
         }
     }
 }

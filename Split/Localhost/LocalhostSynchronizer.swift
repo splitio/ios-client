@@ -44,7 +44,10 @@ class LocalhostSynchronizer: FeatureFlagsSynchronizer, @unchecked Sendable {
     func notifyKilled() {
     }
 
-    func notifyUpdated(flagsList: [String]) {
+    func notifyUpdated(flags: [String]) {
+    }
+    
+    func notifyUpdated(segments: [String]) {
     }
 
     func pause() {

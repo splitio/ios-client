@@ -28,8 +28,6 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
     private let processQueue: DispatchQueue
     private let dataAccessQueue: DispatchQueue
     private var isStarted: Bool
-    
-    private var lastUpdateTimestamp: Int64?
 
     init(config: SplitClientConfig) {
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process")
@@ -137,7 +135,8 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
                 }
                 
                 // MARK: SDK READY
-                if event.type == .splitsUpdated, let timestamp = event.extra as? Int64 { // Get timestamp from splitsLoaded metadata
+                var lastUpdateTimestamp: Int64?
+                if event.type == .splitsUpdated, let timestamp = event.extra as? Int64 { // Get timestamp from splitsUpdated metadata
                     lastUpdateTimestamp = timestamp == 0 ? nil : timestamp
                 }
                 triggerSdkReadyIfNeeded(SdkReadyMetadata(lastUpdateTimestamp: lastUpdateTimestamp, isInitialCacheLoad: lastUpdateTimestamp == nil))
@@ -151,8 +150,8 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
                    isTriggered(internal: .attributesLoadedFromCache) {
                     
                     // MARK: READY FROM CACHE - NOT FRESH INSTALL
-                    // Get timestamp from splitsLoaded metadata
-                    if event.type == .splitsLoadedFromCache, let timestamp = event.extra as? Int64 {
+                    var lastUpdateTimestamp: Int64?
+                    if event.type == .splitsLoadedFromCache, let timestamp = event.extra as? Int64 { // Get timestamp from splitsLoaded metadata
                         lastUpdateTimestamp = timestamp
                     }
                     
@@ -192,7 +191,7 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
            !isTriggered(external: .sdkReady) {
             if !isTriggered(external: .sdkReadyFromCache) {
                 
-                // MARK: READY FROM CACHE (FRESH INSTALL)
+                // MARK: READY FROM CACHE - FRESH INSTALL
                 trigger(event: SplitEventWithMetadata(type: .sdkReadyFromCache, metadata: SdkReadyFromCacheMetadata(lastUpdateTimestamp: nil, isInitialCacheLoad: true)))
             }
             

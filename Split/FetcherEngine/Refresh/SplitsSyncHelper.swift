@@ -78,6 +78,7 @@ class SplitsSyncHelper: @unchecked Sendable {
     func sync(since: Int64,
               rbSince: Int64,
               till: Int64? = nil,
+              rbTill: Int64? = nil,
               clearBeforeUpdate: Bool = false,
               headers: HttpHeaders? = nil) throws -> SyncResult {
         do {
@@ -95,6 +96,7 @@ class SplitsSyncHelper: @unchecked Sendable {
             let res = try tryToSync(since: since,
                                     rbSince: rbSince,
                                     till: till,
+                                    rbTill: rbTill,
                                     clearBeforeUpdate: shouldClearBeforeUpdate,
                                     headers: headers)
 
@@ -110,6 +112,7 @@ class SplitsSyncHelper: @unchecked Sendable {
             return try tryToSync(since: res.changeNumber,
                                    rbSince: res.rbChangeNumber,
                                    till: res.changeNumber,
+                                   rbTill: res.rbChangeNumber,
                                    clearBeforeUpdate: shouldClearBeforeUpdate && res.changeNumber == since,
                                    headers: headers,
                                    useTillParam: true)
@@ -143,9 +146,9 @@ class SplitsSyncHelper: @unchecked Sendable {
         while attemptCount < maxAttempts {
             let result = try fetchUntil(since: nextSince,
                                         rbSince: nextRbSince,
-                                       till: useTillParam ? till : nil,
-                                       clearBeforeUpdate: clearBeforeUpdate,
-                                       headers: headers)
+                                        till: useTillParam ? till : nil,
+                                        clearBeforeUpdate: clearBeforeUpdate,
+                                        headers: headers)
             nextSince = result.till
             nextRbSince = result.rbTill ?? -1
 
