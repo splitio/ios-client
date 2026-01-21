@@ -92,6 +92,7 @@ extension DefaultSplitClient {
     // MARK: Events Listeners with Medatadata
     @objc public func addEventsListener(listener: SplitClientEventListener) {
         if let l = listener.onSdkReady {
+            // TODO: TRY TO PROTECT FROM CRASHES WITH A TRY CATCH BEFORE EXECUTING THE CLOSURES ON SPLITEVENTMANAGER
             registerEvent(.sdkReady, action: l)
         }
 
@@ -104,7 +105,7 @@ extension DefaultSplitClient {
         }
     }
     
-    private func registerEvent<T: EventMetadata>(_ event: SplitEvent, action: @escaping (T) -> Void) {
+    private func registerEvent<T: EventMetadata>(_ event: SplitEvent, action: @Sendable @escaping (T) -> Void) {
         guard let factory = clientManager?.splitFactory else { return }
         let task = SplitEventActionTask(action: action, event: event, runInBackground: true, factory: factory, queue: nil)
         eventsManager.register(event: event, task: task)

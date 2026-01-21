@@ -134,7 +134,8 @@ class DefaultPushNotificationManager: PushNotificationManager, @unchecked Sendab
         }
         Logger.d("Streaming authentication success")
 
-        let connectionDelay = result.sseConnectionDelay
+        // TODO: RESTORE THIS LINE BELOW !!!
+        let connectionDelay = Int64(1) //result.sseConnectionDelay
         self.broadcasterChannel.push(event: .pushDelayReceived(delaySeconds: connectionDelay))
         let lastId = lastConnId.value
         if connectionDelay > 0 {

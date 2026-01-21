@@ -2,12 +2,12 @@
 
 import Foundation
 
-internal typealias SplitActionWithMetadata<T: EventMetadata> = (T) -> ()
+internal typealias SplitActionWithMetadata<T: EventMetadata> = @Sendable (T) -> ()
 
 class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
 
     private var eventHandler: SplitAction?
-    private var eventHandlerWithMetadata: SplitActionWithMetadata<EventMetadata>?
+    private var eventHandlerWithMetadata: EventMetadataHandler?
     private var queue: DispatchQueue?
     var event: SplitEvent
     var runInBackground: Bool = false
@@ -20,14 +20,8 @@ class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
         self.queue = queue
         self.factory = factory
         
-        // Metadata: "swap" for concrete type and ensure type is correct for this event
-        self.eventHandlerWithMetadata = { metadata in
-            guard let typed = metadata as? T else {
-                Logger.e("Wrong metadata type for this event (\(event.toString())).")
-                return
-            }
-            action(typed)
-        }
+        // Preserve the concrete type using type erasure container
+        self.eventHandlerWithMetadata = TypedEventMetadataHandler(action: action)
     }
       
     init(action: @escaping SplitAction, event: SplitEvent, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
@@ -47,7 +41,26 @@ class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
         eventHandler?()
         
         if let metadata = metadata {
-            eventHandlerWithMetadata?(metadata)
+            eventHandlerWithMetadata?.execute(metadata)
         }
+    }
+}
+
+// MARK: This below is used to preserve the concrete type of the event, since the pipeline uses the
+// MARK: erased type.
+// Type erasure container to preserve concrete type information
+private protocol EventMetadataHandler: Sendable {
+    func execute(_ metadata: EventMetadata)
+}
+
+private struct TypedEventMetadataHandler<T: EventMetadata>: EventMetadataHandler {
+    let action: SplitActionWithMetadata<T>
+    
+    func execute(_ metadata: EventMetadata) {
+        guard let typed = metadata as? T else {
+            Logger.e("Wrong metadata type for event handler. Expected \(T.self), got \(type(of: metadata)).")
+            return
+        }
+        action(typed)
     }
 }

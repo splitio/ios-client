@@ -28,6 +28,8 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
     private let processQueue: DispatchQueue
     private let dataAccessQueue: DispatchQueue
     private var isStarted: Bool
+    
+    private var lastUpdateTimestamp: Int64?
 
     init(config: SplitClientConfig) {
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process")
@@ -120,40 +122,57 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
         return isRunning
     }
 
+    // MARK: Here we map InternalEvents to external Events
     private func processEvent(_ event: SplitInternalEventWithMetadata) {
         guard isRunning() else { return }
 
         triggered.append(event)
         switch event.type {
             case .splitsUpdated, .mySegmentsUpdated, .myLargeSegmentsUpdated:
+            
+                // MARK: NORMAL SDK UPDATE
                 if isTriggered(external: .sdkReady) {
-                    trigger(event: .sdkUpdated)
+                    trigger(event: SplitEventWithMetadata(type: .sdkUpdated, metadata: event.metadata))
                     return
                 }
-                self.triggerSdkReadyIfNeeded()
+                
+                // MARK: SDK READY
+                if event.type == .splitsUpdated, let timestamp = event.extra as? Int64 { // Get timestamp from splitsLoaded metadata
+                    lastUpdateTimestamp = timestamp == 0 ? nil : timestamp
+                }
+                triggerSdkReadyIfNeeded(SdkReadyMetadata(lastUpdateTimestamp: lastUpdateTimestamp, isInitialCacheLoad: lastUpdateTimestamp == nil))
 
-            case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache,
-                    .splitsLoadedFromCache, .attributesLoadedFromCache:
+            case .mySegmentsLoadedFromCache, .myLargeSegmentsLoadedFromCache, .splitsLoadedFromCache, .attributesLoadedFromCache:
+            
                 Logger.v("Event \(event) triggered")
                 if isTriggered(internal: .splitsLoadedFromCache),
                    isTriggered(internal: .mySegmentsLoadedFromCache),
                    isTriggered(internal: .myLargeSegmentsLoadedFromCache),
                    isTriggered(internal: .attributesLoadedFromCache) {
-                    trigger(event: SplitEvent.sdkReadyFromCache)
+                    
+                    // MARK: READY FROM CACHE - NOT FRESH INSTALL
+                    // Get timestamp from splitsLoaded metadata
+                    if event.type == .splitsLoadedFromCache, let timestamp = event.extra as? Int64 {
+                        lastUpdateTimestamp = timestamp
+                    }
+                    
+                    trigger(event: SplitEventWithMetadata(type: .sdkReadyFromCache, metadata: SdkReadyFromCacheMetadata(lastUpdateTimestamp: lastUpdateTimestamp, isInitialCacheLoad: false)))
                 }
             case .splitKilledNotification:
+                // MARK: KILLED NOTIF (SDK UPDATE)
                 if isTriggered(external: .sdkReady) {
-                    trigger(event: .sdkUpdated)
+                    trigger(event: SplitEventWithMetadata(type: .sdkUpdated, metadata: event.metadata))
                     return
                 }
             case .sdkReadyTimeoutReached:
+                // MARK: TIMEOUT
                 if !isTriggered(external: .sdkReady) {
                     trigger(event: SplitEvent.sdkReadyTimedOut)
                 }
             }
     }
 
-    // MARK: Helper functions.
+    // MARK: Helper functions
     func isTriggered(external event: SplitEvent) -> Bool {
         var triggered = false
         dataAccessQueue.sync {
@@ -166,15 +185,18 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
         return triggered
     }
 
-    private func triggerSdkReadyIfNeeded() {
+    private func triggerSdkReadyIfNeeded(_ metadata: SdkReadyMetadata) {
         if isTriggered(internal: .mySegmentsUpdated),
            isTriggered(internal: .splitsUpdated),
            isTriggered(internal: .myLargeSegmentsUpdated),
            !isTriggered(external: .sdkReady) {
             if !isTriggered(external: .sdkReadyFromCache) {
-                self.trigger(event: .sdkReadyFromCache)
+                
+                // MARK: READY FROM CACHE (FRESH INSTALL)
+                trigger(event: SplitEventWithMetadata(type: .sdkReadyFromCache, metadata: SdkReadyFromCacheMetadata(lastUpdateTimestamp: nil, isInitialCacheLoad: true)))
             }
-            self.trigger(event: .sdkReady)
+            
+            self.trigger(event: SplitEventWithMetadata(type: .sdkReady, metadata: metadata))
         }
     }
 

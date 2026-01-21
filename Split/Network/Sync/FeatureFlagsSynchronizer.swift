@@ -102,7 +102,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
             
             // Events & Logs
             if splitsStorage.getAll().count > 0 {
-                self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
+                self.splitEventsManager.notifyInternalEvent(SplitInternalEventWithMetadata(.splitsLoadedFromCache, metadata: nil, extra: splitsStorage.updateTimestamp))
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
             Logger.v("Notifying Splits loaded from cache")
@@ -254,7 +254,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
         return nil
     }
     
-    private func shouldForceParse() -> Bool {
+    private func shouldForceParse() -> Bool { // This runs literally once (just when the user updates to this SDK version having existing flags)
         storageContainer.generalInfoStorage.getSegmentsInUse() == nil && storageContainer.generalInfoStorage.getSplitsChangeNumber() > -1
     }
 }

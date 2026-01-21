@@ -10,7 +10,7 @@ import Foundation
 
 public typealias SplitAction = () -> Void
 
-@objc public protocol SplitClientEventListener: AnyObject {
+@objc public protocol SplitClientEventListener: AnyObject, Sendable {
     @objc(onSdkReady:)
     optional func onSdkReady(_ metadata: SdkReadyMetadata)
     @objc(onSdkReadyFromCache:)

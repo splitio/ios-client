@@ -70,16 +70,16 @@ import Foundation
             global = sanitizedGlobal
             return self
         }
-        
+
         // MARK: By Flag
         @objc(byFlag:)
         public func byFlag(_ byFlagFallbacks: [String: FallbackTreatment]) -> Builder {
-            
+
             // Warn if you're overriding an already configured flag
             for key in byFlagFallbacks.keys where byFlag.keys.contains(key) {
                 Logger.w("Duplicate fallback for flag '\(key)'. Overriding existing value.")
             }
-            
+
             // Merge
             var merged = byFlag
             for (key, value) in byFlagFallbacks {

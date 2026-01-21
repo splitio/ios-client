@@ -141,11 +141,13 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
         do {
             let changeNumber = splitsStorage.changeNumber
             let rbChangeNumber = ruleBasedSegmentsStorage.changeNumber
+            var lastUpdateTimestamp = splitsStorage.updateTimestamp
+            
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
 
             if result.success {
                 if !isSdkReadyTriggered() || !result.featureFlagsUpdated.isEmpty {
-                    let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated))
+                    let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated), extra: lastUpdateTimestamp)
                     notifyUpdate(event)
                 }
                 resetBackoffCounter()

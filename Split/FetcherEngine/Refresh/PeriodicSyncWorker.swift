@@ -230,7 +230,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker, @unchecked Sendable 
             if result.success {
                 if  result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
-                    var event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+                    let event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
                     notifyUpdate(event)
                 }
             }

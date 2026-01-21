@@ -158,7 +158,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
         }
     }
     
-    private func registerEvent<T: EventMetadata>(_ event: SplitEvent, action: @escaping (T) -> Void) {
+    private func registerEvent<T: EventMetadata>(_ event: SplitEvent, action: @Sendable @escaping (T) -> Void) {
         guard let factory = clientManager?.splitFactory else { return }
         let task = SplitEventActionTask(action: action, event: event, runInBackground: true, factory: factory, queue: nil)
         eventsManager?.register(event: event, task: task)
