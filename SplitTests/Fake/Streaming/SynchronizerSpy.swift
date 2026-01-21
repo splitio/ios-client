@@ -11,6 +11,7 @@ import XCTest
 @testable import Split
 
 class SynchronizerSpy: Synchronizer, @unchecked Sendable {
+    
     var splitSynchronizer: Synchronizer
 
     var loadAndSynchronizeSplitsCalled = false
@@ -204,10 +205,17 @@ class SynchronizerSpy: Synchronizer, @unchecked Sendable {
         notifyMyLargeSegmentsUpdatedCalled = true
         splitSynchronizer.notifyLargeSegmentsUpdated(forKey: key)
     }
+    
+    var notifyRuleBasedSegmentsUpdatedCalled: [String] = []
+    func notifyRuleBasedSegmentsUpdated(segments: [String]) {
+        notifyRuleBasedSegmentsUpdatedCalled = segments
+        splitSynchronizer.notifyRuleBasedSegmentsUpdated(segments: segments)
+    }
 
     var notifyFeatureFlagsUpdatedCalled: [String] = []
-    func notifyFeatureFlagsUpdated(flagsList: [String]) {
-        notifyFeatureFlagsUpdatedCalled = flagsList
+    func notifyFeatureFlagsUpdated(flags: [String]) {
+        notifyFeatureFlagsUpdatedCalled = flags
+        splitSynchronizer.notifyFeatureFlagsUpdated(flags: flags)
     }
 
     func notifySplitKilled() {

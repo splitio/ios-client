@@ -39,9 +39,14 @@ class FeatureFlagsSynchronizerStub: FeatureFlagsSynchronizer, @unchecked Sendabl
         notifyKilledCalled = true
     }
 
-    var notifyUpdatedCalled: [String] = []
-    func notifyUpdated(flagsList: [String]) {
-        notifyUpdatedCalled = flagsList
+    var notifyUpdatedFlagsCalled: [String] = []
+    func notifyUpdated(flags: [String]) {
+        notifyUpdatedFlagsCalled = flags
+    }
+    
+    var notifyUpdatedSgmentsCalled: [String] = []
+    func notifyUpdated(segments: [String]) {
+        notifyUpdatedSgmentsCalled = segments
     }
 
     var pauseCalled = false
