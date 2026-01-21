@@ -165,7 +165,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
                     
                 }
                 
-                let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []), extra: lastUpdateTimestamp)
+                let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkReadyMetadata(lastUpdateTimestamp: lastUpdateTimestamp, isInitialCacheLoad: true), extra: lastUpdateTimestamp)
                 notifyUpdate(event)
                 
                 resetBackoffCounter()
