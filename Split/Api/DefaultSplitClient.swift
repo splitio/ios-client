@@ -92,7 +92,6 @@ extension DefaultSplitClient {
     // MARK: Events Listeners with Medatadata
     @objc public func addEventsListener(listener: SplitClientEventListener) {
         if let l = listener.onSdkReady {
-            // TODO: TRY TO PROTECT FROM CRASHES WITH A TRY CATCH BEFORE EXECUTING THE CLOSURES ON SPLITEVENTMANAGER
             registerEvent(.sdkReady, action: l)
         }
 

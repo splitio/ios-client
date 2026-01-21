@@ -42,15 +42,11 @@ class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
         
         if let metadata = metadata {
             eventHandlerWithMetadata?.execute(metadata)
-            //do {
-            // try ... // TODO: CONFORM TO THROW
-            //}
         }
     }
 }
 
-// MARK: This below is used to preserve the concrete type of the event, since the pipeline uses the
-// MARK: erased type.
+// MARK: This below is used to preserve the concrete type of the event, since the pipeline uses the erased type.
 // Type erasure container to preserve concrete type information
 private protocol EventMetadataHandler: Sendable {
     func execute(_ metadata: EventMetadata)
