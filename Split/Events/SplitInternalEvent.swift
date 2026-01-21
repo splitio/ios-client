@@ -19,7 +19,7 @@ enum SplitInternalEvent {
     case splitKilledNotification
 }
 
-struct SplitInternalEventWithMetadata {
+struct SplitInternalEventWithMetadata: @unchecked Sendable {
     let type: SplitInternalEvent
     let metadata: EventMetadata?
     var extra: Any?
