@@ -61,7 +61,6 @@ class FailedClient: SplitClient {
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
     
     // MARK: Events Listeners with Medatadata
-    var listener: (any SplitClientEventListener)?
     @objc public func addEventsListener(listener: SplitClientEventListener) {}
 
     // MARK: Track

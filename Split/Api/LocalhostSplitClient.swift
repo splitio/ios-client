@@ -49,7 +49,6 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     private var evaluator: Evaluator
     private let key: Key
     weak var clientManager: SplitClientManager?
-    @objc public var listener: SplitClientEventListener?
 
     init(key: Key, splitsStorage: SplitsStorage, clientManager: SplitClientManager?, eventsManager: SplitEventsManager? = nil, evaluator: Evaluator) {
         self.eventsManager = eventsManager

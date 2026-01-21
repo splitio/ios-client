@@ -17,7 +17,6 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
     private var isClientDestroyed = false
     private let eventsTracker: EventsTracker
     private weak var clientManager: SplitClientManager?
-    @objc public var listener: SplitClientEventListener?
 
     var initStopwatch: Stopwatch?
 

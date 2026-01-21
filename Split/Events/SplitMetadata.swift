@@ -2,7 +2,7 @@
 
 import Foundation
 
-@objc public protocol EventMetadata: Sendable, NSObjectProtocol {}
+@objc protocol EventMetadata: Sendable, NSObjectProtocol {}
 
 // MARK: UPDATE
 /// Represents the type of SDK update that triggered a metadata callback.

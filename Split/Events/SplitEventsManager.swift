@@ -56,6 +56,7 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
         }
     }
     
+    @available(*, deprecated, message: "Notify with metadata")
     func notifyInternalEvent(_ event: SplitInternalEvent) {
         notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
     }
