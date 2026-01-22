@@ -27,7 +27,7 @@ import Foundation
     }
 }
 
-@objcMembers public final class SplitEventWithMetadata: NSObject, Sendable {
+final class SplitEventWithMetadata: NSObject, Sendable {
     let type: SplitEvent
     let metadata: EventMetadata?
     
