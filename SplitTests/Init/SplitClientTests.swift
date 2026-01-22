@@ -86,6 +86,60 @@ class SplitClientTests: XCTestCase {
             XCTAssertNotNil(task.takeQueue())
         }
     }
+
+    func testAddEventListenerRegistersAllMetadataEvents() {
+        let listener = SplitEventListenerAllEvents()
+        client.addEventListener(listener: listener)
+
+        let types = Set(eventsManager.registeredEvents.keys.map { $0.type })
+        XCTAssertEqual(types, Set([.sdkReady, .sdkReadyFromCache, .sdkUpdated]))
+
+        for event in types {
+            guard let task = eventsManager.registeredEvents.first(where: { $0.key.type == event })?.value else {
+                XCTFail("Expected task for \(event)")
+                continue
+            }
+
+            XCTAssertTrue(task.runInBackground)
+            XCTAssertNil(task.takeQueue())
+        }
+    }
+
+    func testAddEventListenerRegistersOnlyImplementedCallbacks() {
+        let listener = SplitEventListenerReadyOnly()
+        client.addEventListener(listener: listener)
+
+        let types = Set(eventsManager.registeredEvents.keys.map { $0.type })
+        XCTAssertEqual(types, Set([.sdkReady]))
+    }
+
+    func testAddEventListenerCallsMultipleListenersOnSdkReady() {
+        let config = SplitClientConfig()
+        config.logLevel = .verbose
+        let localEventsManager = DefaultSplitEventsManager(config: config)
+        localEventsManager.start()
+
+        let localClient = DefaultSplitClient(config: config, key: key,
+                                             treatmentManager: treatmentManager, apiFacade: apiFacade,
+                                             storageContainer: storageContainer,
+                                             eventsManager: localEventsManager,
+                                             eventsTracker: eventsTracker, clientManager: clientManager)
+
+        let exp1 = XCTestExpectation(description: "listener 1 called")
+        let exp2 = XCTestExpectation(description: "listener 2 called")
+
+        let listener1 = SplitEventListenerReadyClosure(onReady: { exp1.fulfill() })
+        let listener2 = SplitEventListenerReadyClosure(onReady: { exp2.fulfill() })
+
+        localClient.addEventListener(listener: listener1)
+        localClient.addEventListener(listener: listener2)
+
+        localEventsManager.notifyInternalEvent(.mySegmentsUpdated)
+        localEventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
+        localEventsManager.notifyInternalEvent(.splitsUpdated)
+
+        wait(for: [exp1, exp2], timeout: 2.0)
+    }
     
     func testGetTreatmentWithEvaluationOptions() {
         testEvaluationOptionsPassedCorrectly(
@@ -274,5 +328,29 @@ class SplitClientTests: XCTestCase {
 
         // Verify properties were passed correctly
         verifyProperties(in: getEvaluationOptions(mockManager))
+    }
+}
+
+final class SplitEventListenerAllEvents: NSObject, SplitEventListener {
+    @objc func onSdkReady(_ metadata: SdkReadyMetadata) {}
+
+    @objc func onSdkReadyFromCache(_ metadata: SdkReadyFromCacheMetadata) {}
+
+    @objc func onSdkUpdate(_ metadata: SdkUpdateMetadata) {}
+}
+
+final class SplitEventListenerReadyOnly: NSObject, SplitEventListener {
+    @objc func onSdkReady(_ metadata: SdkReadyMetadata) {}
+}
+
+final class SplitEventListenerReadyClosure: NSObject, SplitEventListener, @unchecked Sendable {
+    private let onReady: @Sendable () -> Void
+
+    init(onReady: @escaping @Sendable () -> Void) {
+        self.onReady = onReady
+    }
+
+    @objc func onSdkReady(_ metadata: SdkReadyMetadata) {
+        onReady()
     }
 }
