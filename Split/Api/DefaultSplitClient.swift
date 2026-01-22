@@ -17,7 +17,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
     private var isClientDestroyed = false
     private let eventsTracker: EventsTracker
     private weak var clientManager: SplitClientManager?
-    @objc public var listener: SplitClientEventListener?
+    @objc public var listener: SplitEventListener?
 
     var initStopwatch: Stopwatch?
 
@@ -90,7 +90,7 @@ extension DefaultSplitClient {
     }
     
     // MARK: Events Listeners with Medatadata
-    @objc public func addEventsListener(listener: SplitClientEventListener) {
+    @objc public func addEventListener(listener: SplitEventListener) {
         if let l = listener.onSdkReady {
             registerEvent(.sdkReady, action: l)
         }

@@ -49,7 +49,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     private var evaluator: Evaluator
     private let key: Key
     weak var clientManager: SplitClientManager?
-    @objc public var listener: SplitClientEventListener?
+    @objc public var listener: SplitEventListener?
 
     init(key: Key, splitsStorage: SplitsStorage, clientManager: SplitClientManager?, eventsManager: SplitEventsManager? = nil, evaluator: Evaluator) {
         self.eventsManager = eventsManager
@@ -144,7 +144,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
     
     // MARK: Events Listeners with Medatadata
-    @objc public func addEventsListener(listener: SplitClientEventListener) {
+    @objc public func addEventListener(listener: SplitEventListener) {
         if let l = listener.onSdkReady {
             registerEvent(.sdkReady, action: l)
         }
