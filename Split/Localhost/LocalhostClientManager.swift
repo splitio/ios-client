@@ -91,8 +91,11 @@ class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
         let newGroup = LocalhostComponentsGroup(client: newClient, eventsManager: newEventsManager)
         clients.setValue(newGroup, forKey: key.matchingKey)
         eventsManagerCoordinator.add(newEventsManager, forKey: key)
-        newEventsManager.notifyInternalEvent(.mySegmentsUpdated)
-        newEventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
+        
+        var event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+        newEventsManager.notifyInternalEvent(event)
+        event = SplitInternalEventWithMetadata(.myLargeSegmentsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+        newEventsManager.notifyInternalEvent(event)
 
         return newClient
     }

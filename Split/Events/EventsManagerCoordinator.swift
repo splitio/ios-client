@@ -37,7 +37,7 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator, @unchecked Sendable
 
             self.triggered.insert(event.type)
             self.managers.forEach { _, manager in
-                manager.notifyInternalEvent(event.type)
+                manager.notifyInternalEvent(event)
             }
         }
     }

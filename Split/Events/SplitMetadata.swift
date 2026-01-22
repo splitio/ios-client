@@ -18,6 +18,15 @@ import Foundation
 @objc public enum SdkUpdateMetadataType: Int, Sendable {
     case FLAGS_UPDATE
     case SEGMENTS_UPDATE
+    
+    public func toString() -> String {
+        switch self {
+            case .FLAGS_UPDATE:
+                return "FLAGS_UPDATE"
+            case .SEGMENTS_UPDATE:
+                return "SEGMENTS_UPDATE"
+        }
+    }
 }
 
 /// Metadata for SDK update event.
@@ -29,7 +38,7 @@ import Foundation
 /// - The type of update that occurred (flags or segments)
 /// - The specific flags affected
 ///
-@objcMembers public final class SdkUpdateMetadata: NSObject, EventMetadata {
+@objcMembers public final class SdkUpdateMetadata: NSObject, EventMetadata, Sendable {
     
     public let type: SdkUpdateMetadataType
     
@@ -58,12 +67,12 @@ import Foundation
 /// - The timestamp of the last successful update.
 /// - Whether the data was loaded from the initial cache.
 ///
-@objcMembers public final class SdkReadyMetadata: NSObject, EventMetadata {
+@objcMembers public final class SdkReadyMetadata: NSObject, EventMetadata, Sendable {
     
     /// Timestamp (in milliseconds since epoch) of the last successful SDK update.
     ///
     /// A value of `-1` indicates that no update has occurred yet.
-    public let lastUpdateTimestamp: Int64
+    public let lastUpdateTimestamp: Int64?
     
     /// Indicates whether this SDK initialization corresponds to a fresh install.
     public let isInitialCacheLoad: Bool
@@ -73,7 +82,7 @@ import Foundation
         fatalError("Use SDK-provided instances only")
     }
     
-    internal init(lastUpdateTimestamp: Int64, isInitialCacheLoad: Bool) {
+    internal init(lastUpdateTimestamp: Int64? = nil, isInitialCacheLoad: Bool) {
         self.isInitialCacheLoad = isInitialCacheLoad
         self.lastUpdateTimestamp = lastUpdateTimestamp
         super.init()
@@ -90,7 +99,12 @@ import Foundation
 /// - The SDK initialized using previously stored data.
 /// - No fresh data has been fetched from the network yet.
 ///
-@objcMembers public final class SdkReadyFromCacheMetadata: NSObject, EventMetadata {
+@objcMembers public final class SdkReadyFromCacheMetadata: NSObject, EventMetadata, Sendable {
+    
+    /// Timestamp (in milliseconds since epoch) of the last successful SDK update.
+    ///
+    /// A value of `-1` indicates that no update has occurred yet.
+    public let lastUpdateTimestamp: Int64?
     
     /// Indicates whether this SDK initialization corresponds to a fresh install.
     public let isInitialCacheLoad: Bool
@@ -100,8 +114,9 @@ import Foundation
         fatalError("Use SDK-provided instances only")
     }
     
-    internal init(isInitialCacheLoad: Bool) {
+    internal init(lastUpdateTimestamp: Int64? = nil, isInitialCacheLoad: Bool) {
         self.isInitialCacheLoad = isInitialCacheLoad
+        self.lastUpdateTimestamp = lastUpdateTimestamp
         super.init()
     }
 }
