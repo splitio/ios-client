@@ -27,4 +27,4 @@ struct SplitInternalEventWithMetadata {
         self.type = type
         self.metadata = metadata
     }
-}
+} 
