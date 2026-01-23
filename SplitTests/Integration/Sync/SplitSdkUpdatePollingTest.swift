@@ -171,6 +171,10 @@ class SplitSdkUpdatePollingTest: XCTestCase {
 
         let client = factory!.client
 
+        let exp = XCTestExpectation(description: "Update exp")
+        let listener = TestEventListener(updateExp: exp)
+        client.addEventListener(listener: listener)
+        
         client.on(event: SplitEvent.sdkReady) {
             sdkReady.fulfill()
         }
@@ -179,7 +183,10 @@ class SplitSdkUpdatePollingTest: XCTestCase {
             sdkUpdate.fulfill()
         }
 
-        wait(for: [sdkReady, sdkUpdate], timeout: 30)
+        wait(for: [sdkReady, sdkUpdate, exp], timeout: 30)
+        
+        XCTAssertEqual(listener.updateMetadata?.type, .FLAGS_UPDATE)
+        XCTAssertEqual(listener.updateMetadata?.names, ["test_feature"])
 
         let semaphore = DispatchSemaphore(value: 0)
         client.destroy(completion: {
