@@ -170,7 +170,7 @@ class SplitSdkUpdatePollingTest: XCTestCase {
         factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
 
         let client = factory!.client
-        
+
         client.on(event: SplitEvent.sdkReady) {
             sdkReady.fulfill()
         }
