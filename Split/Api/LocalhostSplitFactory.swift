@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 ///
 /// SplitFactory implementation for Localhost mode

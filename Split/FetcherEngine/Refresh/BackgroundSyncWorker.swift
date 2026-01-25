@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol BackgroundSyncWorker {
     func execute()

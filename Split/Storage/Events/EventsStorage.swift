@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol EventsStorage {
     func enablePersistence(_ enable: Bool)

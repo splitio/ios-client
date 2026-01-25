@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 ///
 /// Default implementation of SplitManager protocol

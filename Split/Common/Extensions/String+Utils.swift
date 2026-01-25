@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 extension Substring {
     func asString() -> String {

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 extension Dictionary: DynamicEncodable where Key: Hashable, Value: DynamicEncodable {
     func toJsonObject() -> Any {

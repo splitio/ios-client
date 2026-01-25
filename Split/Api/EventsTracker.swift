@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol EventsTracker: AnyObject {
     var isTrackingEnabled: Bool { get set }

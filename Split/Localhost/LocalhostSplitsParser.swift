@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 /**
  Data structure to hold parsed feature flags and its corresponding treatment
  */

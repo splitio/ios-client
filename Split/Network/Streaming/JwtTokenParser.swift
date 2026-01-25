@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 enum JwtTokenError: Error {
     case tokenIsNull

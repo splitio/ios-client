@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 extension Array: DynamicEncodable where Element: DynamicEncodable {
     func toJsonObject() -> Any {

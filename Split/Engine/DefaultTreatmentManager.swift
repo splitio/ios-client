@@ -6,6 +6,7 @@
 //  Copyright © 2019 Split. All rights reserved.
 
 import Foundation
+import Logging
 
 class DefaultTreatmentManager: TreatmentManager, @unchecked Sendable {
 

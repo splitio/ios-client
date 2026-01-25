@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 ///
 /// Retrieves segments changes or a user key

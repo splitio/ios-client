@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol HttpMySegmentsFetcher {
     func execute(userKey: String, till: Int64?, headers: [String: String]?) throws -> AllSegmentsChange?

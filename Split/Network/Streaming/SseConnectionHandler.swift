@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 class SseConnectionHandler: @unchecked Sendable {
     private let clientLock = NSLock()

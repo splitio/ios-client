@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 @objc public class SyncConfig: NSObject {
     private(set) var filters: [SplitFilter]

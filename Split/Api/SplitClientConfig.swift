@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 public typealias SplitImpressionListener = (SplitImpression) -> Void
 
@@ -126,11 +127,13 @@ public class SplitClientConfig: NSObject {
     @available(*, deprecated, message: "Use logLevel instead")
     @objc public var isDebugModeEnabled: Bool {
         get {
-            return Logger.shared.level == .debug
+            Logger.ensureInitialized()
+            return SplitLogLevel.from(Logger.shared.level) == .debug
         }
         set {
+            Logger.ensureInitialized()
             if Logger.shared.level == .none {
-                Logger.shared.level = newValue ? .debug : .none
+                Logger.shared.level = newValue ? SplitLogLevel.debug.toLogLevel() : .none
             }
         }
     }
@@ -142,11 +145,13 @@ public class SplitClientConfig: NSObject {
     @available(*, deprecated, message: "Use logLevel instead")
     @objc public var isVerboseModeEnabled: Bool {
         get {
-            return Logger.shared.level == .verbose
+            Logger.ensureInitialized()
+            return SplitLogLevel.from(Logger.shared.level) == .verbose
         }
         set {
+            Logger.ensureInitialized()
             if Logger.shared.level == .none {
-                Logger.shared.level = newValue ? .verbose : .none
+                Logger.shared.level = newValue ? SplitLogLevel.verbose.toLogLevel() : .none
             }
         }
     }
@@ -155,15 +160,18 @@ public class SplitClientConfig: NSObject {
     /// Swift only method
     public var logLevel: SplitLogLevel {
         get {
-            return Logger.shared.level
+            Logger.ensureInitialized()
+            return SplitLogLevel.from(Logger.shared.level)
         }
         set {
-            Logger.shared.level = newValue
+            Logger.ensureInitialized()
+            Logger.shared.level = newValue.toLogLevel()
         }
     }
 
     @objc public func set(logLevel: String) {
-        Logger.shared.level = SplitLogLevel(rawValue: logLevel) ?? .none
+        Logger.ensureInitialized()
+        Logger.shared.level = (SplitLogLevel(rawValue: logLevel) ?? .none).toLogLevel()
     }
 
     ///

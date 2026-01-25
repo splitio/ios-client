@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Logging
 
 class GreaterThanOrEqualToSemverMatcher: BaseMatcher, MatcherProtocol {
 

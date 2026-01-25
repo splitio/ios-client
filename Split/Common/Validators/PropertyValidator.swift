@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol PropertyValidator {
     /// Validates properties for events and impressions

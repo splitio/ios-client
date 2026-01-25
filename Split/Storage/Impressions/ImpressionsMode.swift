@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 public enum ImpressionsMode: String {
     case optimized = "OPTIMIZED"

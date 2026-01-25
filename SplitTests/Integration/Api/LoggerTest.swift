@@ -7,11 +7,12 @@
 //
 
 import Foundation
+import Logging
 @testable import Split
 
 import XCTest
-@testable import Split
 
+// This test verifies that SplitLogLevel mapping to LogLevel works correctly
 class LoggerTest : XCTestCase {
 
     let printer = LogPrinterStub()
@@ -19,10 +20,11 @@ class LoggerTest : XCTestCase {
     override func setUp() {
         printer.clear()
         Logger.shared.printer = printer
+        Logger.shared.dateProvider = SplitDateProvider()
     }
 
     func testNone() {
-        Logger.shared.level = .none
+        Logger.shared.level = SplitLogLevel.none.toLogLevel()
 
         logAll()
 
@@ -34,7 +36,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testVerbose() {
-        Logger.shared.level = .verbose
+        Logger.shared.level = SplitLogLevel.verbose.toLogLevel()
 
         logAll()
 
@@ -46,7 +48,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testDebug() {
-        Logger.shared.level = .debug
+        Logger.shared.level = SplitLogLevel.debug.toLogLevel()
 
         logAll()
 
@@ -58,7 +60,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testInfo() {
-        Logger.shared.level = .info
+        Logger.shared.level = SplitLogLevel.info.toLogLevel()
 
         logAll()
 
@@ -70,7 +72,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testWarning() {
-        Logger.shared.level = .warning
+        Logger.shared.level = SplitLogLevel.warning.toLogLevel()
 
         logAll()
 
@@ -82,7 +84,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testError() {
-        Logger.shared.level = .error
+        Logger.shared.level = SplitLogLevel.error.toLogLevel()
 
         logAll()
 
@@ -93,7 +95,7 @@ class LoggerTest : XCTestCase {
         XCTAssertTrue(isLogged(level: .error))
     }
 
-    private func isLogged(level: SplitLogLevel) -> Bool {
+    private func isLogged(level: LogLevel) -> Bool {
         return printer.logs.filter { $0.contains("\(level.rawValue)") }.count > 0
     }
 
@@ -107,6 +109,7 @@ class LoggerTest : XCTestCase {
 
     override func tearDown() {
         Logger.shared.printer = DefaultLogPrinter()
+        Logger.shared.dateProvider = SplitDateProvider()
         printer.clear()
     }
 }

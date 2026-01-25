@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol FlagSetsValidator {
     func validateOnEvaluation(_ values: [String], calledFrom method: String, setsInFilter: [String]) -> [String]

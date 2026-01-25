@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol HashedImpressionsStorage {
     func loadFromDb()

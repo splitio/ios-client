@@ -1649,6 +1649,12 @@
 		C5A7D5572DDBD4380081D190 /* split_changes_rbs.json in Resources */ = {isa = PBXBuildFile; fileRef = C5A7D5562DDBD4280081D190 /* split_changes_rbs.json */; };
 		C5A7D5592DDBD7A30081D190 /* OutdatedProxyIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5A7D5582DDBD7A30081D190 /* OutdatedProxyIntegrationTest.swift */; };
 		C5A7D5612DDF88BA0081D190 /* RuleBasedSegment.swift in Sources */ = {isa = PBXBuildFile; fileRef = C539CAB52D88C1F10050C732 /* RuleBasedSegment.swift */; };
+		C5B9D4B82F259BD9000D1C11 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B42F259BD9000D1C11 /* Logger.swift */; };
+		C5B9D4B92F259BD9000D1C11 /* LogPrinter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B62F259BD9000D1C11 /* LogPrinter.swift */; };
+		C5B9D4BA2F259BD9000D1C11 /* DateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B32F259BD9000D1C11 /* DateProvider.swift */; };
+		C5B9D4BB2F259BD9000D1C11 /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B52F259BD9000D1C11 /* LogLevel.swift */; };
+		C5B9D4BC2F259BD9000D1C11 /* TimeChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B72F259BD9000D1C11 /* TimeChecker.swift */; };
+		C5B9D4BE2F259BEA000D1C11 /* LogPrinterStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4BD2F259BEA000D1C11 /* LogPrinterStub.swift */; };
 		C5BD1E4C2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4D2D11A993008EF198 /* DecoratedImpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */; };
 		C5BD1E4F2D130EAF008EF198 /* ImpressionsToggleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */; };
@@ -2577,6 +2583,12 @@
 		C5A7D5522DD672CF0081D190 /* RuleBasedSegmentsIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RuleBasedSegmentsIntegrationTest.swift; sourceTree = "<group>"; };
 		C5A7D5562DDBD4280081D190 /* split_changes_rbs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = split_changes_rbs.json; sourceTree = "<group>"; };
 		C5A7D5582DDBD7A30081D190 /* OutdatedProxyIntegrationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutdatedProxyIntegrationTest.swift; sourceTree = "<group>"; };
+		C5B9D4B32F259BD9000D1C11 /* DateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateProvider.swift; sourceTree = "<group>"; };
+		C5B9D4B42F259BD9000D1C11 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		C5B9D4B52F259BD9000D1C11 /* LogLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogLevel.swift; sourceTree = "<group>"; };
+		C5B9D4B62F259BD9000D1C11 /* LogPrinter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogPrinter.swift; sourceTree = "<group>"; };
+		C5B9D4B72F259BD9000D1C11 /* TimeChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeChecker.swift; sourceTree = "<group>"; };
+		C5B9D4BD2F259BEA000D1C11 /* LogPrinterStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogPrinterStub.swift; sourceTree = "<group>"; };
 		C5BD1E4B2D11A98E008EF198 /* DecoratedImpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecoratedImpression.swift; sourceTree = "<group>"; };
 		C5BD1E4E2D130EA7008EF198 /* ImpressionsToggleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpressionsToggleTest.swift; sourceTree = "<group>"; };
 		C5BD1E512D130FB6008EF198 /* splitchanges_toggle.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitchanges_toggle.json; sourceTree = "<group>"; };
@@ -2653,19 +2665,23 @@
 		09594BE53BC4B1E633601B3A /* Logging */ = {
 			isa = PBXGroup;
 			children = (
+				C5B9D4B32F259BD9000D1C11 /* DateProvider.swift */,
+				C5B9D4B42F259BD9000D1C11 /* Logger.swift */,
+				C5B9D4B52F259BD9000D1C11 /* LogLevel.swift */,
+				C5B9D4B62F259BD9000D1C11 /* LogPrinter.swift */,
+				C5B9D4B72F259BD9000D1C11 /* TimeChecker.swift */,
 				11D5B257E8900DEAB2408E42 /* Tests */,
 				BDAE97952FA0ADED787D7ACC /* Logging.swift */,
 			);
-			name = Logging;
 			path = Logging;
 			sourceTree = "<group>";
 		};
 		11D5B257E8900DEAB2408E42 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				C5B9D4BD2F259BEA000D1C11 /* LogPrinterStub.swift */,
 				23FD80A6B13740C2114DFA2F /* LoggingTests.swift */,
 			);
-			name = Tests;
 			path = Tests;
 			sourceTree = "<group>";
 		};
@@ -2674,7 +2690,6 @@
 			children = (
 				09594BE53BC4B1E633601B3A /* Logging */,
 			);
-			name = Sources;
 			path = Sources;
 			sourceTree = "<group>";
 		};
@@ -4879,6 +4894,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				55F2612BD679415B346A4584 /* Logging.swift in Sources */,
+				C5B9D4B82F259BD9000D1C11 /* Logger.swift in Sources */,
+				C5B9D4B92F259BD9000D1C11 /* LogPrinter.swift in Sources */,
+				C5B9D4BA2F259BD9000D1C11 /* DateProvider.swift in Sources */,
+				C5B9D4BB2F259BD9000D1C11 /* LogLevel.swift in Sources */,
+				C5B9D4BC2F259BD9000D1C11 /* TimeChecker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6017,6 +6037,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				88E54A26B0FA48B97D7B6AE3 /* LoggingTests.swift in Sources */,
+				C5B9D4BE2F259BEA000D1C11 /* LogPrinterStub.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

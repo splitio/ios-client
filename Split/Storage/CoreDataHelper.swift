@@ -6,6 +6,7 @@
 //  Copyright © 2020 Split. All rights reserved.
 //
 import CoreData
+import Logging
 
 enum CoreDataEntity: String {
     case event = "Event"

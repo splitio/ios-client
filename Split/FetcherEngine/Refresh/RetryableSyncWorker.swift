@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol RetryableSyncWorker: Sendable {
     typealias SyncCompletion = (Bool) -> Void

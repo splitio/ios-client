@@ -1,6 +1,7 @@
 //  Created by Martin Cardozo on 25/08/2025
 
 import Foundation
+import Logging
 
 /// A class that represents a fallback treatment configuration for feature flags.
 /// 

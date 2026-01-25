@@ -1,20 +1,19 @@
 //
 //  LogPrinterStub.swift
-//  SplitTests
+//  LoggingTests
 //
 //  Created by Javier Avrudsky on 08-Jul-2022.
 //  Copyright © 2022 Split. All rights reserved.
 //
 
 import Foundation
-import Logging
-@testable import Split
+@testable import Logging
 
 class LogPrinterStub: LogPrinter, @unchecked Sendable {
 
     private(set) var logs = [String]()
 
-    private let queue = DispatchQueue(label: "Split.LogPrinterStub",
+    private let queue = DispatchQueue(label: "Logging.LogPrinterStub",
                                   target: .global())
 
     func stdout(_ items: Any...) {

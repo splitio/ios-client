@@ -1,6 +1,7 @@
 //  Created by Natalia  Stele on 11/14/17
 
 import Foundation
+import Logging
 // swiftlint:disable function_body_length
 
 protocol Evaluator {

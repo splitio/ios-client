@@ -11,18 +11,20 @@ let package = Package(
     targets: [
         .target(
             name: "Split",
+            dependencies: ["Logging"],
             path: "Split",
             exclude: [
                 "Common/Yaml/LICENSE",
                 "Info.plist",
                 "Split.h"
-            ],
-            dependencies: ["Logging"]
+            ]
         ),
     
         .target(
             name: "Logging",
-            dependencies: []
+            dependencies: [],
+            path: "Sources/Logging",
+            exclude: ["Tests", "README.md"]
         ),
         .testTarget(
             name: "LoggingTests",

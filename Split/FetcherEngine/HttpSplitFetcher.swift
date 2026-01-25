@@ -5,6 +5,7 @@
 //  Created by Javier Avrudsky on 02-Dic-2020
 
 import Foundation
+import Logging
 
 protocol HttpSplitFetcher {
     func execute(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders?, spec: String?) throws -> TargetingRulesChange

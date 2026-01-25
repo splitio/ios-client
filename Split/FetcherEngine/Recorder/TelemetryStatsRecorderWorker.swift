@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 class TelemetryStatsRecorderWorker: RecorderWorker, @unchecked Sendable {
 

@@ -5,6 +5,7 @@
 //  Created by Javier L. Avrudsky on 5/23/18.
 
 import Foundation
+import Logging
 
 // MARK: HttpSession
 

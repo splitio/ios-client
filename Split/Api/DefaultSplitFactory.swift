@@ -5,6 +5,7 @@
 //  Created by Brian Sztamfater on 27/9/17.
 
 import Foundation
+import Logging
 
 /**
  Default implementation of SplitManager protocol

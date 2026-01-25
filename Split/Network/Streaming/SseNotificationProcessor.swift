@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol SseNotificationProcessor {
     func process(_ notification: IncomingNotification)

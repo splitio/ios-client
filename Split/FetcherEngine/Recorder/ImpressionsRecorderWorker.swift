@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 class ImpressionsRecorderWorker: RecorderWorker, @unchecked Sendable {
 

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 // FileHelper
 struct FileUtil {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Logging
 
 enum SemverParseError: Error {
     case invalidVersionFormat(String)

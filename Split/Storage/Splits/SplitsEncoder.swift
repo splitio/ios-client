@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol SplitsEncoder {
     func encode(_ list: [Split]) -> [String: String]

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 protocol RuleBasedSegmentsDecoder {
     func decode(_ jsonSegments: [String]) -> [RuleBasedSegment]
