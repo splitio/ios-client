@@ -19,4 +19,9 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.source_files = 'Split/**/*.{swift}','Split/Common/Utils/JFBCrypt/*.{h,m}'
   s.exclude_files = 'Split/Common/Utils/Lib/*'
 
+    s.subspec 'Logging' do |ss|
+    ss.source_files = 'Sources/Logging/**/*'
+  end
+
+        # #INJECT_SUBSPEC
 end

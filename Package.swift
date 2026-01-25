@@ -16,7 +16,19 @@ let package = Package(
                 "Common/Yaml/LICENSE",
                 "Info.plist",
                 "Split.h"
-            ]
-        )
+            ],
+            dependencies: ["Logging"]
+        ),
+    
+        .target(
+            name: "Logging",
+            dependencies: []
+        ),
+        .testTarget(
+            name: "LoggingTests",
+            dependencies: ["Logging"],
+            path: "Sources/Logging/Tests"
+        ),
+        // #INJECT_TARGET
     ]
 )
