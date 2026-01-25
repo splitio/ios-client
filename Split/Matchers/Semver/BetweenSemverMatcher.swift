@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Logging
 
 class BetweenSemverMatcher: BaseMatcher, MatcherProtocol {
 

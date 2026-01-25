@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol HttpRequest: Sendable {
     typealias RequestCompletionHandler = (HttpResponse) -> Void

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol NotificationManagerKeeper {
     var isStreamingActive: Bool { get }

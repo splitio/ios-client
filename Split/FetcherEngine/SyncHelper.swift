@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol SyncHelper {
     func checkEndpointReachability(restClient: RestClient, resource: Resource) throws

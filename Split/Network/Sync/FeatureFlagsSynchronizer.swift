@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol FeatureFlagsSynchronizer {
     func load()

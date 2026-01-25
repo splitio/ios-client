@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol RestClientImpressionsCount: RestClient {
     func send(counts: ImpressionsCount, completion: @escaping (DataResult<EmptyValue>) -> Void)

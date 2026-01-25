@@ -6,7 +6,6 @@
 //  Copyright © 2021 Split. All rights reserved.
 //
 import Foundation
-import Logging
 
 class GlobalSecureStorage: KeyValueStorage, @unchecked Sendable {
 

@@ -1,7 +1,6 @@
 //  Created by Javier L. Avrudsky on 7/6/18
 
 import Foundation
-import Logging
 
 internal typealias SplitActionWithMetadata<T: EventMetadata> = @Sendable (T) -> ()
 

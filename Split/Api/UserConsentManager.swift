@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol UserConsentManager: AnyObject {
     func set(_ status: UserConsent)

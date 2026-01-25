@@ -2,7 +2,6 @@
 //  Copyright © 2025 Split. All rights reserved.
 
 import Foundation
-import Logging
 
 class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
 

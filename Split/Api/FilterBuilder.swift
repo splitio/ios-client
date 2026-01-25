@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 enum FilterError: Error {
     case maxFilterValuesExceded(message: String)

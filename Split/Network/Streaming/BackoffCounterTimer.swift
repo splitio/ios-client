@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol BackoffCounterTimer {
     func schedule(handler: @escaping @Sendable () -> Void)

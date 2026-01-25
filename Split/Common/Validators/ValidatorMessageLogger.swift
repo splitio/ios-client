@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 ///
 /// Tags to use when logging message on validation

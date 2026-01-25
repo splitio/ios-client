@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol SplitsDecoder {
     func decode(_ list: [String]) -> [Split]

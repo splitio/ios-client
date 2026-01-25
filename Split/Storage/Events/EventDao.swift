@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 import CoreData
 
 protocol EventDao {

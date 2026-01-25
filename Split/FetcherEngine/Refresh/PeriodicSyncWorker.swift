@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 protocol PeriodicTimer {
     func trigger()
     func stop()

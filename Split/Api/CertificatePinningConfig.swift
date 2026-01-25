@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 public typealias CertificatePinningFailureHandler = @Sendable(String) -> Void
 public typealias CertificatePinningStatusHandler = @Sendable(String, CertificatePinningStatus, String) -> Void

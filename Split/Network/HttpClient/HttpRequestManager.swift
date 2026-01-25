@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 ///
 /// Stores sent requests in a list

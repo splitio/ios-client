@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol PushNotificationManager {
     // Visible for testing. Make possible to inject stub

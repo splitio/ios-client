@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol RestClientTelemetryConfig: RestClient {
     func send(config: TelemetryConfig, completion: @escaping (DataResult<EmptyValue>) -> Void)

@@ -1,7 +1,6 @@
 //  Created by Martin Cardozo on 26/08/2025
 
 import Foundation
-import Logging
 
 final class FallbackSanitizer: NSObject {
     

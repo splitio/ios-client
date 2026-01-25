@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 class Murmur64x128 {
     ///

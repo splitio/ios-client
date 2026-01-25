@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 class ThreadUtils {
     static func delay(seconds: Double) {

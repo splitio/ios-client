@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol RestClientTrackEvents: RestClient {
     func sendTrackEvents(events: [EventDTO], completion: @escaping (DataResult<EmptyValue>) -> Void)

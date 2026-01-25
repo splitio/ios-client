@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol SyncSplitsStorage: RolloutDefinitionsCache {
     func update(splitChange: ProcessedSplitChange) -> Bool

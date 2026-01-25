@@ -5,7 +5,6 @@
 //
 
 import Foundation
-import Logging
 
 /// Protocol for controlling persistence behavior in response to failures.
 ///

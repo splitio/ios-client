@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 struct SplitDatabaseHelper {
     static private let kDbMagicCharsCount = 4

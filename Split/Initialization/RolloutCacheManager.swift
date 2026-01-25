@@ -1,5 +1,4 @@
 import Foundation
-import Logging
 
 protocol RolloutCacheManager {
     func validateCache(listener: (() -> Void))

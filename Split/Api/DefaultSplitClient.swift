@@ -2,8 +2,6 @@
 //  Modified by Natalia Stele on 11/10/17.
 
 import Foundation
-import Logging
-import Logging
 
 typealias DestroyHandler = () -> Void
 

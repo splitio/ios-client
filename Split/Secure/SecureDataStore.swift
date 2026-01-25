@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Logging
 
 class SecureDataStore: @unchecked Sendable {
 

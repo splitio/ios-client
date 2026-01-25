@@ -1,5 +1,4 @@
 import Foundation
-import Logging
 
 /// Configuration class for rollout cache. Internal use only.
 @objc public class RolloutCacheConfiguration: NSObject {

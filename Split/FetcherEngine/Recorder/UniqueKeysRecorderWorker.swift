@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 class UniqueKeysRecorderWorker: RecorderWorker, @unchecked Sendable {
 

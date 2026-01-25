@@ -7,7 +7,6 @@
 //  Update: Replacing timer by blocking queue. 05-10-2021
 //
 import Foundation
-import Logging
 
 protocol SplitEventsManager: AnyObject, Sendable {
     func register(event: SplitEvent, task: SplitEventTask)

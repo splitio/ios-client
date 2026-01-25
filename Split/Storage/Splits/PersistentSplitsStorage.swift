@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol PersistentSplitsStorage {
     func update(splitChange: ProcessedSplitChange, onFailure: ((Error) -> Void)?)

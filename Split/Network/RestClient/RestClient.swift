@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol RestClient {
     func isServerAvailable(_ url: URL) -> Bool

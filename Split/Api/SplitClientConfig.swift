@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 public typealias SplitImpressionListener = (SplitImpression) -> Void
 

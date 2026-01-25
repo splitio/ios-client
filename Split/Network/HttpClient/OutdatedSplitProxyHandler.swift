@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 /// Handles proxy spec fallback and recovery.
 ///

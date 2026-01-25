@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 class SegmentsUpdateWorker: UpdateWorker<MembershipsUpdateNotification>, @unchecked Sendable {
 

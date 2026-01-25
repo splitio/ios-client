@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol SplitClientManager: AnyObject {
     var defaultClient: SplitClient? { get }

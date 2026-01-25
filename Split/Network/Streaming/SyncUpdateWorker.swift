@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 ///
 /// Swift doesn't allow dynamic dispatch

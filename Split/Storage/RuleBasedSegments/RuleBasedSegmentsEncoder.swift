@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol RuleBasedSegmentsEncoder {
     func encode(_ segments: [RuleBasedSegment]) -> [String: String]

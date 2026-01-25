@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 enum RecordingService {
     case uniqueKeys

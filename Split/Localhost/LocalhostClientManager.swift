@@ -6,7 +6,6 @@
 //  Copyright © 2024 Split. All rights reserved.
 
 import Foundation
-import Logging
 
 class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
 

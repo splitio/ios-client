@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 struct SseClientConstants {
     static let pushNotificationChannelsParam = "channels"

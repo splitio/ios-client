@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol RestClientUniqueKeys: RestClient {
     func send(uniqueKeys: UniqueKeys, completion: @escaping (DataResult<EmptyValue>) -> Void)

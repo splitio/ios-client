@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol ImpressionsStorage {
     func enablePersistence(_ enable: Bool)

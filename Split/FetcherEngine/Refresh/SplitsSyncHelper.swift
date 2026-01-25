@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 struct SyncResult {
     let success: Bool

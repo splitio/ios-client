@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Logging
 
 protocol SseHandler {
     func isConnectionConfirmed(message: [String: String]) -> Bool
