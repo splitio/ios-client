@@ -13,7 +13,6 @@ import Logging
 typealias Logger = Logging.Logger
 
 /// Split's implementation of DateProvider using Date+Utils extensions.
-/// Declared here to ensure it's compiled as part of Split's sources when building with Xcode.
 struct SplitDateProvider: DateProvider {
     func nowMillis() -> Int64 {
         Date.nowMillis()
