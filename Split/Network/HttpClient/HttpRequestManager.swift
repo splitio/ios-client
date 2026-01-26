@@ -179,6 +179,7 @@ extension DefaultHttpRequestManager {
         }
         
         // Finally we trigger the complete-status handler (host, success/fail, reason)
-        notificationHelper?.post(notification: .pinnedCredentialStatus, info: CertificatePinningCompleteStatus(host: challenge.protectionSpace.host, status: finalStatus, reason: checkResult.description) as AnyObject)
+        notificationHelper?.post(notification: .pinnedCredentialStatus,
+                                 info: CertificatePinningCompleteStatus(host: challenge.protectionSpace.host, status: finalStatus, reason: checkResult.description) as AnyObject)
     }
 }

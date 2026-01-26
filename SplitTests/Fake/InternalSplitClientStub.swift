@@ -10,10 +10,11 @@ import Foundation
 @testable import Split
 
 class InternalSplitClientStub: InternalSplitClient, @unchecked Sendable {
-
+    
     var splitsStorage: SplitsStorage?
     var mySegmentsStorage: MySegmentsStorage?
     var myLargeSegmentsStorage: MySegmentsStorage?
+    var listener: SplitEventListener?
 
     init(splitsStorage: SplitsStorage?,
          mySegmentsStorage: MySegmentsStorage?,
@@ -95,14 +96,13 @@ class InternalSplitClientStub: InternalSplitClient, @unchecked Sendable {
         return ["": SplitResult(treatment: SplitConstants.control)]
     }
 
-    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction) {}
 
-    func on(event: SplitEvent, execute action: @escaping SplitAction) {
-    }
+    func on(event: SplitEvent, execute action: @escaping SplitAction) {}
+    
+    func addEventListener(listener: SplitEventListener) {}
 
     func track(trafficType: String, eventType: String) -> Bool {
         return true
