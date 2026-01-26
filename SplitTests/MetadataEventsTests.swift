@@ -35,8 +35,19 @@ class MetadataEventsTests: XCTestCase, @unchecked Sendable {
         XCTestExpectation(description: "upd 2"),
         XCTestExpectation(description: "upd 3")
     ]
+    var isSseAuthHit = false
+    var isSseHit = false
+    var checkSplitChangesHit = false
+    var checkMySegmentsHit = false
+    var mySegExp: XCTestExpectation!
+    var splitsChangesExp: XCTestExpectation!
+    var mySegmentsHits = 0
     
     override func setUp() {
+        
+        isSseAuthHit = false
+        isSseHit = false
+        mySegmentsHits = 0
         
         // Normal ready
         exp0 = XCTestExpectation(description: "SDK READY")
@@ -93,14 +104,98 @@ class MetadataEventsTests: XCTestCase, @unchecked Sendable {
         XCTAssertEqual(listener?.fromCacheMetadata?.lastUpdateTimestamp, nil)
     }
     
-    func testReadyMetadataReRun() {
-        XCTAssertEqual(listener?.readyMetadata?.isInitialCacheLoad, true)
-        XCTAssertEqual(listener?.readyMetadata?.lastUpdateTimestamp, nil)
+    func testReadyMetadataReRun() throws {
         
-        // TODO: run with timestamp on storage
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+        let metadataReady = XCTestExpectation(description: "SDK READY FROM CACHE")
+        
+        let testFactory = TestSplitFactory(userKey: IntegrationHelper.dummyUserKey)
+        testFactory.createHttpClient(dispatcher: buildTestDispatcherEmpty(), streamingHandler: buildStreamingHandler())
+        
+        // MARK: Key part (re-run simulation)
+        try testFactory.buildSdk(splitsUpdateTimeStamp: 100)
+        
+        let client = testFactory.client
+
+        // Listener
+        let listener = TestEventListener(readyExp: metadataReady)
+        client.addEventListener(listener: listener)
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        wait(for: [sdkReadyExpectation, metadataReady], timeout: 5)
+        
+        XCTAssertEqual(listener.readyMetadata?.isInitialCacheLoad, false)
+        XCTAssertNotNil(listener.readyMetadata?.lastUpdateTimestamp)
+    }
+    
+    func testUpdateMetadataStreaming() {
+        
+        let apiKey = IntegrationHelper.dummyApiKey
+        let sdkReady = XCTestExpectation(description: "SDK READY Expectation")
+        let sdkUpdate = XCTestExpectation(description: "SDK Update Expectation")
+        
+        let database = TestingHelper.createTestDatabase(name: "GralIntegrationTest")
+        splitsChangesHits = 0
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcherStreaming(), streamingHandler: buildStreamingHandler())
+        let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        loadChanges()
+        
+        database.generalInfoDao.update(info: .splitsChangeNumber, longValue: 500)
+        let splitConfig: SplitClientConfig = SplitClientConfig()
+        splitConfig.featuresRefreshRate = 9999999
+        splitConfig.segmentsRefreshRate = 9999999
+        splitConfig.impressionRefreshRate = 999999
+        splitConfig.sdkReadyTimeOut = 60000
+        splitConfig.eventsPushRate = 999999
+
+        sseExp = XCTestExpectation()
+        let key: Key = Key(matchingKey: IntegrationHelper.dummyUserKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(database)
+        let factory = builder.setApiKey(apiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+        
+        let client = factory.client
+        
+        // MARK: Key part 1
+        let exp = XCTestExpectation(description: "Update exp")
+        let listener = TestEventListener(updateExp: exp)
+        client.addEventListener(listener: listener)
+        
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReady.fulfill()
+        }
+
+        client.on(event: SplitEvent.sdkUpdated) {
+            sdkUpdate.fulfill()
+        }
+
+        wait(for: [sdkReady, sseExp], timeout: 5)
+        streamingBinding?.push(message: "id:a62260de-13bb-11eb-adc1-0242ac120002") // send msg to confirm streaming connection ok
+
+        streamingBinding?.push(message: StreamingIntegrationHelper.splitUpdateMessage(timestamp: 1999999, changeNumber: 99999))
+        
+        wait(for: [sdkUpdate, exp], timeout: 5)
+        
+        // MARK: Key part 2
+        XCTAssertEqual(listener.updateMetadata?.type, .FLAGS_UPDATE)
+        XCTAssertEqual(listener.updateMetadata?.names, ["workm"])
+
+        let semaphore = DispatchSemaphore(value: 0)
+        client.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
     }
     
     func testUpdateMetadataPolling() throws {
+        
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(), streamingHandler: buildStreamingHandler())
         let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
@@ -117,6 +212,8 @@ class MetadataEventsTests: XCTestCase, @unchecked Sendable {
         splitConfig.impressionRefreshRate = 99999
         splitConfig.sdkReadyTimeOut = 60000
         splitConfig.trafficType = trafficType
+        
+        // MARK: Key part 1
         splitConfig.streamingEnabled = false
         splitConfig.serviceEndpoints = ServiceEndpoints.builder().set(sdkEndpoint: "localhost").set(eventsEndpoint: "localhost").build()
 
@@ -127,7 +224,7 @@ class MetadataEventsTests: XCTestCase, @unchecked Sendable {
         factory = builder.setApiKey(apiKey).setKey(key).setConfig(splitConfig).build()
         let client = factory!.client
         
-        // MARK: Key part 1
+        // MARK: Key part 2
         let exp = XCTestExpectation(description: "Update exp")
         let listener = TestEventListener(updateExp: exp)
         client.addEventListener(listener: listener)
@@ -142,7 +239,7 @@ class MetadataEventsTests: XCTestCase, @unchecked Sendable {
 
         wait(for: [sdkReady, sdkUpdate, exp], timeout: 30)
         
-        // MARK: Key part 2
+        // MARK: Key part 3
         XCTAssertEqual(listener.updateMetadata?.type, .FLAGS_UPDATE)
         XCTAssertEqual(listener.updateMetadata?.names, ["test_feature"])
 
@@ -197,7 +294,7 @@ final class TestEventListener: SplitEventListener {
 }
 
 
-// MARK: Helpers (for update tests)
+// MARK: Helpers
 extension MetadataEventsTests {
     private func buildTestDispatcher() -> HttpClientTestDispatcher {
 
@@ -284,6 +381,32 @@ extension MetadataEventsTests {
         FileHelper.loadSplitChangeFile(sourceClass: self, fileName: "splitchanges_int_test")
     }
     
+    private func loadChanges() {
+        for i in 0..<5 {
+            let change = getChanges(withTreatment: self.treatments[i],
+                                    since: self.numbers[i],
+                                    till: self.numbers[i])
+            changes.insert(change, at: i)
+        }
+    }
+
+    private func getChanges(withTreatment: String, since: Int, till: Int) -> String {
+        let change = IntegrationHelper.getChanges(fileName: "simple_split_change")
+        change?.since = Int64(since)
+        change?.till = Int64(till)
+        let split = change?.splits[0]
+        if let partitions = split?.conditions?[2].partitions {
+            let partition = partitions.filter { $0.treatment == withTreatment }
+            partition[0].size = 100
+
+            for partition in partitions where partition.treatment != withTreatment {
+                partition.size = 0
+            }
+        }
+        let targetingRulesChange = TargetingRulesChange(featureFlags: change!, ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))
+        return (try? Json.encodeToJson(targetingRulesChange)) ?? ""
+    }
+    
     private func getChanges(for hitNumber: Int) -> SplitChange {
         if hitNumber < numbers.count {
             let jsonData = Data(self.changes[hitNumber].utf8)
@@ -300,5 +423,56 @@ extension MetadataEventsTests {
             self.reqChangesIndex+=1
         }
         return i
+    }
+    
+    private func buildTestDispatcherEmpty() -> HttpClientTestDispatcher {
+        return { request in
+            if request.isSplitEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 100, till: 100).utf8))
+            }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            if request.isAuthEndpoint() {
+                self.isSseAuthHit = true
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.sseDisabledResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 200)
+        }
+    }
+    
+    private func buildTestDispatcherStreaming() -> HttpClientTestDispatcher {
+        return { request in
+            if request.isSplitEndpoint() {
+                let hitNumber = self.getAndUpdateHit()
+                return TestDispatcherResponse(code: 200, data: try! Json.encodeToJsonData(TargetingRulesChange(featureFlags: self.getChangesStreaming(for: hitNumber), ruleBasedSegments: RuleBasedSegmentChange(segments: [], since: -1, till: -1))))
+            }
+            if request.isMySegmentsEndpoint() {
+                self.mySegmentsHits+=1
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            return TestDispatcherResponse(code: 500)
+        }
+    }
+    
+    private func getChangesStreaming(for hitNumber: Int) -> SplitChange {
+        if hitNumber < numbers.count {
+            let jsonData = Data(self.changes[hitNumber].utf8)
+            return try! Json.decodeFrom(json: jsonData, to: TargetingRulesChange.self).featureFlags
+        }
+        let jsonData = Data(IntegrationHelper.emptySplitChanges(since: 500, till: 500).utf8)
+        return try! Json.decodeFrom(json: jsonData, to: TargetingRulesChange.self).featureFlags
+    }
+    
+    private func getAndUpdateHit() -> Int {
+        var hitNumber = 0
+        DispatchQueue.test.sync {
+            hitNumber = self.splitsChangesHits
+            self.splitsChangesHits+=1
+        }
+        return hitNumber
     }
 }

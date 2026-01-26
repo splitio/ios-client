@@ -147,7 +147,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
 
             if result.success {
-                if !isSdkReadyTriggered() || !result.featureFlagsUpdated.isEmpty || result.rbsUpdated {
+                if isSdkReadyTriggered() || !result.featureFlagsUpdated.isEmpty || result.rbsUpdated {
                     
                     if !result.featureFlagsUpdated.isEmpty {
                         let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated), extra: lastUpdateTimestamp)
@@ -163,6 +163,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
                         return true
                     }
                     
+                    return true
                 }
                 
                 let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkReadyMetadata(lastUpdateTimestamp: lastUpdateTimestamp, isInitialCacheLoad: true), extra: lastUpdateTimestamp)

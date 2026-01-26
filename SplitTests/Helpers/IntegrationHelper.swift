@@ -252,19 +252,19 @@ extension IntegrationHelper {
             .setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
     }
     
-    private func buildSimplestHttpClient() -> HttpClient {
+    func buildSimplestHttpClient() -> HttpClient {
         DefaultHttpClient(session: HttpSessionMock(), requestManager: buildSimplestReqManager())
     }
     
-    private func buildSimplestReqManager() -> HttpRequestManagerTestDispatcher {
+    func buildSimplestReqManager() -> HttpRequestManagerTestDispatcher {
         HttpRequestManagerTestDispatcher(dispatcher: IntegrationHelper().buildSimplestTestDispatcher(), streamingHandler: IntegrationHelper().buildSimplestStreamingHandler())
     }
     
-    private func buildSimplestStreamingHandler() -> TestStreamResponseBindingHandler {
+    func buildSimplestStreamingHandler() -> TestStreamResponseBindingHandler {
         { request in TestStreamResponseBinding.createFor(request: request, code: 200) }
     }
     
-    private func buildSimplestTestDispatcher() -> HttpClientTestDispatcher {
+    func buildSimplestTestDispatcher() -> HttpClientTestDispatcher {
         return { request in
             if request.isSplitEndpoint() {
                 return TestDispatcherResponse(code: 200, data: try? Json.encodeToJsonData(self.loadSampleSplitsChange()))
@@ -282,7 +282,7 @@ extension IntegrationHelper {
         }
     }
     
-    private func loadSampleSplitsChange() -> TargetingRulesChange? {
+    func loadSampleSplitsChange() -> TargetingRulesChange? {
         if let file = FileHelper.readDataFromFile(sourceClass: self, name: "splitchanges_1", type: "json"), let change = try? Json.decodeFrom(json: file, to: TargetingRulesChange.self) {
             return change
         }
