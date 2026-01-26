@@ -10,18 +10,7 @@
 
 ## Usage
 
-### 1) Add as a Swift Package dependency
-
-In your `Package.swift`:
-
-```swift
-.target(
-  name: "YourTarget",
-  dependencies: ["Logging"]
-)
-```
-
-### 2) Configure required dependencies
+### 1) Configure required dependencies
 
 This module intentionally does **not** implement “real time” by default. You must provide a `DateProvider` from the host app/module (e.g. using `Foundation.Date`, your own time utils, etc).
 
@@ -44,7 +33,7 @@ Logger.shared.dateProvider = AppDateProvider()
 Logger.shared.level = .info
 ```
 
-### 3) Log
+### 2) Log
 
 ```swift
 import Logging
