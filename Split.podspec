@@ -19,9 +19,5 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.source_files = 'Sources/**/*'
   s.exclude_files = 'Sources/**/Tests/**'
 
-    s.subspec 'Logging' do |ss|
-    ss.source_files = 'Sources/Logging/**/*'
-  end
-
         # #INJECT_SUBSPEC
 end
