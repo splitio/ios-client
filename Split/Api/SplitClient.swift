@@ -47,7 +47,6 @@ public typealias SplitAction = () -> Void
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
     
     // MARK: Events with Metadata
-    @objc var listener: SplitEventListener? { get set }
     @objc(addEventListener:)
     func addEventListener(listener: SplitEventListener)
 
