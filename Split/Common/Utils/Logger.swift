@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os.log
 
 struct TimeChecker {
 
@@ -66,7 +67,7 @@ protocol LogPrinter {
 
 class DefaultLogPrinter: LogPrinter {
     func stdout(_ items: Any...) {
-        print(items)
+        os_log("%@", type: .default, items.map { "\($0)" }.joined(separator: " "))
     }
 }
 
