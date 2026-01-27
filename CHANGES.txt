@@ -1,3 +1,6 @@
+3.6.1: (Jan 27, 2026)
+- Removed test cases from PBXResourcesBuildPhase, to avoid inclusion in generated XCFramework, and added validation on CI.
+
 3.6.0: (Jan. 8, 2026)
 - Added support for Swift 6.
 
