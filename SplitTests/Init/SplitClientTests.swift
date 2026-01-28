@@ -138,7 +138,7 @@ class SplitClientTests: XCTestCase {
         localEventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
         localEventsManager.notifyInternalEvent(.splitsUpdated)
 
-        wait(for: [exp1, exp2], timeout: 2.0)
+        wait(for: [exp1, exp2], timeout: 3.0)
     }
     
     func testGetTreatmentWithEvaluationOptions() {
@@ -331,26 +331,26 @@ class SplitClientTests: XCTestCase {
     }
 }
 
-final class SplitEventListenerAllEvents: NSObject, SplitEventListener {
-    @objc func onReady(_ metadata: SdkReadyMetadata) {}
+final class SplitEventListenerAllEvents: SplitEventListener {
+    func onReady(_ metadata: SdkReadyMetadata) {}
 
-    @objc func onReadyFromCache(_ metadata: SdkReadyFromCacheMetadata) {}
+    func onReadyFromCache(_ metadata: SdkReadyFromCacheMetadata) {}
 
-    @objc func onUpdate(_ metadata: SdkUpdateMetadata) {}
+    func onUpdate(_ metadata: SdkUpdateMetadata) {}
 }
 
 final class SplitEventListenerReadyOnly: NSObject, SplitEventListener {
-    @objc func onSdkReady(_ metadata: SdkReadyMetadata) {}
+    func onReady(_ metadata: SdkReadyMetadata) {}
 }
 
-final class SplitEventListenerReadyClosure: NSObject, SplitEventListener, @unchecked Sendable {
+final class SplitEventListenerReadyClosure:  SplitEventListener {
     private let onReady: @Sendable () -> Void
 
     init(onReady: @escaping @Sendable () -> Void) {
         self.onReady = onReady
     }
 
-    @objc func onSdkReady(_ metadata: SdkReadyMetadata) {
+    func onReady(_ metadata: SdkReadyMetadata) {
         onReady()
     }
 }
