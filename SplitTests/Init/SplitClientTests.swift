@@ -332,11 +332,11 @@ class SplitClientTests: XCTestCase {
 }
 
 final class SplitEventListenerAllEvents: NSObject, SplitEventListener {
-    @objc func onSdkReady(_ metadata: SdkReadyMetadata) {}
+    @objc func onReady(_ metadata: SdkReadyMetadata) {}
 
-    @objc func onSdkReadyFromCache(_ metadata: SdkReadyFromCacheMetadata) {}
+    @objc func onReadyFromCache(_ metadata: SdkReadyFromCacheMetadata) {}
 
-    @objc func onSdkUpdate(_ metadata: SdkUpdateMetadata) {}
+    @objc func onUpdate(_ metadata: SdkUpdateMetadata) {}
 }
 
 final class SplitEventListenerReadyOnly: NSObject, SplitEventListener {

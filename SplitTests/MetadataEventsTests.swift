@@ -184,7 +184,7 @@ class MetadataEventsTests: XCTestCase, @unchecked Sendable {
         wait(for: [sdkUpdate, exp], timeout: 5)
         
         // MARK: Key part 2
-        XCTAssertEqual(listener.updateMetadata?.type, .FLAGS_UPDATE)
+        XCTAssertEqual(listener.updateMetadata?.type, .flagsUpdate)
         XCTAssertEqual(listener.updateMetadata?.names, ["workm"])
 
         let semaphore = DispatchSemaphore(value: 0)
@@ -240,7 +240,7 @@ class MetadataEventsTests: XCTestCase, @unchecked Sendable {
         wait(for: [sdkReady, sdkUpdate, exp], timeout: 30)
         
         // MARK: Key part 3
-        XCTAssertEqual(listener.updateMetadata?.type, .FLAGS_UPDATE)
+        XCTAssertEqual(listener.updateMetadata?.type, .flagsUpdate)
         XCTAssertEqual(listener.updateMetadata?.names, ["test_feature"])
 
         let semaphore = DispatchSemaphore(value: 0)
@@ -274,19 +274,19 @@ final class TestEventListener: SplitEventListener {
         self.listenerNumber = listenerNumber!
     }
     
-    func onSdkReady(_ metadata: SdkReadyMetadata) {
+    func onReady(_ metadata: SdkReadyMetadata) {
         readyMetadata = metadata
         readyExp.fulfill()
         print("Ready expectation \(listenerNumber) - \(String(describing: Unmanaged.passUnretained(readyExp).toOpaque()))")
     }
     
-    func onSdkReadyFromCache(_ metadata: SdkReadyFromCacheMetadata) {
+    func onReadyFromCache(_ metadata: SdkReadyFromCacheMetadata) {
         fromCacheMetadata = metadata
         fromCacheExp.fulfill()
         print("Ready from Cache expectation \(listenerNumber) - \(String(describing: Unmanaged.passUnretained(readyExp).toOpaque()))")
     }
     
-    func onSdkUpdate(_ metadata: SdkUpdateMetadata) {
+    func onUpdate(_ metadata: SdkUpdateMetadata) {
         updateMetadata = metadata
         updateExp.fulfill()
         print("Update expectation \(listenerNumber) - \(String(describing: Unmanaged.passUnretained(readyExp).toOpaque()))")

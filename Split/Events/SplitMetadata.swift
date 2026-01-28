@@ -16,17 +16,8 @@ import Foundation
 ///   One or more user segments were updated.
 ///
 @objc public enum SdkUpdateMetadataType: Int, Sendable {
-    case FLAGS_UPDATE
-    case SEGMENTS_UPDATE
-    
-    public func toString() -> String {
-        switch self {
-            case .FLAGS_UPDATE:
-                return "FLAGS_UPDATE"
-            case .SEGMENTS_UPDATE:
-                return "SEGMENTS_UPDATE"
-        }
-    }
+    case flagsUpdate
+    case segmentsUpdate
 }
 
 /// Metadata for SDK update event.

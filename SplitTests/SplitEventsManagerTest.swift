@@ -333,7 +333,7 @@ class SplitEventsManagerTest: XCTestCase, @unchecked Sendable {
     func testSdkUpdateWithMetadata() {
         let taskExp = XCTestExpectation()
         
-        let type: SdkUpdateMetadataType = .FLAGS_UPDATE
+        let type: SdkUpdateMetadataType = .flagsUpdate
         let names = ["Flag1", "FLAG2"]
 
         let metadata = SdkUpdateMetadata(type: type, names: names)

@@ -46,13 +46,13 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendabl
             if result.success {
                 if !isSdkReadyTriggered() {
                     // Notifying both to trigger SDK Ready
-                    var event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+                    var event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []))
                     notifyUpdate(event)
-                    event = SplitInternalEventWithMetadata(.myLargeSegmentsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+                    event = SplitInternalEventWithMetadata(.myLargeSegmentsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []))
                     notifyUpdate(event)
                 } else if  result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
-                    let event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+                    let event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []))
                     notifyUpdate(event)
                 }
                 return true

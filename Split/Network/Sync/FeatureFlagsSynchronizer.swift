@@ -169,7 +169,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
 
     func notifyUpdated(flags: [String]) {
         // Build event
-        let eventMetadata = SdkUpdateMetadata(type: .FLAGS_UPDATE, names: flags)
+        let eventMetadata = SdkUpdateMetadata(type: .flagsUpdate, names: flags)
         let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: eventMetadata)
         
         // Send
@@ -178,7 +178,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
     
     func notifyUpdated(segments: [String]) {
         // Build event
-        let eventMetadata = SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: segments)
+        let eventMetadata = SdkUpdateMetadata(type: .segmentsUpdate, names: segments)
         let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: eventMetadata)
         
         // Send
