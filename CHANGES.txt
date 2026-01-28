@@ -1,3 +1,6 @@
+3.7.0: (Jan 28, 2026)
+- Added functionality to provide metadata alongside SDK update and READY events. Read more in our docs.
+
 3.6.0: (ene. 8, 2026)
 - - The SDK is now Swift 6 compatible.
 
