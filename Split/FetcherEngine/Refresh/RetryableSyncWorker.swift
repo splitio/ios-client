@@ -150,14 +150,14 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
                 if isSdkReadyTriggered() || !result.featureFlagsUpdated.isEmpty || result.rbsUpdated {
                     
                     if !result.featureFlagsUpdated.isEmpty {
-                        let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated), extra: lastUpdateTimestamp)
+                        let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .flagsUpdate, names: result.featureFlagsUpdated), extra: lastUpdateTimestamp)
                         notifyUpdate(event)
                         resetBackoffCounter()
                         return true  // Avoid duplicating notifications, prioritizing flags over RBS updates
                     }
                     
                     if result.rbsUpdated {
-                        let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []), extra: lastUpdateTimestamp)
+                        let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []), extra: lastUpdateTimestamp)
                         notifyUpdate(event)
                         resetBackoffCounter()
                         return true
@@ -244,7 +244,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker, @unchecked Sendable 
             if result.success {
                 
                 if !result.featureFlagsUpdated.isEmpty {
-                    let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated))
+                    let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .flagsUpdate, names: result.featureFlagsUpdated))
                     notifyUpdate(event)
                     
                     // Avoids double update notification, prioritizing flags notification over RBS
@@ -253,7 +253,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker, @unchecked Sendable 
                 }
                 
                 if result.rbsUpdated {
-                    let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+                    let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []))
                     notifyUpdate(event)
                 }
                 
