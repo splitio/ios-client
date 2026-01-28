@@ -122,13 +122,15 @@ class DefaultByKeyFacade: ByKeyFacade, @unchecked Sendable {
 
     func notifyMySegmentsUpdated(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
-            group.eventsManager.notifyInternalEvent(.mySegmentsUpdated)
+            let event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []))
+            group.eventsManager.notifyInternalEvent(event)
         }
     }
 
     func notifyMyLargeSegmentsUpdated(forKey key: String) {
         doInAll(forMatchingKey: key) { group in
-            group.eventsManager.notifyInternalEvent(.myLargeSegmentsUpdated)
+            let event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []))
+            group.eventsManager.notifyInternalEvent(event)
         }
     }
 

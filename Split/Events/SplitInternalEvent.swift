@@ -18,3 +18,15 @@ enum SplitInternalEvent {
     case sdkReadyTimeoutReached
     case splitKilledNotification
 }
+
+struct SplitInternalEventWithMetadata: @unchecked Sendable {
+    let type: SplitInternalEvent
+    let metadata: EventMetadata?
+    var extra: Any?
+    
+    init(_ type: SplitInternalEvent, metadata: EventMetadata? = nil, extra: Any? = nil) {
+        self.type = type
+        self.metadata = metadata
+        self.extra = extra
+    }
+} 

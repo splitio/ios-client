@@ -10,6 +10,15 @@ import Foundation
 
 public typealias SplitAction = () -> Void
 
+@objc public protocol SplitEventListener: AnyObject, Sendable {
+    @objc(onReady:)
+    optional func onReady(_ metadata: SdkReadyMetadata)
+    @objc(onReadyFromCache:)
+    optional func onReadyFromCache(_ metadata: SdkReadyFromCacheMetadata)
+    @objc(onUpdate:)
+    optional func onUpdate(_ metadata: SdkUpdateMetadata)
+}
+
 @objc public protocol SplitClient {
 
     // MARK: Evaluation feature
@@ -36,6 +45,10 @@ public typealias SplitAction = () -> Void
     func on(event: SplitEvent, execute action: @escaping SplitAction)
     func on(event: SplitEvent, runInBackground: Bool, execute action: @escaping SplitAction)
     func on(event: SplitEvent, queue: DispatchQueue, execute action: @escaping SplitAction)
+    
+    // MARK: Events with Metadata
+    @objc(addEventListener:)
+    func addEventListener(listener: SplitEventListener)
 
     // MARK: Track feature
     func track(trafficType: String, eventType: String) -> Bool

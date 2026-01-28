@@ -79,10 +79,12 @@ class BaseRetryableSyncWorker: RetryableSyncWorker, @unchecked Sendable {
         }
     }
 
-    func notifyUpdate(_ events: [SplitInternalEvent]) {
-        events.forEach {
-            eventsManager.notifyInternalEvent($0)
-        }
+    func notifyUpdate(_ event: SplitInternalEvent) {
+        notifyUpdate(SplitInternalEventWithMetadata(event, metadata: nil))
+    }
+    
+    func notifyUpdate(_ event: SplitInternalEventWithMetadata) {
+        eventsManager.notifyInternalEvent(event)
     }
 
     func isSdkReadyTriggered() -> Bool {
@@ -135,16 +137,38 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
                    reconnectBackoffCounter: reconnectBackoffCounter)
     }
 
+    // MARK: INITIAL SYNC & POLLING
     override func fetchFromRemote() throws -> Bool {
         do {
             let changeNumber = splitsStorage.changeNumber
             let rbChangeNumber = ruleBasedSegmentsStorage.changeNumber
+            let lastUpdateTimestamp = splitsStorage.updateTimestamp
+            
             let result = try syncHelper.sync(since: changeNumber, rbSince: rbChangeNumber, clearBeforeUpdate: false)
+
             if result.success {
-                if !isSdkReadyTriggered() ||
-                    result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                if isSdkReadyTriggered() || !result.featureFlagsUpdated.isEmpty || result.rbsUpdated {
+                    
+                    if !result.featureFlagsUpdated.isEmpty {
+                        let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .flagsUpdate, names: result.featureFlagsUpdated), extra: lastUpdateTimestamp)
+                        notifyUpdate(event)
+                        resetBackoffCounter()
+                        return true  // Avoid duplicating notifications, prioritizing flags over RBS updates
+                    }
+                    
+                    if result.rbsUpdated {
+                        let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []), extra: lastUpdateTimestamp)
+                        notifyUpdate(event)
+                        resetBackoffCounter()
+                        return true
+                    }
+                    
+                    return true
                 }
+                
+                let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkReadyMetadata(lastUpdateTimestamp: lastUpdateTimestamp, isInitialCacheLoad: true), extra: lastUpdateTimestamp)
+                notifyUpdate(event)
+                
                 resetBackoffCounter()
                 return true
             }
@@ -213,13 +237,26 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker, @unchecked Sendable 
         do {
             let result = try syncHelper.sync(since: storedChangeNumber,
                                              rbSince: storedRbChangeNumber,
-                                             till: flagsChangeNumber ?? rbsChangeNumber,
+                                             till: flagsChangeNumber,
+                                             rbTill: rbsChangeNumber,
                                              clearBeforeUpdate: false,
                                              headers: ServiceConstants.controlNoCacheHeader)
             if result.success {
-                if result.featureFlagsUpdated {
-                    notifyUpdate([.splitsUpdated])
+                
+                if !result.featureFlagsUpdated.isEmpty {
+                    let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .flagsUpdate, names: result.featureFlagsUpdated))
+                    notifyUpdate(event)
+                    
+                    // Avoids double update notification, prioritizing flags notification over RBS
+                    resetBackoffCounter()
+                    return true
                 }
+                
+                if result.rbsUpdated {
+                    let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []))
+                    notifyUpdate(event)
+                }
+                
                 resetBackoffCounter()
                 return true
             }

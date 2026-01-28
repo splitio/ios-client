@@ -25,13 +25,17 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator, @unchecked Sendable
     )
 
     func notifyInternalEvent(_ event: SplitInternalEvent) {
-        if !eventsToHandle.contains(event) {
+        notifyInternalEvent(SplitInternalEventWithMetadata(event, metadata: nil))
+    }
+
+    func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {
+        if !eventsToHandle.contains(event.type) {
             return
         }
         queue.async { [weak self] in
             guard let self = self else { return }
 
-            self.triggered.insert(event)
+            self.triggered.insert(event.type)
             self.managers.forEach { _, manager in
                 manager.notifyInternalEvent(event)
             }
@@ -77,4 +81,8 @@ class MainSplitEventsManager: SplitEventsManagerCoordinator, @unchecked Sendable
     }
 
     func register(event: SplitEvent, task: SplitEventTask) {}
+    
+    func register(event: SplitEventWithMetadata, task: any SplitEventTask) {
+        /* Intentionally unimplemented */
+    }
 }

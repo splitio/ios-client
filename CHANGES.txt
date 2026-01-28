@@ -1,3 +1,6 @@
+3.7.0: (Jan 28, 2026)
+- Added functionality to provide metadata alongside SDK update and READY events. Read more in our docs.
+
 3.6.1: (Jan 27, 2026)
 - Removed test cases from PBXResourcesBuildPhase, to avoid inclusion in generated XCFramework, and added validation on CI.
 

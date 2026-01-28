@@ -67,7 +67,7 @@ class TestSplitFactory: SplitFactory {
         self.httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
     }
 
-    func buildSdk(polling: Bool = false) throws {
+    func buildSdk(polling: Bool = false, splitsUpdateTimeStamp: Int64? = nil) throws {
 
         guard let httpClient = self.httpClient else {
             print("HTTP client is null. Fix!!")
@@ -80,6 +80,10 @@ class TestSplitFactory: SplitFactory {
             splitClientConfig: splitConfig, apiKey: IntegrationHelper.dummyApiKey,
             userKey: key.matchingKey, databaseName: "dummy", telemetryStorage: nil, testDatabase: splitDatabase)
 
+        if let splitsUpdateTimeStamp = splitsUpdateTimeStamp {
+            storageContainer.generalInfoStorage.setUpdateTimestamp(timestamp: splitsUpdateTimeStamp)
+        }
+        
         let manager = DefaultSplitManager(splitsStorage: storageContainer.splitsStorage)
         defaultManager = manager
 

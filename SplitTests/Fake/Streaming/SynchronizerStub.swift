@@ -16,6 +16,7 @@ struct ForceMySegmentsParams {
 }
 
 class SynchronizerStub: Synchronizer, @unchecked Sendable {
+    
     var disableSdkCalled = false
     var disableEventsCalled = false
     var disableTelemetryCalled = false
@@ -133,6 +134,11 @@ class SynchronizerStub: Synchronizer, @unchecked Sendable {
             exp.fulfill()
         }
     }
+    
+    var notifyRuleBasedSegmentsUpdatedCalled = [String]()
+    func notifyRuleBasedSegmentsUpdated(segments: [String]) {
+        notifyRuleBasedSegmentsUpdatedCalled = segments
+    }
 
 
     func syncAll() {
@@ -236,9 +242,9 @@ class SynchronizerStub: Synchronizer, @unchecked Sendable {
         notifyMySegmentsUpdatedCalled = true
     }
 
-    var notifyFeatureFlagsUpdatedCalled = true
-    func notifyFeatureFlagsUpdated() {
-        notifyFeatureFlagsUpdatedCalled = true
+    var notifyFeatureFlagsUpdatedCalled: [String] = []
+    func notifyFeatureFlagsUpdated(flags: [String]) {
+        notifyFeatureFlagsUpdatedCalled = flags
     }
 
     func notifySplitKilled() {

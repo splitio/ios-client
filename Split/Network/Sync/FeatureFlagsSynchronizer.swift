@@ -15,7 +15,8 @@ protocol FeatureFlagsSynchronizer {
     func startPeriodicSync()
     func stopPeriodicSync()
     func notifyKilled()
-    func notifyUpdated()
+    func notifyUpdated(flags: [String])
+    func notifyUpdated(segments: [String])
     func pause()
     func resume()
     func destroy()
@@ -102,7 +103,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
             
             // Events & Logs
             if splitsStorage.getAll().count > 0 {
-                self.splitEventsManager.notifyInternalEvent(.splitsLoadedFromCache)
+                self.splitEventsManager.notifyInternalEvent(SplitInternalEventWithMetadata(.splitsLoadedFromCache, metadata: nil, extra: splitsStorage.updateTimestamp))
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
             Logger.v("Notifying Splits loaded from cache")
@@ -166,8 +167,22 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
         splitEventsManager.notifyInternalEvent(.splitKilledNotification)
     }
 
-    func notifyUpdated() {
-        splitEventsManager.notifyInternalEvent(.splitsUpdated)
+    func notifyUpdated(flags: [String]) {
+        // Build event
+        let eventMetadata = SdkUpdateMetadata(type: .flagsUpdate, names: flags)
+        let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: eventMetadata)
+        
+        // Send
+        splitEventsManager.notifyInternalEvent(event)
+    }
+    
+    func notifyUpdated(segments: [String]) {
+        // Build event
+        let eventMetadata = SdkUpdateMetadata(type: .segmentsUpdate, names: segments)
+        let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: eventMetadata)
+        
+        // Send
+        splitEventsManager.notifyInternalEvent(event)
     }
 
     func pause() {
@@ -249,7 +264,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
         return nil
     }
     
-    private func shouldForceParse() -> Bool {
+    private func shouldForceParse() -> Bool { // This runs literally once (just when the user updates to this SDK version having existing flags)
         storageContainer.generalInfoStorage.getSegmentsInUse() == nil && storageContainer.generalInfoStorage.getSplitsChangeNumber() > -1
     }
 }
