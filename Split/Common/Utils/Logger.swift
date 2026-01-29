@@ -60,7 +60,7 @@ struct TimeChecker {
 }
 
 // Protocol to enable testing for Logger class
-protocol LogPrinter {
+public protocol LogPrinter {
     func stdout(_ items: Any...)
 }
 
@@ -70,14 +70,14 @@ class DefaultLogPrinter: LogPrinter {
     }
 }
 
-class Logger: @unchecked Sendable {
-    var printer: LogPrinter = DefaultLogPrinter()
+public class Logger: @unchecked Sendable {
+    public var printer: LogPrinter = DefaultLogPrinter()
     private let tag: String = "SplitSDK"
 
     var level: SplitLogLevel = .none
 
-    static let shared: Logger = {
-        return Logger()
+    public static let shared: Logger = {
+        Logger()
     }()
 
     private init() {}
