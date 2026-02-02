@@ -189,13 +189,13 @@ class PeriodicSplitsSyncWorker: BasePeriodicSyncWorker, @unchecked Sendable {
         if result.success {
     
             if !result.featureFlagsUpdated.isEmpty {
-                let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .FLAGS_UPDATE, names: result.featureFlagsUpdated))
+                let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .flagsUpdate, names: result.featureFlagsUpdated))
                 notifyUpdate(event)
                 return // Avoid duplicate notification
             }
             
             if result.rbsUpdated {
-                let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+                let event = SplitInternalEventWithMetadata(.splitsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []))
                 notifyUpdate(event)
             }
         }
@@ -239,7 +239,7 @@ class PeriodicMySegmentsSyncWorker: BasePeriodicSyncWorker, @unchecked Sendable 
             if result.success {
                 if  result.msUpdated || result.mlsUpdated {
                     // For now is not necessary specify which entity was updated
-                    let event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .SEGMENTS_UPDATE, names: []))
+                    let event = SplitInternalEventWithMetadata(.mySegmentsUpdated, metadata: SdkUpdateMetadata(type: .segmentsUpdate, names: []))
                     notifyUpdate(event)
                 }
             }

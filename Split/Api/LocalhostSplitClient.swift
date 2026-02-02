@@ -145,15 +145,15 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     
     // MARK: Events Listeners with Medatadata
     @objc public func addEventListener(listener: SplitEventListener) {
-        if let l = listener.onSdkReady {
+        if let l = listener.onReady {
             registerEvent(.sdkReady, action: l)
         }
 
-        if let l = listener.onSdkReadyFromCache {
+        if let l = listener.onReadyFromCache {
             registerEvent(.sdkReadyFromCache, action: l)
         }
 
-        if let l = listener.onSdkUpdate {
+        if let l = listener.onUpdate {
             registerEvent(.sdkUpdated, action: l)
         }
     }

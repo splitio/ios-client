@@ -819,6 +819,8 @@
 		5B91B8392DDE4A3B000510F0 /* SplitDTOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */; };
 		5BAB399E2F17EEB000843533 /* SplitMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAB399D2F17EEAA00843533 /* SplitMetadata.swift */; };
 		5BAB399F2F17EEB000843533 /* SplitMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAB399D2F17EEAA00843533 /* SplitMetadata.swift */; };
+		5BAB39F12F22BCF400843533 /* MetadataEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAB39F02F22BCE600843533 /* MetadataEventsTests.swift */; };
+		5BAB39F22F22BCF400843533 /* MetadataEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BAB39F02F22BCE600843533 /* MetadataEventsTests.swift */; };
 		5BD75F832E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */; };
 		5BD75FB02E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */; };
 		5BD75FB12E5DF0DB00F9EFBD /* FallbackTreatments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */; };
@@ -2106,6 +2108,7 @@
 		5B7E60132F0D67C9003B32B9 /* SplitFlakyTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitFlakyTests.xctestplan; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
 		5BAB399D2F17EEAA00843533 /* SplitMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitMetadata.swift; sourceTree = "<group>"; };
+		5BAB39F02F22BCE600843533 /* MetadataEventsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetadataEventsTests.swift; sourceTree = "<group>"; };
 		5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitiOSUnit_5.xctestplan; sourceTree = "<group>"; };
 		5BD75FAF2E5DF0D700F9EFBD /* FallbackTreatments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackTreatments.swift; sourceTree = "<group>"; };
 		5BD75FB22E5DF15700F9EFBD /* FallbackSanitizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FallbackSanitizer.swift; sourceTree = "<group>"; };
@@ -3548,6 +3551,7 @@
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
 			isa = PBXGroup;
 			children = (
+				5BAB39F02F22BCE600843533 /* MetadataEventsTests.swift */,
 				5BD7675A2E65E9A400F9EFBD /* FallbackTreatmentsTests */,
 				C539CAE52D947D2A0050C732 /* Common */,
 				5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */,
@@ -4531,7 +4535,6 @@
 				3B6DEE5520EA6A4E0067435E /* Sources */,
 				3B6DEE5620EA6A4E0067435E /* Frameworks */,
 				3B6DEE5820EA6A4E0067435E /* Resources */,
-				598F9BE1230DAEBC00F0E4C0 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -4752,14 +4755,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				958F987B2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan in Resources */,
 				95CED0632B50584F005E3C34 /* PrivacyInfo.xcprivacy in Resources */,
-				95880D092AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan in Resources */,
 				599EA57622666B84006CBA89 /* LICENSE in Resources */,
-				95192EAA2BEA9806004084EA /* SplitiOSUnit_1.xctestplan in Resources */,
 				3B6DEF5C20EA6AE50067435E /* .gitkeep in Resources */,
-				952FA1692A44C0FB00264AB5 /* SplitStreamingUT.xctestplan in Resources */,
-				956A7E1B2970B0F20080D53C /* SplitiOSStreaming.xctestplan in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4988,23 +4986,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		598F9BE1230DAEBC00F0E4C0 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\nswiftlint\nelse\necho \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -5439,6 +5420,7 @@
 				95ABF4BC29300ECB006ED016 /* ImpressionsModeTypeWrapperTest.swift in Sources */,
 				59ED408624EAB95E00EF7B09 /* SseAuthenticationStub.swift in Sources */,
 				9500D9D32C62530300383593 /* PersistentMyLargeSegmentsStorageTests.swift in Sources */,
+				5BAB39F22F22BCF400843533 /* MetadataEventsTests.swift in Sources */,
 				950F72FC292E615D008A0040 /* DispatchQueue+Test.swift in Sources */,
 				59C492FB216695D500F5F774 /* Murmur3HashingTest.swift in Sources */,
 				59B2043B24F568660092F2E9 /* SynchronizerStub.swift in Sources */,
@@ -5963,6 +5945,7 @@
 				5B3C16ED2ED76BAD0068D623 /* SplitBgSynchronizerTests.swift in Sources */,
 				5B3C16EE2ED76BAD0068D623 /* PeriodicSplitsSyncWorkerTest.swift in Sources */,
 				5B3C16EF2ED76BAD0068D623 /* MatcherEvalTests.swift in Sources */,
+				5BAB39F12F22BCF400843533 /* MetadataEventsTests.swift in Sources */,
 				5B3C16F02ED76BAD0068D623 /* UserConsentModeNoneTest.swift in Sources */,
 				5B3C16F12ED76BAD0068D623 /* StreamingDisabledTest.swift in Sources */,
 				5B3C16F22ED76BAD0068D623 /* StreamingAuthFail5xxTest.swift in Sources */,
