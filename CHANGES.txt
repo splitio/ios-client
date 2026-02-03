@@ -1,5 +1,11 @@
-3.6.0: (ene. 8, 2026)
-- - The SDK is now Swift 6 compatible.
+3.7.0: (Jan 28, 2026)
+- Added functionality to provide metadata alongside SDK update and READY events. Read more in our docs.
+
+3.6.1: (Jan 27, 2026)
+- Removed test cases from PBXResourcesBuildPhase, to avoid inclusion in generated XCFramework, and added validation on CI.
+
+3.6.0: (Jan. 8, 2026)
+- Added support for Swift 6.
 
 3.5.2: (Dec 18, 2025)
 - Fixed issue where targeting rules cache integrity could be lost if a SQLite write failed.
