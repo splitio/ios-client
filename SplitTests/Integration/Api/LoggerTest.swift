@@ -95,6 +95,30 @@ class LoggerTest : XCTestCase {
         XCTAssertTrue(isLogged(level: .error))
     }
 
+    func testToLogLevelVerbose() {
+        XCTAssertEqual(SplitLogLevel.verbose.toLogLevel(), LogLevel.verbose)
+    }
+
+    func testToLogLevelDebug() {
+        XCTAssertEqual(SplitLogLevel.debug.toLogLevel(), LogLevel.debug)
+    }
+
+    func testToLogLevelInfo() {
+        XCTAssertEqual(SplitLogLevel.info.toLogLevel(), LogLevel.info)
+    }
+
+    func testToLogLevelWarning() {
+        XCTAssertEqual(SplitLogLevel.warning.toLogLevel(), LogLevel.warning)
+    }
+
+    func testToLogLevelError() {
+        XCTAssertEqual(SplitLogLevel.error.toLogLevel(), LogLevel.error)
+    }
+
+    func testToLogLevelNone() {
+        XCTAssertEqual(SplitLogLevel.none.toLogLevel(), LogLevel.none)
+    }
+
     private func isLogged(level: LogLevel) -> Bool {
         return printer.logs.filter { $0.contains("\(level.rawValue)") }.count > 0
     }
