@@ -149,7 +149,7 @@ jobs:
             -Dsonar.objc.file.suffixes=-
             -Dsonar.coverageReportPaths=sonarqube-generic-coverage.xml
             -Dsonar.verbose=true
-            -Dsonar.sources=Split
+            -Dsonar.sources=Split,Sources
             -Dsonar.exclusions=**/Tests/**,**/*.generated.swift
             -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift
             -Dsonar.qualitygate.wait=true
@@ -179,7 +179,7 @@ jobs:
             -Dsonar.objc.file.suffixes=-
             -Dsonar.coverageReportPaths=sonarqube-generic-coverage.xml
             -Dsonar.verbose=true
-            -Dsonar.sources=Split
+            -Dsonar.sources=Split,Sources
             -Dsonar.exclusions=**/Tests/**,**/*.generated.swift
             -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift
             -Dsonar.qualitygate.wait=true
