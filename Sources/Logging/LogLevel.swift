@@ -2,8 +2,6 @@
 //  LogLevel.swift
 //  Logging
 //
-//  Created by Split SDK Team
-//
 
 import Foundation
 
