@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Http
 
 class SyncManagerBuilder: @unchecked Sendable {
 
@@ -100,13 +101,16 @@ class SyncManagerBuilder: @unchecked Sendable {
 
     private func buildSseHttpClient(config: SplitClientConfig,
                                     apiFacade: SplitApiFacade) -> HttpClient {
-        let sseHttpConfig = HttpSessionConfig()
-        sseHttpConfig.httpsAuthenticator = config.httpsAuthenticator
-        sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
-        sseHttpConfig.notificationHelper = notificationHelper
-        if let pinningConfig = config.certificatePinningConfig {
-            sseHttpConfig.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
-        }
+        let pinChecker: TlsPinChecker? = config.certificatePinningConfig.map { DefaultTlsPinChecker(pins: $0.pins) }
+        let authHandler = SplitAuthChallengeHandler(
+            pinChecker: pinChecker,
+            httpsAuthenticator: config.httpsAuthenticator,
+            notificationHelper: notificationHelper
+        )
+        let sseHttpConfig = Http.HttpSessionConfig(
+            connectionTimeOut: config.sseHttpClientConnectionTimeOut,
+            authChallengeHandler: authHandler
+        )
         return apiFacade.streamingHttpClient ?? DefaultHttpClient(configuration: sseHttpConfig)
     }
 

@@ -1,33 +1,28 @@
 //
 //  HttpRequestList.swift
-//  Split
-//
-//  Created by Javier L. Avrudsky on 08/07/2020.
-//  Copyright © 2020 Split. All rights reserved.
+//  Http
 //
 
 import Foundation
 
-// MARK: Request list
-class HttpRequestList: @unchecked Sendable {
+public class HttpRequestList: @unchecked Sendable {
     private let queueName = "split.http-request-queue"
     private var queue: DispatchQueue
     private var requests: [Int: HttpRequest]
 
-    init() {
+    public init() {
         queue = DispatchQueue(label: queueName, attributes: .concurrent)
         requests = [Int: HttpRequest]()
     }
 
-    func set(_ request: HttpRequest) {
+    public func set(_ request: HttpRequest) {
         queue.async(flags: .barrier) { [weak self] in
-            if let self = self {
-                self.requests[request.identifier] = request
-            }
+            guard let self = self else { return }
+            self.requests[request.identifier] = request
         }
     }
 
-    func get(identifier: Int) -> HttpRequest? {
+    public func get(identifier: Int) -> HttpRequest? {
         var request: HttpRequest?
         queue.sync {
             request = requests[identifier]
@@ -35,26 +30,24 @@ class HttpRequestList: @unchecked Sendable {
         return request
     }
 
-    func take(identifier: Int) -> HttpRequest? {
+    public func take(identifier: Int) -> HttpRequest? {
         var request: HttpRequest?
         queue.sync {
             request = requests[identifier]
             if request != nil {
                 queue.async(flags: .barrier) { [weak self] in
-                    if let self = self {
-                        self.requests.removeValue(forKey: identifier)
-                    }
+                    guard let self = self else { return }
+                    self.requests.removeValue(forKey: identifier)
                 }
             }
         }
         return request
     }
 
-    func clear() {
+    public func clear() {
         queue.async(flags: .barrier) { [weak self] in
-            if let self = self {
-                self.requests.removeAll()
-            }
+            guard let self = self else { return }
+            self.requests.removeAll()
         }
     }
 }

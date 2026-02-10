@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Http
 #if os(iOS) || os(tvOS)
 @preconcurrency import BackgroundTasks
 
@@ -175,8 +176,12 @@ struct BackgroundSyncExecutor: @unchecked Sendable {
 
         var httpClient: HttpClient?
         if let pins = pinnedCredentials {
-            let httpConfig = HttpSessionConfig.default
-            httpConfig.pinChecker = DefaultTlsPinChecker(pins: pins)
+            let authHandler = SplitAuthChallengeHandler(
+                pinChecker: DefaultTlsPinChecker(pins: pins),
+                httpsAuthenticator: nil,
+                notificationHelper: nil
+            )
+            let httpConfig = Http.HttpSessionConfig(authChallengeHandler: authHandler)
             httpClient = DefaultHttpClient(configuration: httpConfig)
         }
         let restClient = DefaultRestClient(httpClient: httpClient ?? DefaultHttpClient.shared,

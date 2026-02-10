@@ -164,12 +164,12 @@ extension DefaultSplitFactory {
     func setupCertificatePinning(_ params: SplitFactoryParams) {
         
         if let pinningConfig = params.config.certificatePinningConfig {
-            
+
             // 1. Setup Notificator
             let notificationHelper = params.notificationHelper ?? DefaultNotificationHelper.instance
-            HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
-            HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
-            HttpSessionConfig.default.notificationHelper = notificationHelper
+            SplitHttpConfig.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
+            SplitHttpConfig.httpsAuthenticator = params.config.httpsAuthenticator
+            SplitHttpConfig.notificationHelper = notificationHelper
             
             // 2. Connect Failure Handler
             if let handler = pinningConfig.failureHandler {

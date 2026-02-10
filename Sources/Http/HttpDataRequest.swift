@@ -1,34 +1,29 @@
 //
-// HttpDataRequest.swift
-// Split
-//
-// Created by Javier L. Avrudsky on 12/05/2020.
-// Copyright (c) 2020 Split. All rights reserved.
+//  HttpDataRequest.swift
+//  Http
 //
 
 import Foundation
 
-protocol HttpDataRequest: HttpRequest, HttpDataReceivingRequest {
+public protocol HttpDataRequest: HttpRequest, HttpDataReceivingRequest {
     var data: Data? { get }
     func notifyIncomingData(_ data: Data)
-    func getResponse(completionHandler: @escaping RequestCompletionHandler,
-                     errorHandler: @escaping RequestErrorHandler) -> Self
+    func getResponse(completionHandler: @escaping HttpRequest.RequestCompletionHandler,
+                     errorHandler: @escaping HttpRequest.RequestErrorHandler) -> Self
 }
 
-// MARK: HttpDataRequest
-class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest, @unchecked Sendable {
+public class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest, @unchecked Sendable {
+    public private(set) var data: Data?
 
-    private(set) var data: Data?
-
-    override func notifyIncomingData(_ data: Data) {
+    public override func notifyIncomingData(_ data: Data) {
         if self.data == nil {
             self.data = Data()
         }
         self.data?.append(data)
     }
 
-    func getResponse(completionHandler: @escaping RequestCompletionHandler,
-                     errorHandler: @escaping RequestErrorHandler) -> Self {
+    public func getResponse(completionHandler: @escaping HttpRequest.RequestCompletionHandler,
+                           errorHandler: @escaping HttpRequest.RequestErrorHandler) -> Self {
         requestQueue.sync {
             self.completionHandler = completionHandler
             self.errorHandler = errorHandler
@@ -36,7 +31,7 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest, @unchecked Senda
         return self
     }
 
-    override func complete(error: HttpError?) {
+    public override func complete(error: HttpError?) {
         requestQueue.async(flags: .barrier) {
             var internalCode = InternalHttpErrorCode.noCode
             if self.pinnedCredentialFail {
@@ -52,8 +47,7 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest, @unchecked Senda
             } else if let completionHandler = self.completionHandler {
                 completionHandler(HttpResponse(code: self.responseCode,
                                                data: self.data,
-                                               internalCode: internalCode)
-                )
+                                               internalCode: internalCode))
             }
         }
     }

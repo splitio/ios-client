@@ -68,7 +68,8 @@ class DefaultRestClient: SplitApiRestClient, @unchecked Sendable {
                         body: body)
             .getResponse(completionHandler: { response in
             switch response.result {
-            case .success(let json):
+            case .success(let data):
+                let json = Json(data)
                 if json.isNull() {
                     completion(DataResult { return nil })
                     return
