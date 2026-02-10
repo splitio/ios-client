@@ -1,19 +1,17 @@
 //
-//  LoggerTest.swift
-//  SplitTests
+//  LoggingTests.swift
+//  LoggingTests
 //
 //  Created by Javier Avrudsky on 08-Jul-2022.
 //  Copyright © 2022 Split. All rights reserved.
 //
 
 import Foundation
-import Logging
-@testable import Split
+@testable import Logging
 
 import XCTest
 
-// This test verifies that SplitLogLevel mapping to LogLevel works correctly
-class LoggerTest : XCTestCase {
+class LoggingTests : XCTestCase {
 
     let printer = LogPrinterStub()
 
@@ -24,7 +22,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testNone() {
-        Logger.shared.level = SplitLogLevel.none.toLogLevel()
+        Logger.shared.level = .none
 
         logAll()
 
@@ -36,7 +34,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testVerbose() {
-        Logger.shared.level = SplitLogLevel.verbose.toLogLevel()
+        Logger.shared.level = .verbose
 
         logAll()
 
@@ -48,7 +46,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testDebug() {
-        Logger.shared.level = SplitLogLevel.debug.toLogLevel()
+        Logger.shared.level = .debug
 
         logAll()
 
@@ -60,7 +58,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testInfo() {
-        Logger.shared.level = SplitLogLevel.info.toLogLevel()
+        Logger.shared.level = .info
 
         logAll()
 
@@ -72,7 +70,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testWarning() {
-        Logger.shared.level = SplitLogLevel.warning.toLogLevel()
+        Logger.shared.level = .warning
 
         logAll()
 
@@ -84,7 +82,7 @@ class LoggerTest : XCTestCase {
     }
 
     func testError() {
-        Logger.shared.level = SplitLogLevel.error.toLogLevel()
+        Logger.shared.level = .error
 
         logAll()
 
@@ -93,30 +91,6 @@ class LoggerTest : XCTestCase {
         XCTAssertFalse(isLogged(level: .info))
         XCTAssertFalse(isLogged(level: .warning))
         XCTAssertTrue(isLogged(level: .error))
-    }
-
-    func testToLogLevelVerbose() {
-        XCTAssertEqual(SplitLogLevel.verbose.toLogLevel(), LogLevel.verbose)
-    }
-
-    func testToLogLevelDebug() {
-        XCTAssertEqual(SplitLogLevel.debug.toLogLevel(), LogLevel.debug)
-    }
-
-    func testToLogLevelInfo() {
-        XCTAssertEqual(SplitLogLevel.info.toLogLevel(), LogLevel.info)
-    }
-
-    func testToLogLevelWarning() {
-        XCTAssertEqual(SplitLogLevel.warning.toLogLevel(), LogLevel.warning)
-    }
-
-    func testToLogLevelError() {
-        XCTAssertEqual(SplitLogLevel.error.toLogLevel(), LogLevel.error)
-    }
-
-    func testToLogLevelNone() {
-        XCTAssertEqual(SplitLogLevel.none.toLogLevel(), LogLevel.none)
     }
 
     private func isLogged(level: LogLevel) -> Bool {
@@ -137,4 +111,3 @@ class LoggerTest : XCTestCase {
         printer.clear()
     }
 }
-

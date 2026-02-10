@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Logging
 
 public enum SplitLogLevel: String {
 
@@ -31,6 +32,44 @@ public enum SplitLogLevel: String {
             return 4
         case .none:
             return 5
+        }
+    }
+    
+    /// Maps SplitLogLevel to Logging's LogLevel
+    func toLogLevel() -> LogLevel {
+        switch self {
+        case .verbose:
+            return .verbose
+        case .debug:
+            return .debug
+        case .info:
+            return .info
+        case .warning:
+            return .warning
+        case .error:
+            return .error
+        case .none:
+            return .none
+        }
+    }
+    
+    /// Creates SplitLogLevel from Logging's LogLevel
+    static func from(_ logLevel: LogLevel) -> SplitLogLevel {
+        switch logLevel {
+        case .verbose:
+            return .verbose
+        case .debug:
+            return .debug
+        case .info:
+            return .info
+        case .warning:
+            return .warning
+        case .error:
+            return .error
+        case .none:
+            return .none
+        @unknown default:
+            return .none
         }
     }
 }
