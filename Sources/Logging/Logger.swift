@@ -8,7 +8,7 @@ import Foundation
 /// Main logger class for the Logging module
 public class Logger: @unchecked Sendable {
     public var printer: LogPrinter = DefaultLogPrinter()
-    public var dateProvider: DateProvider = PlaceholderDateProvider()
+    public var dateProvider: DateProvider = DefaultDateProvider()
     private let tag: String = "SplitSDK"
     
     public var level: LogLevel = .none

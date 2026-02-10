@@ -6,30 +6,19 @@
 - `LogLevel`: logging level enum
 - `LogPrinter`: output interface (default prints to stdout)
 - `TimeChecker`: helper to measure and log time intervals
-- `DateProvider`: host-provided timestamp + label formatting (keeps this module independent from your app’s time utilities)
+- `DateProvider`: timestamp + label formatting (ships with a `DefaultDateProvider` backed by `Foundation.Date`)
 
 ## Usage
 
-### 1) Configure required dependencies
+### 1) Configure (optional)
 
-This module intentionally does **not** implement “real time” by default. You must provide a `DateProvider` from the host app/module (e.g. using `Foundation.Date`, your own time utils, etc).
-
-Example:
+The module ships with a `DefaultDateProvider` that uses `Foundation.Date`, so it works out of the box. You can still supply a custom `DateProvider` if you need different formatting or a custom clock:
 
 ```swift
 import Logging
-import Foundation
 
-struct AppDateProvider: DateProvider {
-  func nowMillis() -> Int64 { Int64(Date().timeIntervalSince1970 * 1000) }
-  func nowLabel() -> String {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "dd-MM-yyyy HH:mm:ss.SSS"
-    return formatter.string(from: Date())
-  }
-}
-
-Logger.shared.dateProvider = AppDateProvider()
+// Optional: override the default provider
+Logger.shared.dateProvider = MyCustomDateProvider()
 Logger.shared.level = .info
 ```
 
