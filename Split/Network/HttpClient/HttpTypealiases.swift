@@ -12,6 +12,7 @@ typealias HttpError = Http.HttpError
 typealias HttpHeaders = Http.HttpHeaders
 typealias HttpMethod = Http.HttpMethod
 typealias HttpParameter = Http.HttpParameter
+typealias HttpParameterValue = Http.HttpParameterValue
 typealias HttpParameters = Http.HttpParameters
 typealias HttpDataRequest = Http.HttpDataRequest
 typealias HttpStreamRequest = Http.HttpStreamRequest

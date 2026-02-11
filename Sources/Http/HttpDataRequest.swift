@@ -8,8 +8,8 @@ import Foundation
 public protocol HttpDataRequest: HttpRequest, HttpDataReceivingRequest {
     var data: Data? { get }
     func notifyIncomingData(_ data: Data)
-    func getResponse(completionHandler: @escaping HttpRequest.RequestCompletionHandler,
-                     errorHandler: @escaping HttpRequest.RequestErrorHandler) -> Self
+    func getResponse(completionHandler: @escaping @Sendable HttpRequest.RequestCompletionHandler,
+                     errorHandler: @escaping @Sendable HttpRequest.RequestErrorHandler) -> Self
 }
 
 public class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest, @unchecked Sendable {
@@ -22,8 +22,8 @@ public class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest, @unchecke
         self.data?.append(data)
     }
 
-    public func getResponse(completionHandler: @escaping HttpRequest.RequestCompletionHandler,
-                           errorHandler: @escaping HttpRequest.RequestErrorHandler) -> Self {
+    public func getResponse(completionHandler: @escaping @Sendable HttpRequest.RequestCompletionHandler,
+                           errorHandler: @escaping @Sendable HttpRequest.RequestErrorHandler) -> Self {
         requestQueue.sync {
             self.completionHandler = completionHandler
             self.errorHandler = errorHandler

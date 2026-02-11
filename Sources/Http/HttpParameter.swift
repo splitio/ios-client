@@ -7,9 +7,9 @@ import Foundation
 
 public struct HttpParameter: Sendable {
     public let key: String
-    public let value: Any?
+    public let value: HttpParameterValue
 
-    public init(key: String, value: Any? = nil) {
+    public init(key: String, value: HttpParameterValue = .none) {
         self.key = key
         self.value = value
     }

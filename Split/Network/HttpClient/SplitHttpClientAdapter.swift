@@ -24,10 +24,10 @@ extension HttpClient {
 enum SplitHttpConfig {
     static let kDefaultConnectionTimeout: TimeInterval = 30
 
-    static var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
-    static var pinChecker: TlsPinChecker?
-    static var httpsAuthenticator: SplitHttpsAuthenticator?
-    static var notificationHelper: NotificationHelper?
+    nonisolated(unsafe) static var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
+    nonisolated(unsafe) static var pinChecker: TlsPinChecker?
+    nonisolated(unsafe) static var httpsAuthenticator: SplitHttpsAuthenticator?
+    nonisolated(unsafe) static var notificationHelper: NotificationHelper?
 
     static func makeHttpSessionConfig() -> Http.HttpSessionConfig {
         let authHandler: HttpAuthChallengeHandler? = (pinChecker != nil || httpsAuthenticator != nil)

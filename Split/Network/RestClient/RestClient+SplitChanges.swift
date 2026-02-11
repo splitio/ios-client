@@ -69,19 +69,19 @@ extension DefaultRestClient: RestClientSplitChanges {
                                  spec: String) -> HttpParameters {
         var parameters: [HttpParameter] = []
         if !spec.isEmpty {
-            parameters.append(HttpParameter(key: "s", value: spec))
+            parameters.append(HttpParameter(key: "s", value: .string(spec)))
         }
 
-        parameters.append(HttpParameter(key: "since", value: since))
+        parameters.append(HttpParameter(key: "since", value: .int64(since)))
         if let rbSince = rbSince {
-            parameters.append(HttpParameter(key: "rbSince", value: rbSince))
+            parameters.append(HttpParameter(key: "rbSince", value: .int64(rbSince)))
         }
         parameters.append(HttpParameter(key: "sets"))
         parameters.append(HttpParameter(key: "names"))
         parameters.append(HttpParameter(key: "prefixes"))
 
         if let till = till {
-            parameters.append(HttpParameter(key: "till", value: till))
+            parameters.append(HttpParameter(key: "till", value: .int64(till)))
         }
 
         return HttpParameters(parameters)

@@ -1546,6 +1546,7 @@
 		E7A1B00F0000000000000001 /* HttpRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A1000F0000000000000001 /* HttpRequestManager.swift */; };
 		E7A1B0100000000000000001 /* HttpEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A100100000000000000001 /* HttpEndpoint.swift */; };
 		E7A1B0110000000000000001 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A100110000000000000001 /* HttpClient.swift */; };
+		E7A1B0120000000000000001 /* HttpParameterValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A100120000000000000001 /* HttpParameterValue.swift */; };
 		E7B1C0010000000000000001 /* SplitAuthChallengeHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B100010000000000000001 /* SplitAuthChallengeHandler.swift */; };
 		E7B1C0020000000000000001 /* Endpoint+HttpEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B100020000000000000001 /* Endpoint+HttpEndpoint.swift */; };
 		E7B1C0030000000000000001 /* SplitHttpClientAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B100030000000000000001 /* SplitHttpClientAdapter.swift */; };
@@ -2618,6 +2619,7 @@
 		DB05351F643A2046D7E1EC50 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		F20B85AA66D33446CA9BE8AE /* Http.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Http.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7A100010000000000000001 /* HttpTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpTypes.swift; sourceTree = "<group>"; };
+		E7A100120000000000000001 /* HttpParameterValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameterValue.swift; sourceTree = "<group>"; };
 		E7A100020000000000000001 /* HttpError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpError.swift; sourceTree = "<group>"; };
 		E7A100030000000000000001 /* HttpParameter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameter.swift; sourceTree = "<group>"; };
 		E7A100040000000000000001 /* HttpParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpParameters.swift; sourceTree = "<group>"; };
@@ -4489,6 +4491,7 @@
 				E7A100050000000000000001 /* HttpTask.swift */,
 				E7A100040000000000000001 /* HttpParameters.swift */,
 				E7A100030000000000000001 /* HttpParameter.swift */,
+				E7A100120000000000000001 /* HttpParameterValue.swift */,
 				E7A100020000000000000001 /* HttpError.swift */,
 				E7A100010000000000000001 /* HttpTypes.swift */,
 				FFA05F7D652DE539093C3B00 /* Tests */,
@@ -6544,6 +6547,7 @@
 				E7A1B00F0000000000000001 /* HttpRequestManager.swift in Sources */,
 				E7A1B0100000000000000001 /* HttpEndpoint.swift in Sources */,
 				E7A1B0110000000000000001 /* HttpClient.swift in Sources */,
+				E7A1B0120000000000000001 /* HttpParameterValue.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6642,6 +6646,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -7039,6 +7044,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -7349,6 +7355,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VALIDATE_PRODUCT = YES;
@@ -7920,6 +7927,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_INSTALL_OBJC_HEADER = YES;
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";

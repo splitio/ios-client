@@ -6,8 +6,8 @@
 import Foundation
 
 public protocol HttpRequest: Sendable {
-    typealias RequestCompletionHandler = (HttpResponse) -> Void
-    typealias RequestErrorHandler = (HttpError) -> Void
+    typealias RequestCompletionHandler = @Sendable (HttpResponse) -> Void
+    typealias RequestErrorHandler = @Sendable (HttpError) -> Void
 
     var identifier: Int { get }
     var url: URL { get }
@@ -58,21 +58,23 @@ public class BaseHttpRequest: HttpRequest, @unchecked Sendable {
         if let parameters = parameters {
             let initialQueryItems = components?.queryItems ?? []
             components?.queryItems?.removeAll()
-            var queryItems: [String: Any] = initialQueryItems.reduce(into: [:]) { dict, item in
+            var valueByKey: [String: String] = initialQueryItems.reduce(into: [:]) { dict, item in
                 dict[item.name] = item.value
             }
-            queryItems.merge(parameters.values) { current, _ in current }
-
-            var finalQueryItems: [URLQueryItem] = []
-            let keys = parameters.order ?? Array(queryItems.keys)
-            for key in keys {
-                if let value = queryItems[key] {
-                    var parsedValue = "\(value)"
-                    if let array = value as? [Any] {
-                        parsedValue = array.compactMap { "\($0)" }.joined(separator: ",")
-                    }
-                    finalQueryItems.append(URLQueryItem(name: key, value: parsedValue))
+            for key in parameters.order {
+                if let paramValue = parameters.values[key], let parsed = paramValue.queryStringValue {
+                    valueByKey[key] = parsed
                 }
+            }
+            var finalQueryItems: [URLQueryItem] = []
+            for key in parameters.order {
+                if let parsed = valueByKey[key] {
+                    finalQueryItems.append(URLQueryItem(name: key, value: parsed))
+                }
+            }
+            let orderedKeys = Set(parameters.order)
+            for (key, parsed) in valueByKey where !orderedKeys.contains(key) {
+                finalQueryItems.append(URLQueryItem(name: key, value: parsed))
             }
             components?.queryItems = finalQueryItems
         }

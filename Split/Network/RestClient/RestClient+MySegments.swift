@@ -45,6 +45,6 @@ extension DefaultRestClient: RestClientMySegments {
         guard let till = till else {
             return nil
         }
-        return HttpParameters([HttpParameter(key: "till", value: till)])
+        return HttpParameters([HttpParameter(key: "till", value: .int64(till))])
     }
 }

@@ -5,32 +5,34 @@
 
 import Foundation
 
-public class HttpParameters: ExpressibleByDictionaryLiteral, @unchecked Sendable {
-    public let order: [String]?
-    public let values: [String: Any]
+public struct HttpParameters: Sendable {
+    public let order: [String]
+    public let values: [String: HttpParameterValue]
 
-    public init(values: [String: Any]) {
+    public init(values: [String: HttpParameterValue]) {
         self.values = values
-        self.order = nil
+        self.order = Array(values.keys)
     }
 
+    /// Builds parameters from an ordered list (order preserved).
     public init(_ parameters: [HttpParameter]) {
         var order: [String] = []
-        self.values = parameters.reduce(into: [:]) { dict, item in
-            if item.value != nil {
-                dict[item.key] = item.value
-            }
+        var values: [String: HttpParameterValue] = [:]
+        for item in parameters {
             order.append(item.key)
+            values[item.key] = item.value
         }
         self.order = order
+        self.values = values
     }
 
-    public required init(dictionaryLiteral elements: (String, Any)...) {
-        self.values = Dictionary(uniqueKeysWithValues: elements)
-        self.order = nil
+    /// Convenience for [String: String] (e.g. from SseClient).
+    public init(stringValues: [String: String]) {
+        self.values = stringValues.mapValues { .string($0) }
+        self.order = Array(stringValues.keys)
     }
 
-    public subscript(key: String) -> Any? {
-        return values[key]
+    public subscript(key: String) -> HttpParameterValue? {
+        values[key]
     }
 }

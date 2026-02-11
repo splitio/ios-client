@@ -42,7 +42,7 @@ final class SplitAuthChallengeHandler: HttpAuthChallengeHandler, @unchecked Send
     private func checkPins(
         pinChecker: TlsPinChecker,
         challenge: URLAuthenticationChallenge,
-        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+        completionHandler: @escaping @Sendable (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
         let checkResult = pinChecker.check(credential: challenge)
         var finalStatus: CertificatePinningStatus

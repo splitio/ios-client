@@ -33,13 +33,13 @@ class HttpDataRequestTest: XCTestCase {
 
     func testRequestCreationWithOrder() throws {
         // Testing parameter setup on request creation
-        let parameters: HttpParameters = HttpParameters([HttpParameter(key: "p2", value: 2), HttpParameter(key: "p3", value: [1,2,3]), HttpParameter(key: "defaultParam"), HttpParameter(key: "p1", value: "v1")])
+        let parameters: HttpParameters = HttpParameters([HttpParameter(key: "p2", value: .int(2)), HttpParameter(key: "p3", value: .intArray([1, 2, 3])), HttpParameter(key: "defaultParam"), HttpParameter(key: "p1", value: .string("v1"))])
         let headers: HttpHeaders = ["h1": "v1", "h2": "v2"]
         let httpRequest = try DefaultHttpDataRequest(session: httpSession, url: URL(string: (url.absoluteString + "?defaultParam=4"))!, method: .get, parameters: parameters, headers: headers)
 
-        XCTAssertEqual("v1", httpRequest.parameters!["p1"] as! String)
-        XCTAssertEqual(2, httpRequest.parameters!["p2"] as! Int)
-        XCTAssertEqual([1,2,3], httpRequest.parameters!["p3"] as! [Int])
+        if case .string(let s) = httpRequest.parameters!["p1"] { XCTAssertEqual("v1", s) }
+        if case .int(let i) = httpRequest.parameters!["p2"] { XCTAssertEqual(2, i) }
+        if case .intArray(let a) = httpRequest.parameters!["p3"] { XCTAssertEqual([1, 2, 3], a) }
         XCTAssertEqual("v1", httpRequest.headers["h1"])
         XCTAssertEqual("v2", httpRequest.headers["h2"])
         XCTAssertEqual(headers, httpRequest.headers)

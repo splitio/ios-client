@@ -60,7 +60,7 @@ class DefaultSseClient: SseClient, @unchecked Sendable {
             do {
                 self.streamRequest = try self.httpClient.sendStreamRequest(
                     endpoint: self.endpoint,
-                    parameters: HttpParameters(values: parameters),
+                    parameters: HttpParameters(stringValues: parameters),
                     headers: self.endpoint.headers)
                 .getResponse(responseHandler: self.responseHandler(completion: completion),
                              incomingDataHandler: self.incommingDataHandler(completion: completion),

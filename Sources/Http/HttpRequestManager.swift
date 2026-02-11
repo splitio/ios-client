@@ -60,7 +60,7 @@ extension DefaultHttpRequestManager: URLSessionDataDelegate {
         _ session: URLSession,
         dataTask: URLSessionDataTask,
         didReceive response: URLResponse,
-        completionHandler: @escaping (URLSession.ResponseDisposition) -> Void
+        completionHandler: @escaping @Sendable (URLSession.ResponseDisposition) -> Void
     ) {
         if let urlResponse = response as? HTTPURLResponse {
             _ = set(responseCode: urlResponse.statusCode, to: dataTask.taskIdentifier)

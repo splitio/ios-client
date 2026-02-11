@@ -62,9 +62,9 @@ class HttpClientTest: XCTestCase {
         let expectation = XCTestExpectation(description: "complete req")
         _ = try httpClient.sendRequest(endpoint: factory.splitChangesEndpoint,
                                        parameters: HttpParameters([
-                                        HttpParameter(key: "s", value: "2.2"),
-                                        HttpParameter(key: "since", value: 100),
-                                        HttpParameter(key: "rbSince", value: 120)])).getResponse(completionHandler: { response in
+                                        HttpParameter(key: "s", value: .string("2.2")),
+                                        HttpParameter(key: "since", value: .int(100)),
+                                        HttpParameter(key: "rbSince", value: .int(120))])).getResponse(completionHandler: { response in
             splitsChange = try? response.result.value?.decode(TargetingRulesChange.self)?.featureFlags
             expectation.fulfill()
         }, errorHandler: { error in })

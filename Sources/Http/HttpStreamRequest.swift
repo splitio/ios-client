@@ -6,10 +6,10 @@
 import Foundation
 
 public protocol HttpStreamRequest: HttpRequest, HttpDataReceivingRequest {
-    typealias ResponseHandler = (HttpResponse) -> Void
-    typealias IncomingDataHandler = (Data) -> Void
-    typealias CloseHandler = () -> Void
-    typealias ErrorHandler = (HttpError) -> Void
+    typealias ResponseHandler = @Sendable (HttpResponse) -> Void
+    typealias IncomingDataHandler = @Sendable (Data) -> Void
+    typealias CloseHandler = @Sendable () -> Void
+    typealias ErrorHandler = @Sendable (HttpError) -> Void
 
     func getResponse(responseHandler: @escaping ResponseHandler,
                      incomingDataHandler: @escaping IncomingDataHandler,
@@ -23,7 +23,7 @@ public class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest, @unch
     public var incomingDataHandler: DefaultHttpStreamRequest.IncomingDataHandler?
     public var closeHandler: DefaultHttpStreamRequest.CloseHandler?
 
-    public override init(session: HttpSession, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
+    public init(session: HttpSession, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
         try super.init(session: session, url: url, method: .get, parameters: parameters, headers: headers)
     }
 
@@ -34,10 +34,10 @@ public class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest, @unch
     @discardableResult
     public func response(
         queue: DispatchQueue? = nil,
-        responseHandler: @escaping DefaultHttpStreamRequest.ResponseHandler,
-        incomingDataHandler: @escaping DefaultHttpStreamRequest.IncomingDataHandler,
-        closeHandler: @escaping DefaultHttpStreamRequest.CloseHandler,
-        errorHandler: @escaping DefaultHttpStreamRequest.ErrorHandler
+        responseHandler: @escaping @Sendable DefaultHttpStreamRequest.ResponseHandler,
+        incomingDataHandler: @escaping @Sendable DefaultHttpStreamRequest.IncomingDataHandler,
+        closeHandler: @escaping @Sendable DefaultHttpStreamRequest.CloseHandler,
+        errorHandler: @escaping @Sendable DefaultHttpStreamRequest.ErrorHandler
     ) -> Self {
         self.responseHandler = responseHandler
         self.incomingDataHandler = incomingDataHandler
@@ -47,10 +47,10 @@ public class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest, @unch
     }
 
     public func getResponse(
-        responseHandler: @escaping DefaultHttpStreamRequest.ResponseHandler,
-        incomingDataHandler: @escaping DefaultHttpStreamRequest.IncomingDataHandler,
-        closeHandler: @escaping DefaultHttpStreamRequest.CloseHandler,
-        errorHandler: @escaping DefaultHttpStreamRequest.ErrorHandler
+        responseHandler: @escaping @Sendable DefaultHttpStreamRequest.ResponseHandler,
+        incomingDataHandler: @escaping @Sendable DefaultHttpStreamRequest.IncomingDataHandler,
+        closeHandler: @escaping @Sendable DefaultHttpStreamRequest.CloseHandler,
+        errorHandler: @escaping @Sendable DefaultHttpStreamRequest.ErrorHandler
     ) -> Self {
         response(
             queue: DispatchQueue(label: HttpQueue.default),

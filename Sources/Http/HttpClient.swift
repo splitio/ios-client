@@ -23,12 +23,9 @@ extension HttpClient {
 
 // MARK: - DefaultHttpClient
 public class DefaultHttpClient: @unchecked Sendable {
-    #if swift(>=6.0)
-    nonisolated(unsafe) public static let shared: HttpClient = DefaultHttpClient()
-    #else
+    
     public static let shared: HttpClient = DefaultHttpClient()
-    #endif
-
+    
     private var testSession: HttpSession?
     private var testRequestManager: HttpRequestManager?
 
