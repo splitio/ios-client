@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 
 class EndpointFactory {
     private static let kAuthorizationHeader = "Authorization"

@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 
 //MARK: Solving Swift 6 stricter casting
 #if swift(>=6.0)

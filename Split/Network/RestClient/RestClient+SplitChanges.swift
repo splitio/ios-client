@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 
 /// A handler for specific error conditions in Split Changes requests
 fileprivate class SplitChangesErrorHandler {

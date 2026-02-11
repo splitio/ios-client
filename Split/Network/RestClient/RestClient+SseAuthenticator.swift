@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 
 struct SseAuthenticationResponse: Decodable {
     let pushEnabled: Bool

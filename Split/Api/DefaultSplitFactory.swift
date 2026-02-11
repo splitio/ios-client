@@ -5,6 +5,9 @@
 //  Created by Brian Sztamfater on 27/9/17.
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 
 /**
  Default implementation of SplitManager protocol
@@ -168,8 +171,10 @@ extension DefaultSplitFactory {
             // 1. Setup Notificator
             let notificationHelper = params.notificationHelper ?? DefaultNotificationHelper.instance
             HttpSessionConfig.default.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
-            HttpSessionConfig.default.httpsAuthenticator = params.config.httpsAuthenticator
-            HttpSessionConfig.default.notificationHelper = notificationHelper
+            if let auth = params.config.httpsAuthenticator {
+                HttpSessionConfig.default.authenticator = SplitAuthenticatorAdapter(wrapped: auth)
+            }
+            HttpSessionConfig.default.notificationHandler = SplitNotificationAdapter(helper: notificationHelper)
             
             // 2. Connect Failure Handler
             if let handler = pinningConfig.failureHandler {

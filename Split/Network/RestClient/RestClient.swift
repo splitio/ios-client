@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 
 protocol RestClient {
     func isServerAvailable(_ url: URL) -> Bool

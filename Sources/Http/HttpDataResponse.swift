@@ -1,35 +1,11 @@
 //
 //  HttpDataResponse.swift
-//  Split
+//  Http
 //
 //  Created by Javier L. Avrudsky on 5/23/18.
 //  Initially based on Alamofire network library API
 
 import Foundation
-
-// MARK: HttpResultWrapper
-enum HttpResultWrapper {
-    case success(Json)
-    case failure
-
-    var isSuccess: Bool {
-        switch self {
-        case .success:
-            return true
-        case .failure:
-            return false
-        }
-    }
-
-    var value: Json? {
-        switch self {
-        case .success(let value):
-            return value
-        case .failure:
-            return nil
-        }
-    }
-}
 
 // MARK: HttpDataResponse
 struct HttpDataResponse<Value> {
@@ -58,7 +34,7 @@ enum HttpResult<Value> {
     }
 
     var isFailure: Bool {
-        return !isSuccess
+        !isSuccess
     }
 
     var value: Value? {

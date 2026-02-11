@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1DA8343D9925920867E52FD0 /* Http.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76006F2EFA92F7C8557F5E70 /* Http.swift */; };
 		2DF7C3837113F36647769631 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
 		31AA2036872EEC62D9EDF4AB /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA22D3DA2B022F2E7F3231 /* Endpoint.swift */; };
 		31AA21DE01A000A7C30630F2 /* SseClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA280A65C72BC92858422C /* SseClientTest.swift */; };
@@ -2137,7 +2136,6 @@
 		5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcher.swift; sourceTree = "<group>"; };
 		5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherTest.swift; sourceTree = "<group>"; };
 		5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrerequisitesMatcherMock.swift; sourceTree = "<group>"; };
-		76006F2EFA92F7C8557F5E70 /* Http.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Http.swift; sourceTree = "<group>"; };
 		9500D9912C56F9BA00383593 /* HostDomainFilterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilterTests.swift; sourceTree = "<group>"; };
 		9500D9A82C59297400383593 /* HostDomainFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDomainFilter.swift; sourceTree = "<group>"; };
 		9500D9AC2C5A918300383593 /* split_cache_v5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = split_cache_v5.xcdatamodel; sourceTree = "<group>"; };
@@ -2790,7 +2788,6 @@
 			children = (
 				C1F89DF36719FDF83F6C69EF /* HttpTests.swift */,
 			);
-			name = Tests;
 			path = Tests;
 			sourceTree = "<group>";
 		};
@@ -3922,9 +3919,7 @@
 			isa = PBXGroup;
 			children = (
 				381132A583F6A4F026D6EA07 /* Tests */,
-				76006F2EFA92F7C8557F5E70 /* Http.swift */,
 			);
-			name = Http;
 			path = Http;
 			sourceTree = "<group>";
 		};
@@ -5392,7 +5387,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1DA8343D9925920867E52FD0 /* Http.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

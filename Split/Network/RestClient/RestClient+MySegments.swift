@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 protocol RestClientMySegments: RestClient {
     func getMySegments(user: String,
                        till: Int64?,

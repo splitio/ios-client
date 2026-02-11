@@ -1,6 +1,6 @@
 //
 //  Endpoint.swift
-// Split
+// Http
 //
 // Created by Javier L. Avrudsky on 13/05/2020.
 // Copyright (c) 2020 Split. All rights reserved.
@@ -8,11 +8,11 @@
 
 import Foundation
 
-class Endpoint {
+public class Endpoint {
 
-    private(set) var url: URL
-    private(set) var method: HttpMethod
-    private(set) var headers = [String: String]()
+    public private(set) var url: URL
+    public private(set) var method: HttpMethod
+    public private(set) var headers = [String: String]()
 
     private init(baseUrl: URL, path: String?, isPathEncoded: Bool = false, defaultQueryString: String? = nil) {
 
@@ -41,41 +41,41 @@ class Endpoint {
         self.method = .get
     }
 
-    static func builder(baseUrl: URL, path: String? = nil, defaultQueryString: String? = nil) -> Builder {
-        return Builder(baseUrl: baseUrl, path: path, isPathEncoded: false, defaultQueryString: defaultQueryString)
+    public static func builder(baseUrl: URL, path: String? = nil, defaultQueryString: String? = nil) -> Builder {
+        Builder(baseUrl: baseUrl, path: path, isPathEncoded: false, defaultQueryString: defaultQueryString)
     }
 
-    static func builder(baseUrl: URL, encodedPath: String, defaultQueryString: String? = nil) -> Builder {
-        return Builder(baseUrl: baseUrl, path: encodedPath, isPathEncoded: true, defaultQueryString: defaultQueryString)
+    public static func builder(baseUrl: URL, encodedPath: String, defaultQueryString: String? = nil) -> Builder {
+        Builder(baseUrl: baseUrl, path: encodedPath, isPathEncoded: true, defaultQueryString: defaultQueryString)
     }
 
-    struct Builder {
+    public struct Builder {
         private var endpoint: Endpoint
 
-        init(baseUrl: URL, path: String?, isPathEncoded: Bool, defaultQueryString: String? = nil) {
+        public init(baseUrl: URL, path: String?, isPathEncoded: Bool, defaultQueryString: String? = nil) {
             endpoint = Endpoint(baseUrl: baseUrl, path: path,
                                 isPathEncoded: isPathEncoded, defaultQueryString: defaultQueryString)
         }
 
-        func add(header: String, withValue value: String) -> Self {
+        public func add(header: String, withValue value: String) -> Self {
             endpoint.headers[header] = value
             return self
         }
 
-        func add(headers: [String: String]) -> Self {
+        public func add(headers: [String: String]) -> Self {
             for (header, value) in headers {
                 endpoint.headers[header] = value
             }
             return self
         }
 
-        func set(method: HttpMethod) -> Self {
+        public func set(method: HttpMethod) -> Self {
             endpoint.method = method
             return self
         }
 
-        func build() -> Endpoint {
-            return endpoint
+        public func build() -> Endpoint {
+            endpoint
         }
     }
 }

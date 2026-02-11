@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 #if os(iOS) || os(tvOS)
 @preconcurrency import BackgroundTasks
 

@@ -1,6 +1,6 @@
 //
 // HttpDataRequest.swift
-// Split
+// Http
 //
 // Created by Javier L. Avrudsky on 12/05/2020.
 // Copyright (c) 2020 Split. All rights reserved.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol HttpDataRequest: HttpRequest, HttpDataReceivingRequest {
+public protocol HttpDataRequest: HttpRequest, HttpDataReceivingRequest {
     var data: Data? { get }
     func notifyIncomingData(_ data: Data)
     func getResponse(completionHandler: @escaping RequestCompletionHandler,
@@ -16,18 +16,18 @@ protocol HttpDataRequest: HttpRequest, HttpDataReceivingRequest {
 }
 
 // MARK: HttpDataRequest
-class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest, @unchecked Sendable {
+public class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest, @unchecked Sendable {
 
-    private(set) var data: Data?
+    public private(set) var data: Data?
 
-    override func notifyIncomingData(_ data: Data) {
+    override public func notifyIncomingData(_ data: Data) {
         if self.data == nil {
             self.data = Data()
         }
         self.data?.append(data)
     }
 
-    func getResponse(completionHandler: @escaping RequestCompletionHandler,
+    public func getResponse(completionHandler: @escaping RequestCompletionHandler,
                      errorHandler: @escaping RequestErrorHandler) -> Self {
         requestQueue.sync {
             self.completionHandler = completionHandler
@@ -36,7 +36,7 @@ class DefaultHttpDataRequest: BaseHttpRequest, HttpDataRequest, @unchecked Senda
         return self
     }
 
-    override func complete(error: HttpError?) {
+    override public func complete(error: HttpError?) {
         requestQueue.async(flags: .barrier) {
             var internalCode = InternalHttpErrorCode.noCode
             if self.pinnedCredentialFail {

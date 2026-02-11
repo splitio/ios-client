@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 
 protocol HttpImpressionsCountRecorder {
     func execute(_ counts: ImpressionsCount) throws

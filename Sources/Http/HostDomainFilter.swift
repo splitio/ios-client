@@ -1,6 +1,6 @@
 //
 //  HostsFilter.swift
-//  Split
+//  Http
 //
 //  Created by Javier Avrudsky on 30/07/2024.
 //  Copyright © 2024 Split. All rights reserved.
@@ -8,22 +8,30 @@
 
 import Foundation
 
-struct HostDomainFilter {
-    static let endString = "$"
-    static let mainRegex = "^(?:[a-zA-Z0-9_-]+\\.)"
-    static let wildCards = [(prefix: "**.", pattern: "\(mainRegex)*"),
+private extension String {
+    func matchRegex(_ pattern: String) -> Bool {
+        guard let regex = try? NSRegularExpression(pattern: pattern) else {
+            return false
+        }
+        return regex.firstMatch(in: self, range: NSRange(startIndex..<endIndex, in: self)) != nil
+    }
+}
+
+public struct HostDomainFilter {
+    public static let endString = "$"
+    public static let mainRegex = "^(?:[a-zA-Z0-9_-]+\\.)"
+    public static let wildCards = [(prefix: "**.", pattern: "\(mainRegex)*"),
                          (prefix: "*.", pattern: "\(mainRegex)?")]
 
-    static func pinsFor(host: String, pins: [CredentialPin]) -> [CredentialPin] {
+    public static func pinsFor(host: String, pins: [CredentialPin]) -> [CredentialPin] {
         var foundPins = [CredentialPin]()
         for pin in pins {
             var hasWildcard = false
             for wildCard in wildCards {
                 let count = wildCard.prefix.count
                 if pin.host.starts(with: wildCard.prefix), pin.host.count > count {
-                    let pinHost = pin.host
-                        .suffix(starting: count)
-                        .asString()
+                    // Extract the host suffix after the wildcard prefix (e.g., "**.example.com" -> "example.com")
+                    let pinHost = String(pin.host.suffix(from: pin.host.index(pin.host.startIndex, offsetBy: count)))
                         .replacingOccurrences(of: ".", with: "\\.")
                     let regex = "\(wildCard.pattern)\(pinHost)\(endString)"
                     if host.matchRegex(regex) {

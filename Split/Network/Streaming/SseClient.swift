@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 
 struct SseClientConstants {
     static let pushNotificationChannelsParam = "channels"

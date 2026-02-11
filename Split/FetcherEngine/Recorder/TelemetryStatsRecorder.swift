@@ -7,6 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
+import Http
+#endif
 
 protocol HttpTelemetryStatsRecorder {
     func isEndpointAvailable() -> Bool
