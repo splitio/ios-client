@@ -1,13 +1,13 @@
 //
 //  HttpRequestManagerMock.swift
-//  SplitTests
+//  HttpTests
 //
 //  Created by Javier L. Avrudsky on 07/07/2020.
 //  Copyright © 2020 Split. All rights reserved.
 //
 
 import Foundation
-@testable import Split
+@testable import Http
 
 class HttpRequestManagerMock: HttpRequestManager, @unchecked Sendable {
 

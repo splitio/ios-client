@@ -1,6 +1,6 @@
 //
 //  HttpStreamRequestTest.swift
-//  SplitTests
+//  HttpTests
 //
 //  Created by Javier L. Avrudsky on 25/06/2020.
 //  Copyright © 2020 Split. All rights reserved.
@@ -8,7 +8,13 @@
 
 import Foundation
 import XCTest
-@testable import Split
+@testable import Http
+
+private extension Data {
+    var stringRepresentation: String {
+        String(data: self, encoding: .utf8) ?? ""
+    }
+}
 
 class HttpStreamRequestTest: XCTestCase {
 
@@ -54,7 +60,7 @@ class HttpStreamRequestTest: XCTestCase {
         let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, parameters: nil, headers: nil)
 
         _ = httpRequest.getResponse(responseHandler: { response in
-            responseIsSuccess = response.result.isSuccess
+            responseIsSuccess = response.isSuccess
 
         }, incomingDataHandler: { data in
             receivedData.append(data.stringRepresentation)
@@ -90,7 +96,7 @@ class HttpStreamRequestTest: XCTestCase {
         let httpRequest = try DefaultHttpStreamRequest(session: httpSession, url: url, parameters: nil, headers: nil)
 
         _ = httpRequest.getResponse(responseHandler: { response in
-            responseIsSuccess = response.result.isSuccess
+            responseIsSuccess = response.isSuccess
             onResponseExpectation.fulfill()
 
         }, incomingDataHandler: { data in

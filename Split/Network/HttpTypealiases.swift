@@ -4,7 +4,7 @@
 
 import Http
 
-// Re-export only CertificatePinningStatus for SDK consumers
+// Re-export only CertificatePinningStatus for SDK consumers, to be used by the handlers
 @_exported import enum Http.CertificatePinningStatus
 
 // MARK: - Internal use
