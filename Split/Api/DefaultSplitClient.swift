@@ -2,9 +2,6 @@
 //  Modified by Natalia Stele on 11/10/17.
 
 import Foundation
-#if !COCOAPODS
-@_exported import Http
-#endif
 
 typealias DestroyHandler = () -> Void
 

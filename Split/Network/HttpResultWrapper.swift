@@ -3,9 +3,6 @@
 //  used by RestClient and the rest of the SDK.
 
 import Foundation
-#if !COCOAPODS
-import Http
-#endif
 
 // MARK: HttpResultWrapper
 enum HttpResultWrapper {

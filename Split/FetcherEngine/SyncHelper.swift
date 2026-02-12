@@ -7,9 +7,6 @@
 //
 
 import Foundation
-#if !COCOAPODS
-import Http
-#endif
 
 protocol SyncHelper {
     func checkEndpointReachability(restClient: RestClient, resource: Resource) throws

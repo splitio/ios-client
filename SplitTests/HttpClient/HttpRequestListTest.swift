@@ -9,6 +9,9 @@
 import Foundation
 import XCTest
 @testable import Split
+#if !COCOAPODS
+import Http
+#endif
 
 class HttpRequestListTest: XCTestCase {
     var requestList: HttpRequestList!

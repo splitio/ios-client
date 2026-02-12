@@ -7,9 +7,6 @@
 //
 
 import Foundation
-#if !COCOAPODS
-import Http
-#endif
 
 protocol HttpUniqueKeysRecorder {
     func execute(_ uniqueKeys: UniqueKeys) throws

@@ -7,9 +7,6 @@
 //
 
 import Foundation
-#if !COCOAPODS
-import Http
-#endif
 
 ///
 /// Used when HTTP response decoding

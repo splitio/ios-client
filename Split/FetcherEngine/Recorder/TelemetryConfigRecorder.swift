@@ -7,9 +7,6 @@
 //
 
 import Foundation
-#if !COCOAPODS
-import Http
-#endif
 
 protocol HttpTelemetryConfigRecorder {
     func execute(_ config: TelemetryConfig) throws

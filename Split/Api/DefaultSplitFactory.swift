@@ -5,9 +5,6 @@
 //  Created by Brian Sztamfater on 27/9/17.
 
 import Foundation
-#if !COCOAPODS
-import Http
-#endif
 
 /**
  Default implementation of SplitManager protocol

@@ -127,7 +127,7 @@ public enum KeyHashAlgo: String, Codable, Sendable {
 }
 
 struct CertKeyTypeHelper: Sendable {
-    private nonisolated(unsafe) static let keyMapping: [String: CertKeyType] = [
+    private static let keyMapping: [String: CertKeyType] = [
         "\(kSecAttrKeyTypeRSA)_2048": .rsa2048,
         "\(kSecAttrKeyTypeRSA)_3072": .rsa3072,
         "\(kSecAttrKeyTypeRSA)_4096": .rsa4096,

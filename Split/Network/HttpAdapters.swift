@@ -2,9 +2,6 @@
 //  to the generic protocols defined in the Http module.
 
 import Foundation
-#if !COCOAPODS
-import Http
-#endif
 
 // MARK: - SplitHttpsAuthenticator → HttpAuthenticator
 /// Wraps a ``SplitHttpsAuthenticator`` (the @objc public SDK protocol)

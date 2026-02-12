@@ -7,9 +7,6 @@
 //
 
 import Foundation
-#if !COCOAPODS
-import Http
-#endif
 
 public typealias CertificatePinningFailureHandler = @Sendable(String) -> Void
 public typealias CertificatePinningStatusHandler = @Sendable(String, CertificatePinningStatus, String) -> Void

@@ -8,6 +8,9 @@
 
 import Foundation
 @testable import Split
+#if !COCOAPODS
+import Http
+#endif
 
 class HttpSessionMock: HttpSession, @unchecked Sendable {
 
