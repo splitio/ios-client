@@ -1,5 +1,5 @@
 //
-//  ReconnectBackoffCounterTest.swift
+//  BackoffCounterTest.swift
 //  SplitTests
 //
 //  Created by Javier L. Avrudsky on 13/08/2020.
@@ -11,7 +11,7 @@ import Foundation
 import XCTest
 @testable import Split
 
-class ReconnectBackoffCounterTest: XCTestCase {
+class BackoffCounterTest: XCTestCase {
     override func setUp() {
     }
 
@@ -36,7 +36,7 @@ class ReconnectBackoffCounterTest: XCTestCase {
     }
 
     private func testWithBase(base: Int, results: [Double]) {
-        let counter = DefaultReconnectBackoffCounter(backoffBase: base);
+        let counter = DefaultBackoffCounter(backoffBase: base);
         let v1 = counter.getNextRetryTime()
         let v2 = counter.getNextRetryTime()
         let v3 = counter.getNextRetryTime()

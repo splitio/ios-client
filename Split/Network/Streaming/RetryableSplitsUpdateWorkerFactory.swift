@@ -26,7 +26,7 @@ protocol SyncWorkerFactory {
     func createPeriodicSplitsSyncWorker() -> PeriodicSyncWorker
 
     func createRetryableSplitsUpdateWorker(changeNumber: SplitsUpdateChangeNumber,
-                                           reconnectBackoffCounter: ReconnectBackoffCounter
+                                           backoffCounter: BackoffCounter
     ) -> RetryableSyncWorker
 
     func createPeriodicImpressionsRecorderWorker(syncHelper: ImpressionsRecorderSyncHelper?) -> PeriodicRecorderWorker?
@@ -98,7 +98,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
     }
 
     func createRetryableSplitsSyncWorker() -> RetryableSyncWorker {
-        let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
+        let backoffCounter = DefaultBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
         return RetryableSplitsSyncWorker(splitFetcher: apiFacade.splitsFetcher,
                                          splitsStorage: storageContainer.splitsStorage,
                                          generalInfoStorage: storageContainer.generalInfoStorage,
@@ -106,12 +106,12 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                          splitChangeProcessor: splitChangeProcessor,
                                          ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                          eventsManager: eventsManager,
-                                         reconnectBackoffCounter: backoffCounter,
+                                         backoffCounter: backoffCounter,
                                          splitConfig: splitConfig)
     }
 
     func createRetryableSplitsUpdateWorker(changeNumber: SplitsUpdateChangeNumber,
-                                           reconnectBackoffCounter: ReconnectBackoffCounter) -> RetryableSyncWorker {
+                                           backoffCounter: BackoffCounter) -> RetryableSyncWorker {
         return RetryableSplitsUpdateWorker(splitsFetcher: apiFacade.splitsFetcher,
                                            splitsStorage: storageContainer.splitsStorage,
                                            ruleBasedSegmentsStorage: storageContainer.ruleBasedSegmentsStorage,
@@ -120,7 +120,7 @@ class DefaultSyncWorkerFactory: SyncWorkerFactory {
                                            ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                            changeNumber: changeNumber,
                                            eventsManager: eventsManager,
-                                           reconnectBackoffCounter: reconnectBackoffCounter,
+                                           backoffCounter: backoffCounter,
                                            splitConfig: splitConfig)
     }
 
@@ -289,7 +289,7 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
 
 
         let backoffBase =  splitConfig.generalRetryBackoffBase
-        let mySegmentsBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffBase)
+        let mySegmentsBackoffCounter = DefaultBackoffCounter(backoffBase: backoffBase)
         let msByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
         let mlsByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: myLargeSegmentsStorage, userKey: key)
         let changeNumbers = changeNumbers ?? SegmentsChangeNumber(msChangeNumber: msByKeyStorage.changeNumber,
@@ -303,7 +303,7 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
 
         return RetryableMySegmentsSyncWorker(telemetryProducer: telemetryProducer,
                                              eventsManager: eventsManager,
-                                             reconnectBackoffCounter: mySegmentsBackoffCounter,
+                                             backoffCounter: mySegmentsBackoffCounter,
                                              avoidCache: avoidCache,
                                              changeNumbers: changeNumbers,
                                              syncHelper: syncHelper)

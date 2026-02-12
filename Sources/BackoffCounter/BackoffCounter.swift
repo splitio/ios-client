@@ -1,5 +1,5 @@
 //
-//  ReconnectBackoffCounter.swift
+//  BackoffCounter.swift
 //  Split
 //
 //  Created by Javier L. Avrudsky on 13/08/2020.
@@ -8,29 +8,33 @@
 
 import Foundation
 
-protocol ReconnectBackoffCounter {
+public protocol BackoffCounter {
     func getNextRetryTime() -> Double
     func resetCounter()
 }
 
-class DefaultReconnectBackoffCounter: ReconnectBackoffCounter, @unchecked Sendable {
+public class DefaultBackoffCounter: BackoffCounter, @unchecked Sendable {
     private var maxTimeLimitInSecs: Double = 1800.0 // 30 minutes (30 * 60)
     private static let kRetryExponentialBase = 2
     private let backoffBase: Int
-    private var attemptCount: AtomicInt
+    private var attemptCount: Int = 0
+    private let lock = NSLock()
 
-    init(backoffBase: Int, maxTimeLimit: Int? = nil) {
+    public init(backoffBase: Int, maxTimeLimit: Int? = nil) {
         self.backoffBase = backoffBase
-        self.attemptCount = AtomicInt(0)
         if let max = maxTimeLimit {
             maxTimeLimitInSecs = Double(max)
         }
     }
 
-    func getNextRetryTime() -> Double {
+    public func getNextRetryTime() -> Double {
+        lock.lock()
+        let currentAttempt = attemptCount
+        attemptCount += 1
+        lock.unlock()
 
         let base = Decimal(backoffBase * Self.kRetryExponentialBase)
-        let decimalResult = pow(base, attemptCount.getAndAdd(1))
+        let decimalResult = pow(base, currentAttempt)
 
         var retryTime = maxTimeLimitInSecs
         if !decimalResult.isNaN, decimalResult < Decimal(maxTimeLimitInSecs) {
@@ -39,7 +43,9 @@ class DefaultReconnectBackoffCounter: ReconnectBackoffCounter, @unchecked Sendab
         return retryTime
     }
 
-    func resetCounter() {
-        attemptCount .mutate { $0 = 0 }
+    public func resetCounter() {
+        lock.lock()
+        attemptCount = 0
+        lock.unlock()
     }
 }
