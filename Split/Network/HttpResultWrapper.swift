@@ -1,11 +1,6 @@
-//
-//  HttpResultWrapper.swift
-//  Split
-//
 //  Originally part of HttpDataResponse.swift
 //  Bridges HttpResponse (from Http module) to the Json-based result wrapper
 //  used by RestClient and the rest of the SDK.
-//
 
 import Foundation
 #if !COCOAPODS

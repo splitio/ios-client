@@ -29,7 +29,7 @@ class DefaultSseClientFactory: SseClientFactory {
     }
 
     func create() -> SseClient {
-        return DefaultSseClient(endpoint: endpoint,
+        DefaultSseClient(endpoint: endpoint,
                                 httpClient: httpClient,
                                 sseHandler: sseHandler)
     }

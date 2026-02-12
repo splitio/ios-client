@@ -20,7 +20,7 @@ class LoggerTest : XCTestCase {
     override func setUp() {
         printer.clear()
         Logger.shared.printer = printer
-        Logger.shared.dateProvider = SplitDateProvider()
+        Logger.shared.dateProvider = DefaultDateProvider()
     }
 
     func testNone() {
@@ -133,7 +133,7 @@ class LoggerTest : XCTestCase {
 
     override func tearDown() {
         Logger.shared.printer = DefaultLogPrinter()
-        Logger.shared.dateProvider = SplitDateProvider()
+        Logger.shared.dateProvider = DefaultDateProvider()
         printer.clear()
     }
 }

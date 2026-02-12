@@ -10,9 +10,7 @@ import Foundation
 
 private extension String {
     func matchRegex(_ pattern: String) -> Bool {
-        guard let regex = try? NSRegularExpression(pattern: pattern) else {
-            return false
-        }
+        guard let regex = try? NSRegularExpression(pattern: pattern) else { return false }
         return regex.firstMatch(in: self, range: NSRange(startIndex..<endIndex, in: self)) != nil
     }
 }

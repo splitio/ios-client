@@ -16,16 +16,21 @@ public protocol DateProvider {
     func nowLabel() -> String
 }
 
-/// Placeholder implementation that returns hardcoded values
-/// This should be replaced by a real implementation from the consuming module
-public struct PlaceholderDateProvider: DateProvider {
+/// Default implementation that uses Foundation's Date
+public struct DefaultDateProvider: DateProvider {
     public init() {}
-    
+
+    private static let formatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd-MM-yyyy HH:mm:ss.SSS"
+        return formatter
+    }()
+
     public func nowMillis() -> Int64 {
-        return 0
+        return Int64(Date().timeIntervalSince1970 * 1000)
     }
-    
+
     public func nowLabel() -> String {
-        return "00-00-0000 00:00:00.000"
+        return Self.formatter.string(from: Date())
     }
 }

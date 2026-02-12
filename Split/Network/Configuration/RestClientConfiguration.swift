@@ -13,6 +13,6 @@ import Http
 
 struct RestClientConfiguration {
     static var httpClient: HttpClient {
-        return DefaultHttpClient.shared
+        DefaultHttpClient.shared
     }
 }
