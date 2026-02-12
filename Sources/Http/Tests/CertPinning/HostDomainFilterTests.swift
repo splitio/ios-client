@@ -1,6 +1,6 @@
 //
-//  CredentialPinParserTests.swift
-//  SplitTests
+//  HostDomainFilterTests.swift
+//  HttpTests
 //
 //  Created by Javier Avrudsky on 28/07/2024.
 //  Copyright © 2024 Split. All rights reserved.
@@ -8,7 +8,7 @@
 
 import Foundation
 import XCTest
-@testable import Split
+@testable import Http
 
 class CredentialPinParserTests: XCTestCase {
 
