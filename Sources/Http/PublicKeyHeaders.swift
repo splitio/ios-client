@@ -94,7 +94,7 @@ struct PublicKeyHeaders {
         0x70, 0x03, 0x21, 0x00
     ]
 
-    private nonisolated(unsafe) static let headersMap: [CertKeyType: [UInt8]] = [
+    private static let headersMap: [CertKeyType: [UInt8]] = [
         .rsa2048: rsa2048Asn1,
         .rsa3072: rsa3072Asn1,
         .rsa4096: rsa4096Asn1,
