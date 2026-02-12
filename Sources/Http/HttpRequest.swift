@@ -58,8 +58,8 @@ public class BaseHttpRequest: HttpRequest, @unchecked Sendable {
         task?.identifier ?? -1
     }
 
-    init(session: HttpSession, url: URL, method: HttpMethod,
-         parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
+    public init(session: HttpSession, url: URL, method: HttpMethod,
+                parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
 
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
 

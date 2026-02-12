@@ -121,13 +121,13 @@ public enum CredentialValidationResult: CaseIterable {
     }
 }
 
-public enum KeyHashAlgo: String, Codable {
+public enum KeyHashAlgo: String, Codable, Sendable {
     case sha256
     case sha1
 }
 
-struct CertKeyTypeHelper {
-    private static let keyMapping: [String: CertKeyType] = [
+struct CertKeyTypeHelper: Sendable {
+    private nonisolated(unsafe) static let keyMapping: [String: CertKeyType] = [
         "\(kSecAttrKeyTypeRSA)_2048": .rsa2048,
         "\(kSecAttrKeyTypeRSA)_3072": .rsa3072,
         "\(kSecAttrKeyTypeRSA)_4096": .rsa4096,
@@ -144,7 +144,7 @@ struct CertKeyTypeHelper {
     }
 }
 
-public enum CertKeyType {
+public enum CertKeyType: Sendable {
     case rsa2048
     case rsa3072
     case rsa4096

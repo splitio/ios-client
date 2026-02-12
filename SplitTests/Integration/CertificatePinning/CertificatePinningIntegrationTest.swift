@@ -12,7 +12,7 @@ class CertificatePinningIntegrationTest: XCTestCase {
     
     override func tearDown() {
         HttpSessionConfig.default.pinChecker = nil
-        HttpSessionConfig.default.notificationHelper = nil
+        HttpSessionConfig.default.notificationHandler = nil
         super.tearDown()
     }
 
@@ -45,15 +45,15 @@ class CertificatePinningIntegrationTest: XCTestCase {
         factory = builder.build()
         XCTAssertNotNil(factory)
         XCTAssertNotNil(HttpSessionConfig.default.pinChecker)
-        XCTAssertNotNil(HttpSessionConfig.default.notificationHelper)
+        XCTAssertNotNil(HttpSessionConfig.default.notificationHandler)
         
         // Simulate a notification to prove the listener is active
-        guard let notificationHelper = HttpSessionConfig.default.notificationHelper else {
-            XCTFail("Notification helper is nil")
+        guard let notificationHandler = HttpSessionConfig.default.notificationHandler else {
+            XCTFail("Notification handler is nil")
             return
         }
         let statusObj = CertificatePinningCompleteStatus(host: testHost, status: testStatus, reason: testReason)
-        notificationHelper.post(notification: .pinnedCredentialStatus, info: statusObj)
+        notificationHandler.notifyPinningStatus(statusObj)
         
         waitForExpectations(timeout: 1.0, handler: nil)
     }
@@ -90,17 +90,17 @@ class CertificatePinningIntegrationTest: XCTestCase {
         factory = builder.build()
         XCTAssertNotNil(factory)
         
-        guard let notificationHelper = HttpSessionConfig.default.notificationHelper else {
-            XCTFail("Notification helper is nil")
+        guard let notificationHandler = HttpSessionConfig.default.notificationHandler else {
+            XCTFail("Notification handler is nil")
             return
         }
         
         // Post failure notification (triggers failureHandler)
-        notificationHelper.post(notification: .pinnedCredentialValidationFail, info: testHost as AnyObject)
+        notificationHandler.notifyPinningFailure(host: testHost)
 
         // Post status notification (triggers statusHandler)
         let statusObj = CertificatePinningCompleteStatus(host: testHost, status: .failed, reason: "Error")
-        notificationHelper.post(notification: .pinnedCredentialStatus, info: statusObj)
+        notificationHandler.notifyPinningStatus(statusObj)
         waitForExpectations(timeout: 1.0, handler: nil)
     }
 }

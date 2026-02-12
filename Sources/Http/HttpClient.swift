@@ -9,8 +9,6 @@ import Foundation
 import Logging
 #endif
 
-// MARK: - Private Extensions
-
 private func += <K, V> ( left: inout [K: V], right: [K: V]) {
     for (key, value) in right {
         left[key] = value
@@ -50,7 +48,7 @@ public enum HttpMethod: String, CustomStringConvertible {
     case options
     case head
 
-    var isUpload: Bool {
+    public var isUpload: Bool {
         switch self {
         case .post, .patch, .put:
             return true
