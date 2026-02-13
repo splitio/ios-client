@@ -3,9 +3,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 
 import Foundation
-
 import XCTest
-@testable import Split
+@testable import BackoffCounter
 
 class BackoffCounterTest: XCTestCase {
 
