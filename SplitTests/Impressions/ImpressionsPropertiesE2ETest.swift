@@ -852,22 +852,11 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
        1. Create Client A (factory A, file-backed DB)
        2. Client A does many getTreatment evaluations with properties (no dedup →
           one async insert + save() per evaluation, still queuing on context A)
-       3. Client A calls flush() (async — two dispatch hops before actual work)
+       3. Client A calls flush()
        4. IMMEDIATELY create Client B (factory B, same SQLite file, separate
-          NSPersistentStoreCoordinator). No sleep, no waiting.
-       5. Client B's periodic timer fires at deadline:0 → pop → post → delete.
-          These delete save() calls collide with Client A's still-running insert
-          save() calls at the SQLite write lock (SQLITE_BUSY, no busy-wait).
+          NSPersistentStoreCoordinator)
+       5. Client B's periodic timer fires at deadline:0
        6. Client B does its own evaluations (more concurrent writes).
-
-     On the old branch (with status-based pop):
-       - pop() marks rows as "deleted" → if HTTP fails, setActive() recovery
-         save() can hit SQLITE_BUSY → rows stuck as "deleted" → LOST.
-       - Even with HTTP success, the status update save() and delete save()
-         compete with the other coordinator's writes.
-
-     On the new branch (no status): pop() is read-only, delete only after
-     successful POST, no recovery needed. Should pass.
      */
     func testBackToBackFactoriesOnSameDbFileNoImpressionLoss() {
         let databaseName = "impressions_two_coordinators_e2e"
@@ -962,9 +951,9 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
                                                           status: StorageRecordStatus.active,
                                                           maxRows: 1_000_000).count
         // Count deleted impressions (stuck — lost if nobody recovers them)
-        let deletedDbCount = dbVerify.impressionDao.getBy(createdAt: 0,
-                                                           status: StorageRecordStatus.deleted,
-                                                           maxRows: 1_000_000).count
+//        let deletedDbCount = dbVerify.impressionDao.getBy(createdAt: 0,
+//                                                           status: StorageRecordStatus.deleted,
+//                                                           maxRows: 1_000_000).count
 
         var finalAPosted = 0
         var finalBPosted = 0
@@ -973,16 +962,12 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
             finalBPosted = clientBPostCount
         }
 
-        // Both clients' HTTP succeeds, so all posted impressions reached the server.
-        // But impressions stuck as "deleted" in the DB were popped (marked deleted)
-        // yet their delete save() may have failed (SQLITE_BUSY) — they could be
-        // re-posted on a future flush, OR they may be orphaned if the context is gone.
         let totalPosted = finalAPosted + finalBPosted
         let totalAccountedFor = totalPosted + activeDbCount
         let expectedTotal = evaluationCountA + evaluationCountB
 
         print("SplitSDK - TWO_COORD clientA_posted=\(finalAPosted), clientB_posted=\(finalBPosted), "
-            + "db_active=\(activeDbCount), db_deleted=\(deletedDbCount), "
+            + "db_active=\(activeDbCount), "
             + "total_accounted=\(totalAccountedFor), expected=\(expectedTotal)")
 
         // Every impression must be either posted or recoverable (active in DB).
@@ -991,8 +976,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         XCTAssertGreaterThanOrEqual(totalAccountedFor, expectedTotal,
             "All impressions must be accounted for: "
             + "posted(\(totalPosted)) + db_active(\(activeDbCount)) "
-            + "should be >= expected(\(expectedTotal)). "
-            + "db_deleted(\(deletedDbCount)) rows are STUCK and LOST.")
+            + "should be >= expected(\(expectedTotal)).")
 
         cleanupClient(clientA)
         cleanupClient(clientB)
