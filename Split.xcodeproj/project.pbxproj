@@ -1657,6 +1657,17 @@
 		HTTPMOCK004A /* HttpRequestManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPMOCK004 /* HttpRequestManagerMock.swift */; };
 		HTTPMOCK004B /* HttpRequestManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPMOCK004 /* HttpRequestManagerMock.swift */; };
 		HTTPTESTS00001 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53126909B1A56DEF7508435 /* Http.framework */; };
+		HTTPTEST0001 /* EndpointTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4EE17FE37A6BAB2D117D669 /* EndpointTest.swift */; };
+		HTTPTEST0002 /* HttpDataRequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DEF7B50823F88119BA6E1B /* HttpDataRequestTest.swift */; };
+		HTTPTEST0003 /* HttpErrorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C1524C7BEEB79FC9511F415 /* HttpErrorTest.swift */; };
+		HTTPTEST0004 /* HttpRequestListTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C8E3197850EF8B3A018411 /* HttpRequestListTest.swift */; };
+		HTTPTEST0005 /* HttpResponseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EEEB88FB24E4ED0BB277E57 /* HttpResponseTest.swift */; };
+		HTTPTEST0006 /* HttpStreamRequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC4B8AC48DBBD214B7F18D99 /* HttpStreamRequestTest.swift */; };
+		HTTPTEST0007 /* HostDomainFilterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3158A3274A3CAD65A7F9AF39 /* HostDomainFilterTests.swift */; };
+		HTTPTEST0008 /* HttpSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C1DA4FB95441C6EF9C36C80 /* HttpSessionMock.swift */; };
+		HTTPTEST0009 /* HttpTaskMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C8EC7FC8354849F1782A28 /* HttpTaskMock.swift */; };
+		HTTPTEST0010 /* HttpRequestMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71C009AEC877C6F2EF6FBF1B /* HttpRequestMock.swift */; };
+		HTTPTEST0011 /* HttpRequestManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51B9B9FE5CD83450F74F278 /* HttpRequestManagerMock.swift */; };
 		HTTPTESTS00002 /* HttpTestTypealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPTESTS00003 /* HttpTestTypealiases.swift */; };
 		HTTPTESTS00004 /* HttpTestTypealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPTESTS00003 /* HttpTestTypealiases.swift */; };
 		HTTPTESTS00005 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53126909B1A56DEF7508435 /* Http.framework */; };
@@ -2535,6 +2546,7 @@
 		95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceConstants.swift; sourceTree = "<group>"; };
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F7BBC52C07D02F00C5F2E4 /* SemVer.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SemVer.xctestplan; sourceTree = "<group>"; };
+		5B0F30732F3FDA0100D7056F /* ModulesTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModulesTests.xctestplan; sourceTree = "<group>"; };
 		95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSIntegration_1.xctestplan; sourceTree = "<group>"; };
 		95F7BBD42C1A27C200C5F2E4 /* rsa_2048_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_2048_public_01.pem; sourceTree = "<group>"; };
 		95F7BBD52C1A27C200C5F2E4 /* rsa_4096_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_4096_public_01.pem; sourceTree = "<group>"; };
@@ -2910,6 +2922,7 @@
 				950F72FD292E87A4008A0040 /* SplitiOSIntegration.xctestplan */,
 				95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */,
 				95F7BBC52C07D02F00C5F2E4 /* SemVer.xctestplan */,
+				5B0F30732F3FDA0100D7056F /* ModulesTests.xctestplan */,
 				956A7E1A2970B0F20080D53C /* SplitiOSStreaming.xctestplan */,
 				95880D082AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan */,
 				958F987A2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan */,
@@ -6447,6 +6460,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				HTTPTEST0001 /* EndpointTest.swift in Sources */,
+				HTTPTEST0002 /* HttpDataRequestTest.swift in Sources */,
+				HTTPTEST0003 /* HttpErrorTest.swift in Sources */,
+				HTTPTEST0004 /* HttpRequestListTest.swift in Sources */,
+				HTTPTEST0005 /* HttpResponseTest.swift in Sources */,
+				HTTPTEST0006 /* HttpStreamRequestTest.swift in Sources */,
+				HTTPTEST0007 /* HostDomainFilterTests.swift in Sources */,
+				HTTPTEST0008 /* HttpSessionMock.swift in Sources */,
+				HTTPTEST0009 /* HttpTaskMock.swift in Sources */,
+				HTTPTEST0010 /* HttpRequestMock.swift in Sources */,
+				HTTPTEST0011 /* HttpRequestManagerMock.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
