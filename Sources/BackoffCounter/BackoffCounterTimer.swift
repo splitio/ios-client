@@ -1,10 +1,6 @@
-//
-//  BackoffCounterTimer.swift
-//  Split
-//
+//  BackoffCounterTimer
 //  Created by Javier L. Avrudsky on 20/10/2020.
 //  Copyright © 2020 Split. All rights reserved.
-//
 
 import Foundation
 #if !COCOAPODS

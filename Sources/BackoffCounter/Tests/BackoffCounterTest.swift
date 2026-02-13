@@ -1,10 +1,6 @@
-//
-//  BackoffCounterTest.swift
-//  SplitTests
-//
+//  BackoffCounterTest
 //  Created by Javier L. Avrudsky on 13/08/2020.
 //  Copyright © 2020 Split. All rights reserved.
-//
 
 import Foundation
 
@@ -12,8 +8,6 @@ import XCTest
 @testable import Split
 
 class BackoffCounterTest: XCTestCase {
-    override func setUp() {
-    }
 
     func testBase1() {
         let results: [Double] = [1, 2, 4, 8, 30, 1]
@@ -55,9 +49,5 @@ class BackoffCounterTest: XCTestCase {
         XCTAssertEqual(results[3], v4)
         XCTAssertEqual(1800, vMax)
         XCTAssertEqual(1, vReset)
-    }
-
-    override func tearDown() {
-
     }
 }
