@@ -1,9 +1,6 @@
-//
-//  HttpRequest.swift
-//  Http
-//
+//  HttpRequest
 //  Created by Javier L. Avrudsky on 5/23/18.
-//
+//  Copyright © 2018 Split. All rights reserved.
 
 import Foundation
 #if !COCOAPODS
@@ -58,8 +55,7 @@ public class BaseHttpRequest: HttpRequest, @unchecked Sendable {
         task?.identifier ?? -1
     }
 
-    public init(session: HttpSession, url: URL, method: HttpMethod,
-                parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
+    public init(session: HttpSession, url: URL, method: HttpMethod, parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
 
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
 

@@ -1,8 +1,6 @@
-//
-//  HttpStreamResponse.swift
-//  Http
-//
+//  HttpStreamResponse
 //  Created by Javier L. Avrudsky on 4/06/20.
+//  Copyright © 2020 Split. All rights reserved.
 
 import Foundation
 

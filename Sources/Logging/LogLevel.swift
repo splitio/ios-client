@@ -1,7 +1,5 @@
-//
-//  LogLevel.swift
-//  Logging
-//
+//  LogLevel
+//  Copyright © 2022 Split. All rights reserved.
 
 import Foundation
 

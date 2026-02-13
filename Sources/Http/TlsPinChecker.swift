@@ -1,10 +1,6 @@
-//
-//  SslPinValidator.swift
-//  Http
-//
+//  TlsPinChecker
 //  Created by Javier Avrudsky on 05/06/2024.
 //  Copyright © 2024 Split. All rights reserved.
-//
 
 import Foundation
 import CommonCrypto

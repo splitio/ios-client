@@ -1,9 +1,8 @@
-//  PeriodicRecorderWorker
+//  PeriodicTimer
 //  Copyright © 2020 Split. All rights reserved.
 
 import Foundation
 
-/// Protocol for a timer that can be triggered periodically
 public protocol PeriodicTimer: Sendable {
     func trigger()
     func stop()
@@ -11,7 +10,6 @@ public protocol PeriodicTimer: Sendable {
     func handler(_ handler: @escaping () -> Void)
 }
 
-/// Default implementation of PeriodicTimer using DispatchSourceTimer
 public final class DefaultPeriodicTimer: PeriodicTimer, @unchecked Sendable {
 
     private let deadLineInSecs: Int
@@ -45,8 +43,7 @@ public final class DefaultPeriodicTimer: PeriodicTimer, @unchecked Sendable {
         }
     }
 
-    public func stop() {
-        // Not suspending the timer to avoid crashes
+    public func stop() { // Not suspending the timer to avoid crashes
         lock.lock()
         isRunning = false
         lock.unlock()

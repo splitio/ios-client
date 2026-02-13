@@ -37,7 +37,7 @@ class BackoffCounterTest: XCTestCase {
         let v4 = counter.getNextRetryTime()
 
         for _ in 0..<2000 {
-            _ = counter.getNextRetryTime()
+            counter.getNextRetryTime()
         }
         let vMax = counter.getNextRetryTime()
         counter.resetCounter();

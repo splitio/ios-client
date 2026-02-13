@@ -1,7 +1,5 @@
-//
-//  Logger.swift
-//  Logging
-//
+//  Logger
+//  Copyright © 2022 Split. All rights reserved.
 
 import Foundation
 

@@ -1,11 +1,9 @@
-//  PeriodicRecorderWorkerTests
+//  PeriodicRecorderWorkerTest
 //  Created by Javier Avrudsky on 18/12/2020.
 //  Copyright © 2020 Split. All rights reserved.
 
 import XCTest
 @testable import PeriodicRecorderWorker
-
-// MARK: - Test Stubs
 
 final class RecorderWorkerStub: RecorderWorker, @unchecked Sendable {
     var flushCallCount = 0

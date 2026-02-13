@@ -23,6 +23,7 @@ public class DefaultBackoffCounter: BackoffCounter, @unchecked Sendable {
         }
     }
 
+    @discardableResult
     public func getNextRetryTime() -> Double {
         lock.lock()
         let currentAttempt = attemptCount

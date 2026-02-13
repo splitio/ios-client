@@ -1,7 +1,5 @@
-//
-//  LogPrinter.swift
-//  Logging
-//
+//  LogPrinter
+//  Copyright © 2022 Split. All rights reserved.
 
 import Foundation
 

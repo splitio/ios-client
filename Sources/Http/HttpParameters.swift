@@ -1,9 +1,5 @@
-//
-//  HttpParameters.swift
-//  Http
-//
+//  HttpParameters
 //  Copyright © 2024 Split. All rights reserved.
-//
 
 import Foundation
 
@@ -33,6 +29,6 @@ public class HttpParameters: ExpressibleByDictionaryLiteral {
     }
 
     public subscript(key: String) -> Any? {
-        return values[key]
+        values[key]
     }
 }
