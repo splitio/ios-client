@@ -101,9 +101,11 @@ class SyncManagerBuilder: @unchecked Sendable {
     private func buildSseHttpClient(config: SplitClientConfig,
                                     apiFacade: SplitApiFacade) -> HttpClient {
         let sseHttpConfig = HttpSessionConfig()
-        sseHttpConfig.httpsAuthenticator = config.httpsAuthenticator
+        if let auth = config.httpsAuthenticator {
+            sseHttpConfig.authenticator = SplitAuthenticatorAdapter(wrapped: auth)
+        }
         sseHttpConfig.connectionTimeOut = config.sseHttpClientConnectionTimeOut
-        sseHttpConfig.notificationHelper = notificationHelper
+        sseHttpConfig.notificationHandler = SplitNotificationAdapter(helper: notificationHelper)
         if let pinningConfig = config.certificatePinningConfig {
             sseHttpConfig.pinChecker = DefaultTlsPinChecker(pins: pinningConfig.pins)
         }

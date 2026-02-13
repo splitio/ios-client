@@ -1,6 +1,6 @@
 //
 // HttpError.swift
-// Split
+// Http
 //
 // Created by Javier L. Avrudsky on 04/06/2020.
 // Copyright (c) 2020 Split. All rights reserved.
@@ -8,12 +8,12 @@
 
 import Foundation
 
-struct InternalHttpErrorCode {
-    static let pinningValidationFail = 1
-    static let noCode = -1
+public struct InternalHttpErrorCode {
+    public static let pinningValidationFail = 1
+    public static let noCode = -1
 }
 
-enum HttpError: Error, Equatable {
+public enum HttpError: Error, Equatable {
     case serverUnavailable
     case requestTimeOut
     case uriTooLong
@@ -26,7 +26,7 @@ enum HttpError: Error, Equatable {
 
 // MARK: Get message
 extension HttpError {
-    var code: Int {
+    public var code: Int {
         switch self {
         case .clientRelated(let code, _):
             return code
@@ -43,7 +43,7 @@ extension HttpError {
 
     /// Determines if this error is related to an outdated proxy
     /// - Returns: true if this is an outdated proxy error, false otherwise
-    func isProxyOutdatedError() -> Bool {
+    public func isProxyOutdatedError() -> Bool {
         switch self {
         case .outdatedProxyError(_, _):
             return true
@@ -52,7 +52,7 @@ extension HttpError {
         }
     }
 
-    var message: String {
+    public var message: String {
         switch self {
         case .serverUnavailable:
             return "Server is unavailable"
@@ -74,7 +74,7 @@ extension HttpError {
         }
     }
 
-    var internalCode: Int {
+    public var internalCode: Int {
         switch self {
         case .clientRelated(_, let internalCode):
             return internalCode

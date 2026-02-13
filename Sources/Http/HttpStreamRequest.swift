@@ -1,6 +1,6 @@
 //
 // HttpStreamRequest.swift
-// Split
+// Http
 //
 // Created by Javier L. Avrudsky on 04/06/2020.
 // Copyright (c) 2020 Split. All rights reserved.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol HttpStreamRequest: HttpRequest, HttpDataReceivingRequest {
+public protocol HttpStreamRequest: HttpRequest, HttpDataReceivingRequest {
     typealias ResponseHandler = (HttpResponse) -> Void
     typealias IncomingDataHandler = (Data) -> Void
     typealias CloseHandler = () -> Void
@@ -23,24 +23,24 @@ protocol HttpStreamRequest: HttpRequest, HttpDataReceivingRequest {
 }
 
 // MARK: DefaultHttpStreamRequest
-class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest, @unchecked Sendable {
+public class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest, @unchecked Sendable {
 
-    var responseHandler: ResponseHandler?
-    var incomingDataHandler: IncomingDataHandler?
-    var closeHandler: CloseHandler?
+    public var responseHandler: ResponseHandler?
+    public var incomingDataHandler: IncomingDataHandler?
+    public var closeHandler: CloseHandler?
     
-    init(session: HttpSession, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
+    public init(session: HttpSession, url: URL, parameters: HttpParameters?, headers: HttpHeaders?) throws {
         try super.init(session: session, url: url, method: .get, parameters: parameters, headers: headers)
     }
 
-    override func notifyIncomingData(_ data: Data) {
+    override public func notifyIncomingData(_ data: Data) {
         if let incomingDataHandler = self.incomingDataHandler {
             incomingDataHandler(data)
         }
     }
 
     @discardableResult
-    func response(
+    public func response(
         queue: DispatchQueue? = nil,
         responseHandler: @escaping ResponseHandler,
         incomingDataHandler: @escaping IncomingDataHandler,
@@ -53,10 +53,10 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest, @unchecked S
         return self
     }
 
-    func getResponse(responseHandler: @escaping ResponseHandler, incomingDataHandler: @escaping IncomingDataHandler,
+    public func getResponse(responseHandler: @escaping ResponseHandler, incomingDataHandler: @escaping IncomingDataHandler,
                      closeHandler: @escaping CloseHandler, errorHandler: @escaping ErrorHandler) -> Self {
 
-        return response(
+        response(
             queue: DispatchQueue(label: HttpQueue.default),
             responseHandler: responseHandler,
             incomingDataHandler: incomingDataHandler,
@@ -64,17 +64,17 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest, @unchecked S
             errorHandler: errorHandler)
     }
 
-    func close() {
+    public func close() {
         task?.cancel()
     }
 
-    override func setResponse(code: Int) {
+    override public func setResponse(code: Int) {
         if let responseHandler  = self.responseHandler {
             responseHandler(HttpResponse(code: code))
         }
     }
 
-    override func complete(error: HttpError?) {
+    override public func complete(error: HttpError?) {
         if let error = error, let errorHandler = self.errorHandler {
             errorHandler(error)
         } else if let closeHandler = self.closeHandler {
@@ -85,14 +85,14 @@ class DefaultHttpStreamRequest: BaseHttpRequest, HttpStreamRequest, @unchecked S
 
 extension DefaultHttpStreamRequest: CustomStringConvertible, CustomDebugStringConvertible {
     private var requestIsNullText: String {
-        return "No description available: Null"
+        "No description available: Null"
     }
 
-    var description: String {
-        return urlRequest?.description ?? requestIsNullText
+    public var description: String {
+        urlRequest?.description ?? requestIsNullText
     }
 
-    var debugDescription: String {
-        return urlRequest?.debugDescription ?? requestIsNullText
+    public var debugDescription: String {
+        urlRequest?.debugDescription ?? requestIsNullText
     }
 }

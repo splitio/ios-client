@@ -1,22 +1,22 @@
 //
 //  HttpParameters.swift
-//  Split
+//  Http
 //
 //  Copyright © 2024 Split. All rights reserved.
 //
 
 import Foundation
 
-class HttpParameters: ExpressibleByDictionaryLiteral {
-    let order: [String]?
-    let values: [String: Any]
+public class HttpParameters: ExpressibleByDictionaryLiteral {
+    public let order: [String]?
+    public let values: [String: Any]
 
-    init (values: [String: Any]) {
+    public init(values: [String: Any]) {
         self.values = values
         self.order = nil
     }
 
-    init(_ parameters: [HttpParameter]) {
+    public init(_ parameters: [HttpParameter]) {
         var order: [String] = []
         self.values = parameters.reduce(into: [:], { (dict, item) in
             if item.value != nil {
@@ -27,12 +27,12 @@ class HttpParameters: ExpressibleByDictionaryLiteral {
         self.order = order
     }
 
-    required init(dictionaryLiteral elements: (String, Any)...) {
+    public required init(dictionaryLiteral elements: (String, Any)...) {
         self.values = Dictionary(uniqueKeysWithValues: elements)
         self.order = nil
     }
 
-    subscript(key: String) -> Any? {
+    public subscript(key: String) -> Any? {
         return values[key]
     }
 }

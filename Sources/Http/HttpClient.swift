@@ -1,10 +1,19 @@
 //
 //  HttpClient.swift
-//  Split
+//  Http
 //
 //  Created by Javier L. Avrudsky on 5/23/18.
 
 import Foundation
+#if !COCOAPODS
+import Logging
+#endif
+
+private func += <K, V> ( left: inout [K: V], right: [K: V]) {
+    for (key, value) in right {
+        left[key] = value
+    }
+}
 
 // MARK: HttpSession
 
@@ -12,25 +21,25 @@ import Foundation
 /// This file also includes some complementary HTTP client components
 ///
 struct HttpQueue {
-    public static let `default`: String = "split-rest-queue"
+    static let `default`: String = "split-rest-queue"
 }
 
 // MARK: HTTP codes
-struct HttpCode {
+public struct HttpCode {
     static let requestOk = 200
     static let multipleChoice = 300
-    static let badRequest = 400
+    public static let badRequest = 400
     static let unauthorized = 401
     static let forbidden = 403
     static let notFound = 404
     static let requestTimeOut = 408
-    static let uriTooLong = 414
-    static let internalServerError = 500
-    static let networkLost = -1005
+    public static let uriTooLong = 414
+    public static let internalServerError = 500
+    public static let networkLost = -1005
 }
 
 // MARK: HttpMethod
-enum HttpMethod: String, CustomStringConvertible {
+public enum HttpMethod: String, CustomStringConvertible {
     case get
     case post
     case patch
@@ -69,21 +78,23 @@ enum HttpMethod: String, CustomStringConvertible {
 }
 
 // MARK: HttpSession Delegate
-typealias HttpHeaders = [String: String]
+public typealias HttpHeaders = [String: String]
 
-class HttpSessionConfig: @unchecked Sendable {
+public class HttpSessionConfig: @unchecked Sendable {
     static let kDefaultConnectionTimeout: TimeInterval = 30
 
-    static let `default`: HttpSessionConfig = {
-        return HttpSessionConfig()
+    public static let `default`: HttpSessionConfig = {
+        HttpSessionConfig()
     }()
-    var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
-    var httpsAuthenticator: SplitHttpsAuthenticator?
-    var pinChecker: TlsPinChecker?
-    var notificationHelper: NotificationHelper?
+    public var connectionTimeOut: TimeInterval = kDefaultConnectionTimeout
+    public var authenticator: HttpAuthenticator?
+    public var pinChecker: TlsPinChecker?
+    public var notificationHandler: HttpNotificationHandler?
+
+    public init() {}
 }
 
-protocol HttpClient {
+public protocol HttpClient {
 
     func sendRequest(endpoint: Endpoint, parameters: HttpParameters?,
                      headers: [String: String]?, body: Data?) throws -> HttpDataRequest
@@ -93,18 +104,18 @@ protocol HttpClient {
 }
 
 extension HttpClient {
-    func sendRequest(endpoint: Endpoint, parameters: HttpParameters? = nil,
+    public func sendRequest(endpoint: Endpoint, parameters: HttpParameters? = nil,
                      headers: [String: String]? = nil) throws -> HttpDataRequest {
-        return try sendRequest(endpoint: endpoint, parameters: parameters, headers: headers, body: nil)
+        try sendRequest(endpoint: endpoint, parameters: parameters, headers: headers, body: nil)
     }
 }
 
-class DefaultHttpClient: @unchecked Sendable {
+public class DefaultHttpClient: @unchecked Sendable {
 
     #if swift(>=6.0)
-        nonisolated(unsafe) static let shared: HttpClient = { DefaultHttpClient() }()
+        nonisolated(unsafe) public static let shared: HttpClient = { DefaultHttpClient() }()
     #else
-        static let shared: HttpClient = { DefaultHttpClient() }()
+        public static let shared: HttpClient = { DefaultHttpClient() }()
     #endif
     
     private var testSession: HttpSession?
@@ -114,9 +125,9 @@ class DefaultHttpClient: @unchecked Sendable {
     private var requestManager: HttpRequestManager!
     private var configuration: HttpSessionConfig
     private var isStarted = false
-    private var startQueue = DispatchQueue(label: "http-client-start", target: DispatchQueue.general)
+    private var startQueue = DispatchQueue(label: "http-client-start", attributes: .concurrent)
 
-    init(configuration: HttpSessionConfig = HttpSessionConfig.default,
+    public init(configuration: HttpSessionConfig = HttpSessionConfig.default,
          session: HttpSession? = nil,
          requestManager: HttpRequestManager? = nil) {
 
@@ -135,9 +146,9 @@ class DefaultHttpClient: @unchecked Sendable {
                 if let requestManager = testRequestManager {
                     self.requestManager = requestManager
                 } else {
-                    self.requestManager = DefaultHttpRequestManager(authententicator: configuration.httpsAuthenticator,
+                    self.requestManager = DefaultHttpRequestManager(authenticator: configuration.authenticator,
                                                                     pinChecker: configuration.pinChecker,
-                                                                    notificationHelper: configuration.notificationHelper)
+                                                                    notificationHandler: configuration.notificationHandler)
                 }
 
                 if let httpSession = testSession {
@@ -183,7 +194,7 @@ extension DefaultHttpClient {
 // MARK: DefaultHttpClient - HttpClient
 extension DefaultHttpClient: HttpClient {
 
-    func sendRequest(endpoint: Endpoint, parameters: HttpParameters?, headers: [String: String]?,
+    public func sendRequest(endpoint: Endpoint, parameters: HttpParameters?, headers: [String: String]?,
                      body: Data?) throws -> HttpDataRequest {
         var httpHeaders = endpoint.headers
         if let headers = headers {
@@ -197,7 +208,7 @@ extension DefaultHttpClient: HttpClient {
         return request
     }
 
-    func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?,
+    public func sendStreamRequest(endpoint: Endpoint, parameters: HttpParameters?,
                            headers: [String: String]?) throws -> HttpStreamRequest {
             let request = try self.createStreamRequest(endpoint.url, parameters: parameters, headers: headers)
         request.send()

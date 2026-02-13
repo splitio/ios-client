@@ -1,13 +1,16 @@
 //
 //  HttpRequest.swift
-//  Split
+//  Http
 //
 //  Created by Javier L. Avrudsky on 5/23/18.
 //
 
 import Foundation
+#if !COCOAPODS
+import Logging
+#endif
 
-protocol HttpRequest: Sendable {
+public protocol HttpRequest: Sendable {
     typealias RequestCompletionHandler = (HttpResponse) -> Void
     typealias RequestErrorHandler = (HttpError) -> Void
 
@@ -28,35 +31,35 @@ protocol HttpRequest: Sendable {
 
 }
 
-protocol HttpDataReceivingRequest {
+public protocol HttpDataReceivingRequest {
     func notifyIncomingData(_ data: Data)
 }
 
 // MARK: BaseHttpRequest
-class BaseHttpRequest: HttpRequest, @unchecked Sendable {
+public class BaseHttpRequest: HttpRequest, @unchecked Sendable {
 
-    private(set) var responseCode: Int = 1
-    private(set) var url: URL
-    private(set) var body: Data?
-    private(set) var method: HttpMethod
-    private(set) var parameters: HttpParameters?
-    private(set) var headers: HttpHeaders
+    public private(set) var responseCode: Int = 1
+    public private(set) var url: URL
+    public private(set) var body: Data?
+    public private(set) var method: HttpMethod
+    public private(set) var parameters: HttpParameters?
+    public private(set) var headers: HttpHeaders
     private(set) weak var session: HttpSession?
     private(set) var task: HttpTask?
     private(set) var error: Error?
-    private(set) var pinnedCredentialFail: Bool = false
+    public private(set) var pinnedCredentialFail: Bool = false
 
     var requestQueue = DispatchQueue(label: "split-http-base-request", attributes: .concurrent)
     var completionHandler: RequestCompletionHandler?
     var errorHandler: RequestErrorHandler?
     private(set) var urlRequest: URLRequest?
 
-    var identifier: Int {
-        return task?.identifier ?? -1
+    public var identifier: Int {
+        task?.identifier ?? -1
     }
 
-    init(session: HttpSession, url: URL, method: HttpMethod,
-         parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
+    public init(session: HttpSession, url: URL, method: HttpMethod,
+                parameters: HttpParameters? = nil, headers: HttpHeaders?, body: Data? = nil) throws {
 
         var components = URLComponents(url: url, resolvingAgainstBaseURL: true)
 
@@ -105,26 +108,26 @@ class BaseHttpRequest: HttpRequest, @unchecked Sendable {
         }
     }
 
-    func send() {
+    public func send() {
         guard let session = self.session else { return }
         requestQueue.sync {
             task = session.startTask(with: self)
         }
     }
 
-    func setResponse(code: Int) {
+    public func setResponse(code: Int) {
         responseCode = code
     }
 
-    func complete(error: HttpError?) {
+    public func complete(error: HttpError?) {
         Logger.e("Http Complete method should be implemented")
     }
 
-    func notifyIncomingData(_ data: Data) {
+    public func notifyIncomingData(_ data: Data) {
         Logger.e("Http notifyIncomingData method should be implemented")
     }
 
-    func notifyPinnedCredentialFail() {
+    public func notifyPinnedCredentialFail() {
         pinnedCredentialFail = true
     }
 }

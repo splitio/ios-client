@@ -1,6 +1,6 @@
 //
 //  HttpRequestListTest.swift
-//  SplitTests
+//  HttpTests
 //
 //  Created by Javier L. Avrudsky on 23/06/2020.
 //  Copyright © 2020 Split. All rights reserved.
@@ -8,7 +8,7 @@
 
 import Foundation
 import XCTest
-@testable import Split
+@testable import Http
 
 class HttpRequestListTest: XCTestCase {
     var requestList: HttpRequestList!

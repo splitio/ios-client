@@ -1,6 +1,6 @@
 //
 //  SslPinValidator.swift
-//  Split
+//  Http
 //
 //  Created by Javier Avrudsky on 05/06/2024.
 //  Copyright © 2024 Split. All rights reserved.
@@ -8,19 +8,54 @@
 
 import Foundation
 import CommonCrypto
+#if !COCOAPODS
+import Logging
+#endif
+
+// MARK: - Private Extensions
+
+private extension String {
+    var dataBytes: Data? {
+        self.data(using: .utf8)
+    }
+}
+
+private extension Data {
+    var hexadecimalRepresentation: String {
+        self.map { String(format: "%02hhx", $0) + " " }.joined()
+    }
+}
+
+private struct HttpFileUtil {
+    static func loadFileData(name: String, type: String, bundle: Bundle) -> Data? {
+        guard let path = bundle.path(forResource: name, ofType: type) else {
+            return nil
+        }
+        let url = URL(fileURLWithPath: path)
+        return try? Data(contentsOf: url)
+    }
+}
+
+// MARK: - TLS Pinning Types
 
 enum PinType {
     case key
     case certificate
 }
 
-struct CredentialPin: Codable {
-    let host: String
-    let hash: Data
-    let algo: KeyHashAlgo
+public struct CredentialPin: Codable, Sendable {
+    public let host: String
+    public let hash: Data
+    public let algo: KeyHashAlgo
+
+    public init(host: String, hash: Data, algo: KeyHashAlgo) {
+        self.host = host
+        self.hash = hash
+        self.algo = algo
+    }
 }
 
-enum CredentialValidationResult: CaseIterable {
+public enum CredentialValidationResult: CaseIterable {
     case success
     case error
     case noPinsForDomain
@@ -32,7 +67,7 @@ enum CredentialValidationResult: CaseIterable {
     case invalidCredential
     case invalidParameter
 
-    var description: String {
+    public var description: String {
         switch self {
             case .success:
                 return "Success"
@@ -59,11 +94,11 @@ enum CredentialValidationResult: CaseIterable {
 }
 
 @objc public class CertificatePinningCompleteStatus: NSObject {
-    let host: String
-    let status: CertificatePinningStatus
-    let reason: String
+    public let host: String
+    public let status: CertificatePinningStatus
+    public let reason: String
     
-    init(host: String, status: CertificatePinningStatus, reason: String) {
+    public init(host: String, status: CertificatePinningStatus, reason: String) {
         self.host = host
         self.status = status
         self.reason = reason
@@ -82,16 +117,16 @@ enum CredentialValidationResult: CaseIterable {
     }
 
     public func toString() -> String {
-        return description
+        description
     }
 }
 
-enum KeyHashAlgo: String, Codable {
+public enum KeyHashAlgo: String, Codable, Sendable {
     case sha256
     case sha1
 }
 
-struct CertKeyTypeHelper {
+struct CertKeyTypeHelper: Sendable {
     private static let keyMapping: [String: CertKeyType] = [
         "\(kSecAttrKeyTypeRSA)_2048": .rsa2048,
         "\(kSecAttrKeyTypeRSA)_3072": .rsa3072,
@@ -109,7 +144,7 @@ struct CertKeyTypeHelper {
     }
 }
 
-enum CertKeyType {
+public enum CertKeyType: Sendable {
     case rsa2048
     case rsa3072
     case rsa4096
@@ -119,11 +154,11 @@ enum CertKeyType {
     case ed25519
     case unsupported
 
-    static func from(type: String, size: Int) -> CertKeyType {
-        return CertKeyTypeHelper.map(type: type, size: size)
+    public static func from(type: String, size: Int) -> CertKeyType {
+        CertKeyTypeHelper.map(type: type, size: size)
     }
 
-    func isSupported() -> Bool {
+    public func isSupported() -> Bool {
         switch self {
             case .rsa2048, .rsa3072, .rsa4096:
                 return true
@@ -135,42 +170,42 @@ enum CertKeyType {
     }
 }
 
-struct CertSpki {
-    let type: CertKeyType
-    var data: Data {
-        return rawData
+public struct CertSpki {
+    public let type: CertKeyType
+    public var data: Data {
+        rawData
     }
     private var rawData: Data
 
-    init(type: CertKeyType, data: Data) {
+    public init(type: CertKeyType, data: Data) {
         self.type = type
         self.rawData = data
     }
 
-    mutating func addHeader(_ header: Data) {
+    public mutating func addHeader(_ header: Data) {
         rawData = header + rawData
     }
 
-    mutating func addHeader(_ header: [UInt8]) {
+    public mutating func addHeader(_ header: [UInt8]) {
         rawData = Data(header) + rawData
     }
 }
 
-protocol TlsPinChecker: Sendable {
+public protocol TlsPinChecker: Sendable {
     func check(credential: AnyObject) -> CredentialValidationResult
 }
 
-struct DefaultTlsPinChecker: TlsPinChecker {
+public struct DefaultTlsPinChecker: TlsPinChecker {
 
     private let pins: [CredentialPin]
 
-    init(pins: [CredentialPin]) {
+    public init(pins: [CredentialPin]) {
         self.pins = pins
     }
 
-    // Using a generic parameter to aisolate Apple's framework and
+    // Using a generic parameter to isolate Apple's framework and
     // also to make the component easily mockable
-    func check(credential: AnyObject) -> CredentialValidationResult {
+    public func check(credential: AnyObject) -> CredentialValidationResult {
 
         guard let challenge = credential as? URLAuthenticationChallenge else {
             Logger.e("The credential received is not a URLAuthenticationChallenge")
@@ -313,8 +348,8 @@ struct DefaultTlsPinChecker: TlsPinChecker {
     }
 }
 
-struct AlgoHelper {
-    static func computeHash(_ data: Data, algo: KeyHashAlgo) -> Data {
+public struct AlgoHelper {
+    public static func computeHash(_ data: Data, algo: KeyHashAlgo) -> Data {
         switch algo {
             case .sha1:
                 return hashSha1(data)
@@ -341,10 +376,10 @@ struct AlgoHelper {
 }
 
 // TODO: improve this parser to encapsulate Apple's framework
-struct TlsCertificateParser {
+public struct TlsCertificateParser {
     private static let certificateExtension = "der"
     
-    static func spki(from certificateName: String, bundle: Bundle) -> CertSpki? {
+    public static func spki(from certificateName: String, bundle: Bundle) -> CertSpki? {
         guard let certificate = loadCertificate(name: certificateName, bundle: bundle) else {
             Logger.e("Could not load certificate \(certificateName) to get SPKI")
             return nil
@@ -354,7 +389,7 @@ struct TlsCertificateParser {
 
     private static func loadCertificate(name: String, bundle: Bundle) -> SecCertificate? {
 
-        let loadedData = FileUtil.loadFileData(name: name, type: certificateExtension, bundle: bundle)
+        let loadedData = HttpFileUtil.loadFileData(name: name, type: certificateExtension, bundle: bundle)
         guard let cerData = loadedData as? NSData else {
             Logger.e("Could not load certificate \(name) for name")
             return nil
@@ -363,10 +398,10 @@ struct TlsCertificateParser {
         return SecCertificateCreateWithData(nil, cerData)
     }
 
-    // Geting Subject Public Key Info (SPKI)
+    // Getting Subject Public Key Info (SPKI)
     // This is visible for testing purposes, because this logic is simple but has a tricky implementation
     // It is not part of the implemented protocol
-    static func spki(from certificate: SecCertificate) -> CertSpki? {
+    public static func spki(from certificate: SecCertificate) -> CertSpki? {
         // TODO: This whole operation is expensive, create a hash cache
         // Extract and hash public key
         if var pKey = publicKey(from: certificate) {

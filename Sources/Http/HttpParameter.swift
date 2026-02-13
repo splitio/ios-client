@@ -1,18 +1,18 @@
 //
 //  HttpParameter.swift
-//  Split
+//  Http
 //
 //  Copyright © 2024 Split. All rights reserved.
 //
 
 import Foundation
 
-struct HttpParameter {
+public struct HttpParameter {
 
     let key: String
     let value: Any?
 
-    init(key: String, value: Any? = nil) {
+    public init(key: String, value: Any? = nil) {
         self.key = key
         self.value = value
     }

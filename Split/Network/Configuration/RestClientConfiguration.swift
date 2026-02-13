@@ -10,6 +10,6 @@ import Foundation
 
 struct RestClientConfiguration {
     static var httpClient: HttpClient {
-        return DefaultHttpClient.shared
+        DefaultHttpClient.shared
     }
 }

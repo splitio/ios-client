@@ -10,6 +10,19 @@ import Foundation
 import XCTest
 @testable import Split
 
+/// Adapter to make NotificationHelperStub conform to HttpNotificationHandler for tests
+struct TestNotificationHandlerAdapter: HttpNotificationHandler {
+    let helper: NotificationHelperStub
+
+    func notifyPinningFailure(host: String) {
+        helper.post(notification: .pinnedCredentialValidationFail, info: host as AnyObject)
+    }
+
+    func notifyPinningStatus(_ status: CertificatePinningCompleteStatus) {
+        helper.post(notification: .pinnedCredentialStatus, info: status as AnyObject)
+    }
+}
+
 class HttpRequestManagerTests: XCTestCase, @unchecked Sendable {
     var reqManager: HttpRequestManager!
     var pinChecker: PinCheckerMock!
@@ -113,7 +126,7 @@ class HttpRequestManagerTests: XCTestCase, @unchecked Sendable {
     }
 
     func testNetworkConnectionLostErrorMapping() {
-        let manager = DefaultHttpRequestManager(pinChecker: nil, notificationHelper: nil)
+        let manager = DefaultHttpRequestManager(pinChecker: nil, notificationHandler: nil)
         let taskId = 12345
         let request = ErrorCapturingHttpRequestMock(identifier: taskId)
 
@@ -142,7 +155,7 @@ class HttpRequestManagerTests: XCTestCase, @unchecked Sendable {
         pinChecker = PinCheckerMock()
         pinChecker.pinResults = CredentialValidationResult.allCases
         return DefaultHttpRequestManager(pinChecker: pinChecker,
-                                         notificationHelper: notificationHelper)
+                                         notificationHandler: TestNotificationHandlerAdapter(helper: notificationHelper))
     }
 }
 

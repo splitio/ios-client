@@ -1,18 +1,21 @@
 //
 //  HttpRequestManager.swift
-//  Split
+//  Http
 //
 //  Created by Javier L. Avrudsky on 08/07/2020.
 //  Copyright © 2020 Split. All rights reserved.
 //
 
 import Foundation
+#if !COCOAPODS
+import Logging
+#endif
 
 ///
 /// Stores sent requests in a list
 /// and updates them by calling corresponding handler
-/// when a delegate method from URLTask or URLSession sis called
-protocol HttpRequestManager {
+/// when a delegate method from URLTask or URLSession is called
+public protocol HttpRequestManager {
     func addRequest(_ request: HttpRequest)
     func append(data: Data, to taskIdentifier: Int)
     func complete(taskIdentifier: Int, error: HttpError?)
@@ -20,27 +23,27 @@ protocol HttpRequestManager {
     func destroy()
 }
 
-final class DefaultHttpRequestManager: NSObject, @unchecked Sendable {
+public final class DefaultHttpRequestManager: NSObject, @unchecked Sendable {
     private let requests = HttpRequestList()
-    private let authenticator: SplitHttpsAuthenticator?
+    private let authenticator: HttpAuthenticator?
 
     private let pinChecker: TlsPinChecker?
 
-    private let notificationHelper: NotificationHelper?
+    private let notificationHandler: HttpNotificationHandler?
 
-    init(authententicator: SplitHttpsAuthenticator? = nil,
+    public init(authenticator: HttpAuthenticator? = nil,
          pinChecker: TlsPinChecker?,
-         notificationHelper: NotificationHelper?) {
-        self.authenticator = authententicator
+         notificationHandler: HttpNotificationHandler?) {
+        self.authenticator = authenticator
         self.pinChecker = pinChecker
-        self.notificationHelper = notificationHelper
+        self.notificationHandler = notificationHandler
     }
 }
 
 // MARK: HttpRequestManager - URLSessionTaskDelegate
 extension DefaultHttpRequestManager: URLSessionTaskDelegate {
 
-    func urlSession(_ session: URLSession, task: URLSessionTask,
+    public func urlSession(_ session: URLSession, task: URLSessionTask,
                     didReceive challenge: URLAuthenticationChallenge,
                     completionHandler: @escaping @Sendable (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
     ) {
@@ -67,7 +70,7 @@ extension DefaultHttpRequestManager: URLSessionTaskDelegate {
         completionHandler(.performDefaultHandling, nil)
     }
 
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
 
         var httpError: HttpError?
         if let error = error as NSError? {
@@ -88,7 +91,7 @@ extension DefaultHttpRequestManager: URLSessionTaskDelegate {
 // MARK: URLSessionDataDelegate
 extension DefaultHttpRequestManager: URLSessionDataDelegate {
 
-    func urlSession(_ session: URLSession,
+    public func urlSession(_ session: URLSession,
                     dataTask: URLSessionDataTask,
                     didReceive response: URLResponse,
                     completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
@@ -102,13 +105,13 @@ extension DefaultHttpRequestManager: URLSessionDataDelegate {
         }
     }
 
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         append(data: data, to: dataTask.taskIdentifier)
     }
 }
 
 extension DefaultHttpRequestManager: HttpRequestManager {
-    func set(responseCode: Int, to taskIdentifier: Int) -> Bool {
+    public func set(responseCode: Int, to taskIdentifier: Int) -> Bool {
         if let request = requests.get(identifier: taskIdentifier) {
             request.setResponse(code: responseCode)
             return true
@@ -116,23 +119,23 @@ extension DefaultHttpRequestManager: HttpRequestManager {
         return false
     }
 
-    func complete(taskIdentifier: Int, error: HttpError?) {
+    public func complete(taskIdentifier: Int, error: HttpError?) {
         if let request = requests.get(identifier: taskIdentifier) {
             request.complete(error: error)
         }
     }
 
-    func addRequest(_ request: HttpRequest) {
+    public func addRequest(_ request: HttpRequest) {
         requests.set(request)
     }
 
-    func append(data: Data, to taskIdentifier: Int) {
+    public func append(data: Data, to taskIdentifier: Int) {
         if let request = requests.get(identifier: taskIdentifier) as? HttpDataReceivingRequest {
             request.notifyIncomingData(data)
         }
     }
 
-    func destroy() {
+    public func destroy() {
         requests.clear()
     }
 }
@@ -169,7 +172,7 @@ extension DefaultHttpRequestManager {
                 finalStatus = .success
             
             case .error, .invalidChain, .credentialNotPinned, .spkiError, .invalidCredential, .invalidParameter, .unavailableServerTrust:
-                notificationHelper?.post(notification: .pinnedCredentialValidationFail, info: challenge.protectionSpace.host as AnyObject)
+                notificationHandler?.notifyPinningFailure(host: challenge.protectionSpace.host)
                 completionHandler(.cancelAuthenticationChallenge, nil)
                 finalStatus = .failed
 
@@ -179,7 +182,9 @@ extension DefaultHttpRequestManager {
         }
         
         // Finally we trigger the complete-status handler (host, success/fail, reason)
-        notificationHelper?.post(notification: .pinnedCredentialStatus,
-                                 info: CertificatePinningCompleteStatus(host: challenge.protectionSpace.host, status: finalStatus, reason: checkResult.description) as AnyObject)
+        notificationHandler?.notifyPinningStatus(
+            CertificatePinningCompleteStatus(host: challenge.protectionSpace.host,
+                                             status: finalStatus,
+                                             reason: checkResult.description))
     }
 }

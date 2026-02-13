@@ -1,6 +1,6 @@
 //
 //  HttpStreamResponse.swift
-//  Split
+//  Http
 //
 //  Created by Javier L. Avrudsky on 4/06/20.
 
