@@ -30,7 +30,6 @@ class DefaultImpressionsStorage: PersistentImpressionsStorage, @unchecked Sendab
     func pop(count: Int) -> [KeyImpression] {
         let createdAt = Date().unixTimestamp() - self.expirationPeriod
         let impressions = impressionDao.getBy(createdAt: createdAt, status: StorageRecordStatus.active, maxRows: count)
-        impressionDao.update(ids: impressions.compactMap { $0.storageId }, newStatus: StorageRecordStatus.deleted)
         return impressions
     }
 

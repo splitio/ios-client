@@ -49,17 +49,12 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
      And impressions refresh rate set to 5 seconds
      And an impressions endpoint spy that counts posted impressions
      When getTreatment is called in a loop with EvaluationOptions(properties)
-     And the loop stops early at a random iteration (between 20% and 100% of total) with a flush
+     And the loop stops early at a random iteration
      Or the loop completes all iterations and a fallback flush is triggered
      Then each iteration returns the expected treatment
      And elapsed time is greater than zero
      And impression listener count equals tracked evaluations
-     And tracked evaluations equal db impressions plus posted impressions
-
-     Notes:
-     - Posted impressions are removed from the impressions table after successful post.
-     - The random early exit varies the number of evaluations to exercise different batch sizes.
-     - Exactly one explicit flush is performed per test run (random or fallback).
+     And tracked evaluations is less than db impressions plus posted impressions (no loss)
      */
     func testTreatmentLoopWithImpressionPropertiesAndRandomFlushAccounting() {
         let iterations = 10000
@@ -170,8 +165,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
      And flush() is called to trigger impression posting
      And the test waits for the HTTP post to start
      And destroy() is called while the HTTP response is still blocked
-     Then no impressions should be orphaned in deleted status
-     And all impressions are accounted for: either posted or still active (recoverable).
+     Then all impressions are accounted for: either posted or still in DB (recoverable).
      */
     func testImpressionsNotLostWhenDestroyedDuringInflightPost() {
         let databaseName = "impressions_orphan_destroy_e2e"
@@ -198,10 +192,10 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         generateImpressions(client: client, count: evaluationCount)
         usleep(2_000_000)
 
-        // Verify impressions are in DB with active status
-        let (activeBeforeFlush, _) = queryImpressionCounts()
-        print("SplitSDK - ORPHAN_TEST activeBeforeFlush=\(activeBeforeFlush)")
-        XCTAssertEqual(evaluationCount, activeBeforeFlush, "All impressions should be active before flush")
+        // Verify impressions are in DB
+        let impressionsBeforeFlush = queryImpressionCount()
+        print("SplitSDK - ORPHAN_TEST impressionsBeforeFlush=\(impressionsBeforeFlush)")
+        XCTAssertEqual(evaluationCount, impressionsBeforeFlush, "All impressions should be in DB before flush")
 
         // Trigger flush — this will pop() rows (marking them deleted) and start HTTP post
         client.flush()
@@ -211,18 +205,16 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         cleanupClient(client)
 
         // Check DB and post state BEFORE unblocking the HTTP response.
-        let (activeAfterDestroy, deletedAfterDestroy) = queryImpressionCounts()
+        let impressionsAfterDestroy = queryImpressionCount()
         var postReceivedAfterDestroy = 0
         postQueue.sync { postReceivedAfterDestroy = postReceivedCount }
 
-        print("SplitSDK - ORPHAN_TEST activeAfterDestroy=\(activeAfterDestroy), deletedAfterDestroy=\(deletedAfterDestroy), postReceivedAfterDestroy=\(postReceivedAfterDestroy), evaluationCount=\(evaluationCount)")
+        print("SplitSDK - ORPHAN_TEST impressionsAfterDestroy=\(impressionsAfterDestroy), postReceivedAfterDestroy=\(postReceivedAfterDestroy), evaluationCount=\(evaluationCount)")
 
-        // No impressions should be stuck in deleted status — they must be either
-        // posted successfully or restored to active so a future flush can retry them.
-        XCTAssertEqual(0, deletedAfterDestroy,
-                       "No impressions should be orphaned in deleted status")
-        XCTAssertEqual(evaluationCount, activeAfterDestroy + postReceivedAfterDestroy,
-                       "All impressions must be accounted for: either posted or still active")
+        // All impressions must be accounted for: either posted or still in DB
+        // so a future flush can retry them.
+        XCTAssertEqual(evaluationCount, impressionsAfterDestroy + postReceivedAfterDestroy,
+                       "All impressions must be accounted for: either posted or still in DB")
 
         // Unblock the HTTP response so the blocked worker thread can finish
         impressionPostSemaphore.signal()
@@ -235,21 +227,23 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
      Scenario: a second client on the same DB recovers orphaned impressions from the first
 
      This is a variant of testImpressionsNotLostWhenDestroyedDuringInflightPost.
-     After Client A's impressions are orphaned (stuck in deleted status), a second
-     factory/client is created on the same database. Client B does its own evaluations
-     and flushes. We verify that:
-     - Client B posts both its OWN and the recovered orphaned impressions from Client A
-     - No impressions remain in deleted status after Client B flushes
+     After Client A is destroyed during an in-flight post, its impressions remain in
+     the database. A second factory/client is created on the same database. Client B
+     does its own evaluations and flushes. We verify that:
+     - Client B posts both its OWN and the recovered impressions from Client A
+     - No impressions remain in the database after Client B flushes
      */
     func testOrphanedImpressionsRecoveredByNewClient() {
         let databaseName = "impressions_orphan_new_client_e2e"
         let impressionPostStarted = XCTestExpectation(description: "Impression post started")
         let impressionPostSemaphore = DispatchSemaphore(value: 0)
-        let clientBPostedExp = XCTestExpectation(description: "Client B impressions posted")
+        let clientBPostedExp = XCTestExpectation(description: "Client B posted expected impressions")
         var postReceivedCount = 0
         var clientBPostReceivedCount = 0
         var isClientBPhase = false
         let postQueue = DispatchQueue(label: "orphan-new-client-post-queue")
+        var expectedPostedByB = 0
+        var clientBPostedExpFulfilled = false
 
         let dispatcher = buildOrphanTestDispatcher { request in
             if !isClientBPhase {
@@ -261,11 +255,16 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
                 }
                 return TestDispatcherResponse(code: 200)
             } else {
-                // Client B phase: respond immediately and count
+                // Client B phase: respond immediately and count until expected total is reached.
                 postQueue.sync {
                     clientBPostReceivedCount += self.parseImpressionCount(from: request)
+                    if !clientBPostedExpFulfilled,
+                       expectedPostedByB > 0,
+                       clientBPostReceivedCount >= expectedPostedByB {
+                        clientBPostedExpFulfilled = true
+                        clientBPostedExp.fulfill()
+                    }
                 }
-                clientBPostedExp.fulfill()
                 return TestDispatcherResponse(code: 200)
             }
         }
@@ -290,9 +289,9 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         impressionPostSemaphore.signal()
         usleep(500_000)
 
-        // Verify Client A's impressions are orphaned
-        let (_, deletedAfterDestroy) = queryImpressionCounts()
-        print("SplitSDK - ORPHAN_NEW_CLIENT deletedAfterDestroy=\(deletedAfterDestroy)")
+        // Verify Client A's impressions are still in DB
+        let impressionsAfterDestroy = queryImpressionCount()
+        print("SplitSDK - ORPHAN_NEW_CLIENT impressionsAfterDestroy=\(impressionsAfterDestroy)")
 
         // --- Client B phase ---
         isClientBPhase = true
@@ -304,24 +303,36 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         usleep(2_000_000)
 
         // Flush Client B
+        // Client B is only expected to post impressions that are ACTIVE in the DB at startup
+        // (leftover from Client A) plus its own generated impressions. Impressions already
+        // sent by Client A's in-flight request are not expected to be re-posted by Client B.
+        expectedPostedByB = impressionsAfterDestroy + evaluationCountB
         clientB.flush()
         wait(for: [clientBPostedExp], timeout: 15)
         usleep(1_000_000)
 
         // Final state
         var finalClientBPostCount = 0
-        postQueue.sync { finalClientBPostCount = clientBPostReceivedCount }
-        let (finalActive, finalDeleted) = queryImpressionCounts()
+        var finalClientAPostCount = 0
+        postQueue.sync {
+            finalClientBPostCount = clientBPostReceivedCount
+            finalClientAPostCount = postReceivedCount
+        }
+        let finalImpressions = queryImpressionCount()
 
-        print("SplitSDK - ORPHAN_NEW_CLIENT clientBPosted=\(finalClientBPostCount), finalActive=\(finalActive), finalDeleted=\(finalDeleted)")
+        print("SplitSDK - ORPHAN_NEW_CLIENT clientAPosted=\(finalClientAPostCount), clientBPosted=\(finalClientBPostCount), finalImpressions=\(finalImpressions)")
 
-        // Client B should have posted ALL impressions: its own + recovered orphans from Client A
-        XCTAssertEqual(evaluationCountA + evaluationCountB, finalClientBPostCount,
-                       "Client B should post both its own and Client A's recovered impressions")
+        // Client B should post leftover ACTIVE impressions from Client A plus its own.
+        XCTAssertEqual(impressionsAfterDestroy + evaluationCountB, finalClientBPostCount,
+                       "Client B should post its own impressions plus active leftover impressions from Client A")
 
-        // No impressions should remain in deleted status
-        XCTAssertEqual(0, finalDeleted,
-                       "No impressions should be stuck in deleted status after Client B flushes")
+        // Across both clients, all evaluations should be accounted for by posted impressions.
+        XCTAssertEqual(evaluationCountA + evaluationCountB, finalClientAPostCount + finalClientBPostCount,
+                       "All impressions should be posted across Client A (in-flight) and Client B (recovered active)")
+
+        // No impressions should remain in DB
+        XCTAssertEqual(0, finalImpressions,
+                       "No impressions should remain in DB after Client B flushes")
 
         removeDatabaseFiles(databaseName: databaseName)
     }
@@ -331,7 +342,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
      Given Client A generates impressions and flushes
      And the impressions HTTP POST fails with a 500 error (not interrupted)
-     And ImpressionsRecorderWorker.setActive() restores them to active status
+     And the impressions remain in the database after the failed flush
      And Client A is destroyed normally after the failed flush completes
      When a second factory/client (Client B) is created on the same database
      And Client B generates its own impressions and flushes
@@ -385,21 +396,19 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         clientA.flush()
         wait(for: [clientAPostAttempted], timeout: 10)
 
-        // Wait until impressions are restored to active by setActive().
+        // Wait until impressions are back in DB after failed POST.
         let restoreDeadline = Date().timeIntervalSince1970 + 10.0
         while Date().timeIntervalSince1970 < restoreDeadline {
-            let (active, deleted) = queryImpressionCounts()
-            if active == evaluationCountA && deleted == 0 {
+            let count = queryImpressionCount()
+            if count == evaluationCountA {
                 break
             }
             usleep(200_000)
         }
 
-        let (activeAfterFailedFlush, deletedAfterFailedFlush) = queryImpressionCounts()
-        XCTAssertEqual(evaluationCountA, activeAfterFailedFlush,
-                       "All impressions should be restored to active after failed POST")
-        XCTAssertEqual(0, deletedAfterFailedFlush,
-                       "No impressions should remain in deleted status after failed POST")
+        let impressionsAfterFailedFlush = queryImpressionCount()
+        XCTAssertEqual(evaluationCountA, impressionsAfterFailedFlush,
+                       "All impressions should still be in DB after failed POST")
 
         cleanupClient(clientA)
 
@@ -420,8 +429,8 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         // Wait until DB drains after successful post.
         let drainDeadline = Date().timeIntervalSince1970 + 10.0
         while Date().timeIntervalSince1970 < drainDeadline {
-            let (active, deleted) = queryImpressionCounts()
-            if active == 0 && deleted == 0 {
+            let count = queryImpressionCount()
+            if count == 0 {
                 break
             }
             usleep(200_000)
@@ -432,9 +441,8 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
                            "Client B should post both Client A's recovered and its own impressions")
         }
 
-        let (finalActive, finalDeleted) = queryImpressionCounts()
-        XCTAssertEqual(0, finalActive, "No active impressions should remain after successful flush")
-        XCTAssertEqual(0, finalDeleted, "No deleted impressions should remain after successful flush")
+        let finalImpressions = queryImpressionCount()
+        XCTAssertEqual(0, finalImpressions, "No impressions should remain in DB after successful flush")
 
         cleanupClient(clientB)
         removeDatabaseFiles(databaseName: databaseName)
@@ -591,7 +599,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         }
 
         // Check the number of impressions recorded
-        let expectedCount = 1
+        let expectedCount = expectDeduplication ? 1 : treatmentTimes
         XCTAssertEqual(expectedCount, impressions[featureName]?.count ?? 0,
                        "Expected \(expectedCount) impressions for feature \(featureName)")
         
@@ -776,9 +784,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
             if request.isImpressionsEndpoint() {
                 self.queue.sync {
-                    if let exp = self.impExp {
-                        exp.fulfill()
-                    }
                     if let body = request.body?.stringRepresentation.utf8 {
                         let bodyString = String(body)
                         self.requestBodies.append(bodyString)
@@ -794,6 +799,9 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
                                 self.impressions.updateValue(imps, forKey: test.testName)
                             }
                         }
+                    }
+                    if let exp = self.impExp {
+                        exp.fulfill()
                     }
                 }
                 return TestDispatcherResponse(code: 200)
@@ -933,10 +941,8 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         }
     }
 
-    /// Queries the database for impression counts grouped by status.
-    private func queryImpressionCounts() -> (active: Int, deleted: Int) {
-        let active = db.impressionDao.getBy(createdAt: 0, status: StorageRecordStatus.active, maxRows: 1_000_000).count
-        let deleted = db.impressionDao.getBy(createdAt: 0, status: StorageRecordStatus.deleted, maxRows: 1_000_000).count
-        return (active, deleted)
+    /// Queries the database for total impression count.
+    private func queryImpressionCount() -> Int {
+        return db.impressionDao.getBy(createdAt: 0, status: StorageRecordStatus.active, maxRows: 1_000_000).count
     }
 }

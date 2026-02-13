@@ -15,6 +15,7 @@ class ImpressionEntity: NSManagedObject {
     @NSManaged public var storageId: String
     @NSManaged public var body: String
     @NSManaged public var createdAt: Int64
+    // status is not queried anymore, but we keep it for backward compatibility
     @NSManaged public var status: Int32
     @NSManaged public var testName: String
 }
