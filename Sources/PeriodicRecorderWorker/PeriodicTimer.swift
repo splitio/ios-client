@@ -1,10 +1,5 @@
-//
-//  PeriodicTimer.swift
 //  PeriodicRecorderWorker
-//
-//  Created by Javier Avrudsky on 26-Sep-2020
 //  Copyright © 2020 Split. All rights reserved.
-//
 
 import Foundation
 

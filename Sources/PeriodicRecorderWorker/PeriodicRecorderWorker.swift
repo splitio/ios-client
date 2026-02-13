@@ -1,10 +1,6 @@
-//
-//  PeriodicRecorderWorker.swift
 //  PeriodicRecorderWorker
-//
 //  Created by Javier Avrudsky on 02-Dic-2020
 //  Copyright © 2020 Split. All rights reserved.
-//
 
 import Foundation
 
