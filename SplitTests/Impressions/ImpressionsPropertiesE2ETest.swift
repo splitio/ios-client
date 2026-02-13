@@ -843,6 +843,162 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         return splitJson
     }
 
+    // MARK: - Two-Coordinator Collision Test & Helpers
+
+    /**
+     Scenario: back-to-back factory creation on the same SQLite file.
+     Replicates the customer flow exactly:
+
+       1. Create Client A (factory A, file-backed DB)
+       2. Client A does many getTreatment evaluations with properties (no dedup →
+          one async insert + save() per evaluation, still queuing on context A)
+       3. Client A calls flush() (async — two dispatch hops before actual work)
+       4. IMMEDIATELY create Client B (factory B, same SQLite file, separate
+          NSPersistentStoreCoordinator). No sleep, no waiting.
+       5. Client B's periodic timer fires at deadline:0 → pop → post → delete.
+          These delete save() calls collide with Client A's still-running insert
+          save() calls at the SQLite write lock (SQLITE_BUSY, no busy-wait).
+       6. Client B does its own evaluations (more concurrent writes).
+
+     On the old branch (with status-based pop):
+       - pop() marks rows as "deleted" → if HTTP fails, setActive() recovery
+         save() can hit SQLITE_BUSY → rows stuck as "deleted" → LOST.
+       - Even with HTTP success, the status update save() and delete save()
+         compete with the other coordinator's writes.
+
+     On the new branch (no status): pop() is read-only, delete only after
+     successful POST, no recovery needed. Should pass.
+     */
+    func testBackToBackFactoriesOnSameDbFileNoImpressionLoss() {
+        let databaseName = "impressions_two_coordinators_e2e"
+        removeDatabaseFiles(databaseName: databaseName)
+
+        let postQueue = DispatchQueue(label: "two-coord-post-queue")
+        var clientAPostCount = 0
+        var clientBPostCount = 0
+
+        let evaluationCountA = 30000
+        let evaluationCountB = 6000
+
+        // Client A dispatcher: count posted impressions
+        let dispatcherA = buildOrphanTestDispatcher { request in
+            postQueue.sync {
+                clientAPostCount += self.parseImpressionCount(from: request)
+            }
+            return TestDispatcherResponse(code: 200)
+        }
+
+        // Client B dispatcher: count posted impressions
+        let dispatcherB = buildOrphanTestDispatcher { request in
+            postQueue.sync {
+                clientBPostCount += self.parseImpressionCount(from: request)
+            }
+            return TestDispatcherResponse(code: 200)
+        }
+
+        // --- Client A: first NSPersistentStoreCoordinator on file-backed DB ---
+        guard let helperA = CoreDataHelperBuilder.build(databaseName: databaseName) else {
+            XCTFail("Failed to create DB helper for Client A")
+            return
+        }
+        db = TestingHelper.createTestDatabase(name: databaseName, helper: helperA)
+        let httpClientA = buildOrphanHttpClient(dispatcher: dispatcherA)
+        let clientA = buildOrphanTestClient(httpClient: httpClientA, matchingKey: userKey) { config in
+            config.impressionsQueueSize = 100_000
+            config.impressionsChunkSize = 100_000
+            config.impressionRefreshRate = 5
+        }
+
+        // Step 2: Client A does many evaluations — async inserts still queuing
+        // on context A's serial queue.
+        generateImpressions(client: clientA, count: evaluationCountA)
+
+        // Step 3: Client A calls flush() — async (DispatchQueue.general → flushQueue).
+        // Inserts are likely still in progress.
+        clientA.flush()
+
+        // Step 4: IMMEDIATELY create Client B — NO SLEEP.
+        // Client A's inserts are still running. Client B opens a second
+        // NSPersistentStoreCoordinator on the same SQLite file.
+        // Client B's periodic timer fires at deadline:0 → pop → post → delete.
+        // Those writes collide with Client A's ongoing insert save() calls.
+        guard let helperB = CoreDataHelperBuilder.build(databaseName: databaseName) else {
+            XCTFail("Failed to create DB helper for Client B")
+            return
+        }
+        db = TestingHelper.createTestDatabase(name: databaseName, helper: helperB)
+        let httpClientB = buildOrphanHttpClient(dispatcher: dispatcherB)
+        let clientB = buildOrphanTestClient(httpClient: httpClientB, matchingKey: "client_b_key") { config in
+            config.impressionsQueueSize = 100_000
+            config.impressionsChunkSize = 100_000
+            config.impressionRefreshRate = 5
+        }
+
+        // Step 5-6: Client B does its own evaluations (more concurrent writes).
+        generateImpressions(client: clientB, count: evaluationCountB, startIndex: evaluationCountA)
+
+        // Wait for async inserts + flush cycles to settle on both coordinators.
+        usleep(5_000_000)
+
+        // Extra flush rounds to drain anything remaining.
+        clientA.flush()
+        clientB.flush()
+        usleep(5_000_000)
+
+        clientA.flush()
+        clientB.flush()
+        usleep(3_000_000)
+
+        // --- Verification ---
+        // Use a FRESH coordinator to get a clean view of the SQLite file.
+        guard let helperVerify = CoreDataHelperBuilder.build(databaseName: databaseName) else {
+            XCTFail("Failed to create verification DB helper")
+            return
+        }
+        let dbVerify = TestingHelper.createTestDatabase(name: databaseName, helper: helperVerify)
+
+        // Count active impressions (recoverable)
+        let activeDbCount = dbVerify.impressionDao.getBy(createdAt: 0,
+                                                          status: StorageRecordStatus.active,
+                                                          maxRows: 1_000_000).count
+        // Count deleted impressions (stuck — lost if nobody recovers them)
+        let deletedDbCount = dbVerify.impressionDao.getBy(createdAt: 0,
+                                                           status: StorageRecordStatus.deleted,
+                                                           maxRows: 1_000_000).count
+
+        var finalAPosted = 0
+        var finalBPosted = 0
+        postQueue.sync {
+            finalAPosted = clientAPostCount
+            finalBPosted = clientBPostCount
+        }
+
+        // Both clients' HTTP succeeds, so all posted impressions reached the server.
+        // But impressions stuck as "deleted" in the DB were popped (marked deleted)
+        // yet their delete save() may have failed (SQLITE_BUSY) — they could be
+        // re-posted on a future flush, OR they may be orphaned if the context is gone.
+        let totalPosted = finalAPosted + finalBPosted
+        let totalAccountedFor = totalPosted + activeDbCount
+        let expectedTotal = evaluationCountA + evaluationCountB
+
+        print("SplitSDK - TWO_COORD clientA_posted=\(finalAPosted), clientB_posted=\(finalBPosted), "
+            + "db_active=\(activeDbCount), db_deleted=\(deletedDbCount), "
+            + "total_accounted=\(totalAccountedFor), expected=\(expectedTotal)")
+
+        // Every impression must be either posted or recoverable (active in DB).
+        // Impressions stuck as "deleted" are NOT recoverable — they will never be
+        // popped again (status=active filter skips them).
+        XCTAssertGreaterThanOrEqual(totalAccountedFor, expectedTotal,
+            "All impressions must be accounted for: "
+            + "posted(\(totalPosted)) + db_active(\(activeDbCount)) "
+            + "should be >= expected(\(expectedTotal)). "
+            + "db_deleted(\(deletedDbCount)) rows are STUCK and LOST.")
+
+        cleanupClient(clientA)
+        cleanupClient(clientB)
+        removeDatabaseFiles(databaseName: databaseName)
+    }
+
     // MARK: - Orphan Test Helpers
 
     /// Parses the number of individual impressions from an HTTP request body.
@@ -946,147 +1102,4 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         return db.impressionDao.getBy(createdAt: 0, status: StorageRecordStatus.active, maxRows: 1_000_000).count
     }
 
-    // MARK: - Two-Coordinator Collision Test
-
-        /**
-         Scenario: back-to-back factory creation on the same SQLite file — no impression loss
-         despite concurrent insert/delete across uncoordinated NSPersistentStoreCoordinators.
-
-         Replicates the reported customer scenario:
-         - Client A (factory A) does many getTreatment evaluations with impression properties.
-           Each evaluation inserts one impression with an individual save() — no deduplication
-           because properties make each impression unique.
-         - Client A calls flush().
-         - Client B (factory B, same SDK key + same DB prefix) is created "back to back".
-           Each factory creates its own NSPersistentStoreCoordinator, both pointing at the
-           same SQLite file.
-         - Client B's periodic timer fires immediately (deadline: 0) — it pops committed
-           impressions from SQLite, posts them, and deletes them.
-         - The collision: Client A's ongoing insert save() and Client B's delete save()
-           compete for the SQLite write lock. With no busy-timeout configured,
-           the loser gets SQLITE_BUSY and CoreDataHelper.save() swallows the error.
-
-         The test verifies that despite this contention, all impressions are accounted for:
-         either posted to the server or still recoverable in the database.
-         */
-    func testBackToBackFactoriesOnSameDbFileNoImpressionLoss() {
-        let databaseName = "impressions_two_coordinators_e2e"
-        removeDatabaseFiles(databaseName: databaseName)
-
-        let postQueue = DispatchQueue(label: "two-coord-post-queue")
-        var clientAPostCount = 0
-        var clientBPostCount = 0
-
-        let evaluationCountA = 200
-        let evaluationCountB = 50
-
-        // Client A dispatcher: count posted impressions
-        let dispatcherA = buildOrphanTestDispatcher { request in
-            postQueue.sync {
-                clientAPostCount += self.parseImpressionCount(from: request)
-            }
-            return TestDispatcherResponse(code: 200)
-        }
-
-        // Client B dispatcher: count posted impressions
-        let dispatcherB = buildOrphanTestDispatcher { request in
-            postQueue.sync {
-                clientBPostCount += self.parseImpressionCount(from: request)
-            }
-            return TestDispatcherResponse(code: 200)
-        }
-
-        // --- Client A: first NSPersistentStoreCoordinator on file-backed DB ---
-        guard let helperA = CoreDataHelperBuilder.build(databaseName: databaseName) else {
-            XCTFail("Failed to create DB helper for Client A")
-            return
-        }
-        db = TestingHelper.createTestDatabase(name: databaseName, helper: helperA)
-        let httpClientA = buildOrphanHttpClient(dispatcher: dispatcherA)
-        let clientA = buildOrphanTestClient(httpClient: httpClientA, matchingKey: userKey) { config in
-            config.impressionsQueueSize = 100_000
-            config.impressionsChunkSize = 100_000
-        }
-
-        // Client A generates many impressions. Each getTreatment triggers an async
-        // insert (context.perform { create + save() }). The saves are queued on
-        // Context A's serial queue and will still be executing after this returns.
-        generateImpressions(client: clientA, count: evaluationCountA)
-
-        // Client A calls flush() — async (DispatchQueue.general → flushQueue).
-        // Inserts may still be in progress on Context A's queue.
-        clientA.flush()
-
-        // --- Client B: SECOND NSPersistentStoreCoordinator on SAME SQLite file ---
-        // Created "back to back" while Client A is still inserting.
-        // Client B's periodic timer fires immediately (deadline: 0). Its pop() reads
-        // from SQLite; its post + delete save() may collide with Client A's ongoing
-        // insert save() at the SQLite write lock (SQLITE_BUSY, no busy-wait).
-        guard let helperB = CoreDataHelperBuilder.build(databaseName: databaseName) else {
-            XCTFail("Failed to create DB helper for Client B")
-            return
-        }
-        db = TestingHelper.createTestDatabase(name: databaseName, helper: helperB)
-        let httpClientB = buildOrphanHttpClient(dispatcher: dispatcherB)
-        let clientB = buildOrphanTestClient(httpClient: httpClientB, matchingKey: "client_b_key") { config in
-            config.impressionsQueueSize = 100_000
-            config.impressionsChunkSize = 100_000
-        }
-
-        // Client B also generates its own impressions (separate coordinator writes).
-        generateImpressions(client: clientB, count: evaluationCountB, startIndex: evaluationCountA)
-
-        // Wait for all async inserts to drain on both contexts.
-        usleep(5_000_000)
-
-        // Explicit flush on both to post any remaining impressions.
-        clientA.flush()
-        clientB.flush()
-
-        // Wait for flushes + HTTP + deletes to settle.
-        usleep(5_000_000)
-
-        // One more flush round in case deletes caused SQLITE_BUSY on prior flush saves,
-        // leaving some impressions un-deleted and re-poppable.
-        clientA.flush()
-        clientB.flush()
-        usleep(3_000_000)
-
-        // --- Verification ---
-        // Use a FRESH coordinator to get a clean view of the SQLite file.
-        guard let helperVerify = CoreDataHelperBuilder.build(databaseName: databaseName) else {
-            XCTFail("Failed to create verification DB helper")
-            return
-        }
-        let dbVerify = TestingHelper.createTestDatabase(name: databaseName, helper: helperVerify)
-        let finalDbCount = dbVerify.impressionDao.getBy(createdAt: 0,
-                                                         status: StorageRecordStatus.active,
-                                                         maxRows: 1_000_000).count
-
-        var finalAPosted = 0
-        var finalBPosted = 0
-        postQueue.sync {
-            finalAPosted = clientAPostCount
-            finalBPosted = clientBPostCount
-        }
-
-        let totalAccountedFor = finalAPosted + finalBPosted + finalDbCount
-        let expectedTotal = evaluationCountA + evaluationCountB
-
-        print("SplitSDK - TWO_COORD clientA_posted=\(finalAPosted), clientB_posted=\(finalBPosted), "
-            + "db_remaining=\(finalDbCount), total_accounted=\(totalAccountedFor), expected=\(expectedTotal)")
-
-        // Core assertion: no impressions lost.
-        // Every impression must be either posted (by A or B) or still in the DB.
-        // Duplicates across clients are acceptable (both may post the same rows
-        // because pop() is read-only on this branch).
-        XCTAssertGreaterThanOrEqual(totalAccountedFor, expectedTotal,
-            "All impressions must be accounted for: "
-            + "posted_A(\(finalAPosted)) + posted_B(\(finalBPosted)) + db(\(finalDbCount)) "
-            + "should be >= expected(\(expectedTotal))")
-
-        cleanupClient(clientA)
-        cleanupClient(clientB)
-        removeDatabaseFiles(databaseName: databaseName)
-    }
 }
