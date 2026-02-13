@@ -18,7 +18,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
     var ruleBasedSegmentsStorage: RuleBasedSegmentsStorageStub!
     var generalInfoStorage: GeneralInfoStorageMock!
     var eventsManager: SplitEventsManagerMock!
-    var backoffCounter: ReconnectBackoffCounterStub!
+    var backoffCounter: BackoffCounterStub!
     var splitsSyncWorker: PeriodicSplitsSyncWorker!
     var splitChangeProcessor: SplitChangeProcessorStub!
     var ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessorStub!
@@ -31,7 +31,7 @@ class PeriodicSplitsSyncWorkerTest: XCTestCase {
         splitChangeProcessor = SplitChangeProcessorStub()
         ruleBasedSegmentChangeProcessor = RuleBasedSegmentChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
-        backoffCounter = ReconnectBackoffCounterStub()
+        backoffCounter = BackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
     }
 

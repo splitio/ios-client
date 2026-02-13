@@ -136,8 +136,8 @@ class SplitsSyncHelper: @unchecked Sendable {
                    headers: HttpHeaders? = nil,
                    useTillParam: Bool = false) throws -> SyncResult {
 
-        let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffTimeBaseInSecs,
-                                                            maxTimeLimit: backoffTimeMaxInSecs)
+        let backoffCounter = DefaultBackoffCounter(backoffBase: backoffTimeBaseInSecs,
+                                                   maxTimeLimit: backoffTimeMaxInSecs)
         var nextSince = since
         var nextRbSince: Int64? = rbSince
         var attemptCount = 0

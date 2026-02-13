@@ -1,5 +1,5 @@
 //
-//  ReconnectBackoffCounterStub.swift
+//  BackoffCounterStub.swift
 //  SplitTests
 //
 //  Created by Javier L. Avrudsky on 17/08/2020.
@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 
-class ReconnectBackoffCounterStub: ReconnectBackoffCounter, @unchecked Sendable {
+class BackoffCounterStub: BackoffCounter, @unchecked Sendable {
     var resetCounterCalled = false
     var retryCallCount = 0
     var nextRetryTime: Double = 1
