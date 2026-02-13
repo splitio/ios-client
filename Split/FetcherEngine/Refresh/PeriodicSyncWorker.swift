@@ -7,58 +7,9 @@
 //
 
 import Foundation
-protocol PeriodicTimer {
-    func trigger()
-    func stop()
-    func destroy()
-    func handler( _ handler: @escaping () -> Void)
-}
 
-class DefaultPeriodicTimer: PeriodicTimer, @unchecked Sendable {
-
-    private let deadLineInSecs: Int
-    private let intervalInSecs: Int
-    private var fetchTimer: DispatchSourceTimer
-    private var isRunning: Atomic<Bool>
-
-    init(deadline deadlineInSecs: Int, interval intervalInSecs: Int) {
-        self.deadLineInSecs = deadlineInSecs
-        self.intervalInSecs = intervalInSecs
-        self.isRunning = Atomic(false)
-        fetchTimer = DispatchSource.makeTimerSource(queue: DispatchQueue.general)
-        self.fetchTimer.resume()
-    }
-
-    convenience init(interval intervalInSecs: Int) {
-        self.init(deadline: 0, interval: intervalInSecs)
-    }
-
-    func trigger() {
-        if !isRunning.getAndSet(true) {
-            fetchTimer.schedule(deadline: .now() + .seconds(deadLineInSecs),
-                                repeating: .seconds(intervalInSecs))
-//            fetchTimer.resume()
-        }
-    }
-
-    func stop() {
-        // Not suspending the timer to avoid crashes
-        isRunning.set(false)
-    }
-
-    func destroy() {
-        fetchTimer.cancel()
-    }
-
-    func handler( _ handler: @escaping () -> Void) {
-        let action = { [weak self] in
-            if let self = self, self.isRunning.value {
-                handler()
-            }
-        }
-        fetchTimer.setEventHandler(handler: action)
-    }
-}
+// PeriodicTimer and DefaultPeriodicTimer are defined in Sources/PeriodicRecorderWorker/PeriodicTimer.swift
+// and are available via @_exported import (SPM) or direct inclusion (CocoaPods).
 
 protocol PeriodicSyncWorker {
     //    typealias SyncCompletion = (Bool) -> Void

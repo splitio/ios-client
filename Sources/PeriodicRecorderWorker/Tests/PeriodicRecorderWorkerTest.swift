@@ -1,13 +1,48 @@
 //
-//  PeriodicRecorderWorker.swift
-//  SplitTests
+//  PeriodicRecorderWorkerTest.swift
+//  PeriodicRecorderWorkerTests
 //
 //  Created by Javier Avrudsky on 18/12/2020.
 //  Copyright © 2020 Split. All rights reserved.
 //
 
 import XCTest
-@testable import Split
+@testable import PeriodicRecorderWorker
+
+// MARK: - Test Stubs
+
+final class RecorderWorkerStub: RecorderWorker, @unchecked Sendable {
+    var flushCallCount = 0
+    
+    func flush() {
+        flushCallCount += 1
+    }
+}
+
+final class PeriodicTimerStub: PeriodicTimer, @unchecked Sendable {
+    var timerHandler: (() -> Void)?
+    var triggerCallCount = 0
+    var stopCallCount = 0
+    var destroyCallCount = 0
+    
+    func trigger() {
+        triggerCallCount += 1
+    }
+    
+    func stop() {
+        stopCallCount += 1
+    }
+    
+    func destroy() {
+        destroyCallCount += 1
+    }
+    
+    func handler(_ handler: @escaping () -> Void) {
+        timerHandler = handler
+    }
+}
+
+// MARK: - Tests
 
 class PeriodicRecorderWorkerTests: XCTestCase {
 
@@ -52,6 +87,4 @@ class PeriodicRecorderWorkerTests: XCTestCase {
 
         XCTAssertEqual(1, timer.destroyCallCount)
     }
-
 }
-
