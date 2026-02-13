@@ -94,8 +94,8 @@ class SyncManagerBuilder: @unchecked Sendable {
     }
 
     private func buildSseBackoffTimer(config: SplitClientConfig) -> BackoffCounterTimer {
-        let sseBackoffCounter = DefaultReconnectBackoffCounter(backoffBase: config.pushRetryBackoffBase)
-        return DefaultBackoffCounterTimer(reconnectBackoffCounter: sseBackoffCounter)
+        let sseBackoffCounter = DefaultBackoffCounter(backoffBase: config.pushRetryBackoffBase)
+        return DefaultBackoffCounterTimer(backoffCounter: sseBackoffCounter)
     }
 
     private func buildSseHttpClient(config: SplitClientConfig,

@@ -31,7 +31,7 @@ class SyncWorkerFactoryStub: SyncWorkerFactory, @unchecked Sendable {
     var retryableSplitsUpdateWorkers: [RetryableSyncWorker] = [RetryableSyncWorkerStub()]
 
     func createRetryableSplitsUpdateWorker(changeNumber: SplitsUpdateChangeNumber,
-                                           reconnectBackoffCounter: ReconnectBackoffCounter
+                                           backoffCounter: BackoffCounter
     ) -> RetryableSyncWorker {
 
         if retryableWorkerIndex < retryableSplitsUpdateWorkers.count - 1{
