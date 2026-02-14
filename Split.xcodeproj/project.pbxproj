@@ -2381,7 +2381,6 @@
 		95825BA0271F004700A0CDAD /* Split_Split.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Split_Split.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		95825BA2271F004800A0CDAD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95825BD7271F4E3700A0CDAD /* Bundle+Name.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+Name.swift"; sourceTree = "<group>"; };
-		95825BDC271F4E8700A0CDAD /* Bundle+Name.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Name.swift"; sourceTree = "<group>"; };
 		95825C012721F0F800A0CDAD /* UserKeyEncondingTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserKeyEncondingTest.swift; sourceTree = "<group>"; };
 		9582A1802C6E70A5001F25E2 /* SegmentsUpdateWorkerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentsUpdateWorkerTests.swift; sourceTree = "<group>"; };
 		9582A1822C73D4F5001F25E2 /* RestClient+MySegments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+MySegments.swift"; sourceTree = "<group>"; };
@@ -4357,7 +4356,6 @@
 		956E418E271DC8F1008B4DB6 /* Splitlib */ = {
 			isa = PBXGroup;
 			children = (
-				95825BDC271F4E8700A0CDAD /* Bundle+Name.swift */,
 			);
 			path = Splitlib;
 			sourceTree = "<group>";
