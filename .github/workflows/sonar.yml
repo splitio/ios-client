@@ -30,7 +30,7 @@ jobs:
           xcodebuild -quiet test \
             -project Split.xcodeproj \
             -scheme Split \
-            -testPlan "SplitiOSFull" \
+            -testPlan "TestPlans/SplitiOSFull" \
             -destination 'platform=iOS Simulator,OS=18.5,name=iPhone 16' \
             -enableCodeCoverage YES \
             -resultBundlePath build/Logs/Test/TestResults.xcresult \

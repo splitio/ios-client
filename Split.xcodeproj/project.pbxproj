@@ -2158,7 +2158,6 @@
 		5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitschanges_no_segments.json; sourceTree = "<group>"; };
 		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B3C18042ED76BAD0068D623 /* SplitTestsSwift6.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitTestsSwift6.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		5B3C18052ED76BAE0068D623 /* SplitTests copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "SplitTests copy-Info.plist"; path = "/Users/martin/Desktop/Code/ios-client/SplitTests copy-Info.plist"; sourceTree = "<absolute>"; };
 		5B7E60132F0D67C9003B32B9 /* SplitFlakyTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SplitFlakyTests.xctestplan; sourceTree = "<group>"; };
 		5B91B8382DDE4A30000510F0 /* SplitDTOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitDTOTests.swift; sourceTree = "<group>"; };
 		5BAB399D2F17EEAA00843533 /* SplitMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitMetadata.swift; sourceTree = "<group>"; };
@@ -2913,38 +2912,44 @@
 			name = iOS;
 			sourceTree = "<group>";
 		};
-		3B6DEE5020EA6A4D0067435E = {
+		TESTPLANS0001 /* TestPlans */ = {
 			isa = PBXGroup;
 			children = (
+				5B0F30732F3FDA0100D7056F /* ModulesTests.xctestplan */,
+				95F7BBC52C07D02F00C5F2E4 /* SemVer.xctestplan */,
+				5B7E60132F0D67C9003B32B9 /* SplitFlakyTests.xctestplan */,
+				95D83A962A561CB000ADA55E /* SplitPushManagerUT.xctestplan */,
+				952FA1682A44C0FB00264AB5 /* SplitStreamingUT.xctestplan */,
+				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
 				9583C2D42C987B02001298C8 /* SplitiOSHalf_1.xctestplan */,
 				9583C2D52C987B02001298C8 /* SplitiOSHalf_2.xctestplan */,
 				950F72FD292E87A4008A0040 /* SplitiOSIntegration.xctestplan */,
 				95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */,
-				95F7BBC52C07D02F00C5F2E4 /* SemVer.xctestplan */,
-				5B0F30732F3FDA0100D7056F /* ModulesTests.xctestplan */,
 				956A7E1A2970B0F20080D53C /* SplitiOSStreaming.xctestplan */,
 				95880D082AF201DC000498A0 /* SplitiOSStreaming_1.xctestplan */,
 				958F987A2B1669BC001F35B3 /* SplitiOSStreaming_2.xctestplan */,
-				952FA1682A44C0FB00264AB5 /* SplitStreamingUT.xctestplan */,
-				95D83A962A561CB000ADA55E /* SplitPushManagerUT.xctestplan */,
 				95B0307B28D275020030EC8B /* SplitiOSUnit.xctestplan */,
 				95192EA92BEA9806004084EA /* SplitiOSUnit_1.xctestplan */,
 				95DF58EB2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan */,
 				95DF58F72BEC5432009220B8 /* SplitiOSUnit_3.xctestplan */,
 				95DF58F92BEE513F009220B8 /* SplitiOSUnit_4.xctestplan */,
 				5BD75F822E5C9B5700F9EFBD /* SplitiOSUnit_5.xctestplan */,
-				950F72FE292E8D6B008A0040 /* SplitiOSFull.xctestplan */,
-				5B7E60132F0D67C9003B32B9 /* SplitFlakyTests.xctestplan */,
+			);
+			path = TestPlans;
+			sourceTree = "<group>";
+		};
+		3B6DEE5020EA6A4D0067435E = {
+			isa = PBXGroup;
+			children = (
+				TESTPLANS0001 /* TestPlans */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
 				95825BA1271F004700A0CDAD /* Resources */,
 				95B027B228CBEF7E0030EC8B /* SplitMacOS */,
 				95B02B1428CFBD160030EC8B /* SplitWatchOS */,
 				95B02CA528D0BD790030EC8B /* SplitTvOS */,
-				95B02E1028D222100030EC8B /* SplitMacOSTests */,
 				3B6DEE5B20EA6A4E0067435E /* Products */,
 				590DF9962125F6900082B94F /* Frameworks */,
-				5B3C18052ED76BAE0068D623 /* SplitTests copy-Info.plist */,
 				237E67ECC8C144123A55D057 /* Sources */,
 			);
 			sourceTree = "<group>";
@@ -4453,13 +4458,6 @@
 				95B02CA628D0BD790030EC8B /* SplitTvOS.h */,
 			);
 			path = SplitTvOS;
-			sourceTree = "<group>";
-		};
-		95B02E1028D222100030EC8B /* SplitMacOSTests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = SplitMacOSTests;
 			sourceTree = "<group>";
 		};
 		95B1802E2767DDC4002DC9DF /* Sync */ = {
@@ -7541,7 +7539,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "SplitTests copy-Info.plist";
+				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -7569,7 +7567,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "SplitTests copy-Info.plist";
+				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8259,7 +8257,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "SplitTests copy-Info.plist";
+				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -8499,7 +8497,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "SplitTests copy-Info.plist";
+				INFOPLIST_FILE = SplitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
