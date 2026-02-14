@@ -1656,7 +1656,6 @@
 		HTTPMOCK003B /* HttpRequestMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPMOCK003 /* HttpRequestMock.swift */; };
 		HTTPMOCK004A /* HttpRequestManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPMOCK004 /* HttpRequestManagerMock.swift */; };
 		HTTPMOCK004B /* HttpRequestManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPMOCK004 /* HttpRequestManagerMock.swift */; };
-		HTTPTESTS00001 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53126909B1A56DEF7508435 /* Http.framework */; };
 		HTTPTEST0001 /* EndpointTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4EE17FE37A6BAB2D117D669 /* EndpointTest.swift */; };
 		HTTPTEST0002 /* HttpDataRequestTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74DEF7B50823F88119BA6E1B /* HttpDataRequestTest.swift */; };
 		HTTPTEST0003 /* HttpErrorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C1524C7BEEB79FC9511F415 /* HttpErrorTest.swift */; };
@@ -1668,6 +1667,7 @@
 		HTTPTEST0009 /* HttpTaskMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C8EC7FC8354849F1782A28 /* HttpTaskMock.swift */; };
 		HTTPTEST0010 /* HttpRequestMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71C009AEC877C6F2EF6FBF1B /* HttpRequestMock.swift */; };
 		HTTPTEST0011 /* HttpRequestManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51B9B9FE5CD83450F74F278 /* HttpRequestManagerMock.swift */; };
+		HTTPTESTS00001 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53126909B1A56DEF7508435 /* Http.framework */; };
 		HTTPTESTS00002 /* HttpTestTypealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPTESTS00003 /* HttpTestTypealiases.swift */; };
 		HTTPTESTS00004 /* HttpTestTypealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPTESTS00003 /* HttpTestTypealiases.swift */; };
 		HTTPTESTS00005 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53126909B1A56DEF7508435 /* Http.framework */; };
@@ -2154,7 +2154,7 @@
 		59FB7C3D22037B9400ECC96A /* SpaceDelimitedLocalhostSplitsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceDelimitedLocalhostSplitsParser.swift; sourceTree = "<group>"; };
 		5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DbEncryptionManager.swift; sourceTree = "<group>"; };
 		5B0F30592F3F7DED00D7056F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		5B0F30732F3FE62E00D7056F /* Package.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		5B0F30732F3FDA0100D7056F /* ModulesTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModulesTests.xctestplan; sourceTree = "<group>"; };
 		5B279CF82E340FB900B73A36 /* splitschanges_no_segments.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = splitschanges_no_segments.json; sourceTree = "<group>"; };
 		5B343EAC2E26E937006BEBE7 /* StorageHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageHelper.swift; sourceTree = "<group>"; };
 		5B3C18042ED76BAD0068D623 /* SplitTestsSwift6.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitTestsSwift6.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2546,7 +2546,6 @@
 		95F3F09425AE1F3700084AF8 /* ServiceConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceConstants.swift; sourceTree = "<group>"; };
 		95F3F45F29842EE6005A4844 /* modules.modulemap */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "sourcecode.module-map"; path = modules.modulemap; sourceTree = "<group>"; };
 		95F7BBC52C07D02F00C5F2E4 /* SemVer.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = SemVer.xctestplan; sourceTree = "<group>"; };
-		5B0F30732F3FDA0100D7056F /* ModulesTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModulesTests.xctestplan; sourceTree = "<group>"; };
 		95F7BBCB2C08FB5000C5F2E4 /* SplitiOSIntegration_1.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SplitiOSIntegration_1.xctestplan; sourceTree = "<group>"; };
 		95F7BBD42C1A27C200C5F2E4 /* rsa_2048_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_2048_public_01.pem; sourceTree = "<group>"; };
 		95F7BBD52C1A27C200C5F2E4 /* rsa_4096_public_01.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rsa_4096_public_01.pem; sourceTree = "<group>"; };
@@ -2938,7 +2937,6 @@
 				5B7E60132F0D67C9003B32B9 /* SplitFlakyTests.xctestplan */,
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
-				956E418E271DC8F1008B4DB6 /* Splitlib */,
 				95825BA1271F004700A0CDAD /* Resources */,
 				95B027B228CBEF7E0030EC8B /* SplitMacOS */,
 				95B02B1428CFBD160030EC8B /* SplitWatchOS */,
@@ -2991,9 +2989,9 @@
 				3B6DEEE220EA6AE30067435E /* Network */,
 				3B6DEF0720EA6AE40067435E /* Storage */,
 				59FB7C3A220378F600ECC96A /* Localhost */,
+				956E418E271DC8F1008B4DB6 /* Splitlib */,
 				59BF3D422232A663004D134D /* Split.h */,
 				3B6DEE5E20EA6A4E0067435E /* Info.plist */,
-				5B0F30732F3FE62E00D7056F /* Package.swift */,
 			);
 			path = Split;
 			sourceTree = "<group>";
