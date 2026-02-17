@@ -108,7 +108,7 @@ public class DefaultHttpClient: @unchecked Sendable {
     private var requestManager: HttpRequestManager!
     private var configuration: HttpSessionConfig
     private var isStarted = false
-    private var startQueue = DispatchQueue(label: "http-client-start", attributes: .concurrent)
+    private var startQueue = DispatchQueue(label: "http-client-start")
 
     public init(configuration: HttpSessionConfig = HttpSessionConfig.default,
          session: HttpSession? = nil,

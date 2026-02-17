@@ -11,7 +11,7 @@ import Logging
 /// Stores sent requests in a list
 /// and updates them by calling corresponding handler
 /// when a delegate method from URLTask or URLSession is called
-public protocol HttpRequestManager {
+ public protocol HttpRequestManager {
     func addRequest(_ request: HttpRequest)
     func append(data: Data, to taskIdentifier: Int)
     func complete(taskIdentifier: Int, error: HttpError?)

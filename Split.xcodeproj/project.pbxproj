@@ -1668,8 +1668,8 @@
 		HTTPTEST0010 /* HttpRequestMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71C009AEC877C6F2EF6FBF1B /* HttpRequestMock.swift */; };
 		HTTPTEST0011 /* HttpRequestManagerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = C51B9B9FE5CD83450F74F278 /* HttpRequestManagerMock.swift */; };
 		HTTPTESTS00001 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53126909B1A56DEF7508435 /* Http.framework */; };
-		HTTPTESTS00002 /* HttpTestTypealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPTESTS00003 /* HttpTestTypealiases.swift */; };
-		HTTPTESTS00004 /* HttpTestTypealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPTESTS00003 /* HttpTestTypealiases.swift */; };
+		HTTPTESTS00002 /* HttpConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPTESTS00003 /* HttpConnector.swift */; };
+		HTTPTESTS00004 /* HttpConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPTESTS00003 /* HttpConnector.swift */; };
 		HTTPTESTS00005 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53126909B1A56DEF7508435 /* Http.framework */; };
 		PRWBUILD0000000001 /* PeriodicRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = PRWMODULE00000001 /* PeriodicRecorderWorker.swift */; };
 		PRWBUILD0000000002 /* PeriodicTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = PRWMODULE00000002 /* PeriodicTimer.swift */; };
@@ -2706,7 +2706,7 @@
 		HTTPMOCK002 /* HttpTaskMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpTaskMock.swift; sourceTree = "<group>"; };
 		HTTPMOCK003 /* HttpRequestMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequestMock.swift; sourceTree = "<group>"; };
 		HTTPMOCK004 /* HttpRequestManagerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpRequestManagerMock.swift; sourceTree = "<group>"; };
-		HTTPTESTS00003 /* HttpTestTypealiases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpTestTypealiases.swift; sourceTree = "<group>"; };
+		HTTPTESTS00003 /* HttpConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpConnector.swift; sourceTree = "<group>"; };
 		PRWMODULE00000001 /* PeriodicRecorderWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodicRecorderWorker.swift; sourceTree = "<group>"; };
 		PRWMODULE00000002 /* PeriodicTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodicTimer.swift; sourceTree = "<group>"; };
 		PRWMODULE00000003 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -3612,7 +3612,6 @@
 				59FB7C1521F79B8200ECC96A /* EventTypeNameHelper.swift */,
 				593225F924A3855700496D8B /* TestHelper.swift */,
 				5932260E24AAB27900496D8B /* TestUtils.swift */,
-				HTTPTESTS00003 /* HttpTestTypealiases.swift */,
 				95F3F009258E143B00084AF8 /* TestingHelper.swift */,
 				95737E152ADEC794007FD15C /* StreamingTestingHelper.swift */,
 				95ED4A9726497EEA00FD3569 /* TestSplitFactory.swift */,
@@ -3679,6 +3678,7 @@
 		592C6AA6211B6C99002D120C /* SplitTests */ = {
 			isa = PBXGroup;
 			children = (
+				SPLITTESTCONN1 /* ModuleConnectors */,
 				5BAB39F02F22BCE600843533 /* MetadataEventsTests.swift */,
 				5BD7675A2E65E9A400F9EFBD /* FallbackTreatmentsTests */,
 				C539CAE52D947D2A0050C732 /* Common */,
@@ -4643,6 +4643,14 @@
 				B0C8EC7FC8354849F1782A28 /* HttpTaskMock.swift */,
 			);
 			path = Mocks;
+			sourceTree = "<group>";
+		};
+		SPLITTESTCONN1 /* ModuleConnectors */ = {
+			isa = PBXGroup;
+			children = (
+				HTTPTESTS00003 /* HttpConnector.swift */,
+			);
+			path = ModuleConnectors;
 			sourceTree = "<group>";
 		};
 		TESTPLANS0001 /* TestPlans */ = {
@@ -5912,7 +5920,7 @@
 				9502B7B62837E75800B779C0 /* PersistentUniqueKeyStorageStub.swift in Sources */,
 				9577A84B2683CBDC00D92AE1 /* ImpressionsCountRecorderWorkerTests.swift in Sources */,
 				5932260F24AAB27900496D8B /* TestUtils.swift in Sources */,
-				HTTPTESTS00002 /* HttpTestTypealiases.swift in Sources */,
+				HTTPTESTS00002 /* HttpConnector.swift in Sources */,
 				95F3F006258D49B600084AF8 /* PersistentEventsStorageStub.swift in Sources */,
 				C53F3C4F2DCD112400655753 /* RuleBasedSegmentChangeProcessorStub.swift in Sources */,
 				5959C477227B89820064F968 /* FactoryMonitorTest.swift in Sources */,
@@ -6289,7 +6297,7 @@
 				5B3C17052ED76BAD0068D623 /* PersistentUniqueKeyStorageStub.swift in Sources */,
 				5B3C17062ED76BAD0068D623 /* ImpressionsCountRecorderWorkerTests.swift in Sources */,
 				5B3C17072ED76BAD0068D623 /* TestUtils.swift in Sources */,
-				HTTPTESTS00004 /* HttpTestTypealiases.swift in Sources */,
+				HTTPTESTS00004 /* HttpConnector.swift in Sources */,
 				5B3C17082ED76BAD0068D623 /* PersistentEventsStorageStub.swift in Sources */,
 				5B3C17092ED76BAD0068D623 /* RuleBasedSegmentChangeProcessorStub.swift in Sources */,
 				5B3C170A2ED76BAD0068D623 /* FactoryMonitorTest.swift in Sources */,
