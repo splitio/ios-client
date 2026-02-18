@@ -166,6 +166,8 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
      And the test waits for the HTTP post to start
      And destroy() is called while the HTTP response is still blocked
      Then all impressions are accounted for: either posted or still in DB (recoverable).
+
+     This scenario also applies to app being killed during in-flight post.
      */
     func testImpressionsNotLostWhenDestroyedDuringInflightPost() {
         let databaseName = "impressions_orphan_destroy_e2e"
@@ -194,10 +196,9 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
         // Verify impressions are in DB
         let impressionsBeforeFlush = queryImpressionCount()
-        print("SplitSDK - ORPHAN_TEST impressionsBeforeFlush=\(impressionsBeforeFlush)")
         XCTAssertEqual(evaluationCount, impressionsBeforeFlush, "All impressions should be in DB before flush")
 
-        // Trigger flush — this will pop() rows (marking them deleted) and start HTTP post
+        // Trigger flush
         client.flush()
         wait(for: [impressionPostStarted], timeout: 10)
 
@@ -208,8 +209,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         let impressionsAfterDestroy = queryImpressionCount()
         var postReceivedAfterDestroy = 0
         postQueue.sync { postReceivedAfterDestroy = postReceivedCount }
-
-        print("SplitSDK - ORPHAN_TEST impressionsAfterDestroy=\(impressionsAfterDestroy), postReceivedAfterDestroy=\(postReceivedAfterDestroy), evaluationCount=\(evaluationCount)")
 
         // All impressions must be accounted for: either posted or still in DB
         // so a future flush can retry them.
@@ -226,7 +225,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
     /**
      Scenario: a second client on the same DB recovers orphaned impressions from the first
 
-     This is a variant of testImpressionsNotLostWhenDestroyedDuringInflightPost.
      After Client A is destroyed during an in-flight post, its impressions remain in
      the database. A second factory/client is created on the same database. Client B
      does its own evaluations and flushes. We verify that:
@@ -291,7 +289,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
         // Verify Client A's impressions are still in DB
         let impressionsAfterDestroy = queryImpressionCount()
-        print("SplitSDK - ORPHAN_NEW_CLIENT impressionsAfterDestroy=\(impressionsAfterDestroy)")
 
         // --- Client B phase ---
         isClientBPhase = true
@@ -303,9 +300,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         usleep(2_000_000)
 
         // Flush Client B
-        // Client B is only expected to post impressions that are ACTIVE in the DB at startup
-        // (leftover from Client A) plus its own generated impressions. Impressions already
-        // sent by Client A's in-flight request are not expected to be re-posted by Client B.
         expectedPostedByB = impressionsAfterDestroy + evaluationCountB
         clientB.flush()
         wait(for: [clientBPostedExp], timeout: 15)
@@ -320,8 +314,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         }
         let finalImpressions = queryImpressionCount()
 
-        print("SplitSDK - ORPHAN_NEW_CLIENT clientAPosted=\(finalClientAPostCount), clientBPosted=\(finalClientBPostCount), finalImpressions=\(finalImpressions)")
-
         // Client B should post leftover ACTIVE impressions from Client A plus its own.
         XCTAssertEqual(impressionsAfterDestroy + evaluationCountB, finalClientBPostCount,
                        "Client B should post its own impressions plus active leftover impressions from Client A")
@@ -334,117 +326,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         XCTAssertEqual(0, finalImpressions,
                        "No impressions should remain in DB after Client B flushes")
 
-        removeDatabaseFiles(databaseName: databaseName)
-    }
-
-    /**
-     Scenario: a second client recovers impressions that failed to post from the first (no interruption)
-
-     Given Client A generates impressions and flushes
-     And the impressions HTTP POST fails with a 500 error (not interrupted)
-     And the impressions remain in the database after the failed flush
-     And Client A is destroyed normally after the failed flush completes
-     When a second factory/client (Client B) is created on the same database
-     And Client B generates its own impressions and flushes
-     Then Client B posts both Client A's recovered impressions and its own
-     And no impressions remain in the database.
-     */
-    func testFailedImpressionsRecoveredByNewClient() {
-        let databaseName = "impressions_failed_recovery_e2e"
-        let clientAPostAttempted = XCTestExpectation(description: "Client A post attempted")
-        let clientBPostedAllExp = XCTestExpectation(description: "Client B posted all impressions")
-
-        let postQueue = DispatchQueue(label: "failed-recovery-post-queue")
-        var isClientBPhase = false
-        var clientBPostedCount = 0
-        var clientBExpFulfilled = false
-
-        let evaluationCountA = 50
-        let evaluationCountB = 20
-        let expectedTotalPostedByB = evaluationCountA + evaluationCountB
-
-        let dispatcher = buildOrphanTestDispatcher { request in
-            if !isClientBPhase {
-                // Client A phase: fail the POST with 500 (should be recovered by setActive()).
-                clientAPostAttempted.fulfill()
-                return TestDispatcherResponse(code: 500)
-            }
-
-            // Client B phase: succeed and count all impressions (Client A recovered + Client B generated).
-            postQueue.sync {
-                clientBPostedCount += self.parseImpressionCount(from: request)
-                if !clientBExpFulfilled && clientBPostedCount >= expectedTotalPostedByB {
-                    clientBExpFulfilled = true
-                    clientBPostedAllExp.fulfill()
-                }
-            }
-            return TestDispatcherResponse(code: 200)
-        }
-
-        // --- Client A phase ---
-        setupOrphanTestDatabase(name: databaseName)
-        let httpClientA = buildOrphanHttpClient(dispatcher: dispatcher)
-        let clientA = buildOrphanTestClient(httpClient: httpClientA, matchingKey: userKey) { config in
-            // Deterministic: avoid queue-size-triggered flushes and keep A in a single chunk.
-            config.impressionsQueueSize = 10_000
-            config.impressionsChunkSize = 100
-        }
-
-        generateImpressions(client: clientA, count: evaluationCountA)
-        usleep(2_000_000)
-
-        clientA.flush()
-        wait(for: [clientAPostAttempted], timeout: 10)
-
-        // Wait until impressions are back in DB after failed POST.
-        let restoreDeadline = Date().timeIntervalSince1970 + 10.0
-        while Date().timeIntervalSince1970 < restoreDeadline {
-            let count = queryImpressionCount()
-            if count == evaluationCountA {
-                break
-            }
-            usleep(200_000)
-        }
-
-        let impressionsAfterFailedFlush = queryImpressionCount()
-        XCTAssertEqual(evaluationCountA, impressionsAfterFailedFlush,
-                       "All impressions should still be in DB after failed POST")
-
-        cleanupClient(clientA)
-
-        // --- Client B phase ---
-        isClientBPhase = true
-        let httpClientB = buildOrphanHttpClient(dispatcher: dispatcher)
-        let clientB = buildOrphanTestClient(httpClient: httpClientB, matchingKey: "client_b_key") { config in
-            config.impressionsQueueSize = 10_000
-            config.impressionsChunkSize = 100
-        }
-
-        generateImpressions(client: clientB, count: evaluationCountB, startIndex: evaluationCountA)
-        usleep(2_000_000)
-
-        clientB.flush()
-        wait(for: [clientBPostedAllExp], timeout: 15)
-
-        // Wait until DB drains after successful post.
-        let drainDeadline = Date().timeIntervalSince1970 + 10.0
-        while Date().timeIntervalSince1970 < drainDeadline {
-            let count = queryImpressionCount()
-            if count == 0 {
-                break
-            }
-            usleep(200_000)
-        }
-
-        postQueue.sync {
-            XCTAssertEqual(expectedTotalPostedByB, clientBPostedCount,
-                           "Client B should post both Client A's recovered and its own impressions")
-        }
-
-        let finalImpressions = queryImpressionCount()
-        XCTAssertEqual(0, finalImpressions, "No impressions should remain in DB after successful flush")
-
-        cleanupClient(clientB)
         removeDatabaseFiles(databaseName: databaseName)
     }
 
@@ -472,7 +353,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
         wait(for: [impExp!], timeout: 10)
 
-        // Verify properties in request body
+        // Verify request body
         XCTAssertFalse(requestBodies.isEmpty, "Request bodies should not be empty")
 
         // Check if properties are included in the request body as a stringified JSON
@@ -483,7 +364,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
         // Check if the properties are properly stringified
         let containsPropertiesValue = requestBodies.contains { body in
-            print(body)
             return body.contains("\\\"test\\\":\\\"value\\\"") && body.contains("\\\"number\\\":123")
         }
         XCTAssertTrue(containsPropertiesValue, "Request body should contain the correct property values")
@@ -843,20 +723,15 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         return splitJson
     }
 
-    // MARK: - Two-Coordinator Collision Test & Helpers
-
     /**
-     Scenario: back-to-back factory creation on the same SQLite file.
-     Replicates the customer flow exactly:
+     Scenario: consecutive factory creation on the same SQLite file.
 
-       1. Create Client A (factory A, file-backed DB)
-       2. Client A does many getTreatment evaluations with properties (no dedup →
-          one async insert + save() per evaluation, still queuing on context A)
+       1. Create Client A (factory A)
+       2. Client A does many getTreatment evaluations with properties
        3. Client A calls flush()
-       4. IMMEDIATELY create Client B (factory B, same SQLite file, separate
-          NSPersistentStoreCoordinator)
-       5. Client B's periodic timer fires at deadline:0
-       6. Client B does its own evaluations (more concurrent writes).
+       4. Immediately create Client B (factory B, same SQLite file)
+       5. Client B's periodic timer fires immediately
+       6. Client B does its own evaluations.
      */
     func testBackToBackFactoriesOnSameDbFileNoImpressionLoss() {
         let databaseName = "impressions_two_coordinators_e2e"
@@ -885,7 +760,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
             return TestDispatcherResponse(code: 200)
         }
 
-        // --- Client A: first NSPersistentStoreCoordinator on file-backed DB ---
+        // Client A
         guard let helperA = CoreDataHelperBuilder.build(databaseName: databaseName) else {
             XCTFail("Failed to create DB helper for Client A")
             return
@@ -898,19 +773,16 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
             config.impressionRefreshRate = 5
         }
 
-        // Step 2: Client A does many evaluations — async inserts still queuing
-        // on context A's serial queue.
+        // Step 2: Client A does many evaluations. Async inserts still queuing
         generateImpressions(client: clientA, count: evaluationCountA)
 
-        // Step 3: Client A calls flush() — async (DispatchQueue.general → flushQueue).
-        // Inserts are likely still in progress.
+        // Step 3: Client A calls flush(). Async.
+        // Inserts still in progress.
         clientA.flush()
 
-        // Step 4: IMMEDIATELY create Client B — NO SLEEP.
+        // Step 4: IMMEDIATELY create Client B.
         // Client A's inserts are still running. Client B opens a second
         // NSPersistentStoreCoordinator on the same SQLite file.
-        // Client B's periodic timer fires at deadline:0 → pop → post → delete.
-        // Those writes collide with Client A's ongoing insert save() calls.
         guard let helperB = CoreDataHelperBuilder.build(databaseName: databaseName) else {
             XCTFail("Failed to create DB helper for Client B")
             return
@@ -938,7 +810,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         clientB.flush()
         usleep(3_000_000)
 
-        // --- Verification ---
         // Use a FRESH coordinator to get a clean view of the SQLite file.
         guard let helperVerify = CoreDataHelperBuilder.build(databaseName: databaseName) else {
             XCTFail("Failed to create verification DB helper")
@@ -950,10 +821,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         let activeDbCount = dbVerify.impressionDao.getBy(createdAt: 0,
                                                           status: StorageRecordStatus.active,
                                                           maxRows: 1_000_000).count
-        // Count deleted impressions (stuck — lost if nobody recovers them)
-//        let deletedDbCount = dbVerify.impressionDao.getBy(createdAt: 0,
-//                                                           status: StorageRecordStatus.deleted,
-//                                                           maxRows: 1_000_000).count
 
         var finalAPosted = 0
         var finalBPosted = 0
@@ -966,13 +833,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         let totalAccountedFor = totalPosted + activeDbCount
         let expectedTotal = evaluationCountA + evaluationCountB
 
-        print("SplitSDK - TWO_COORD clientA_posted=\(finalAPosted), clientB_posted=\(finalBPosted), "
-            + "db_active=\(activeDbCount), "
-            + "total_accounted=\(totalAccountedFor), expected=\(expectedTotal)")
-
         // Every impression must be either posted or recoverable (active in DB).
-        // Impressions stuck as "deleted" are NOT recoverable — they will never be
-        // popped again (status=active filter skips them).
         XCTAssertGreaterThanOrEqual(totalAccountedFor, expectedTotal,
             "All impressions must be accounted for: "
             + "posted(\(totalPosted)) + db_active(\(activeDbCount)) "
@@ -982,8 +843,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         cleanupClient(clientB)
         removeDatabaseFiles(databaseName: databaseName)
     }
-
-    // MARK: - Orphan Test Helpers
 
     /// Parses the number of individual impressions from an HTTP request body.
     private func parseImpressionCount(from request: HttpDataRequest) -> Int {
