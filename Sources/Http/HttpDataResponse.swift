@@ -1,13 +1,11 @@
-//
-//  HttpDataResponse.swift
-//  Http
-//
+//  HttpDataResponse
 //  Created by Javier L. Avrudsky on 5/23/18.
-//  Initially based on Alamofire network library API
+//  Initially based on Alamofire network library API.
+//  Copyright © 2018 Split. All rights reserved.
 
 import Foundation
 
-// MARK: HttpDataResponse
+// MARK: Data Response
 struct HttpDataResponse<Value> {
     let error: Error? = nil
     let data: Data?
@@ -19,17 +17,15 @@ struct HttpDataResponse<Value> {
     }
 }
 
-// MARK: HttpResult
+// MARK: Result
 enum HttpResult<Value> {
     case success(Value)
     case failure(Error)
 
     var isSuccess: Bool {
         switch self {
-        case .success:
-            return true
-        case .failure:
-            return false
+        case .success: true
+        case .failure: false
         }
     }
 
@@ -39,19 +35,15 @@ enum HttpResult<Value> {
 
     var value: Value? {
         switch self {
-        case .success(let value):
-            return value
-        case .failure:
-            return nil
+        case .success(let value): value
+        case .failure: nil
         }
     }
 
     var error: Error? {
         switch self {
-        case .success:
-            return nil
-        case .failure(let error):
-            return error
+        case .success: nil
+        case .failure(let error): error
         }
     }
 }

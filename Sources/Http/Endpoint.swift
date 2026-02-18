@@ -1,10 +1,6 @@
-//
-//  Endpoint.swift
-// Http
-//
-// Created by Javier L. Avrudsky on 13/05/2020.
-// Copyright (c) 2020 Split. All rights reserved.
-//
+//  Endpoint
+//  Created by Javier L. Avrudsky on 13/05/2020.
+//  Copyright © 2020 Split. All rights reserved.
 
 import Foundation
 
@@ -33,8 +29,7 @@ public class Endpoint {
 
         if var queryString = defaultQueryString, let from = queryString.firstIndex(of: "&") {
             let upperLimit = queryString.index(from, offsetBy: 1)
-            queryString = queryString.replacingOccurrences(of: "&", with: "",
-                                                           options: .caseInsensitive, range: from..<upperLimit)
+            queryString = queryString.replacingOccurrences(of: "&", with: "", options: .caseInsensitive, range: from..<upperLimit)
             comp.query = queryString
         }
         self.url = comp.url ?? baseUrl
@@ -53,8 +48,7 @@ public class Endpoint {
         private var endpoint: Endpoint
 
         public init(baseUrl: URL, path: String?, isPathEncoded: Bool, defaultQueryString: String? = nil) {
-            endpoint = Endpoint(baseUrl: baseUrl, path: path,
-                                isPathEncoded: isPathEncoded, defaultQueryString: defaultQueryString)
+            endpoint = Endpoint(baseUrl: baseUrl, path: path, isPathEncoded: isPathEncoded, defaultQueryString: defaultQueryString)
         }
 
         public func add(header: String, withValue value: String) -> Self {

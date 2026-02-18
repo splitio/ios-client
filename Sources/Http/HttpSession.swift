@@ -1,17 +1,10 @@
-//
-//  HttpSession.swift
-//  Http
-//
+//  HttpSession
 //  Created by Javier L. Avrudsky on 08/07/2020.
 //  Copyright © 2020 Split. All rights reserved.
-//
 
 import Foundation
 
-/// This protocol is created to allow adding
-/// Split http classes into the test harness
-/// It will be renamed to HttpSession after all apple URL classes are wrapped
-/// and added to test harness
+/// Protocol to allow adding Split http classes into the test harness.
 public protocol HttpSession: AnyObject {
     func startTask(with request: HttpRequest) -> HttpTask?
     func finalize()

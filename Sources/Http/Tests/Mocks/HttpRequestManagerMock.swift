@@ -1,10 +1,6 @@
-//
-//  HttpRequestManagerMock.swift
-//  HttpTests
-//
+//  HttpRequestManagerMock
 //  Created by Javier L. Avrudsky on 07/07/2020.
 //  Copyright © 2020 Split. All rights reserved.
-//
 
 import Foundation
 @testable import Http

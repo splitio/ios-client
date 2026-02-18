@@ -1,9 +1,6 @@
-//
-//  DateProvider.swift
-//  Logging
-//
-//  Created by Split SDK Team
-//
+//  DateProvider
+//  Created by Split SDK Team.
+//  Copyright © 2022 Split. All rights reserved.
 
 import Foundation
 

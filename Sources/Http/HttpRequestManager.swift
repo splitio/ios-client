@@ -1,10 +1,6 @@
-//
-//  HttpRequestManager.swift
-//  Http
-//
+//  HttpRequestManager
 //  Created by Javier L. Avrudsky on 08/07/2020.
 //  Copyright © 2020 Split. All rights reserved.
-//
 
 import Foundation
 #if !COCOAPODS
@@ -15,7 +11,7 @@ import Logging
 /// Stores sent requests in a list
 /// and updates them by calling corresponding handler
 /// when a delegate method from URLTask or URLSession is called
-public protocol HttpRequestManager {
+ public protocol HttpRequestManager {
     func addRequest(_ request: HttpRequest)
     func append(data: Data, to taskIdentifier: Int)
     func complete(taskIdentifier: Int, error: HttpError?)

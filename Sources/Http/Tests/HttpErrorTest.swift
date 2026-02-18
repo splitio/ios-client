@@ -1,9 +1,5 @@
-//
-//  HttpErrorTest.swift
-//  HttpTests
-//
-//  Copyright © 2026 Split. All rights reserved.
-//
+//  HttpErrorTest
+//  Copyright © 2024 Split. All rights reserved.
 
 import Foundation
 import XCTest

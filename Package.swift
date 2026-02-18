@@ -8,11 +8,13 @@ let package = Package(
     products: [
         .library(name: "Split", targets: ["Split"]),
     
-        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter"]),],
+        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker"]),],
     targets: [
+        
+        // MARK: Split
         .target(
             name: "Split",
-            dependencies: ["Http", "BackoffCounter", "Logging"],
+            dependencies: ["Http", "BackoffCounter", "Logging", "PeriodicRecorderWorker"],
             path: "Split",
             exclude: [
                 "Common/Yaml/LICENSE",
@@ -21,6 +23,8 @@ let package = Package(
             ]
         ),
     
+        // MARK: External Modules
+        // Logging
         .target(
             name: "Logging",
             dependencies: [],
@@ -33,6 +37,7 @@ let package = Package(
             path: "Sources/Logging/Tests"
         ),
         
+        // Http
         .target(
             name: "Http",
             dependencies: ["Logging"],
@@ -45,6 +50,7 @@ let package = Package(
             path: "Sources/Http/Tests"
         ),
         
+        // BackoffCounter
         .target(
             name: "BackoffCounter",
             dependencies: ["Logging"],
@@ -53,8 +59,21 @@ let package = Package(
         ),
         .testTarget(
             name: "BackoffCounterTests",
-            dependencies: ["BackoffCounter"],
+            dependencies: [],
             path: "Sources/BackoffCounter/Tests"
+        ),
+
+        // PeriodicRecorderWorker
+        .target(
+            name: "PeriodicRecorderWorker",
+            dependencies: [],
+            path: "Sources/PeriodicRecorderWorker",
+            exclude: ["Tests", "README.md"]
+        ),
+        .testTarget(
+            name: "PeriodicRecorderWorkerTests",
+            dependencies: ["PeriodicRecorderWorker"],
+            path: "Sources/PeriodicRecorderWorker/Tests"
         ),
         // #INJECT_TARGET
     ]
