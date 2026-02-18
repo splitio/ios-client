@@ -26,12 +26,7 @@ class PersistentImpressionsStorageStub: PersistentImpressionsStorage, @unchecked
     }
 
     func pop(count: Int) -> [KeyImpression] {
-        let deleted = impressionsStatus.filter { $0.value == StorageRecordStatus.deleted }.keys
-        let poped = Array(storedImpressions.values.filter { !deleted.contains($0.storageId ?? "") }.prefix(count))
-        for impression in poped {
-            impressionsStatus[impression.storageId ?? ""] = StorageRecordStatus.deleted
-        }
-        return poped
+        return Array(storedImpressions.values.prefix(count))
     }
 
     func push(impression: KeyImpression) {

@@ -41,17 +41,21 @@ class ImpressionsRecorderWorkerTests: XCTestCase {
     }
 
     func testFailToSendSome() {
-        // Sent impressions have to be removed from storage
-        // Non sent have to appear as active in storage to try to send them again
+        // Sent impressions have to be removed from storage.
+        // The flush stops on the first failed batch; impressions from that batch and
+        // all subsequent ones remain in storage (still active, recoverable on next flush).
         impressionsRecorder.errorOccurredCallCount = 3
         for impression in dummyImpressions {
             persistentImpressionStorage.push(impression: impression)
         }
         worker.flush()
 
-        XCTAssertEqual(6, impressionsRecorder.executeCallCount)
-        XCTAssertEqual(2, persistentImpressionStorage.storedImpressions.count)
-        XCTAssertEqual(9, impressionsRecorder.impressionsSent.flatMap { $0.keyImpressions }.count)
+        // 11 impressions / 2 per push → 3 execute calls before the error:
+        //   call 1 (ok): 2 sent, deleted. call 2 (ok): 2 sent, deleted.
+        //   call 3 (error): loop breaks, 2 + 5 remaining = 7 still in storage.
+        XCTAssertEqual(3, impressionsRecorder.executeCallCount)
+        XCTAssertEqual(7, persistentImpressionStorage.storedImpressions.count)
+        XCTAssertEqual(4, impressionsRecorder.impressionsSent.flatMap { $0.keyImpressions }.count)
     }
 
     func testSendOneImpression() {
