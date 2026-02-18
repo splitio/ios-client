@@ -8,11 +8,11 @@ let package = Package(
     products: [
         .library(name: "Split", targets: ["Split"]),
     
-        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter"]),],
+        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker"]),],
     targets: [
         .target(
             name: "Split",
-            dependencies: ["Http", "BackoffCounter", "Logging"],
+            dependencies: ["Http", "BackoffCounter", "Logging", "PeriodicRecorderWorker"],
             path: "Split",
             exclude: [
                 "Common/Yaml/LICENSE",
@@ -55,6 +55,18 @@ let package = Package(
             name: "BackoffCounterTests",
             dependencies: ["BackoffCounter"],
             path: "Sources/BackoffCounter/Tests"
+        ),
+
+        .target(
+            name: "PeriodicRecorderWorker",
+            dependencies: ["PeriodicRecorderWorker"],
+            path: "Sources/PeriodicRecorderWorker",
+            exclude: ["Tests", "README.md"]
+        ),
+        .testTarget(
+            name: "PeriodicRecorderWorkerTests",
+            dependencies: ["PeriodicRecorderWorker"],
+            path: "Sources/PeriodicRecorderWorker/Tests"
         ),
         // #INJECT_TARGET
     ]
