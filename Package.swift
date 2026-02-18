@@ -53,13 +53,13 @@ let package = Package(
         ),
         .testTarget(
             name: "BackoffCounterTests",
-            dependencies: ["BackoffCounter"],
+            dependencies: [],
             path: "Sources/BackoffCounter/Tests"
         ),
 
         .target(
             name: "PeriodicRecorderWorker",
-            dependencies: ["PeriodicRecorderWorker"],
+            dependencies: [],
             path: "Sources/PeriodicRecorderWorker",
             exclude: ["Tests", "README.md"]
         ),
