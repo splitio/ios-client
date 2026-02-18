@@ -63,6 +63,7 @@ let package = Package(
             path: "Sources/BackoffCounter/Tests"
         ),
 
+        // PeriodicRecorderWorker
         .target(
             name: "PeriodicRecorderWorker",
             dependencies: [],
