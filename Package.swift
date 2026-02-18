@@ -9,7 +9,6 @@ let package = Package(
         .library(name: "Split", targets: ["Split"]),
     
         .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker"]),],
-    
     targets: [
         
         // MARK: Split
@@ -60,11 +59,10 @@ let package = Package(
         ),
         .testTarget(
             name: "BackoffCounterTests",
-            dependencies: ["BackoffCounter"],
+            dependencies: [],
             path: "Sources/BackoffCounter/Tests"
         ),
-        
-        // PeriodicSyncWorker
+
         .target(
             name: "PeriodicRecorderWorker",
             dependencies: [],
@@ -73,7 +71,7 @@ let package = Package(
         ),
         .testTarget(
             name: "PeriodicRecorderWorkerTests",
-            dependencies: [],
+            dependencies: ["PeriodicRecorderWorker"],
             path: "Sources/PeriodicRecorderWorker/Tests"
         ),
         // #INJECT_TARGET
