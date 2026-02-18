@@ -3,9 +3,8 @@
 //  Copyright © 2020 Split. All rights reserved.
 
 import Foundation
-
 import XCTest
-@testable import Split
+@testable import BackoffCounter
 
 class BackoffCounterTest: XCTestCase {
 
@@ -37,7 +36,7 @@ class BackoffCounterTest: XCTestCase {
         let v4 = counter.getNextRetryTime()
 
         for _ in 0..<2000 {
-            _ = counter.getNextRetryTime()
+            counter.getNextRetryTime()
         }
         let vMax = counter.getNextRetryTime()
         counter.resetCounter();

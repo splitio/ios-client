@@ -1,10 +1,6 @@
-//
-//  HostsFilter.swift
-//  Http
-//
+//  HostDomainFilter
 //  Created by Javier Avrudsky on 30/07/2024.
 //  Copyright © 2024 Split. All rights reserved.
-//
 
 import Foundation
 
@@ -18,8 +14,7 @@ private extension String {
 public struct HostDomainFilter {
     public static let endString = "$"
     public static let mainRegex = "^(?:[a-zA-Z0-9_-]+\\.)"
-    public static let wildCards = [(prefix: "**.", pattern: "\(mainRegex)*"),
-                         (prefix: "*.", pattern: "\(mainRegex)?")]
+    public static let wildCards = [(prefix: "**.", pattern: "\(mainRegex)*"), (prefix: "*.", pattern: "\(mainRegex)?")]
 
     public static func pinsFor(host: String, pins: [CredentialPin]) -> [CredentialPin] {
         var foundPins = [CredentialPin]()

@@ -1,0 +1,45 @@
+{
+  "configurations" : [
+    {
+      "id" : "A1B2C3D4-E5F6-7890-ABCD-EF1234567890",
+      "name" : "Default",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "8000B2F11F535D99847B28BE",
+        "name" : "LoggingTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "22075E2EBDA25D78FC291C40",
+        "name" : "HttpTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "98E47A3720C1455A8A6DBD5E",
+        "name" : "BackoffCounterTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "60EAB5B278980408CA33AD72",
+        "name" : "PeriodicRecorderWorkerTests"
+      }
+    }
+  ],
+  "version" : 1
+}

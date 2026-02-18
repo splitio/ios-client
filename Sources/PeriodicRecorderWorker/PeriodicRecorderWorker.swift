@@ -1,15 +1,13 @@
 //  PeriodicRecorderWorker
-//  Created by Javier Avrudsky on 02-Dic-2020
+//  Created by Javier Avrudsky on 02-Dic-2020.
 //  Copyright © 2020 Split. All rights reserved.
 
 import Foundation
 
-/// Protocol for workers that can be flushed periodically
 public protocol RecorderWorker: Sendable {
     func flush()
 }
 
-/// Protocol for periodic recorder workers that manage start/stop lifecycle
 public protocol PeriodicRecorderWorker: Sendable {
     func start()
     func pause()
@@ -18,7 +16,6 @@ public protocol PeriodicRecorderWorker: Sendable {
     func destroy()
 }
 
-/// Default implementation of PeriodicRecorderWorker that periodically flushes a RecorderWorker
 public final class DefaultPeriodicRecorderWorker: PeriodicRecorderWorker, @unchecked Sendable {
 
     private let recorderWorker: RecorderWorker

@@ -1,9 +1,6 @@
-//
-//  TimeChecker.swift
-//  Logging
-//
-//  Created by Split SDK Team
-//
+//  TimeChecker
+//  Created by Split SDK Team.
+//  Copyright © 2022 Split. All rights reserved.
 
 import Foundation
 

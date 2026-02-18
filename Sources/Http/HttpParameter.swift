@@ -1,9 +1,5 @@
-//
-//  HttpParameter.swift
-//  Http
-//
+//  HttpParameter
 //  Copyright © 2024 Split. All rights reserved.
-//
 
 import Foundation
 

@@ -10,6 +10,8 @@ let package = Package(
     
         .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker"]),],
     targets: [
+        
+        // MARK: Split
         .target(
             name: "Split",
             dependencies: ["Http", "BackoffCounter", "Logging", "PeriodicRecorderWorker"],
@@ -21,6 +23,8 @@ let package = Package(
             ]
         ),
     
+        // MARK: External Modules
+        // Logging
         .target(
             name: "Logging",
             dependencies: [],
@@ -33,6 +37,7 @@ let package = Package(
             path: "Sources/Logging/Tests"
         ),
         
+        // Http
         .target(
             name: "Http",
             dependencies: ["Logging"],
@@ -45,6 +50,7 @@ let package = Package(
             path: "Sources/Http/Tests"
         ),
         
+        // BackoffCounter
         .target(
             name: "BackoffCounter",
             dependencies: ["Logging"],
@@ -57,6 +63,7 @@ let package = Package(
             path: "Sources/BackoffCounter/Tests"
         ),
 
+        // PeriodicRecorderWorker
         .target(
             name: "PeriodicRecorderWorker",
             dependencies: [],
