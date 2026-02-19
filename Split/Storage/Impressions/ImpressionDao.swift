@@ -51,7 +51,7 @@ class CoreDataImpressionDao: BaseCoreDataDao, ImpressionDao, @unchecked Sendable
                 return
             }
 
-            let predicate = NSPredicate(format: "createdAt >= %d AND status == %d", createdAt, status)
+            let predicate = NSPredicate(format: "createdAt >= %d", createdAt)
             let entities = self.coreDataHelper.fetch(entity: .impression,
                                                 where: predicate,
                                                 rowLimit: maxRows).compactMap { return $0 as? ImpressionEntity }

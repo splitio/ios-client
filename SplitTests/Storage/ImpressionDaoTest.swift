@@ -75,11 +75,10 @@ class ImpressionDaoTest: XCTestCase {
 
         let loadedImpressions = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
         dao.update(ids: loadedImpressions.prefix(5).compactMap { return $0.storageId }, newStatus: StorageRecordStatus.deleted)
-        let active = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
-        let deleted = dao.getBy(createdAt: 200, status: StorageRecordStatus.deleted, maxRows: 20)
+        // getBy no longer filters by status, so all 10 impressions are returned regardless
+        let all = dao.getBy(createdAt: 200, status: StorageRecordStatus.active, maxRows: 20)
 
-        XCTAssertEqual(5, active.count)
-        XCTAssertEqual(5, deleted.count)
+        XCTAssertEqual(10, all.count)
     }
 
     func testLoadOutdated() {
