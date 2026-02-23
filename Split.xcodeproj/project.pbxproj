@@ -3008,6 +3008,7 @@
 			isa = PBXGroup;
 			children = (
 				5B0F30622F3F81AE00D7056F /* ModuleConnectors */,
+				3B6DEE6520EA6ADF0067435E /* FetcherEngine */,
 				59163B11216396EF00C7AA57 /* Common */,
 				3B6DEEA420EA6AE20067435E /* Models */,
 				952FA1292A2E58FE00264AB5 /* Initialization */,
@@ -3077,7 +3078,6 @@
 		3B6DEE8020EA6ADF0067435E /* Api */ = {
 			isa = PBXGroup;
 			children = (
-				3B6DEE6520EA6ADF0067435E /* FetcherEngine */,
 				C539CADB2D93229D0050C732 /* EvaluationOptions.swift */,
 				3B6DEE7E20EA6ADF0067435E /* DefaultSplitClient.swift */,
 				TRKADAPT0000001 /* TrackerAdapters.swift */,
