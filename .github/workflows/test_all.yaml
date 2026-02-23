@@ -41,12 +41,12 @@ jobs:
       destination: 'platform=iOS Simulator,OS=18.5,name=iPhone 16'
       scheme: ${{ matrix.scheme }}
 
-    modules-test:
-      strategy:
-        matrix:
-          scheme: [ModulesTestsSwift5, ModulesTestsSwift6]
-        fail-fast: false
-      uses: ./.github/workflows/base_modules_ut.yaml
-      with:
-        destination: 'platform=iOS Simulator,OS=18.5,name=iPhone 16'
-        scheme: ${{ matrix.scheme }}
+  modules-test:
+    strategy:
+      matrix:
+        scheme: [ModulesTestsSwift5, ModulesTestsSwift6]
+      fail-fast: false
+    uses: ./.github/workflows/base_modules_ut.yaml
+    with:
+      destination: 'platform=iOS Simulator,OS=18.5,name=iPhone 16'
+      scheme: ${{ matrix.scheme }}
