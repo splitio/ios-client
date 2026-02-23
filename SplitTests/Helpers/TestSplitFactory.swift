@@ -188,12 +188,19 @@ class TestSplitFactory: SplitFactory {
 
         let logger = DefaultValidationMessageLogger()
         let propertyValidator = DefaultPropertyValidator(anyValueValidator: DefaultAnyValueValidator(), validationLogger: logger)
-        let eventsTracker = DefaultEventsTracker(config: splitConfig,
-                                                 synchronizer: synchronizer,
-                                                 eventValidator: DefaultEventValidator(splitsStorage: storageContainer.splitsStorage),
-                                                 propertyValidator: propertyValidator,
-                                                 validationLogger: logger,
-                                                 telemetryProducer: storageContainer.telemetryStorage)
+        let eventsTracker = DefaultEventsTracker(
+            defaultTrafficType: splitConfig.trafficType,
+            initialEventSizeInBytes: splitConfig.initialEventSizeInBytes,
+            eventValidator: EventValidatorAdapter(validator: DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)),
+            propertyValidator: PropertyValidatorAdapter(validator: propertyValidator),
+            logger: TrackerLoggerAdapter(validationLogger: logger),
+            onEventPush: { event in
+                synchronizer.pushEvent(event: event.toEventDTO())
+            },
+            onTrackLatency: { latency in
+                storageContainer.telemetryStorage?.recordLatency(method: .track, latency: latency)
+            }
+        )
 
         userConsentManager = DefaultUserConsentManager(splitConfig: splitConfig,
                                                        storageContainer: storageContainer,

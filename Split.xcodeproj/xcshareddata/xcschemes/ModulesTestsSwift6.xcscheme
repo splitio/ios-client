@@ -63,6 +63,20 @@
                ReferencedContainer = "container:Split.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "TRKTARGET0000002"
+               BuildableName = "TrackerTests.xctest"
+               BlueprintName = "TrackerTests"
+               ReferencedContainer = "container:Split.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -114,6 +128,16 @@
                BlueprintIdentifier = "60EAB5B278980408CA33AD72"
                BuildableName = "PeriodicRecorderWorkerTests.xctest"
                BlueprintName = "PeriodicRecorderWorkerTests"
+               ReferencedContainer = "container:Split.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "TRKTARGET0000002"
+               BuildableName = "TrackerTests.xctest"
+               BlueprintName = "TrackerTests"
                ReferencedContainer = "container:Split.xcodeproj">
             </BuildableReference>
          </TestableReference>
