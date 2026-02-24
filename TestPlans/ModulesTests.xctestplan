@@ -39,6 +39,13 @@
         "identifier" : "60EAB5B278980408CA33AD72",
         "name" : "PeriodicRecorderWorkerTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "TRKTARGET0000002",
+        "name" : "TrackerTests"
+      }
     }
   ],
   "version" : 1

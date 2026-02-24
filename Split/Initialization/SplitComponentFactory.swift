@@ -381,12 +381,22 @@ extension SplitComponentFactory {
         let storageContainer = try getSplitStorageContainer()
         let eventsValidator = DefaultEventValidator(splitsStorage: storageContainer.splitsStorage)
         let propertyValidator = getPropertyValidator()
-        let component: EventsTracker = DefaultEventsTracker(config: splitClientConfig,
-                                                            synchronizer: try getSynchronizer(),
-                                                            eventValidator: eventsValidator,
-                                                            propertyValidator: propertyValidator,
-                                                            validationLogger: validationLogger,
-                                                            telemetryProducer: storageContainer.telemetryStorage)
+        let synchronizer = try getSynchronizer()
+        let telemetryProducer = storageContainer.telemetryStorage
+
+        let component: EventsTracker = DefaultEventsTracker(
+            defaultTrafficType: splitClientConfig.trafficType,
+            initialEventSizeInBytes: splitClientConfig.initialEventSizeInBytes,
+            eventValidator: EventValidatorAdapter(validator: eventsValidator),
+            propertyValidator: PropertyValidatorAdapter(validator: propertyValidator),
+            logger: TrackerLoggerAdapter(validationLogger: validationLogger),
+            onEventPush: { event in
+                synchronizer.pushEvent(event: event.toEventDTO())
+            },
+            onTrackLatency: { latency in
+                telemetryProducer?.recordLatency(method: .track, latency: latency)
+            }
+        )
         catalog.add(component: component)
         return component
     }

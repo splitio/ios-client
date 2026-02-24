@@ -17,21 +17,21 @@ jobs:
     strategy:
       matrix:
         plan: [
-          TestPlans/SplitiOSIntegration,
-          TestPlans/SplitiOSIntegration_1,
-          TestPlans/SplitiOSStreaming,
-          TestPlans/SplitiOSStreaming_1,
-          TestPlans/SplitiOSStreaming_2,
-          TestPlans/SplitiOSUnit,
-          TestPlans/SplitiOSUnit_1,
-          TestPlans/SplitiOSUnit_2,
-          TestPlans/SplitiOSUnit_3,
-          TestPlans/SplitiOSUnit_4,
-          TestPlans/SplitiOSUnit_5,
-          TestPlans/SemVer,
-          TestPlans/SplitPushManagerUT,
-          TestPlans/SplitStreamingUT,
-          TestPlans/SplitFlakyTests
+          SplitiOSIntegration,
+          SplitiOSIntegration_1,
+          SplitiOSStreaming,
+          SplitiOSStreaming_1,
+          SplitiOSStreaming_2,
+          SplitiOSUnit,
+          SplitiOSUnit_1,
+          SplitiOSUnit_2,
+          SplitiOSUnit_3,
+          SplitiOSUnit_4,
+          SplitiOSUnit_5,
+          SemVer,
+          SplitPushManagerUT,
+          SplitStreamingUT,
+          SplitFlakyTests
         ]
         scheme: [SplitTestsSwift5, SplitTestsSwift6]
       fail-fast: false
@@ -41,12 +41,12 @@ jobs:
       destination: 'platform=iOS Simulator,OS=18.5,name=iPhone 16'
       scheme: ${{ matrix.scheme }}
 
-    modules-test:
-      strategy:
-        matrix:
-          scheme: [ModulesTestsSwift5, ModulesTestsSwift6]
-        fail-fast: false
-      uses: ./.github/workflows/base_modules_ut.yaml
-      with:
-        destination: 'platform=iOS Simulator,OS=18.5,name=iPhone 16'
-        scheme: ${{ matrix.scheme }}
+  modules-test:
+    strategy:
+      matrix:
+        scheme: [ModulesTestsSwift5, ModulesTestsSwift6]
+      fail-fast: false
+    uses: ./.github/workflows/base_modules_ut.yaml
+    with:
+      destination: 'platform=iOS Simulator,OS=18.5,name=iPhone 16'
+      scheme: ${{ matrix.scheme }}
