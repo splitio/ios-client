@@ -43,8 +43,8 @@ class PersistentImpressionsStorageTests: XCTestCase {
         let popped = impressionsStorage.pop(count: 100)
 
         XCTAssertEqual(impressionDao.getByImpressions.count, popped.count)
-        XCTAssertEqual(impressionDao.updatedImpressions.count, popped.count)
-        XCTAssertEqual(0, impressionDao.updatedImpressions.values.filter { $0 == StorageRecordStatus.active }.count)
+        XCTAssertEqual(0, impressionDao.updatedImpressions.count)
+        XCTAssertEqual(0, impressionDao.deletedImpressions.count)
     }
 
     func testDelete() {

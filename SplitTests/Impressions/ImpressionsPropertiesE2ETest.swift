@@ -27,6 +27,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
     let queue = DispatchQueue(label: "queue", target: .test)
     var db: SplitDatabase!
     var requestBodies: [String] = []
+    var postedImpressionsCount = 0
 
     override func setUp() {
         let session = HttpSessionMock()
@@ -38,6 +39,294 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         sseExp = XCTestExpectation(description: "Sse conn")
         impExp = nil
         requestBodies = []
+        postedImpressionsCount = 0
+    }
+
+    /**
+     Scenario: treatment evaluations with impression properties account for all impressions
+
+     Given an SDK client initialized with mocked split and segment endpoints
+     And impressions refresh rate set to 5 seconds
+     And an impressions endpoint spy that counts posted impressions
+     When getTreatment is called in a loop with EvaluationOptions(properties)
+     And the loop stops early at a random iteration
+     Or the loop completes all iterations and a fallback flush is triggered
+     Then each iteration returns the expected treatment
+     And elapsed time is greater than zero
+     And impression listener count equals tracked evaluations
+     And tracked evaluations is less than db impressions plus posted impressions (no loss)
+     */
+    func testTreatmentLoopWithImpressionPropertiesAndRandomFlushAccounting() {
+        let iterations = 10000
+        let listenerQueue = DispatchQueue(label: "impression-properties-listener-count")
+        var listenerImpressionsCount = 0
+        let client = setupClientFileBacked(
+            mode: "OPTIMIZED",
+            databaseName: "impressions_properties_random_flush_e2e"
+        ) { config in
+            config.impressionRefreshRate = 5
+            config.impressionListener = { _ in
+                listenerQueue.sync {
+                    listenerImpressionsCount += 1
+                }
+            }
+        }
+        let minFlushIteration = max(1, iterations / 5)
+        let flushAtIteration = Int.random(in: minFlushIteration..<iterations)
+        var randomFlushInvoked = false
+
+        var trackedEvaluations = 0
+        var evaluatedIterations = 0
+        let start = Date().timeIntervalSince1970
+        for i in 0..<iterations {
+            let properties: [String: Any] = [
+                "iteration": i,
+                "bucket": i % 10,
+                "is_even": i % 2 == 0,
+                "tag": "perf_\(i)"
+            ]
+            let evalOptions = EvaluationOptions(properties: properties)
+            let treatment = client.getTreatment("FACUNDO_TEST", attributes: nil, evaluationOptions: evalOptions)
+            XCTAssertTrue(treatment == "off",
+                          "Unexpected treatment value: \(treatment)")
+            if treatment == "off" {
+                trackedEvaluations += 1
+            }
+            evaluatedIterations += 1
+            if !randomFlushInvoked && i >= flushAtIteration && Int.random(in: 0..<100) < 20 {
+                randomFlushInvoked = true
+                client.flush()
+                break
+            }
+        }
+        let elapsedMs = (Date().timeIntervalSince1970 - start) * 1000.0
+
+        // Ensure exactly one flush per test run
+        if !randomFlushInvoked {
+            client.flush()
+        }
+
+        var dbCount = 0
+        var postedCount = 0
+        var lastDbCount = -1
+        var lastPostedCount = -1
+        var stableSamples = 0
+        let quiescenceStart = Date().timeIntervalSince1970
+        let quiescenceDeadline = Date().timeIntervalSince1970 + 60.0
+        while Date().timeIntervalSince1970 < quiescenceDeadline {
+            dbCount = db.impressionDao.getBy(createdAt: 0,
+                                             status: StorageRecordStatus.active,
+                                             maxRows: 1_000_000).count
+            queue.sync {
+                postedCount = postedImpressionsCount
+            }
+
+            if dbCount == lastDbCount && postedCount == lastPostedCount {
+                stableSamples += 1
+                if stableSamples >= 10 {
+                    break
+                }
+            } else {
+                stableSamples = 0
+                lastDbCount = dbCount
+                lastPostedCount = postedCount
+            }
+            usleep(500_000)
+        }
+        _ = (Date().timeIntervalSince1970 - quiescenceStart) * 1000.0
+
+        dbCount = db.impressionDao.getBy(createdAt: 0,
+                                         status: StorageRecordStatus.active,
+                                         maxRows: 1_000_000).count
+        queue.sync {
+            postedCount = postedImpressionsCount
+        }
+        var listenerCount = 0
+        listenerQueue.sync {
+            listenerCount = listenerImpressionsCount
+        }
+
+        XCTAssertGreaterThan(elapsedMs, 0)
+        XCTAssertEqual(trackedEvaluations, listenerCount,
+                       "Tracked evaluations should equal impression listener count")
+        XCTAssertTrue(trackedEvaluations <= dbCount + postedCount,
+                       "Tracked evaluations \(trackedEvaluations) should be equal or less than db + posted impressions (no loss) (\(dbCount) + \(postedCount))")
+
+        cleanupClient(client)
+    }
+
+    /**
+     Scenario: no impressions are lost when client is destroyed during in-flight post
+
+     Given an SDK client initialized with mocked split and segment endpoints
+     And impressions refresh rate set to 999 seconds (prevent automatic flush)
+     And the impressions HTTP endpoint is configured to block responses via semaphore
+     When getTreatment is called multiple times to generate impressions
+     And flush() is called to trigger impression posting
+     And the test waits for the HTTP post to start
+     And destroy() is called while the HTTP response is still blocked
+     Then all impressions are accounted for: either posted or still in DB (recoverable).
+
+     This scenario also applies to app being killed during in-flight post.
+     */
+    func testImpressionsNotLostWhenDestroyedDuringInflightPost() {
+        let databaseName = "impressions_orphan_destroy_e2e"
+        let impressionPostStarted = XCTestExpectation(description: "Impression post started")
+        let impressionPostSemaphore = DispatchSemaphore(value: 0)
+        var postReceivedCount = 0
+        let postQueue = DispatchQueue(label: "orphan-test-post-queue")
+
+        let dispatcher = buildOrphanTestDispatcher { request in
+            impressionPostStarted.fulfill()
+            impressionPostSemaphore.wait()
+            postQueue.sync {
+                postReceivedCount += self.parseImpressionCount(from: request)
+            }
+            return TestDispatcherResponse(code: 200)
+        }
+
+        let httpClient = buildOrphanHttpClient(dispatcher: dispatcher)
+        setupOrphanTestDatabase(name: databaseName)
+        let client = buildOrphanTestClient(httpClient: httpClient, matchingKey: userKey)
+
+        // Generate impressions
+        let evaluationCount = 200
+        generateImpressions(client: client, count: evaluationCount)
+        usleep(2_000_000)
+
+        // Verify impressions are in DB
+        let impressionsBeforeFlush = queryImpressionCount()
+        XCTAssertEqual(evaluationCount, impressionsBeforeFlush, "All impressions should be in DB before flush")
+
+        // Trigger flush
+        client.flush()
+        wait(for: [impressionPostStarted], timeout: 10)
+
+        // Destroy the client while the HTTP post is still blocked
+        cleanupClient(client)
+
+        // Check DB and post state BEFORE unblocking the HTTP response.
+        let impressionsAfterDestroy = queryImpressionCount()
+        var postReceivedAfterDestroy = 0
+        postQueue.sync { postReceivedAfterDestroy = postReceivedCount }
+
+        // All impressions must be accounted for: either posted or still in DB
+        // so a future flush can retry them.
+        XCTAssertEqual(evaluationCount, impressionsAfterDestroy + postReceivedAfterDestroy,
+                       "All impressions must be accounted for: either posted or still in DB")
+
+        // Unblock the HTTP response so the blocked worker thread can finish
+        impressionPostSemaphore.signal()
+        usleep(500_000)
+
+        removeDatabaseFiles(databaseName: databaseName)
+    }
+
+    /**
+     Scenario: a second client on the same DB recovers orphaned impressions from the first
+
+     After Client A is destroyed during an in-flight post, its impressions remain in
+     the database. A second factory/client is created on the same database. Client B
+     does its own evaluations and flushes. We verify that:
+     - Client B posts both its OWN and the recovered impressions from Client A
+     - No impressions remain in the database after Client B flushes
+     */
+    func testOrphanedImpressionsRecoveredByNewClient() {
+        let databaseName = "impressions_orphan_new_client_e2e"
+        let impressionPostStarted = XCTestExpectation(description: "Impression post started")
+        let impressionPostSemaphore = DispatchSemaphore(value: 0)
+        let clientBPostedExp = XCTestExpectation(description: "Client B posted expected impressions")
+        var postReceivedCount = 0
+        var clientBPostReceivedCount = 0
+        var isClientBPhase = false
+        let postQueue = DispatchQueue(label: "orphan-new-client-post-queue")
+        var expectedPostedByB = 0
+        var clientBPostedExpFulfilled = false
+
+        let dispatcher = buildOrphanTestDispatcher { request in
+            if !isClientBPhase {
+                // Client A phase: block the response
+                impressionPostStarted.fulfill()
+                impressionPostSemaphore.wait()
+                postQueue.sync {
+                    postReceivedCount += self.parseImpressionCount(from: request)
+                }
+                return TestDispatcherResponse(code: 200)
+            } else {
+                // Client B phase: respond immediately and count until expected total is reached.
+                postQueue.sync {
+                    clientBPostReceivedCount += self.parseImpressionCount(from: request)
+                    if !clientBPostedExpFulfilled,
+                       expectedPostedByB > 0,
+                       clientBPostReceivedCount >= expectedPostedByB {
+                        clientBPostedExpFulfilled = true
+                        clientBPostedExp.fulfill()
+                    }
+                }
+                return TestDispatcherResponse(code: 200)
+            }
+        }
+
+        // --- Client A phase ---
+        let httpClientA = buildOrphanHttpClient(dispatcher: dispatcher)
+        setupOrphanTestDatabase(name: databaseName)
+        let clientA = buildOrphanTestClient(httpClient: httpClientA, matchingKey: userKey)
+
+        let evaluationCountA = 200
+        generateImpressions(client: clientA, count: evaluationCountA)
+        usleep(2_000_000)
+
+        // Flush Client A → pop marks rows as deleted → HTTP blocks
+        clientA.flush()
+        wait(for: [impressionPostStarted], timeout: 10)
+
+        // Destroy Client A while HTTP is blocked
+        cleanupClient(clientA)
+
+        // Unblock the HTTP response (too late — destroy already happened)
+        impressionPostSemaphore.signal()
+        usleep(500_000)
+
+        // Verify Client A's impressions are still in DB
+        let impressionsAfterDestroy = queryImpressionCount()
+
+        // --- Client B phase ---
+        isClientBPhase = true
+        let httpClientB = buildOrphanHttpClient(dispatcher: dispatcher)
+        let clientB = buildOrphanTestClient(httpClient: httpClientB, matchingKey: "client_b_key")
+
+        let evaluationCountB = 20
+        generateImpressions(client: clientB, count: evaluationCountB, startIndex: evaluationCountA)
+        usleep(2_000_000)
+
+        // Flush Client B
+        expectedPostedByB = impressionsAfterDestroy + evaluationCountB
+        clientB.flush()
+        wait(for: [clientBPostedExp], timeout: 15)
+        usleep(1_000_000)
+
+        // Final state
+        var finalClientBPostCount = 0
+        var finalClientAPostCount = 0
+        postQueue.sync {
+            finalClientBPostCount = clientBPostReceivedCount
+            finalClientAPostCount = postReceivedCount
+        }
+        let finalImpressions = queryImpressionCount()
+
+        // Client B should post leftover ACTIVE impressions from Client A plus its own.
+        XCTAssertEqual(impressionsAfterDestroy + evaluationCountB, finalClientBPostCount,
+                       "Client B should post its own impressions plus active leftover impressions from Client A")
+
+        // Across both clients, all evaluations should be accounted for by posted impressions.
+        XCTAssertEqual(evaluationCountA + evaluationCountB, finalClientAPostCount + finalClientBPostCount,
+                       "All impressions should be posted across Client A (in-flight) and Client B (recovered active)")
+
+        // No impressions should remain in DB
+        XCTAssertEqual(0, finalImpressions,
+                       "No impressions should remain in DB after Client B flushes")
+
+        removeDatabaseFiles(databaseName: databaseName)
     }
 
     func testImpressionsWithPropertiesAreNotDedupedInOptimizedMode() {
@@ -64,7 +353,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
         wait(for: [impExp!], timeout: 10)
 
-        // Verify properties in request body
+        // Verify request body
         XCTAssertFalse(requestBodies.isEmpty, "Request bodies should not be empty")
 
         // Check if properties are included in the request body as a stringified JSON
@@ -75,7 +364,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
         // Check if the properties are properly stringified
         let containsPropertiesValue = requestBodies.contains { body in
-            print(body)
             return body.contains("\\\"test\\\":\\\"value\\\"") && body.contains("\\\"number\\\":123")
         }
         XCTAssertTrue(containsPropertiesValue, "Request body should contain the correct property values")
@@ -191,7 +479,7 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         }
 
         // Check the number of impressions recorded
-        let expectedCount = 1
+        let expectedCount = expectDeduplication ? 1 : treatmentTimes
         XCTAssertEqual(expectedCount, impressions[featureName]?.count ?? 0,
                        "Expected \(expectedCount) impressions for feature \(featureName)")
         
@@ -204,11 +492,17 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
     }
     
     private func setupClient(mode: String) -> SplitClient {
+        return setupClient(mode: mode, configCustomizer: nil)
+    }
+
+    private func setupClient(mode: String,
+                             configCustomizer: ((SplitClientConfig) -> Void)?) -> SplitClient {
         let notificationHelper = NotificationHelperStub()
         db = TestingHelper.createTestDatabase(name: "test")
 
         let splitConfig = createSplitConfig()
         splitConfig.impressionsMode = mode
+        configCustomizer?(splitConfig)
         
         let key: Key = Key(matchingKey: userKey)
         let builder = DefaultSplitFactoryBuilder()
@@ -234,6 +528,66 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
         
         return client
+    }
+
+    private func setupClientFileBacked(mode: String,
+                                       databaseName: String,
+                                       configCustomizer: ((SplitClientConfig) -> Void)?) -> SplitClient {
+        let notificationHelper = NotificationHelperStub()
+        db = createCleanFileBackedDatabase(name: databaseName)
+
+        let splitConfig = createSplitConfig()
+        splitConfig.impressionsMode = mode
+        configCustomizer?(splitConfig)
+
+        let key: Key = Key(matchingKey: userKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(db)
+        _ = builder.setNotificationHelper(notificationHelper)
+        let factory = builder.setApiKey(apiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+
+        let client = factory.client
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY Expectation")
+
+        client.on(event: SplitEvent.sdkReady) {
+            sdkReadyExpectation.fulfill()
+        }
+        client.on(event: SplitEvent.sdkReadyTimedOut) {
+            sdkReadyExpectation.fulfill()
+        }
+
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
+        return client
+    }
+
+    private func createCleanFileBackedDatabase(name: String) -> SplitDatabase {
+        removeDatabaseFiles(databaseName: name)
+        guard let helper = CoreDataHelperBuilder.build(databaseName: name) else {
+            fatalError("Failed to create file-backed test DB: \(name)")
+        }
+        return TestingHelper.createTestDatabase(name: name, helper: helper)
+    }
+
+    private func removeDatabaseFiles(databaseName: String) {
+        guard let cachesUrl = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).last else {
+            return
+        }
+
+        let base = "\(databaseName).\(ServiceConstants.databaseExtension)"
+        let dbUrls = [
+            cachesUrl.appendingPathComponent(base),
+            cachesUrl.appendingPathComponent(base + "-wal"),
+            cachesUrl.appendingPathComponent(base + "-shm")
+        ]
+
+        for url in dbUrls {
+            if FileManager.default.fileExists(atPath: url.path) {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
     }
     
     private func setupClientWithImpressionListener(_ listener: @escaping SplitImpressionListener) -> SplitClient {
@@ -279,8 +633,6 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         splitConfig.eventsQueueSize = 99999
         splitConfig.eventsPushRate = 99999
         splitConfig.logLevel = .verbose
-        splitConfig.impressionsQueueSize = 1
-        splitConfig.impressionsChunkSize = 1
         return splitConfig
     }
 
@@ -312,15 +664,13 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
 
             if request.isImpressionsEndpoint() {
                 self.queue.sync {
-                    if let exp = self.impExp {
-                        exp.fulfill()
-                    }
                     if let body = request.body?.stringRepresentation.utf8 {
                         let bodyString = String(body)
                         self.requestBodies.append(bodyString)
 
                         if let tests = try? Json.decodeFrom(json: bodyString, to: [ImpressionsTest].self) {
                             for test in tests {
+                                self.postedImpressionsCount += test.keyImpressions.count
                                 var imps = [KeyImpression]()
                                 if let prevImp = self.impressions[test.testName] {
                                     imps.append(contentsOf: prevImp)
@@ -329,6 +679,9 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
                                 self.impressions.updateValue(imps, forKey: test.testName)
                             }
                         }
+                    }
+                    if let exp = self.impExp {
+                        exp.fulfill()
                     }
                 }
                 return TestDispatcherResponse(code: 200)
@@ -369,4 +722,227 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         }
         return splitJson
     }
+
+    /**
+     Scenario: consecutive factory creation on the same SQLite file.
+
+       1. Create Client A (factory A)
+       2. Client A does many getTreatment evaluations with properties
+       3. Client A calls flush()
+       4. Immediately create Client B (factory B, same SQLite file)
+       5. Client B's periodic timer fires immediately
+       6. Client B does its own evaluations.
+     */
+    func testBackToBackFactoriesOnSameDbFileNoImpressionLoss() {
+        let databaseName = "impressions_two_coordinators_e2e"
+        removeDatabaseFiles(databaseName: databaseName)
+
+        let postQueue = DispatchQueue(label: "two-coord-post-queue")
+        var clientAPostCount = 0
+        var clientBPostCount = 0
+
+        let evaluationCountA = 30000
+        let evaluationCountB = 6000
+
+        // Client A dispatcher: count posted impressions
+        let dispatcherA = buildOrphanTestDispatcher { request in
+            postQueue.sync {
+                clientAPostCount += self.parseImpressionCount(from: request)
+            }
+            return TestDispatcherResponse(code: 200)
+        }
+
+        // Client B dispatcher: count posted impressions
+        let dispatcherB = buildOrphanTestDispatcher { request in
+            postQueue.sync {
+                clientBPostCount += self.parseImpressionCount(from: request)
+            }
+            return TestDispatcherResponse(code: 200)
+        }
+
+        // Client A
+        guard let helperA = CoreDataHelperBuilder.build(databaseName: databaseName) else {
+            XCTFail("Failed to create DB helper for Client A")
+            return
+        }
+        db = TestingHelper.createTestDatabase(name: databaseName, helper: helperA)
+        let httpClientA = buildOrphanHttpClient(dispatcher: dispatcherA)
+        let clientA = buildOrphanTestClient(httpClient: httpClientA, matchingKey: userKey) { config in
+            config.impressionsQueueSize = 100_000
+            config.impressionsChunkSize = 100_000
+            config.impressionRefreshRate = 5
+        }
+
+        // Step 2: Client A does many evaluations. Async inserts still queuing
+        generateImpressions(client: clientA, count: evaluationCountA)
+
+        // Step 3: Client A calls flush(). Async.
+        // Inserts still in progress.
+        clientA.flush()
+
+        // Step 4: IMMEDIATELY create Client B.
+        // Client A's inserts are still running. Client B opens a second
+        // NSPersistentStoreCoordinator on the same SQLite file.
+        guard let helperB = CoreDataHelperBuilder.build(databaseName: databaseName) else {
+            XCTFail("Failed to create DB helper for Client B")
+            return
+        }
+        db = TestingHelper.createTestDatabase(name: databaseName, helper: helperB)
+        let httpClientB = buildOrphanHttpClient(dispatcher: dispatcherB)
+        let clientB = buildOrphanTestClient(httpClient: httpClientB, matchingKey: "client_b_key") { config in
+            config.impressionsQueueSize = 100_000
+            config.impressionsChunkSize = 100_000
+            config.impressionRefreshRate = 5
+        }
+
+        // Step 5-6: Client B does its own evaluations (more concurrent writes).
+        generateImpressions(client: clientB, count: evaluationCountB, startIndex: evaluationCountA)
+
+        // Wait for async inserts + flush cycles to settle on both coordinators.
+        usleep(5_000_000)
+
+        // Extra flush rounds to drain anything remaining.
+        clientA.flush()
+        clientB.flush()
+        usleep(5_000_000)
+
+        clientA.flush()
+        clientB.flush()
+        usleep(3_000_000)
+
+        // Use a FRESH coordinator to get a clean view of the SQLite file.
+        guard let helperVerify = CoreDataHelperBuilder.build(databaseName: databaseName) else {
+            XCTFail("Failed to create verification DB helper")
+            return
+        }
+        let dbVerify = TestingHelper.createTestDatabase(name: databaseName, helper: helperVerify)
+
+        // Count active impressions (recoverable)
+        let activeDbCount = dbVerify.impressionDao.getBy(createdAt: 0,
+                                                          status: StorageRecordStatus.active,
+                                                          maxRows: 1_000_000).count
+
+        var finalAPosted = 0
+        var finalBPosted = 0
+        postQueue.sync {
+            finalAPosted = clientAPostCount
+            finalBPosted = clientBPostCount
+        }
+
+        let totalPosted = finalAPosted + finalBPosted
+        let totalAccountedFor = totalPosted + activeDbCount
+        let expectedTotal = evaluationCountA + evaluationCountB
+
+        // Every impression must be either posted or recoverable (active in DB).
+        XCTAssertGreaterThanOrEqual(totalAccountedFor, expectedTotal,
+            "All impressions must be accounted for: "
+            + "posted(\(totalPosted)) + db_active(\(activeDbCount)) "
+            + "should be >= expected(\(expectedTotal)).")
+
+        cleanupClient(clientA)
+        cleanupClient(clientB)
+        removeDatabaseFiles(databaseName: databaseName)
+    }
+
+    /// Parses the number of individual impressions from an HTTP request body.
+    private func parseImpressionCount(from request: HttpDataRequest) -> Int {
+        guard let body = request.body?.stringRepresentation.utf8 else { return 0 }
+        let bodyString = String(body)
+        guard let tests = try? Json.decodeFrom(json: bodyString, to: [ImpressionsTest].self) else { return 0 }
+        return tests.reduce(0) { $0 + $1.keyImpressions.count }
+    }
+
+    /// Builds a dispatcher that handles standard endpoints and delegates impressions to the given handler.
+    private func buildOrphanTestDispatcher(
+        impressionHandler: @escaping (HttpDataRequest) -> TestDispatcherResponse
+    ) -> HttpClientTestDispatcher {
+        return { request in
+            if request.isSplitEndpoint() {
+                if self.firstSplitHit {
+                    self.firstSplitHit = false
+                    return TestDispatcherResponse(code: 200, data: Data(self.loadSplitsChangeFile().utf8))
+                }
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 99999, till: 99999).utf8))
+            }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            if request.isAuthEndpoint() {
+                self.isSseAuthHit = true
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            if request.isImpressionsEndpoint() {
+                return impressionHandler(request)
+            }
+            if request.isImpressionsCountEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+            return TestDispatcherResponse(code: 200)
+        }
+    }
+
+    /// Creates an HttpClient from a dispatcher, with a fresh session and streaming handler.
+    private func buildOrphanHttpClient(dispatcher: @escaping HttpClientTestDispatcher) -> HttpClient {
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: dispatcher,
+                                                          streamingHandler: buildStreamingHandler())
+        return DefaultHttpClient(session: session, requestManager: reqManager)
+    }
+
+    /// Sets up a clean file-backed database for orphan tests.
+    private func setupOrphanTestDatabase(name: String) {
+        removeDatabaseFiles(databaseName: name)
+        guard let helper = CoreDataHelperBuilder.build(databaseName: name) else {
+            XCTFail("Failed to create file-backed DB")
+            return
+        }
+        db = TestingHelper.createTestDatabase(name: name, helper: helper)
+    }
+
+    /// Builds a SplitClient configured for orphan impression tests, resetting SSE/split state.
+    private func buildOrphanTestClient(httpClient: HttpClient,
+                                       matchingKey: String,
+                                       configCustomizer: ((SplitClientConfig) -> Void)? = nil) -> SplitClient {
+        firstSplitHit = true
+        sseExp = XCTestExpectation(description: "SSE conn")
+
+        let splitConfig = createSplitConfig()
+        splitConfig.impressionsMode = "OPTIMIZED"
+        splitConfig.impressionRefreshRate = 999
+        configCustomizer?(splitConfig)
+
+        let key = Key(matchingKey: matchingKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(db)
+        _ = builder.setNotificationHelper(NotificationHelperStub())
+        let factory = builder.setApiKey(apiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+
+        let client = factory.client
+
+        let sdkReadyExpectation = XCTestExpectation(description: "SDK READY")
+        client.on(event: SplitEvent.sdkReady) { sdkReadyExpectation.fulfill() }
+        client.on(event: SplitEvent.sdkReadyTimedOut) { sdkReadyExpectation.fulfill() }
+        wait(for: [sdkReadyExpectation, sseExp], timeout: 20)
+
+        return client
+    }
+
+    /// Generates impressions with unique properties by calling getTreatment in a loop.
+    private func generateImpressions(client: SplitClient, count: Int, startIndex: Int = 0) {
+        for i in 0..<count {
+            let properties: [String: Any] = ["iteration": startIndex + i]
+            let evalOptions = EvaluationOptions(properties: properties)
+            let treatment = client.getTreatment("FACUNDO_TEST", attributes: nil, evaluationOptions: evalOptions)
+            XCTAssertEqual("off", treatment, "Expected 'off' treatment")
+        }
+    }
+
+    /// Queries the database for total impression count.
+    private func queryImpressionCount() -> Int {
+        return db.impressionDao.getBy(createdAt: 0, status: StorageRecordStatus.active, maxRows: 1_000_000).count
+    }
+
 }

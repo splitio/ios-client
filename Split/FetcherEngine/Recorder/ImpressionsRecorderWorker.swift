@@ -29,7 +29,7 @@ class ImpressionsRecorderWorker: RecorderWorker, @unchecked Sendable {
 
     func flush() {
         var rowCount = 0
-        var failedImpressions = [KeyImpression]()
+        var failedCount = 0
         repeat {
             let impressions = persistentImpressionsStorage.pop(count: impressionsPerPush)
             rowCount = impressions.count
@@ -42,18 +42,17 @@ class ImpressionsRecorderWorker: RecorderWorker, @unchecked Sendable {
                     Logger.i("Impressions posted successfully")
                 } catch let error {
                     Logger.e("Impression error: \(String(describing: error))")
-                    failedImpressions.append(contentsOf: impressions)
+                    // Impressions remain in DB for retry on next flush cycle
+                    failedCount = rowCount
+                    break
                 }
             }
         } while rowCount == impressionsPerPush
-        // Activate non sent impressions to retry in next iteration
-        persistentImpressionsStorage.setActive(failedImpressions)
         if let syncHelper = impressionsSyncHelper {
-            syncHelper.updateAccumulator(count: failedImpressions.count,
-                                         bytes: failedImpressions.count *
+            syncHelper.updateAccumulator(count: failedCount,
+                                         bytes: failedCount *
                                             ServiceConstants.estimatedImpressionSizeInBytes)
         }
-
     }
 
     private func group(impressions: [KeyImpression]) -> [ImpressionsTest] {

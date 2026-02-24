@@ -1,3 +1,6 @@
+3.7.1: (Feb 19, 2026)
+- Improved impressions persistence and submission.
+
 3.7.0: (Jan 28, 2026)
 - Added functionality to provide metadata alongside SDK update and READY events. Read more in our docs.
 
