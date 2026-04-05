@@ -8,15 +8,17 @@
 
 import Foundation
 
-class EventStreamParser: @unchecked Sendable {
-    static let kIdField = "id"
-    static let kDataField = "data"
-    static let kEventField = "event"
+public class EventStreamParser: @unchecked Sendable {
+    public static let kIdField = "id"
+    public static let kDataField = "data"
+    public static let kEventField = "event"
     private static let kKeepAliveEvent = "keepalive"
     private static let kFieldSeparator: Character = ":"
     private static let kKeepAliveToken = "\(kFieldSeparator)\(kKeepAliveEvent)"
 
-    func parse(streamChunk: String) -> [String: String] {
+    public init() {}
+
+    public func parse(streamChunk: String) -> [String: String] {
 
         var messageValues = [String: String]()
         let messageLines = streamChunk.split(separator: "\n")
@@ -27,7 +29,7 @@ class EventStreamParser: @unchecked Sendable {
                 return messageValues
             }
 
-            if trimmedLine.isEmpty() {
+            if trimmedLine.isEmpty {
                 return messageValues
             }
 
@@ -47,7 +49,7 @@ class EventStreamParser: @unchecked Sendable {
         return messageValues
     }
 
-    func isKeepAlive(values: [String: String]) -> Bool {
+    public func isKeepAlive(values: [String: String]) -> Bool {
         return values.contains { eventType, value in
             return eventType == Self.kEventField &&
                 value.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() == Self.kKeepAliveEvent

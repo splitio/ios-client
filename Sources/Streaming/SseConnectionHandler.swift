@@ -7,33 +7,36 @@
 //
 
 import Foundation
+import Logging
 
-class SseConnectionHandler: @unchecked Sendable {
+public class SseConnectionHandler: @unchecked Sendable {
     private let clientLock = NSLock()
     private let sseClientFactory: SseClientFactory
     private var curClientId: String?
-    private let clients = SynchronizedDictionary<String, SseClient>()
+    private var clients = [String: SseClient]()
 
     var isConnectionOpened: Bool {
+        clientLock.lock()
+        defer { clientLock.unlock() }
         guard let id = curClientId else { return false }
-        return clients.value(forKey: id)?.isConnectionOpened ?? false
+        return clients[id]?.isConnectionOpened ?? false
     }
 
-    init(sseClientFactory: SseClientFactory) {
+    public init(sseClientFactory: SseClientFactory) {
         self.sseClientFactory = sseClientFactory
     }
 
-    func connect(jwt: JwtToken, channels: [String], completion: @escaping SseClient.CompletionHandler) {
+    public func connect(token: String, channels: [String], completion: @escaping SseClient.CompletionHandler) {
         let sseClient = sseClientFactory.create()
         addSseClient(sseClient)
-        sseClient.connect(token: jwt.rawToken, channels: jwt.channels, completion: completion)
+        sseClient.connect(token: token, channels: channels, completion: completion)
     }
 
-    func disconnect() {
+    public func disconnect() {
         Logger.d("Streaming Connection Handler - Disconnecting SSE client")
         let disconnectingClientId = curClientId
         clearClientId()
-        DispatchQueue.general.async { [weak self] in
+        DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
             guard let clientId = disconnectingClientId else { return }
             let cli = self.getSseClient(id: clientId)
@@ -42,8 +45,13 @@ class SseConnectionHandler: @unchecked Sendable {
         }
     }
 
-    func destroy() {
-        for client in clients.takeAll().values {
+    public func destroy() {
+        let all: [SseClient]
+        clientLock.lock()
+        all = Array(clients.values)
+        clients.removeAll()
+        clientLock.unlock()
+        for client in all {
             client.disconnect()
         }
     }
@@ -64,14 +72,20 @@ class SseConnectionHandler: @unchecked Sendable {
 
     private func addSseClient(_ newClient: SseClient) {
         let id = newClientId()
-        clients.setValue(newClient, forKey: id)
+        clientLock.lock()
+        clients[id] = newClient
+        clientLock.unlock()
     }
 
     private func getSseClient(id: String) -> SseClient? {
-        return  clients.value(forKey: id)
+        clientLock.lock()
+        defer { clientLock.unlock() }
+        return clients[id]
     }
 
     private func removeSseClient(id: String) {
+        clientLock.lock()
         clients.removeValue(forKey: id)
+        clientLock.unlock()
     }
 }

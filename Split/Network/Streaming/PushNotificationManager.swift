@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Streaming
 
 protocol PushNotificationManager {
     // Visible for testing. Make possible to inject stub
@@ -205,7 +206,7 @@ class DefaultPushNotificationManager: PushNotificationManager, @unchecked Sendab
             return
         }
 
-        sseConnectionHandler.connect(jwt: jwt, channels: jwt.channels) { [weak self] success in
+        sseConnectionHandler.connect(token: jwt.rawToken, channels: jwt.channels) { [weak self] success in
             guard let self = self else { return }
             if success {
                 self.handleSubsystemUp()
