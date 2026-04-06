@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		007E8FF19EB4FADECA16F955 /* SplitConcurrency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 226AA19708BA547A4D93E9F8 /* SplitConcurrency.framework */; };
 		0CBAED374D5817D747DE3851 /* SseClientFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4262090A2475D361FFDFBF5 /* SseClientFactory.swift */; };
 		139D737E36D5F2FA1834BB96 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
-		17F96B8B1EA4178E605A53CF /* Streaming.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D6B834A3D68F89344693213 /* Streaming.framework */; };
 		2459636933868D053A01BC3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
 		2DF7C3837113F36647769631 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
 		31AA21DE01A000A7C30630F2 /* SseClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA280A65C72BC92858422C /* SseClientTest.swift */; };
@@ -1484,11 +1482,7 @@
 		95F7BC272C45C12700C5F2E4 /* TlsPinCheckerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC262C45C12700C5F2E4 /* TlsPinCheckerMock.swift */; };
 		95F7BC292C46A4C800C5F2E4 /* SecurityHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
-		A4DCFC6EE7054D2DFC37AC5B /* Logging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A84C2F1D387F870A3749BCE7 /* Logging.framework */; };
-		A82A28A96F4D121923F6A848 /* Streaming.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7034BA7E7DEA07B2C0D61E16 /* Streaming.framework */; };
-		AD8ACA1CC3E24F90BB7602B7 /* Http.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B53126909B1A56DEF7508435 /* Http.framework */; };
 		B3A862C479A657597413B150 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
-		B6FA695AA507754831746B9A /* SplitConcurrency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEFABBB94817F2EF9E3D844 /* SplitConcurrency.framework */; };
 		C337B35BD6A7AF02703D6C2D /* BackoffCounterConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF0389ED3DEACFCD8CCEAE2 /* BackoffCounterConnector.swift */; };
 		C337B35BD6A7AF02703D6C2E /* HttpConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF03890DEADBEEF00000001 /* HttpConnector.swift */; };
 		C337B35BD6A7AF02703D6C2F /* PeriodicRecorderWorkerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF03890DEADBEEF00000002 /* PeriodicRecorderWorkerConnector.swift */; };
@@ -1607,7 +1601,6 @@
 		CD311117BB394A70AD6057CD04272DF2 /* DbEncryptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */; };
 		EB1ED1C8E8B43B76B25B1A9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
 		ECE00228125831F5D1F2803A /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 309A80563AF75A24F4776BFA /* EventStreamParser.swift */; };
-		F317D141920B9E83B629A7F8 /* SplitConcurrency.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEFABBB94817F2EF9E3D844 /* SplitConcurrency.framework */; };
 		F9BA1B22E8B74D3199B56594 /* SynchronizedDictionaryComposed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26A9E2D908D607F6A75D8CA /* SynchronizedDictionaryComposed.swift */; };
 		HTTPADP1A28F3E1F2CC4D7F9 /* HttpAdapters.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPADP1B28F3E1F2CC4D7F9 /* HttpAdapters.swift */; };
 		HTTPADP2A28F3E1F2CC4D7F9 /* HttpResultWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTPADP2B28F3E1F2CC4D7F9 /* HttpResultWrapper.swift */; };
@@ -2701,10 +2694,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				TRKFWBUILD00002 /* Tracker.framework in Frameworks */,
-				007E8FF19EB4FADECA16F955 /* SplitConcurrency.framework in Frameworks */,
-				17F96B8B1EA4178E605A53CF /* Streaming.framework in Frameworks */,
-				B6FA695AA507754831746B9A /* SplitConcurrency.framework in Frameworks */,
-				A82A28A96F4D121923F6A848 /* Streaming.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2778,9 +2767,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				EB1ED1C8E8B43B76B25B1A9E /* Foundation.framework in Frameworks */,
-				AD8ACA1CC3E24F90BB7602B7 /* Http.framework in Frameworks */,
-				A4DCFC6EE7054D2DFC37AC5B /* Logging.framework in Frameworks */,
-				F317D141920B9E83B629A7F8 /* SplitConcurrency.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
