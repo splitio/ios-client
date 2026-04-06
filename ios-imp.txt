@@ -1,0 +1,157 @@
+⏺ Here's a comprehensive overview of how this iOS SDK handles and posts impressions:                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                              
+  Impressions Flow Overview                                                                                                                                                                                                                                                   
+                                                                                                                                                                                                                                                                              
+  1. Creation (Evaluation Time)                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                              
+  When a developer calls getTreatment() / getTreatments() / etc., the DefaultTreatmentManager evaluates the feature flag, then creates a KeyImpression containing:                                                                                                            
+                                                                                                                                                                                                                                                                              
+  - keyName (user ID), featureName (split name), treatment, label (evaluation reason), time, changeNumber, optional bucketingKey and properties                                                                                                                               
+
+  The impression is wrapped in a DecoratedImpression (which includes an impressionsDisabled flag) and passed to Synchronizer.pushImpression() → DefaultImpressionsTracker.push().
+
+  2. Three Impression Modes
+
+  The behavior depends on the configured impressionsMode (default: OPTIMIZED):
+
+  ┌───────────┬─────────────────────────────────────┬────────┬─────────────┬──────────────────────┐
+  │   Mode    │          Full Impressions           │ Counts │ Unique Keys │       Use Case       │
+  ├───────────┼─────────────────────────────────────┼────────┼─────────────┼──────────────────────┤
+  │ OPTIMIZED │ Deduplicated (1 per user/split/day) │ Yes    │ No          │ Production (default) │
+  ├───────────┼─────────────────────────────────────┼────────┼─────────────┼──────────────────────┤
+  │ DEBUG     │ All sent                            │ No     │ No          │ Development          │
+  ├───────────┼─────────────────────────────────────┼────────┼─────────────┼──────────────────────┤
+  │ NONE      │ None sent                           │ Yes    │ Yes         │ Privacy/bandwidth    │
+  └───────────┴─────────────────────────────────────┴────────┴─────────────┴──────────────────────┘
+
+  3. Deduplication (OPTIMIZED mode)
+
+  Uses Murmur3 hashing on keyName:featureName:treatment:label:changeNumber. Hashes are stored in HashedImpressionsStorage with a 4-hour expiration. If a duplicate is found on the same day, only the count is incremented — the full impression is not queued.
+
+  4. Storage
+
+  Multi-layer persistent storage using CoreData:
+  - MainImpressionsStorage → PersistentImpressionsStorage → CoreDataImpressionDao
+  - Impressions are JSON-serialized (optionally encrypted) and stored with status tracking for retry
+  - Records older than 90 days are expired
+
+  5. Posting to Backend
+
+  Three separate data streams, each with periodic workers:
+
+  ┌───────────────────┬─────────────────────────┬───────────────────────────────────┬──────────────────┐
+  │      Stream       │        Endpoint         │              Trigger              │      Modes       │
+  ├───────────────────┼─────────────────────────┼───────────────────────────────────┼──────────────────┤
+  │ Full impressions  │ POST /impressions       │ Every ~60s or when queue hits 30K │ OPTIMIZED, DEBUG │
+  ├───────────────────┼─────────────────────────┼───────────────────────────────────┼──────────────────┤
+  │ Impression counts │ POST /impressions/count │ Every ~60s                        │ OPTIMIZED, NONE  │
+  ├───────────────────┼─────────────────────────┼───────────────────────────────────┼──────────────────┤
+  │ Unique keys       │ POST /uniquekeys        │ Periodic                          │ NONE only        │
+  └───────────────────┴─────────────────────────┴───────────────────────────────────┴──────────────────┘
+
+  Flush logic:
+  1. Periodic worker fires on interval
+  2. Pops a batch (e.g., 200) from persistent storage
+  3. Groups impressions by feature name into ImpressionsTest objects
+  4. POSTs to backend via HttpImpressionsRecorder
+  5. On success: deletes from storage
+  6. On failure: keeps in storage marked active for retry next cycle
+
+  6. Wire Format
+
+  Impressions use compact JSON field names:
+  {"k": "user123", "t": "on", "m": 1626800000000, "c": 1234567890, "r": "targeting rule", "pt": 1626700000000}
+
+  7. Thread Safety & Lifecycle
+
+  - All components use concurrent DispatchQueues with barrier operations
+  - pause() saves in-memory data to DB and stops workers
+  - resume() restarts workers
+  - destroy() clears observer and stops everything
+  - Failed posts are retried on the next cycle automatically
+
+  Key Files
+
+  - Tracker: Split/Network/Sync/ImpressionsTracker.swift
+  - Data model: Split/Impressions/KeyImpression.swift
+  - Observer/Dedup: Split/Impressions/DefaultImpressionsObserver.swift
+  - Counter: Split/Impressions/ImpressionsCounter.swift
+  - Recorder worker: Split/FetcherEngine/Recorder/ImpressionsRecorderWorker.swift
+  - HTTP posting: Split/Network/RestClient/RestClient+Impressions.swift
+  - Storage: Split/Storage/Impressions/
+  - Config: Split/Api/SplitClientConfig.swift
+
+-----
+
+Clarifications
+
+  Corrections
+
+  1. Endpoint paths are wrong
+     The document lists simplified paths. The actual paths in EndpointFactory.swift (lines 25-30) are:
+     - Full impressions: POST /testImpressions/bulk (not /impressions)
+     - Impression counts: POST /testImpressions/count (not /impressions/count)
+     - Unique keys: POST /keys/cs (not /uniquekeys)
+     Additionally, impressions and counts use the eventsEndpoint base URL, while unique keys
+     use the telemetryServiceEndpoint base URL.
+
+  2. Periodic intervals are 30 minutes, not ~60 seconds
+     - Full impressions: impressionRefreshRate = 1800 (SplitClientConfig.swift:32)
+     - Impression counts: impressionsCountsRefreshRate = 1800 (SplitClientConfig.swift:322)
+     The document claims "Every ~60s" for both streams, which is off by a factor of 30.
+
+  3. Batch size is 100, not 200
+     The document says "Pops a batch (e.g., 200)". The actual default is
+     impressionsChunkSize = 100 (SplitClientConfig.swift:36).
+
+  4. Unique keys are not "NONE only"
+     The mode table says unique keys are tracked only in NONE mode. They are also tracked
+     when impressionsDisabled is true on an individual feature flag, regardless of the
+     global impressions mode (ImpressionsTracker.swift:113).
+
+  5. Failure handling description is inaccurate
+     The document says failed impressions are "keeps in storage marked active for retry."
+     On failure, the worker simply breaks out of the loop (ImpressionsRecorderWorker.swift:47).
+     Impressions are never explicitly re-marked as active because pop() in
+     PersistentImpressionsStorage does not change record status on retrieval (unlike
+     the unique keys flow which marks records as "deleted" before sending). They remain
+     with their original status and are naturally picked up on the next cycle.
+
+  6. ImpressionDao.getBy() ignores the status parameter
+     Although PersistentImpressionsStorage.pop() passes StorageRecordStatus.active to
+     ImpressionDao.getBy(), the DAO's actual predicate only filters on createdAt
+     (ImpressionDao.swift:54). The status parameter is accepted but unused, meaning all
+     non-expired impressions are returned regardless of status.
+
+  7. Thread safety description is overstated
+     The document says "All components use concurrent DispatchQueues with barrier operations."
+     ImpressionsCounter uses this pattern (ImpressionsCounter.swift:16,20), but
+     DefaultImpressionsTracker itself has no internal synchronization — it is marked
+     @unchecked Sendable and relies on being called from Synchronizer's serial flushQueue.
+
+  Missing Information
+
+  1. Impressions with properties bypass deduplication entirely
+     DefaultImpressionsObserver.testAndSet() returns nil immediately when
+     impression.properties is non-nil (DefaultImpressionsObserver.swift:27-29). This means
+     impressions carrying properties are always treated as unique and never deduplicated,
+     even in OPTIMIZED mode.
+
+  2. The impressionsDisabled per-flag behavior
+     When a feature flag has impressionsDisabled set to true server-side, it behaves like
+     NONE mode for that specific flag regardless of the global impressions mode: no full
+     impression is queued, only unique keys and counts are tracked
+     (ImpressionsTracker.swift:113-121). This per-flag override is not represented in the
+     mode table.
+
+  3. Impression inserts are saved one by one
+     ImpressionDao inserts each impression individually and calls coreDataHelper.save()
+     after each one (ImpressionDao.swift:118-120), with a comment explaining this avoids
+     losing all records if an error occurs on one. This differs from batch insert patterns
+     used elsewhere.
+
+  4. In-memory fallback when persistence is disabled
+     MainImpressionsStorage (ImpressionsStorage.swift:18-52) maintains a SynchronizedList
+     in-memory buffer. When persistence is disabled (e.g., user consent not granted),
+     impressions accumulate in memory instead of CoreData. When persistence is re-enabled,
+     the in-memory buffer is flushed to persistent storage.

@@ -9,9 +9,7 @@
 import Foundation
 import Http
 import Logging
-#if SWIFT_PACKAGE
 import SplitConcurrency
-#endif
 
 public struct SseClientConstants {
     public static let pushNotificationChannelsParam = "channels"

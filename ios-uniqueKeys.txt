@@ -1,0 +1,190 @@
+⏺ Unique Keys: Tracking & Posting                                     
+                                                                                                                                                                                                                                                                              
+  When Are Unique Keys Tracked?                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                              
+  Unique keys are tracked in two scenarios inside DefaultImpressionsTracker.push():                                                                                                                                                                                           
+                                                                                                                                                                                                                                                                              
+  1. NONE impressions mode — no full impressions are ever sent                                                                                                                                                                                                                
+  2. impressionsDisabled flag is true on the split — set server-side per feature flag                                                                                                                                                                                         
+                                                                                                                                                                                                                                                                              
+  In both cases, instead of queuing a full impression, the tracker records which user evaluated which feature.                                                                                                                                                                
+
+  Data Model
+
+  // UniqueKey.swift
+  class UniqueKey: Codable {
+      var userKey: String          // "k" in JSON — the user ID
+      var features: Set<String>    // "fs" in JSON — set of feature names
+  }
+
+  // UniqueKeys.swift — the payload sent to the backend
+  struct UniqueKeys: Codable {
+      let keys: [UniqueKey]
+  }
+
+  In-Memory Tracking
+
+  DefaultUniqueKeyTracker (Split/Network/Sync/UniqueKeyTracker.swift) uses a SynchronizedDictionarySet<String, String> — a thread-safe dictionary where:
+  - Key = user ID
+  - Value = Set<String> of feature names
+
+  When track(userKey:featureName:) is called, it simply adds the feature to that user's set. This naturally deduplicates — same user + same feature is stored only once.
+
+  Persistence
+
+  When saveAndClear() is called, the in-memory dictionary is converted to [UniqueKey] objects and pushed to CoreData via PersistentUniqueKeysStorage:
+
+  - Entity: UniqueKeyEntity with fields: storageId, userKey, featureList (JSON-encoded), createdAt, sendAttemptCount, status
+  - Encryption: Optional cipher support for userKey and featureList
+  - Expiration: Records older than 90 days are filtered out
+  - Retry limit: Max 3 send attempts before auto-deletion
+
+  Posting to Backend
+
+  Endpoint: POST /keys/cs (on the telemetry service URL)
+
+  Worker: UniqueKeysRecorderWorker (Split/FetcherEngine/Recorder/UniqueKeysRecorderWorker.swift)
+
+  Flush process:
+  1. Pops 50 keys at a time from persistent storage (uniqueKeyBulkSize = 50)
+  2. Consolidates/deduplicates — if the same user appears in multiple records, their feature sets are unioned
+  3. Sends via DefaultHttpUniqueKeysRecorder → RestClient.send(uniqueKeys:)
+  4. On success: deletes from CoreData
+  5. On failure: reactivates keys with incremented sendAttemptCount; if count exceeds 3, auto-deleted
+  6. Loops until fewer than 50 keys remain
+
+  Flush Triggers
+
+  ┌────────────────┬───────────────────────────────────────────────────────────────────────┐
+  │    Trigger     │                                Details                                │
+  ├────────────────┼───────────────────────────────────────────────────────────────────────┤
+  │ Periodic       │ Every 15 minutes (uniqueKeysRefreshRate = 900s)                       │
+  ├────────────────┼───────────────────────────────────────────────────────────────────────┤
+  │ Size-based     │ When accumulated size exceeds threshold (estimated 120 bytes per key) │
+  ├────────────────┼───────────────────────────────────────────────────────────────────────┤
+  │ Explicit flush │ On destroy(), app backgrounding, or manual flush() call               │
+  └────────────────┴───────────────────────────────────────────────────────────────────────┘
+
+  Note: Unlike full impressions, the unique keys flush checker is initialized as nil in practice, meaning flushing is primarily time-based (every 15 min) rather than queue-size-based.
+
+  Integration Flow
+
+  getTreatment("feature_flag")
+    → DefaultTreatmentManager.logImpression()
+      → DecoratedImpression(impression, impressionsDisabled: true)
+        → ImpressionsTracker.push()
+          → [NONE mode or impressionsDisabled?]
+            → uniqueKeyTracker.track(userKey, featureName)  // in-memory set
+            → impressionsCounter.inc(featureName, time, 1)  // also count it
+            → return (NO full impression queued)
+
+    [Every 15 minutes]
+      → uniqueKeyTracker.saveAndClear()     // memory → CoreData
+      → UniqueKeysRecorderWorker.flush()    // CoreData → POST /keys/cs
+
+  Key Files
+
+  ┌────────────────────┬─────────────────────────────────────────────────────────────────┐
+  │     Component      │                              Path                               │
+  ├────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Tracker            │ Split/Network/Sync/UniqueKeyTracker.swift                       │
+  ├────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Data models        │ Split/Impressions/UniqueKey.swift, UniqueKeys.swift             │
+  ├────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ CoreData entity    │ Split/Storage/UniqueKeys/UniqueKeyEntity.swift                  │
+  ├────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ DAO                │ Split/Storage/UniqueKeys/UniqueKeyDao.swift                     │
+  ├────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Persistent storage │ Split/Storage/UniqueKeys/PersistentUniqueKeysStorage.swift      │
+  ├────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Recorder worker    │ Split/FetcherEngine/Recorder/UniqueKeysRecorderWorker.swift     │
+  ├────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ HTTP recorder      │ Split/FetcherEngine/Recorder/UniqueKeysRecorder.swift           │
+  ├────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ REST client        │ Split/Network/RestClient/RestClient+UniqueKeys.swift            │
+  ├────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Endpoint config    │ Split/Network/Endpoints/EndpointFactory.swift (path: "keys/cs") │
+  ├────────────────────┼─────────────────────────────────────────────────────────────────┤
+  │ Integration point  │ Split/Network/Sync/ImpressionsTracker.swift (lines 113-122)     │
+  └────────────────────┴─────────────────────────────────────────────────────────────────┘
+
+-----
+
+Clarifications
+
+  Corrections
+
+  1. destroy() does not flush unique keys by itself, but flush() follows it
+     DefaultImpressionsTracker.destroy() (ImpressionsTracker.swift:168-174) only stops periodic
+     workers and saves hashed impressions — it does not call saveUniqueKeys() or trigger a
+     unique keys flush. However, the caller SplitClientManager.destroy(forKey:)
+     (SplitClientManager.swift:134-148) calls syncManager.stop() (which triggers
+     impressionsTracker.destroy()) and then calls self.flush() (which triggers
+     impressionsTracker.flush()). So unique keys are persisted and sent during teardown,
+     just not by destroy() itself. The document's claim that destroy() is a flush trigger
+     is effectively correct at the SplitClientManager level, though misleading at the
+     ImpressionsTracker level.
+
+  2. Retry limit is off-by-one
+     The document says "Max 3 send attempts before auto-deletion." The actual check in
+     UniqueKeyDao.swift:94 is entity.sendAttemptCount > ServiceConstants.retryCount (> 3).
+     Since the count is incremented before the comparison, deletion happens when the count
+     reaches 4 — meaning a record gets its initial attempt plus 3 retries (4 total sends)
+     before deletion, not 3.
+
+  3. On-success deletion uses userKey, not storageId
+     UniqueKeysRecorderWorker.flush() calls uniqueKeyStorage.delete(keys) on success.
+     PersistentUniqueKeysStorage.delete() passes keys.map { $0.userKey } to
+     uniqueKeyDao.delete(), which deletes CoreData records where storageId IN those values
+     (UniqueKeyDao.swift:113). This matches storageId against userKey strings, which is
+     unlikely to match correctly unless storageId happens to equal userKey. This appears
+     to be a bug — sent records are effectively never cleaned up by the success path;
+     they remain in "deleted" status from the earlier pop().
+
+  4. Background observer is macOS-only
+     The background notification that triggers saveUniqueKeys() inside ImpressionsTracker
+     (lines 70-78) is wrapped in #if os(macOS). On iOS, there is no equivalent background
+     hook within ImpressionsTracker itself for persisting unique keys on app backgrounding.
+     The document states "app backgrounding" as a flush trigger without this caveat.
+
+  Missing Information
+
+  1. User Consent system
+     The UserConsent system (UserConsentManager.swift) can completely disable unique key tracking:
+     - When consent is "declined", enableTracking(false) is called, and push() returns early
+       (ImpressionsTracker.swift:101-103) — no unique keys are recorded at all.
+     - When consent is not "granted", enablePersistence(false) is called, making
+       saveUniqueKeys() a no-op (ImpressionsTracker.swift:197-198) — in-memory keys
+       are never persisted to CoreData.
+
+  2. No in-memory size cap
+     SynchronizedDictionarySet (SynchronizedDictionarySet.swift) has no maximum size limit.
+     Since uniqueKeyFlushChecker is nil, the in-memory dictionary grows without bound until
+     the 15-minute periodic saveAndClear(). In high-throughput scenarios with many distinct
+     users or features, memory usage can grow significantly between flushes.
+
+  3. Async dispatch through flushQueue
+     The push() call does not go directly from DefaultTreatmentManager to ImpressionsTracker.
+     It passes through Synchronizer.pushImpression() (Synchronizer.swift:203-208) which
+     dispatches onto a serial DispatchQueue ("split-flush-queue"). This means unique key
+     tracking is asynchronous — getTreatment() returns before the unique key is recorded.
+
+  4. pop() marks records as deleted before sending
+     PersistentUniqueKeysStorage.pop() (PersistentUniqueKeysStorage.swift:28-37) marks
+     records as "deleted" status immediately upon retrieval, before the HTTP request
+     completes. On failure, setActiveAndUpdateSendCount() re-activates them. If the process
+     crashes during a send, those records are lost — they are in "deleted" status and will
+     never be retried.
+
+  5. ImpressionsCounter is always created, not just for NONE mode
+     createImpressionsCountRecorder() is called unconditionally in setupImpressionsMode()
+     (ImpressionsTracker.swift:211). The counter is also incremented in OPTIMIZED mode for
+     non-first-seen impressions (ImpressionsTracker.swift:128). The document's integration
+     flow implies the counter is only used alongside unique keys in NONE/impressionsDisabled
+     scenarios.
+
+  6. The clear() method discards without persisting
+     UniqueKeyTracker has a clear() method (UniqueKeyTracker.swift:38-40) that calls
+     inMemoryKeys.removeAll(), discarding all accumulated keys without writing them to
+     CoreData. This is distinct from saveAndClear() which persists first. The method exists
+     on the protocol but does not appear to be called in production code currently.

@@ -8,9 +8,7 @@
 
 import Foundation
 import Logging
-#if SWIFT_PACKAGE
 import SplitConcurrency
-#endif
 
 public class SseConnectionHandler: @unchecked Sendable {
     private let clientLock = NSLock()
