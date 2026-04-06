@@ -8,13 +8,13 @@ let package = Package(
     products: [
         .library(name: "Split", targets: ["Split"]),
     
-        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker", "Tracker", "Streaming"]),],
+        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker", "Tracker", "Streaming", "SplitConcurrency"]),],
     targets: [
         
         // MARK: Split
         .target(
             name: "Split",
-            dependencies: ["Http", "BackoffCounter", "Logging", "PeriodicRecorderWorker", "Tracker", "Streaming"],
+            dependencies: ["Http", "BackoffCounter", "Logging", "PeriodicRecorderWorker", "Tracker", "Streaming", "SplitConcurrency"],
             path: "Split",
             exclude: [
                 "Common/Yaml/LICENSE",
@@ -85,14 +85,21 @@ let package = Package(
         ),
         .testTarget(
             name: "TrackerTests",
-            dependencies: ["TrackerTests"],
+            dependencies: ["Tracker"],
             path: "Sources/Tracker/Tests"
+        ),
+
+        // SplitConcurrency
+        .target(
+            name: "SplitConcurrency",
+            dependencies: [],
+            path: "Sources/SplitConcurrency"
         ),
 
         // Streaming
         .target(
             name: "Streaming",
-            dependencies: ["Http", "Logging"],
+            dependencies: ["Http", "Logging", "SplitConcurrency"],
             path: "Sources/Streaming",
             exclude: ["Tests", "README.md"]
         ),

@@ -9,6 +9,7 @@
 import Foundation
 import Http
 import Logging
+import SplitConcurrency
 
 public struct SseClientConstants {
     public static let pushNotificationChannelsParam = "channels"
