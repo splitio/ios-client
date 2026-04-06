@@ -2687,14 +2687,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0E5B01725F08B968526EFEF3 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				69BF64B96C8BCA08D03ADF5E /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		23BBD654A69F22BA74A196CF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2778,17 +2770,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A16707E9A911EF051A86FBA6 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				698637D2261E337457B6605B /* Foundation.framework in Frameworks */,
-				DE71D5E5E541F13F12D481F5 /* Http.framework in Frameworks */,
-				96E66749B379338397081113 /* Logging.framework in Frameworks */,
-				B9826C39D0C4E7E25A2A10B8 /* SplitConcurrency.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		BD0D4B047B11B3C12C0B7F7B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2823,18 +2804,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		13000B69AC647470A4F87B81 /* SplitConcurrency */ = {
-			isa = PBXGroup;
-			children = (
-				7D9FCA792BB1C0869C552FE1 /* Atomic.swift */,
-				5FDF9FE9ADF2C2A45F37368C /* SynchronizedDictionary.swift */,
-				5CF87C391874FA7B8168677B /* SynchronizedDictionaryComposed.swift */,
-				FF37F59E324F329FF6F96252 /* SynchronizedDictionarySet.swift */,
-			);
-			name = SplitConcurrency;
-			path = Sources/SplitConcurrency;
-			sourceTree = "<group>";
-		};
 		31AA215C368D12E69FE80703 /* Streaming */ = {
 			isa = PBXGroup;
 			children = (
@@ -2889,8 +2858,6 @@
 				3B6DEE5B20EA6A4E0067435E /* Products */,
 				590DF9962125F6900082B94F /* Frameworks */,
 				5B0379722F4CD36F00DBD621 /* Recovered References */,
-				13000B69AC647470A4F87B81 /* SplitConcurrency */,
-				4A70E0A6C9EA23A64765A9A4 /* Streaming */,
 			);
 			sourceTree = "<group>";
 		};
@@ -3372,19 +3339,6 @@
 				C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */,
 			);
 			path = Storage;
-			sourceTree = "<group>";
-		};
-		4A70E0A6C9EA23A64765A9A4 /* Streaming */ = {
-			isa = PBXGroup;
-			children = (
-				EC52352C2E711717281568A7 /* EventStreamParser.swift */,
-				71556ABC7F6D93E8AD0D25AE /* SseClient.swift */,
-				5F501756A82251A48A26676D /* SseClientFactory.swift */,
-				DCD094E6732278073D6D108A /* SseConnectionHandler.swift */,
-				AADB2717F9AAFB52009382B4 /* SseHandler.swift */,
-			);
-			name = Streaming;
-			path = Sources/Streaming;
 			sourceTree = "<group>";
 		};
 		5905D4DD2559C950006DA3B1 /* MySegments */ = {
@@ -4587,25 +4541,11 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		288401156A6D5E61A1079469 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3B6DEE5720EA6A4E0067435E /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				59BF3D432232A663004D134D /* Split.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8522768BC087828E561EC636 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4648,27 +4588,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		084253A43894BB980D665D0F /* Streaming */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = AA09D79F6044AF9A6BE34819 /* Build configuration list for PBXNativeTarget "Streaming" */;
-			buildPhases = (
-				288401156A6D5E61A1079469 /* Headers */,
-				32538332D252C0CBF4A855A3 /* Sources */,
-				A16707E9A911EF051A86FBA6 /* Frameworks */,
-				1941DE1368C5DD11F6FC2747 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D5FDF7E84DDA05A2F0625CB9 /* PBXTargetDependency */,
-				BCC02B9AE953B927D9128EFA /* PBXTargetDependency */,
-				A66212D12BD1FA25758D532F /* PBXTargetDependency */,
-			);
-			name = Streaming;
-			productName = Streaming;
-			productReference = 7D6B834A3D68F89344693213 /* Streaming.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		22075E2EBDA25D78FC291C40 /* HttpTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 08C301C6CA80A5AD19D35511 /* Build configuration list for PBXNativeTarget "HttpTests" */;
@@ -4918,24 +4837,6 @@
 			productReference = 46392DA809BDD5397B4D8E6A /* BackoffCounter.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		F2D99FA3B7734EA2C724DA19 /* SplitConcurrency */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F90CE16C1FBEEF8A54D4864E /* Build configuration list for PBXNativeTarget "SplitConcurrency" */;
-			buildPhases = (
-				8522768BC087828E561EC636 /* Headers */,
-				52440F93C3B735618CF5A349 /* Sources */,
-				0E5B01725F08B968526EFEF3 /* Frameworks */,
-				81CA6C3BC69000D8D89288EA /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = SplitConcurrency;
-			productName = SplitConcurrency;
-			productReference = 226AA19708BA547A4D93E9F8 /* SplitConcurrency.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		TRKTARGET0000001 /* Tracker */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = TRKCFGLIST0001 /* Build configuration list for PBXNativeTarget "Tracker" */;
@@ -5028,21 +4929,12 @@
 				60EAB5B278980408CA33AD72 /* PeriodicRecorderWorkerTests */,
 				TRKTARGET0000001 /* Tracker */,
 				TRKTARGET0000002 /* TrackerTests */,
-				F2D99FA3B7734EA2C724DA19 /* SplitConcurrency */,
-				084253A43894BB980D665D0F /* Streaming */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		0DEFC087125799DAD9AB97B9 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		1941DE1368C5DD11F6FC2747 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5251,13 +5143,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		81CA6C3BC69000D8D89288EA /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		93BF30FE7E9A4DFB1ADAAF9B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5347,18 +5232,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		32538332D252C0CBF4A855A3 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B9EE06D4573EE7FE9B19F223 /* EventStreamParser.swift in Sources */,
-				10E75D1A6A2C4403600DDB9E /* SseClient.swift in Sources */,
-				E290130B44011B819B2F120B /* SseClientFactory.swift in Sources */,
-				E6300F53AD8B0EE25EE9B078 /* SseConnectionHandler.swift in Sources */,
-				3E70737126C0F77C352C4CD8 /* SseHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5712,17 +5585,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		52440F93C3B735618CF5A349 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7E46F91016B1F3A4BDEC8564 /* Atomic.swift in Sources */,
-				C9A216D211C278A91D065779 /* SynchronizedDictionary.swift in Sources */,
-				D9A85143445D9F3F1C5A601E /* SynchronizedDictionaryComposed.swift in Sources */,
-				08ADE2B72EEBCA82E71C8EA5 /* SynchronizedDictionarySet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6910,7 +6772,6 @@
 		3CC3685AEC1D8616DBBA3B60 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = SplitConcurrency;
-			target = F2D99FA3B7734EA2C724DA19 /* SplitConcurrency */;
 			targetProxy = 7A5E2DBB69047852041EE7ED /* PBXContainerItemProxy */;
 		};
 		592C6AAC211B6C99002D120C /* PBXTargetDependency */ = {
@@ -6953,22 +6814,9 @@
 			target = 557D062442413680641861B3 /* Logging */;
 			targetProxy = 95B02CAB28D0BD7A0030EC8C /* PBXContainerItemProxy */;
 		};
-		A66212D12BD1FA25758D532F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = SplitConcurrency;
-			target = F2D99FA3B7734EA2C724DA19 /* SplitConcurrency */;
-			targetProxy = 6A48EBF45ACCFFBD89D6CBBD /* PBXContainerItemProxy */;
-		};
-		BCC02B9AE953B927D9128EFA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Logging;
-			target = 557D062442413680641861B3 /* Logging */;
-			targetProxy = 5998668CFBDD5D9745406856 /* PBXContainerItemProxy */;
-		};
 		BFFC47F63FC233A5A07CA6BA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Streaming;
-			target = 084253A43894BB980D665D0F /* Streaming */;
 			targetProxy = 838947AECDE2DB87131AEF42 /* PBXContainerItemProxy */;
 		};
 		C5B8C0F15A946E32416739CC /* PBXTargetDependency */ = {
@@ -6982,12 +6830,6 @@
 			name = Logging;
 			target = 557D062442413680641861B3 /* Logging */;
 			targetProxy = 2BCAB130D73EC14037F54664 /* PBXContainerItemProxy */;
-		};
-		D5FDF7E84DDA05A2F0625CB9 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Http;
-			target = A9E90B2EA117111D127AA72A /* Http */;
-			targetProxy = F6057F9F3ECDE92EDCCC146A /* PBXContainerItemProxy */;
 		};
 		E86C21454C5FA11C386AF845 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -9332,17 +9174,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		AA09D79F6044AF9A6BE34819 /* Build configuration list for PBXNativeTarget "Streaming" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CF2A84EE40B88C2648335EBB /* Release */,
-				383D603B63E8E35D3B93FB5E /* Debug */,
-				3B3D9064067CE91DA2208F81 /* Debug-Swift5 */,
-				62AA01E434F066F8F72D2E15 /* Debug-Swift6 */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		EE590F77E5EC5090F3AC0907 /* Build configuration list for PBXNativeTarget "PeriodicRecorderWorker" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -9350,17 +9181,6 @@
 				8A072C8B82CDD8C312742A79 /* Debug */,
 				25610DDE39816D8C96E98E20 /* Debug-Swift5 */,
 				7E1E95ACCB03A65CE983118D /* Debug-Swift6 */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F90CE16C1FBEEF8A54D4864E /* Build configuration list for PBXNativeTarget "SplitConcurrency" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DE17C86F61869380075D7306 /* Release */,
-				473096605A1C4C5B9B5041A7 /* Debug */,
-				64497F39C7897B278EEA5C45 /* Debug-Swift5 */,
-				7139E56CA059ADF602F3D42D /* Debug-Swift6 */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -93,7 +93,13 @@ let package = Package(
         .target(
             name: "SplitConcurrency",
             dependencies: [],
-            path: "Sources/SplitConcurrency"
+            path: "Sources/SplitConcurrency",
+            exclude: ["Tests", "README.md"]
+        ),
+        .testTarget(
+            name: "SplitConcurrencyTests",
+            dependencies: ["SplitConcurrency"],
+            path: "Sources/SplitConcurrency/Tests"
         ),
 
         // Streaming
@@ -103,8 +109,11 @@ let package = Package(
             path: "Sources/Streaming",
             exclude: ["Tests", "README.md"]
         ),
-
-
+        .testTarget(
+            name: "StreamingTests",
+            dependencies: ["Streaming"],
+            path: "Sources/Streaming/Tests"
+        ),
         // #INJECT_TARGET
     ]
 )
