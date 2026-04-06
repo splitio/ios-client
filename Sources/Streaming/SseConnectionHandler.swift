@@ -16,7 +16,7 @@ public class SseConnectionHandler: @unchecked Sendable {
     private var curClientId: String?
     private let clients = SynchronizedDictionary<String, SseClient>()
 
-    var isConnectionOpened: Bool {
+    public var isConnectionOpened: Bool {
         guard let id = curClientId else { return false }
         return clients.value(forKey: id)?.isConnectionOpened ?? false
     }
