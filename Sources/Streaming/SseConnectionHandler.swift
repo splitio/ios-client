@@ -8,18 +8,17 @@
 
 import Foundation
 import Logging
+import SplitConcurrency
 
 public class SseConnectionHandler: @unchecked Sendable {
     private let clientLock = NSLock()
     private let sseClientFactory: SseClientFactory
     private var curClientId: String?
-    private var clients = [String: SseClient]()
+    private let clients = SynchronizedDictionary<String, SseClient>()
 
     var isConnectionOpened: Bool {
-        clientLock.lock()
-        defer { clientLock.unlock() }
         guard let id = curClientId else { return false }
-        return clients[id]?.isConnectionOpened ?? false
+        return clients.value(forKey: id)?.isConnectionOpened ?? false
     }
 
     public init(sseClientFactory: SseClientFactory) {
@@ -46,12 +45,7 @@ public class SseConnectionHandler: @unchecked Sendable {
     }
 
     public func destroy() {
-        let all: [SseClient]
-        clientLock.lock()
-        all = Array(clients.values)
-        clients.removeAll()
-        clientLock.unlock()
-        for client in all {
+        for client in clients.takeAll().values {
             client.disconnect()
         }
     }
@@ -72,20 +66,14 @@ public class SseConnectionHandler: @unchecked Sendable {
 
     private func addSseClient(_ newClient: SseClient) {
         let id = newClientId()
-        clientLock.lock()
-        clients[id] = newClient
-        clientLock.unlock()
+        clients.setValue(newClient, forKey: id)
     }
 
     private func getSseClient(id: String) -> SseClient? {
-        clientLock.lock()
-        defer { clientLock.unlock() }
-        return clients[id]
+        return clients.value(forKey: id)
     }
 
     private func removeSseClient(id: String) {
-        clientLock.lock()
         clients.removeValue(forKey: id)
-        clientLock.unlock()
     }
 }
