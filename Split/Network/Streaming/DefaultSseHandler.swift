@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if SWIFT_PACKAGE
 import Streaming
+#endif
 
 class DefaultSseHandler: SseHandler, @unchecked Sendable {
     let notificationProcessor: SseNotificationProcessor

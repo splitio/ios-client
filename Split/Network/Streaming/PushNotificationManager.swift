@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if SWIFT_PACKAGE
 import Streaming
+#endif
 
 protocol PushNotificationManager {
     // Visible for testing. Make possible to inject stub
