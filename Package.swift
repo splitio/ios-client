@@ -99,7 +99,7 @@ let package = Package(
             dependencies: ["Concurrency"],
             path: "Sources/Concurrency/Tests"
         ),
-        
+
         .target(
             name: "Streaming",
             dependencies: ["Concurrency", "Http", "Logging"],
