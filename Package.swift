@@ -85,7 +85,7 @@ let package = Package(
         ),
         .testTarget(
             name: "TrackerTests",
-            dependencies: ["TrackerTests"],
+            dependencies: ["Tracker"],
             path: "Sources/Tracker/Tests"
         ),
         

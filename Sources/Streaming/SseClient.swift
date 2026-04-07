@@ -7,22 +7,26 @@
 //
 
 import Foundation
+import Concurrency
+import Http
+import Logging
 
-struct SseClientConstants {
-    static let pushNotificationChannelsParam = "channels"
-    static let pushNotificationTokenParam = "accessToken"
-    static let pushNotificationVersionParam = "v"
-    static let pushNotificationVersionValue = "1.1"
+public struct SseClientConstants {
+    public static let pushNotificationChannelsParam = "channels"
+    public static let pushNotificationTokenParam = "accessToken"
+    public static let pushNotificationVersionParam = "v"
+    public static let pushNotificationVersionValue = "1.1"
 }
 
-protocol SseClient: AnyObject {
+public protocol SseClient: AnyObject {
     typealias CompletionHandler = @Sendable (Bool) -> Void
     func connect(token: String, channels: [String], completion: @escaping CompletionHandler)
     func disconnect()
     var isConnectionOpened: Bool { get }
+
 }
 
-class DefaultSseClient: SseClient, @unchecked Sendable {
+public class DefaultSseClient: SseClient, @unchecked Sendable {
 
     ///
     /// NOTE:
@@ -38,18 +42,18 @@ class DefaultSseClient: SseClient, @unchecked Sendable {
     private var isDisconnectCalled: Atomic<Bool> = Atomic(false)
     private var isConnected: Atomic<Bool> = Atomic(false)
     private var isFirstMessage: Atomic<Bool> = Atomic(false)
-    var isConnectionOpened: Bool {
+    public var isConnectionOpened: Bool {
         return isConnected.value
     }
 
-    init(endpoint: Endpoint, httpClient: HttpClient, sseHandler: SseHandler) {
+    public init(endpoint: Endpoint, httpClient: HttpClient, sseHandler: SseHandler) {
         self.endpoint = endpoint
         self.httpClient = httpClient
         self.sseHandler = sseHandler
         self.queue = DispatchQueue(label: "split-sse-client")
     }
 
-    func connect(token: String, channels: [String], completion: @escaping CompletionHandler) {
+    public func connect(token: String, channels: [String], completion: @escaping CompletionHandler) {
         queue.async(flags: .barrier) { [weak self] in
             guard let self = self else { return }
             let parameters: [String: Any] = [
@@ -105,7 +109,7 @@ class DefaultSseClient: SseClient, @unchecked Sendable {
         }
     }
 
-    func disconnect() {
+    public func disconnect() {
         Logger.d("Disconnecting SSE client")
         isDisconnectCalled.set(true)
         isConnected.set(false)
@@ -132,7 +136,7 @@ class DefaultSseClient: SseClient, @unchecked Sendable {
 
             guard let self = self else { return }
 
-            let values = self.streamParser.parse(streamChunk: data.stringRepresentation)
+            let values = self.streamParser.parse(streamChunk: String(data: data, encoding: .utf8) ?? "")
 
             if self.isFirstMessage.value {
                 if self.isConnectionConfirmed(message: values) {

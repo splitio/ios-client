@@ -7,17 +7,18 @@
 //
 
 import Foundation
+import Http
 
-protocol SseClientFactory {
+public protocol SseClientFactory {
     func create() -> SseClient
 }
 
-class DefaultSseClientFactory: SseClientFactory {
+public class DefaultSseClientFactory: SseClientFactory {
     private let endpoint: Endpoint
     private let httpClient: HttpClient
     private let sseHandler: SseHandler
 
-    init(endpoint: Endpoint,
+    public init(endpoint: Endpoint,
          httpClient: HttpClient,
          sseHandler: SseHandler) {
         self.endpoint = endpoint
@@ -25,7 +26,7 @@ class DefaultSseClientFactory: SseClientFactory {
         self.sseHandler = sseHandler
     }
 
-    func create() -> SseClient {
+    public func create() -> SseClient {
         DefaultSseClient(endpoint: endpoint,
                                 httpClient: httpClient,
                                 sseHandler: sseHandler)

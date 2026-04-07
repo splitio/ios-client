@@ -7,33 +7,35 @@
 //
 
 import Foundation
+import Concurrency
+import Logging
 
-class SseConnectionHandler: @unchecked Sendable {
+public class SseConnectionHandler: @unchecked Sendable {
     private let clientLock = NSLock()
     private let sseClientFactory: SseClientFactory
     private var curClientId: String?
     private let clients = SynchronizedDictionary<String, SseClient>()
 
-    var isConnectionOpened: Bool {
+    public var isConnectionOpened: Bool {
         guard let id = curClientId else { return false }
         return clients.value(forKey: id)?.isConnectionOpened ?? false
     }
 
-    init(sseClientFactory: SseClientFactory) {
+    public init(sseClientFactory: SseClientFactory) {
         self.sseClientFactory = sseClientFactory
     }
 
-    func connect(jwt: JwtToken, channels: [String], completion: @escaping SseClient.CompletionHandler) {
+    public func connect(token: String, channels: [String], completion: @escaping SseClient.CompletionHandler) {
         let sseClient = sseClientFactory.create()
         addSseClient(sseClient)
-        sseClient.connect(token: jwt.rawToken, channels: jwt.channels, completion: completion)
+        sseClient.connect(token: token, channels: channels, completion: completion)
     }
 
-    func disconnect() {
+    public func disconnect() {
         Logger.d("Streaming Connection Handler - Disconnecting SSE client")
         let disconnectingClientId = curClientId
         clearClientId()
-        DispatchQueue.general.async { [weak self] in
+        DispatchQueue.global().async { [weak self] in
             guard let self = self else { return }
             guard let clientId = disconnectingClientId else { return }
             let cli = self.getSseClient(id: clientId)
@@ -42,7 +44,7 @@ class SseConnectionHandler: @unchecked Sendable {
         }
     }
 
-    func destroy() {
+    public func destroy() {
         for client in clients.takeAll().values {
             client.disconnect()
         }

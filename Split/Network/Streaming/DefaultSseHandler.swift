@@ -8,12 +8,6 @@
 
 import Foundation
 
-protocol SseHandler {
-    func isConnectionConfirmed(message: [String: String]) -> Bool
-    func handleIncomingMessage(message: [String: String])
-    func reportError(isRetryable: Bool)
-}
-
 class DefaultSseHandler: SseHandler, @unchecked Sendable {
     let notificationProcessor: SseNotificationProcessor
     let notificationParser: SseNotificationParser
