@@ -8,13 +8,13 @@ let package = Package(
     products: [
         .library(name: "Split", targets: ["Split"]),
     
-        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker", "Tracker"]),],
+        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker", "Tracker", "Concurrency"]),],
     targets: [
         
         // MARK: Split
         .target(
             name: "Split",
-            dependencies: ["Http", "BackoffCounter", "Logging", "PeriodicRecorderWorker", "Tracker"],
+            dependencies: ["BackoffCounter", "Concurrency", "Http", "Logging", "PeriodicRecorderWorker", "Tracker"],
             path: "Split",
             exclude: [
                 "Common/Yaml/LICENSE",
@@ -87,6 +87,17 @@ let package = Package(
             name: "TrackerTests",
             dependencies: ["TrackerTests"],
             path: "Sources/Tracker/Tests"
+        ),
+        
+        .target(
+            name: "Concurrency",
+            dependencies: [],
+            exclude: ["Tests", "README.md"]
+        ),
+        .testTarget(
+            name: "ConcurrencyTests",
+            dependencies: ["Concurrency"],
+            path: "Sources/Concurrency/Tests"
         ),
         // #INJECT_TARGET
     ]

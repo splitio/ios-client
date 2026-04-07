@@ -8,35 +8,35 @@
 
 import Foundation
 
-final class Atomic<T>: @unchecked Sendable {
+public final class Atomic<T>: @unchecked Sendable {
 //    private let queue = DispatchQueue(label: "split-atomic", target: DispatchQueue.general)
     private var currentValue: T
 
     private var lock = NSLock()
 
-    init(_ value: T) {
+    public init(_ value: T) {
         self.currentValue = value
     }
 
-    var value: T {
+    public var value: T {
         lock.lock()
         defer { lock.unlock() }
         return self.currentValue
     }
 
-    func mutate(_ transformation: (inout T) -> Void) {
+    public func mutate(_ transformation: (inout T) -> Void) {
         lock.lock()
         transformation(&self.currentValue)
         lock.unlock()
     }
 
-    func mutate(_ transformation: (T, inout T) -> Void) {
+    public func mutate(_ transformation: (T, inout T) -> Void) {
         lock.lock()
         transformation(currentValue, &self.currentValue)
         lock.unlock()
     }
 
-    func getAndSet(_ newValue: T) -> T {
+    public func getAndSet(_ newValue: T) -> T {
         lock.lock()
         defer { lock.unlock() }
         let oldValue = self.currentValue
@@ -44,28 +44,28 @@ final class Atomic<T>: @unchecked Sendable {
         return oldValue
     }
 
-    func set(_ newValue: T) {
+    public func set(_ newValue: T) {
         lock.lock()
         self.currentValue = newValue
         lock.unlock()
     }
 }
 
-final class AtomicInt: @unchecked Sendable {
+public final class AtomicInt: @unchecked Sendable {
     private var curValue: Int
     private var lock = NSLock()
 
-    init(_ value: Int) {
+    public init(_ value: Int) {
         self.curValue = value
     }
 
-    var value: Int {
+    public var value: Int {
         lock.lock()
         defer { lock.unlock() }
         return curValue
     }
 
-    func getAndAdd(_ addValue: Int) -> Int {
+    public func getAndAdd(_ addValue: Int) -> Int {
         lock.lock()
         defer { lock.unlock() }
         let oldValue = self.curValue
@@ -73,7 +73,7 @@ final class AtomicInt: @unchecked Sendable {
         return oldValue
     }
 
-    func addAndGet(_ addValue: Int) -> Int {
+    public func addAndGet(_ addValue: Int) -> Int {
         lock.lock()
         defer { lock.unlock() }
         curValue+=addValue
@@ -81,13 +81,13 @@ final class AtomicInt: @unchecked Sendable {
         return newValue
     }
 
-    func set(_ newValue: Int) {
+    public func set(_ newValue: Int) {
         lock.lock()
         defer { lock.unlock() }
         curValue = newValue
     }
 
-    func getAndSet(_ newValue: Int) -> Int {
+    public func getAndSet(_ newValue: Int) -> Int {
         lock.lock()
         defer { lock.unlock() }
         let oldValue = curValue
@@ -95,7 +95,7 @@ final class AtomicInt: @unchecked Sendable {
         return oldValue
     }
 
-    func mutate(_ transformation: (inout Int) -> Void) {
+    public func mutate(_ transformation: (inout Int) -> Void) {
         lock.lock()
         transformation(&self.curValue)
         lock.unlock()
