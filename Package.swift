@@ -102,7 +102,7 @@ let package = Package(
         
         .target(
             name: "Streaming",
-            dependencies: ["Http", "Logging"],
+            dependencies: ["Concurrency", "Http", "Logging"],
             exclude: ["Tests", "README.md"]
         ),
         .testTarget(
