@@ -1,6 +1,4 @@
 // ConcurrencyTestConnector.swift
-// Created by Split Team.
-// Copyright © 2025 Split. All rights reserved.
 
 #if !COCOAPODS
 import Concurrency
