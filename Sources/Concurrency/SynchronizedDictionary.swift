@@ -8,18 +8,20 @@
 
 import Foundation
 
-class SynchronizedDictionary<K: Hashable, T>: @unchecked Sendable {
+public class SynchronizedDictionary<K: Hashable, T>: @unchecked Sendable {
 
     private var queue: DispatchQueue = DispatchQueue(label: "split-synchronized-dictionary", target: .global())
     private var items = [K: T]()
 
-    var keys: Set<K> {
+    public init() {}
+
+    public var keys: Set<K> {
         queue.sync {
             let keys = items.keys
             return Set(keys.map { $0 as K})
         }
     }
-    var all: [K: T] {
+    public var all: [K: T] {
         var allItems: [K: T]?
         queue.sync {
             allItems = items
@@ -27,7 +29,7 @@ class SynchronizedDictionary<K: Hashable, T>: @unchecked Sendable {
         return allItems!
     }
 
-    var count: Int {
+    public var count: Int {
         var count: Int = 0
         queue.sync {
             count  = items.count
@@ -35,7 +37,7 @@ class SynchronizedDictionary<K: Hashable, T>: @unchecked Sendable {
         return count
     }
 
-    func value(forKey key: K) -> T? {
+    public func value(forKey key: K) -> T? {
         var value: T?
         queue.sync {
             value = items[key]
@@ -43,13 +45,13 @@ class SynchronizedDictionary<K: Hashable, T>: @unchecked Sendable {
         return value
     }
 
-    func removeValue(forKey key: K) {
+    public func removeValue(forKey key: K) {
         queue.sync {
             _ = items.removeValue(forKey: key)
         }
     }
 
-    func removeValues(forKeys keys: Dictionary<K, T>.Keys) {
+    public func removeValues(forKeys keys: Dictionary<K, T>.Keys) {
         queue.sync {
             for key in keys {
                 items.removeValue(forKey: key)
@@ -57,19 +59,19 @@ class SynchronizedDictionary<K: Hashable, T>: @unchecked Sendable {
         }
     }
 
-    func removeAll() {
+    public func removeAll() {
         queue.sync {
             items.removeAll()
         }
     }
 
-    func setValue(_ value: T, forKey key: K) {
+    public func setValue(_ value: T, forKey key: K) {
         queue.sync {
             items[key] = value
         }
     }
 
-    func setValues(_ values: [K: T]) {
+    public func setValues(_ values: [K: T]) {
         queue.sync {
             items.removeAll()
             for (key, value) in values {
@@ -78,7 +80,7 @@ class SynchronizedDictionary<K: Hashable, T>: @unchecked Sendable {
         }
     }
 
-    func putValues(_ values: [K: T]) {
+    public func putValues(_ values: [K: T]) {
         queue.sync {
             for (key, value) in values {
                 items[key] = value
@@ -86,7 +88,7 @@ class SynchronizedDictionary<K: Hashable, T>: @unchecked Sendable {
         }
     }
 
-    func takeValue(forKey key: K) -> T? {
+    public func takeValue(forKey key: K) -> T? {
         var value: T?
         queue.sync {
             value = items[key]
@@ -97,7 +99,7 @@ class SynchronizedDictionary<K: Hashable, T>: @unchecked Sendable {
         return value
     }
 
-    func takeAll() -> [K: T] {
+    public func takeAll() -> [K: T] {
         var allItems: [K: T]!
         queue.sync {
             allItems = items

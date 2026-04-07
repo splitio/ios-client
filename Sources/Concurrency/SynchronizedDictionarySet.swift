@@ -8,20 +8,22 @@
 
 import Foundation
 
-class SynchronizedDictionarySet<K: Hashable, T: Hashable>: @unchecked Sendable {
+public class SynchronizedDictionarySet<K: Hashable, T: Hashable>: @unchecked Sendable {
 
     private var queue: DispatchQueue = DispatchQueue(label: "split-synchronized-dictionary-set",
                                                      target: .global())
     private var items = [K: Set<T>]()
 
-    var keys: Set<K> {
+    public init() {}
+
+    public var keys: Set<K> {
         queue.sync {
             let keys = items.keys
             return Set(keys.map { $0 as K})
         }
     }
 
-    var all: [K: Set<T>] {
+    public var all: [K: Set<T>] {
         var all: [K: Set<T>]?
         queue.sync {
             all = items
@@ -29,7 +31,7 @@ class SynchronizedDictionarySet<K: Hashable, T: Hashable>: @unchecked Sendable {
         return all ?? [K: Set<T>]()
     }
 
-    func count(forKey key: K) -> Int {
+    public func count(forKey key: K) -> Int {
         var count: Int?
         queue.sync {
             count = items[key]?.count
@@ -37,7 +39,7 @@ class SynchronizedDictionarySet<K: Hashable, T: Hashable>: @unchecked Sendable {
         return count ?? 0
     }
 
-    func values(forKey key: K) -> Set<T>? {
+    public func values(forKey key: K) -> Set<T>? {
         var value: Set<T>?
         queue.sync {
             value = items[key]
@@ -45,7 +47,7 @@ class SynchronizedDictionarySet<K: Hashable, T: Hashable>: @unchecked Sendable {
         return value
     }
 
-    func takeAll() -> [K: Set<T>] {
+    public func takeAll() -> [K: Set<T>] {
         var all: [K: Set<T>]?
         queue.sync {
             all = items
@@ -54,7 +56,7 @@ class SynchronizedDictionarySet<K: Hashable, T: Hashable>: @unchecked Sendable {
         return all ?? [K: Set<T>]()
     }
 
-    func contains(value: T, forKey key: K) -> Bool {
+    public func contains(value: T, forKey key: K) -> Bool {
         var hasValue: Bool?
         queue.sync {
             hasValue = items[key]?.contains(value)
@@ -62,13 +64,13 @@ class SynchronizedDictionarySet<K: Hashable, T: Hashable>: @unchecked Sendable {
         return hasValue ?? false
     }
 
-    func set(_ values: Set<T>, forKey key: K) {
+    public func set(_ values: Set<T>, forKey key: K) {
         queue.sync {
             self.items[key] = values
         }
     }
 
-    func insert(_ value: T, forKey key: K) {
+    public func insert(_ value: T, forKey key: K) {
         queue.sync {
             if items[key] != nil {
                 items[key]?.insert(value)
@@ -78,13 +80,13 @@ class SynchronizedDictionarySet<K: Hashable, T: Hashable>: @unchecked Sendable {
         }
     }
 
-    func removeValues(forKey key: K) {
+    public func removeValues(forKey key: K) {
         queue.sync {
             _ = items.removeValue(forKey: key)
         }
     }
 
-    func removeValue(_ value: T, forKey key: K) {
+    public func removeValue(_ value: T, forKey key: K) {
         queue.sync {
             var values = items[key]
             values?.remove(value)
@@ -98,7 +100,7 @@ class SynchronizedDictionarySet<K: Hashable, T: Hashable>: @unchecked Sendable {
         }
     }
 
-    func removeAll() {
+    public func removeAll() {
         queue.sync {
             items.removeAll()
         }
