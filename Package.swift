@@ -8,13 +8,13 @@ let package = Package(
     products: [
         .library(name: "Split", targets: ["Split"]),
     
-        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker", "Tracker", "Concurrency"]),],
+        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker", "Tracker", "Concurrency", "Streaming"]),],
     targets: [
         
         // MARK: Split
         .target(
             name: "Split",
-            dependencies: ["BackoffCounter", "Concurrency", "Http", "Logging", "PeriodicRecorderWorker", "Tracker"],
+            dependencies: ["BackoffCounter", "Concurrency", "Http", "Logging", "PeriodicRecorderWorker", "Streaming", "Tracker"],
             path: "Split",
             exclude: [
                 "Common/Yaml/LICENSE",
@@ -85,7 +85,7 @@ let package = Package(
         ),
         .testTarget(
             name: "TrackerTests",
-            dependencies: ["TrackerTests"],
+            dependencies: ["Tracker"],
             path: "Sources/Tracker/Tests"
         ),
         
@@ -98,6 +98,17 @@ let package = Package(
             name: "ConcurrencyTests",
             dependencies: ["Concurrency"],
             path: "Sources/Concurrency/Tests"
+        ),
+
+        .target(
+            name: "Streaming",
+            dependencies: ["Concurrency", "Http", "Logging"],
+            exclude: ["Tests", "README.md"]
+        ),
+        .testTarget(
+            name: "StreamingTests",
+            dependencies: ["Streaming"],
+            path: "Sources/Streaming/Tests"
         ),
         // #INJECT_TARGET
     ]
