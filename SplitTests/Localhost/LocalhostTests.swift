@@ -85,10 +85,15 @@ class LocalhostTests: XCTestCase {
 
         if yamlContent != nil {
             let updExp = XCTestExpectation()
-            _ = (factory as? SplitLocalhostDataSource)?.updateLocalhost(yaml: onlyFeature())
+            // Register the listener BEFORE triggering the update; otherwise
+            // the .sdkUpdated event may fire before this point and be
+            // dropped (see DefaultSplitClient.on(event:) early return when
+            // event has already been triggered), causing intermittent
+            // timeouts on this expectation.
             client.on(event: .sdkUpdated) {
                 updExp.fulfill()
             }
+            _ = (factory as? SplitLocalhostDataSource)?.updateLocalhost(yaml: onlyFeature())
             wait(for: [updExp], timeout: 5.0)
 
             let splits = manager.splits

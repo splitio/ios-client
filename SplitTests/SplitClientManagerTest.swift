@@ -118,8 +118,7 @@ class SplitClientManagerTest: XCTestCase {
                                              propertyValidator: DefaultPropertyValidator(
                                                 anyValueValidator: DefaultAnyValueValidator(),
                                                 validationLogger: DefaultValidationMessageLogger()
-                                             ),
-                                             factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
+                                             ))
     }
 
     override func tearDown() {

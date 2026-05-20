@@ -113,8 +113,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory, @unchecked Sendable {
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: params.initStopwatch,
-                                             propertyValidator: components.getPropertyValidator(),
-                                             factory: self)
+                                             propertyValidator: components.getPropertyValidator())
 
         components.destroy()
 

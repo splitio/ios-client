@@ -226,8 +226,7 @@ class TestSplitFactory: SplitFactory {
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: nil,
-                                             propertyValidator: propertyValidator,
-                                             factory: self)
+                                             propertyValidator: propertyValidator)
     }
 
     func client(matchingKey: String) -> SplitClient {

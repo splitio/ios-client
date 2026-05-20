@@ -48,14 +48,12 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     private let eventsManager: SplitEventsManager?
     private var evaluator: Evaluator
     private let key: Key
-    weak var clientManager: SplitClientManager?
     @objc public var listener: SplitEventListener?
 
-    init(key: Key, splitsStorage: SplitsStorage, clientManager: SplitClientManager?, eventsManager: SplitEventsManager? = nil, evaluator: Evaluator) {
+    init(key: Key, splitsStorage: SplitsStorage, eventsManager: SplitEventsManager? = nil, evaluator: Evaluator) {
         self.eventsManager = eventsManager
         self.key = key
         self.splitsStorage = splitsStorage
-        self.clientManager = clientManager
 
         self.evaluator = evaluator
         super.init()
@@ -132,12 +130,9 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
 
     private func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
-
-        guard let factory = clientManager?.splitFactory else { return }
         if let eventsManager = self.eventsManager {
             let task = SplitEventActionTask(action: action, event: event,
                                             runInBackground: runInBackground,
-                                            factory: factory,
                                             queue: queue)
             eventsManager.register(event: event, task: task)
         }
@@ -159,8 +154,7 @@ public final class LocalhostSplitClient: NSObject, SplitClient {
     }
     
     private func registerEvent<T: EventMetadata>(_ event: SplitEvent, action: @Sendable @escaping (T) -> Void) {
-        guard let factory = clientManager?.splitFactory else { return }
-        let task = SplitEventActionTask(action: action, event: event, runInBackground: true, factory: factory, queue: nil)
+        let task = SplitEventActionTask(action: action, event: event, runInBackground: true, queue: nil)
         eventsManager?.register(event: event, task: task)
     }
 
