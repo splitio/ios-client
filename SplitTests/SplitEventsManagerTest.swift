@@ -384,7 +384,7 @@ class TestTask: SplitEventActionTask, @unchecked Sendable {
     init(exp: XCTestExpectation?, label: String = "", action: SplitActionWithMetadata<EventMetadata>? = nil, metadata: EventMetadata? = nil) {
         self.exp = exp
         self.label = label
-        super.init(action: action ?? { _ in }, event: .sdkReady, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
+        super.init(action: action ?? { _ in }, event: .sdkReady)
     }
 
     override func run(_ metadata: EventMetadata?) {
