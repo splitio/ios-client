@@ -116,7 +116,7 @@ extension DefaultHttpRequestManager: HttpRequestManager {
     }
 
     public func complete(taskIdentifier: Int, error: HttpError?) {
-        if let request = requests.get(identifier: taskIdentifier) {
+        if let request = requests.take(identifier: taskIdentifier) {
             request.complete(error: error)
         }
     }
