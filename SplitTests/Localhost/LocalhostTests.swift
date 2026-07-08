@@ -85,10 +85,11 @@ class LocalhostTests: XCTestCase {
 
         if yamlContent != nil {
             let updExp = XCTestExpectation()
-            _ = (factory as? SplitLocalhostDataSource)?.updateLocalhost(yaml: onlyFeature())
+
             client.on(event: .sdkUpdated) {
                 updExp.fulfill()
             }
+            _ = (factory as? SplitLocalhostDataSource)?.updateLocalhost(yaml: onlyFeature())
             wait(for: [updExp], timeout: 5.0)
 
             let splits = manager.splits

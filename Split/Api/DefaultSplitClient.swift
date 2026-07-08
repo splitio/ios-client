@@ -16,7 +16,7 @@ public final class DefaultSplitClient: NSObject, SplitClient, TelemetrySplitClie
     private let anyValueValidator: AnyValueValidator
     private var isClientDestroyed = false
     private let eventsTracker: EventsTracker
-    private weak var clientManager: SplitClientManager?
+    private let clientManager: SplitClientManager
     @objc public var listener: SplitEventListener?
 
     var initStopwatch: Stopwatch?
@@ -66,14 +66,8 @@ extension DefaultSplitClient {
     }
 
     private func on(event: SplitEvent, runInBackground: Bool, queue: DispatchQueue?, execute action: @escaping SplitAction) {
-
-        guard let factory = clientManager?.splitFactory else {
-            return
-        }
-
         let task = SplitEventActionTask(action: action, event: event,
                                         runInBackground: runInBackground,
-                                        factory: factory,
                                         queue: queue)
         task.event = event
         on(event: event, executeTask: task)
@@ -105,8 +99,7 @@ extension DefaultSplitClient {
     }
     
     private func registerEvent<T: EventMetadata>(_ event: SplitEvent, action: @Sendable @escaping (T) -> Void) {
-        guard let factory = clientManager?.splitFactory else { return }
-        let task = SplitEventActionTask(action: action, event: event, runInBackground: true, factory: factory, queue: nil)
+        let task = SplitEventActionTask(action: action, event: event, runInBackground: true, queue: nil)
         eventsManager.register(event: event, task: task)
     }
 }
@@ -301,9 +294,7 @@ extension DefaultSplitClient {
 extension DefaultSplitClient {
 
     private func syncFlush() {
-        if let clientManager = clientManager {
-            clientManager.flush()
-        }
+        clientManager.flush()
     }
 
     public func flush() {
@@ -324,10 +315,8 @@ extension DefaultSplitClient {
         
         DispatchQueue.global().async { [weak self, sendableCompletion] in
             guard let self = self else { return }
-            if let clientManager = self.clientManager {
-                clientManager.destroy(forKey: self.key)
-                sendableCompletion.completion?()
-            }
+            self.clientManager.destroy(forKey: self.key)
+            sendableCompletion.completion?()
         }
     }
 }

@@ -64,8 +64,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
                                                splitManager: localhostManager,
                                                splitsStorage: splitsStorage,
                                                synchronizer: synchronizer,
-                                               eventsManagerCoordinator: eventsManager,
-                                               factory: self)
+                                               eventsManagerCoordinator: eventsManager)
 
         self.synchronizer.synchronize()
     }
