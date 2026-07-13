@@ -151,6 +151,43 @@ class HttpRequestManagerTests: XCTestCase, @unchecked Sendable {
         XCTAssertTrue(ok)
     }
 
+    func testCompleteRemovesRequestFromManager() {
+        let manager = DefaultHttpRequestManager(pinChecker: nil, notificationHandler: nil)
+        manager.addRequest(HttpRequestMock(identifier: 1))
+        XCTAssertTrue(manager.set(responseCode: 200, to: 1), "Manager should hold the request before completion")
+
+        manager.complete(taskIdentifier: 1, error: nil)
+
+        XCTAssertFalse(manager.set(responseCode: 200, to: 1), "Completed request must be removed from the manager")
+    }
+
+    func testCompletedRequestIsReleased() {
+        let manager = DefaultHttpRequestManager(pinChecker: nil, notificationHandler: nil)
+        weak var weakRequest: HttpRequestMock?
+
+        autoreleasepool {
+            let request = HttpRequestMock(identifier: 42)
+            weakRequest = request
+            manager.addRequest(request)
+            // Flush the async `set` barrier so the manager is definitely holding the request.
+            XCTAssertTrue(manager.set(responseCode: 200, to: 42))
+            manager.complete(taskIdentifier: 42, error: nil)
+        }
+
+        _ = manager.set(responseCode: 200, to: 42)
+
+        XCTAssertNil(weakRequest, "Manager must release the request after completion (memory leak guard)")
+    }
+
+    func testCompleteUnknownIdentifierIsNoOp() {
+        let manager = DefaultHttpRequestManager(pinChecker: nil, notificationHandler: nil)
+        manager.addRequest(HttpRequestMock(identifier: 1))
+
+        manager.complete(taskIdentifier: 999, error: nil)
+
+        XCTAssertTrue(manager.set(responseCode: 200, to: 1), "An unrelated request must remain tracked")
+    }
+
     func createRequestManager() -> URLSessionTaskDelegate {
         pinChecker = PinCheckerMock()
         pinChecker.pinResults = CredentialValidationResult.allCases
