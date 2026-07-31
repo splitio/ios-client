@@ -1,0 +1,511 @@
+pipeline:
+  name: SDK_ios-client_Test
+  identifier: SDK_iosclient_Test
+  projectIdentifier: Harness_Split
+  orgIdentifier: PROD
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: fmegithubrunnersci
+        repoName: ios-client
+        build: <+input>
+  stages:
+    - stage:
+        name: Build
+        identifier: Build
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+          platform:
+            os: MacOS
+            arch: Arm64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - parallel:
+                  - step:
+                      type: Run
+                      name: Build macOS
+                      identifier: build_macos
+                      spec:
+                        shell: Sh
+                        command: |
+                          set -euo pipefail
+                          export DEVELOPER_DIR="$(ls -d /Applications/Xcode*.app | sort -V | tail -1)/Contents/Developer"
+                          xcodebuild build \
+                            -project Split.xcodeproj \
+                            -scheme Split \
+                            -destination 'platform=macOS,arch=x86_64' \
+                            -derivedDataPath "$PWD/SplitApp-macos" \
+                            ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO \
+                            -configuration Debug
+                  - step:
+                      type: Run
+                      name: Build tvOS
+                      identifier: build_tvos
+                      spec:
+                        shell: Sh
+                        command: |
+                          set -euo pipefail
+                          for x in $(ls -d /Applications/Xcode*.app | sort -Vr); do
+                            if [ -d "$x/Contents/Developer/Platforms/AppleTVOS.platform" ]; then
+                              export DEVELOPER_DIR="$x/Contents/Developer"
+                              break
+                            fi
+                          done
+                          if [ -z "${DEVELOPER_DIR:-}" ]; then
+                            echo "No installed Xcode has the tvOS platform SDK" >&2
+                            exit 1
+                          fi
+                          xcodebuild build \
+                            -project Split.xcodeproj \
+                            -scheme Split \
+                            -destination 'generic/platform=tvOS' \
+                            -derivedDataPath "$PWD/SplitApp-tvos" \
+                            ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO \
+                            -configuration Debug
+                      failureStrategies:
+                        - onFailure:
+                            errors:
+                              - AllErrors
+                            action:
+                              type: MarkAsSuccess
+                  - step:
+                      type: Run
+                      name: Build watchOS
+                      identifier: build_watchos
+                      spec:
+                        shell: Sh
+                        command: |
+                          set -euo pipefail
+                          for x in $(ls -d /Applications/Xcode*.app | sort -Vr); do
+                            if [ -d "$x/Contents/Developer/Platforms/WatchOS.platform" ]; then
+                              export DEVELOPER_DIR="$x/Contents/Developer"
+                              break
+                            fi
+                          done
+                          if [ -z "${DEVELOPER_DIR:-}" ]; then
+                            echo "No installed Xcode has the watchOS platform SDK" >&2
+                            exit 1
+                          fi
+                          xcodebuild build \
+                            -project Split.xcodeproj \
+                            -scheme WatchOS \
+                            -destination 'generic/platform=watchOS' \
+                            -derivedDataPath "$PWD/SplitApp-watchos" \
+                            ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO \
+                            -configuration Debug
+                      failureStrategies:
+                        - onFailure:
+                            errors:
+                              - AllErrors
+                            action:
+                              type: MarkAsSuccess
+                  - step:
+                      type: Run
+                      name: XCFramework
+                      identifier: xcframework
+                      spec:
+                        shell: Sh
+                        command: |
+                          set -euo pipefail
+                          xcodebuild -version
+                          chmod +x ./scripts/generate_xcframework
+                          ./scripts/generate_xcframework
+
+                          XCF="xcframework/Split.xcframework"
+                          test -d "$XCF"
+                          test -f "$XCF/Info.plist"
+                          /usr/bin/plutil -lint "$XCF/Info.plist"
+                          test -d "$XCF/ios-arm64/Split.framework"
+                          test -d "$XCF/ios-arm64_x86_64-simulator/Split.framework"
+                          test -d "$XCF/ios-arm64/Split.framework/Modules/Split.swiftmodule"
+                          test -d "$XCF/ios-arm64_x86_64-simulator/Split.framework/Modules/Split.swiftmodule"
+                          test "$(find "$XCF" -type f -name '*.swiftinterface' | wc -l | tr -d ' ')" -gt 0
+                          if find "$XCF" -type f -name '*.xctestplan' | grep -q .; then
+                            echo "ERROR: Found .xctestplan files inside the XCFramework:"
+                            find "$XCF" -type f -name '*.xctestplan' -print
+                            exit 1
+                          fi
+                          if find "$XCF" -type d -name '*.xctest' | grep -q .; then
+                            echo "ERROR: Found .xctest bundles inside the XCFramework:"
+                            find "$XCF" -type d -name '*.xctest' -print
+                            exit 1
+                          fi
+                          test ! -d split_build
+        timeout: 30m
+    - stage:
+        name: Test
+        identifier: Test
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+          platform:
+            os: MacOS
+            arch: Arm64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Install xcbeautify
+                  identifier: install_xcbeautify
+                  spec:
+                    shell: Sh
+                    command: |
+                      set -euo pipefail
+                      brew install xcbeautify
+              - step:
+                  type: Run
+                  name: Run tests
+                  identifier: run_tests
+                  spec:
+                    shell: Bash
+                    command: |
+                      # Always exit 0 from this step. Harness injects `set -e`, and a green
+                      # xcodebuild run has no "Failing tests:" section — so a bare grep would
+                      # exit 1 and mark the step failed even when all tests passed. Pass/fail
+                      # is owned by the next step via workspace status files.
+                      set +e
+                      set -uo pipefail
+                      export DEVELOPER_DIR="$(ls -d /Applications/Xcode*.app | sort -V | tail -1)/Contents/Developer"
+
+                      STATUS_FILE="test-status.txt"
+                      FAILING_FILE="failing-tests.txt"
+                      SIM_FILE="sim-id.txt"
+                      echo 1 > "$STATUS_FILE"
+                      : > "$FAILING_FILE"
+
+                      SIM_ID="$(xcrun simctl list devices available -j | python3 -c '
+                      import json, sys
+                      devices = json.load(sys.stdin).get("devices", {})
+                      cands = []
+                      for runtime, devs in devices.items():
+                          if "iOS" not in runtime:
+                              continue
+                          for d in devs:
+                              if d.get("isAvailable") and "iPhone" in d.get("name", ""):
+                                  cands.append((runtime, d["udid"], d["name"]))
+                      cands.sort(reverse=True)
+                      if not cands:
+                          sys.exit(1)
+                      print(cands[0][1], file=sys.stdout)
+                      print(f"Selected {cands[0][2]} ({cands[0][0]})", file=sys.stderr)
+                      ')" || SIM_ID=""
+
+                      if [ -z "$SIM_ID" ]; then
+                        echo "No available iPhone simulator found" >&2
+                      else
+                        echo "$SIM_ID" > "$SIM_FILE"
+                        echo "Using simulator id=$SIM_ID"
+                        RAW_LOG="xcodebuild-raw.log"
+                        XCRESULT="build/Logs/Test/TestResults.xcresult"
+                        mkdir -p build/Logs/Test
+                        rm -rf "$XCRESULT"
+
+                        # -scheme alone does not limit which plan targets run; plans list
+                        # both Swift5 and Swift6. Pin execution to this cell's scheme.
+                        xcodebuild test \
+                          -project Split.xcodeproj \
+                          -scheme <+matrix.scheme> \
+                          -destination "platform=iOS Simulator,id=$SIM_ID" \
+                          -testPlan <+matrix.plan> \
+                          -only-testing:<+matrix.scheme> \
+                          -sdk iphonesimulator \
+                          -enableCodeCoverage YES \
+                          -resultBundlePath "$XCRESULT" \
+                          -derivedDataPath build \
+                          ONLY_ACTIVE_ARCH=NO 2>&1 | tee "$RAW_LOG" | xcbeautify
+                        XCODE_STATUS=${PIPESTATUS[0]}
+                        echo "$XCODE_STATUS" > xcodebuild-exit.txt
+
+                        # xcodebuild prints the "Failing tests:" summary on stderr, so the
+                        # pipeline above must redirect 2>&1 or RAW_LOG never contains it.
+                        # Stop at "** TEST FAILED **" so later suite noise is not captured.
+                        # Entries may be "Class.method()" or "Target.Class.method()"; take
+                        # the last two dot-components. grep exits 1 when nothing failed.
+                        grep -A 1000 '^Failing tests:' "$RAW_LOG" 2>/dev/null \
+                          | sed -n '1,/^\*\* TEST FAILED/p' \
+                          | sed -n 's/()[[:space:]]*$//p' \
+                          | awk 'NF' \
+                          | awk '{n=split($1,a,"."); if (n>=2) print a[n-1]"/"a[n]}' \
+                          | sort -u > "$FAILING_FILE" || true
+                        if [ "$XCODE_STATUS" = "0" ]; then
+                          echo 0 > "$STATUS_FILE"
+                        fi
+                        echo "xcodebuild exit=$XCODE_STATUS"
+                        echo "Failing tests captured:"
+                        if [ -s "$FAILING_FILE" ]; then
+                          cat "$FAILING_FILE"
+                        else
+                          echo "none"
+                        fi
+                        echo "TESTS_FAILED=$(cat "$STATUS_FILE")"
+
+                        mkdir -p coverage
+                        COV_FILE="coverage/sonarqube-<+matrix.plan>-<+matrix.scheme>.xml"
+                        chmod +x .github/scripts/xccov-to-sonarqube.sh
+                        if [ -d "$XCRESULT" ]; then
+                          .github/scripts/xccov-to-sonarqube.sh "$XCRESULT" > "$COV_FILE" || true
+                        fi
+                        if [ ! -s "$COV_FILE" ]; then
+                          printf '<coverage version="1"></coverage>\n' > "$COV_FILE"
+                        fi
+                        echo "Wrote coverage report: $COV_FILE ($(wc -c < "$COV_FILE" | tr -d ' ') bytes)"
+                      fi
+                      exit 0
+                  timeout: 30m
+              - step:
+                  type: Run
+                  name: Rerun failed tests
+                  identifier: rerun_failed_tests
+                  spec:
+                    shell: Bash
+                    command: |
+                      set -uo pipefail
+                      export DEVELOPER_DIR="$(ls -d /Applications/Xcode*.app | sort -V | tail -1)/Contents/Developer"
+
+                      STATUS_FILE="test-status.txt"
+                      FAILING_FILE="failing-tests.txt"
+                      SCHEME="<+matrix.scheme>"
+
+                      if [ "$(cat "$STATUS_FILE" 2>/dev/null || echo 1)" = "0" ]; then
+                        echo "Tests already passed; nothing to rerun."
+                        echo "Matrix cell passed."
+                        exit 0
+                      fi
+                      if [ ! -s "$FAILING_FILE" ]; then
+                        echo "No failing tests captured to rerun."
+                        echo "xcodebuild exit was $(cat xcodebuild-exit.txt 2>/dev/null || echo unknown)."
+                        echo "This usually means a build/launch failure rather than test failures."
+                        if [ -s xcodebuild-raw.log ]; then
+                          echo "--- last 60 lines of xcodebuild output ---"
+                          tail -n 60 xcodebuild-raw.log
+                          echo "--- end ---"
+                        fi
+                        echo "Matrix cell failed (status=$(cat "$STATUS_FILE" 2>/dev/null || echo 1))."
+                        exit 1
+                      fi
+
+                      SIM_ID="$(cat sim-id.txt 2>/dev/null || true)"
+                      if [ -z "$SIM_ID" ]; then
+                        SIM_ID="$(xcrun simctl list devices available -j | python3 -c '
+                        import json, sys
+                        devices = json.load(sys.stdin).get("devices", {})
+                        cands = []
+                        for runtime, devs in devices.items():
+                            if "iOS" not in runtime:
+                                continue
+                            for d in devs:
+                                if d.get("isAvailable") and "iPhone" in d.get("name", ""):
+                                    cands.append((runtime, d["udid"], d["name"]))
+                        cands.sort(reverse=True)
+                        if not cands:
+                            sys.exit(1)
+                        print(cands[0][1])
+                        ')"
+                      fi
+                      echo "Rerunning failing tests for $SCHEME on simulator id=$SIM_ID:"
+                      cat "$FAILING_FILE"
+
+                      ARGS=()
+                      while IFS= read -r t; do
+                        [ -z "$t" ] && continue
+                        ARGS+=("-only-testing:${SCHEME}/${t}")
+                      done < "$FAILING_FILE"
+
+                      # Never treat "exit 0 + Executed 0 tests" as green: bad/stale
+                      # -only-testing selectors make xcodebuild succeed without running anything.
+                      set +e
+                      RERUN_LOG="xcodebuild-rerun.log"
+                      xcodebuild test \
+                        -project Split.xcodeproj \
+                        -scheme "$SCHEME" \
+                        -destination "platform=iOS Simulator,id=$SIM_ID" \
+                        -sdk iphonesimulator \
+                        ONLY_ACTIVE_ARCH=NO \
+                        "${ARGS[@]}" 2>&1 | tee "$RERUN_LOG" | xcbeautify
+                      RERUN_STATUS=${PIPESTATUS[0]}
+                      set -uo pipefail
+
+                      # Use awk, not sed: BSD sed BRE treats "?" as a literal character,
+                      # so an optional-plural pattern never matched and every rerun
+                      # looked like 0 tests. Singular "Executed 1 test" must match too.
+                      EXECUTED="$(awk '/Executed [0-9]+ test/ { n = $2 } END { print n + 0 }' "$RERUN_LOG" 2>/dev/null)"
+                      if [ -z "$EXECUTED" ]; then
+                        EXECUTED=0
+                      fi
+                      echo "rerun xcodebuild exit=$RERUN_STATUS executed=$EXECUTED"
+
+                      if [ "$RERUN_STATUS" = "0" ] && [ "$EXECUTED" -gt 0 ]; then
+                        echo 0 > "$STATUS_FILE"
+                        echo "Rerun passed; matrix cell now passing."
+                      else
+                        echo 1 > "$STATUS_FILE"
+                        if [ "$RERUN_STATUS" = "0" ] && [ "$EXECUTED" -eq 0 ]; then
+                          echo "Rerun exited 0 but executed 0 tests — treating as failure (bad -only-testing selectors)."
+                        else
+                          echo "Rerun still failing."
+                        fi
+                      fi
+
+                      if [ "$(cat "$STATUS_FILE")" != "0" ]; then
+                        echo "Matrix cell failed after optional rerun (status=$(cat "$STATUS_FILE"))."
+                        exit 1
+                      fi
+                      echo "Matrix cell passed."
+                  timeout: 15m
+        strategy:
+          matrix:
+            plan:
+              - SplitiOSIntegration
+              - SplitiOSIntegration_1
+              - SplitiOSStreaming
+              - SplitiOSStreaming_1
+              - SplitiOSStreaming_2
+              - SplitiOSUnit
+              - SplitiOSUnit_1
+              - SplitiOSUnit_2
+              - SplitiOSUnit_3
+              - SplitiOSUnit_4
+              - SplitiOSUnit_5
+              - SemVer
+              - SplitPushManagerUT
+              - SplitStreamingUT
+              - SplitFlakyTests
+            scheme:
+              - SplitTestsSwift5
+              - SplitTestsSwift6
+            # Account Mac entitlement is 4. Test waits for Build, so the
+            # matrix can use the full entitlement.
+            maxConcurrency: 4
+        when:
+          pipelineStatus: Success
+          condition: <+pipeline.stages.Build.status> == "SUCCEEDED"
+    - stage:
+        name: Sonar
+        identifier: Sonar
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          caching:
+            enabled: true
+            override: true
+          platform:
+            os: MacOS
+            arch: Arm64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Run SonarQube scan
+                  identifier: run_sonarqube_scan
+                  spec:
+                    shell: Sh
+                    command: |
+                      set -euo pipefail
+
+                      mkdir -p coverage
+                      COVERAGE_PATHS="$(find coverage -type f -name 'sonarqube-*.xml' -size +40c 2>/dev/null | sort | paste -sd, - || true)"
+                      if [ -z "$COVERAGE_PATHS" ]; then
+                        echo "Warning: no non-empty coverage XMLs restored from Test matrix; scanning without coverage."
+                        COVERAGE_ARG=""
+                      else
+                        echo "Using coverage reports:"
+                        echo "$COVERAGE_PATHS" | tr ',' '\n'
+                        COVERAGE_ARG="-Dsonar.coverageReportPaths=$COVERAGE_PATHS"
+                      fi
+
+                      if ! command -v sonar-scanner >/dev/null 2>&1; then
+                        brew install sonar-scanner
+                      fi
+
+                      ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+                      cd "$ROOT_DIR"
+
+                      # Ensure Sonar can compute PR changed files (required by Swift sensor in PR mode).
+                      if git rev-parse --is-shallow-repository >/dev/null 2>&1; then
+                        if [ "$(git rev-parse --is-shallow-repository)" = "true" ]; then
+                          git fetch --unshallow origin || true
+                        fi
+                      fi
+
+                      if [ "<+codebase.prNumber>" != "" ] && [ "<+codebase.prNumber>" != "null" ]; then
+                        git fetch origin "<+codebase.targetBranch>:refs/remotes/origin/<+codebase.targetBranch>" || true
+                        git fetch origin "<+codebase.sourceBranch>:refs/remotes/origin/<+codebase.sourceBranch>" || true
+                        git checkout --detach HEAD 2>/dev/null || true
+                        git branch -f "<+codebase.targetBranch>" "origin/<+codebase.targetBranch>" || true
+                        git checkout -B "<+codebase.sourceBranch>" "origin/<+codebase.sourceBranch>" || true
+                      fi
+
+                      if [ "<+codebase.prNumber>" != "" ] && [ "<+codebase.prNumber>" != "null" ]; then
+                        sonar-scanner \
+                          -Dsonar.host.url=https://sonar.harness.io \
+                          -Dsonar.projectKey=splitio_ios-client \
+                          -Dsonar.projectName=ios-client \
+                          -Dsonar.c.file.suffixes=- \
+                          -Dsonar.cpp.file.suffixes=- \
+                          -Dsonar.objc.file.suffixes=- \
+                          $COVERAGE_ARG \
+                          -Dsonar.verbose=true \
+                          -Dsonar.sources=Split \
+                          -Dsonar.exclusions=**/Tests/**,**/*.generated.swift \
+                          -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift \
+                          -Dsonar.qualitygate.wait=true \
+                          -Dsonar.qualitygate.timeout=300 \
+                          -Dsonar.new.code.ignore.list.patterns=**/*.generated.swift \
+                          -Dsonar.qualitygate.ignoreSmallChanges=false \
+                          -Dsonar.newCode.referenceBranch=<+codebase.targetBranch> \
+                          -Dsonar.pullrequest.provider=github \
+                          -Dsonar.pullrequest.github.repository=splitio/ios-client \
+                          -Dsonar.pullrequest.key=<+codebase.prNumber> \
+                          -Dsonar.pullrequest.branch=<+codebase.sourceBranch> \
+                          -Dsonar.pullrequest.base=<+codebase.targetBranch>
+                      else
+                        sonar-scanner \
+                          -Dsonar.host.url=https://sonar.harness.io \
+                          -Dsonar.projectKey=splitio_ios-client \
+                          -Dsonar.projectName=ios-client \
+                          -Dsonar.c.file.suffixes=- \
+                          -Dsonar.cpp.file.suffixes=- \
+                          -Dsonar.objc.file.suffixes=- \
+                          $COVERAGE_ARG \
+                          -Dsonar.verbose=true \
+                          -Dsonar.sources=Split \
+                          -Dsonar.exclusions=**/Tests/**,**/*.generated.swift \
+                          -Dsonar.coverage.exclusions=**/Tests/**,**/*.generated.swift \
+                          -Dsonar.qualitygate.wait=true \
+                          -Dsonar.qualitygate.timeout=300 \
+                          -Dsonar.new.code.ignore.list.patterns=**/*.generated.swift \
+                          -Dsonar.qualitygate.ignoreSmallChanges=false \
+                          -Dsonar.branch.name=<+codebase.branch>
+                      fi
+                    envVariables:
+                      SONAR_TOKEN: <+secrets.getValue("sonarqube-token")>
+                  timeout: 15m
+                  failureStrategies:
+                    - onFailure:
+                        errors:
+                          - AllErrors
+                        action:
+                          type: MarkAsSuccess
+        when:
+          pipelineStatus: All
+          condition: <+pipeline.stages.Build.status> == "SUCCEEDED"

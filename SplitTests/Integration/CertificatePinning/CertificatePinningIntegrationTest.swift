@@ -55,7 +55,7 @@ class CertificatePinningIntegrationTest: XCTestCase {
         let statusObj = CertificatePinningCompleteStatus(host: testHost, status: testStatus, reason: testReason)
         notificationHandler.notifyPinningStatus(statusObj)
         
-        waitForExpectations(timeout: 1.0, handler: nil)
+        wait(for: [expectation], timeout: 1.0)
     }
 
     func testFactoryWiringOfBothHandlers() {
