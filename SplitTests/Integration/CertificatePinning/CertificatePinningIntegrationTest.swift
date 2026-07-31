@@ -55,7 +55,7 @@ class CertificatePinningIntegrationTest: XCTestCase {
         let statusObj = CertificatePinningCompleteStatus(host: testHost, status: testStatus, reason: testReason)
         notificationHelper.post(notification: .pinnedCredentialStatus, info: statusObj)
         
-        waitForExpectations(timeout: 1.0, handler: nil)
+        wait(for: [expectation], timeout: 1.0)
     }
 
     func testFactoryWiringOfBothHandlers() {
@@ -101,6 +101,6 @@ class CertificatePinningIntegrationTest: XCTestCase {
         // Post status notification (triggers statusHandler)
         let statusObj = CertificatePinningCompleteStatus(host: testHost, status: .failed, reason: "Error")
         notificationHelper.post(notification: .pinnedCredentialStatus, info: statusObj)
-        waitForExpectations(timeout: 1.0, handler: nil)
+        wait(for: [statusExpectation, failureExpectation], timeout: 1.0)
     }
 }
