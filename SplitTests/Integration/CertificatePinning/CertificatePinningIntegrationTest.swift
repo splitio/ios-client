@@ -101,6 +101,6 @@ class CertificatePinningIntegrationTest: XCTestCase {
         // Post status notification (triggers statusHandler)
         let statusObj = CertificatePinningCompleteStatus(host: testHost, status: .failed, reason: "Error")
         notificationHandler.notifyPinningStatus(statusObj)
-        waitForExpectations(timeout: 1.0, handler: nil)
+        wait(for: [statusExpectation, failureExpectation], timeout: 1.0)
     }
 }
