@@ -1,0 +1,73 @@
+pipeline:
+  name: ios-client-release-tag
+  identifier: iosclientreleasetag
+  projectIdentifier: Harness_Split
+  orgIdentifier: PROD
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        repoName: ios-client
+        build: <+input>
+  stages:
+    - stage:
+        name: Create Tag
+        identifier: create_tag
+        description: ""
+        type: CI
+        spec:
+          cloneCodebase: true
+          platform:
+            os: MacOS
+            arch: Arm64
+          runtime:
+            type: Cloud
+            spec: {}
+          execution:
+            steps:
+              - step:
+                  type: Run
+                  name: Verify versions and tag
+                  identifier: verify_and_tag
+                  spec:
+                    shell: Sh
+                    command: |
+                      set -euo pipefail
+                      git config --global user.name "Harness CI"
+                      git config --global user.email "ci@harness.io"
+
+                      BRANCH_NAME="<+codebase.sourceBranch>"
+                      VERSION="${BRANCH_NAME#release/}"
+
+                      case "$BRANCH_NAME" in
+                        release/*) ;;
+                        *)
+                          echo "Not a release/* branch (got: '$BRANCH_NAME') — skipping release tag creation."
+                          exit 0
+                          ;;
+                      esac
+
+                      VERSION_IN_FILE=$(grep -o 'private static let kVersion = "[^"]*"' Split/Common/Utils/Version.swift | cut -d'"' -f2)
+                      if [ "$VERSION_IN_FILE" != "$VERSION" ]; then
+                        echo "Error: Version in Version.swift ($VERSION_IN_FILE) does not match branch version ($VERSION)"
+                        exit 1
+                      fi
+
+                      PODSPEC_VERSION=$(grep -o "s.version          = '[^']*'" Split.podspec | cut -d"'" -f2)
+                      if [ "$PODSPEC_VERSION" != "$VERSION" ]; then
+                        echo "Error: Version in Split.podspec ($PODSPEC_VERSION) does not match branch version ($VERSION)"
+                        exit 1
+                      fi
+
+                      git tag -a "$VERSION" -m "Release $VERSION"
+                      git push origin "$VERSION"
+
+                      sleep 5
+                      git fetch --tags
+                      if git ls-remote --tags origin | grep -q "refs/tags/$VERSION$"; then
+                        echo "Tag $VERSION successfully created in remote"
+                      else
+                        echo "Failed to verify tag $VERSION in remote"
+                        exit 1
+                      fi
+        timeout: 15m
