@@ -124,13 +124,22 @@ fi
 echo "📤 Pushing branch to remote..."
 git push origin $RELEASE_BRANCH
 
-# Get the remote URL and extract the GitHub repo path
-REMOTE_URL=$(git config --get remote.origin.url)
-GITHUB_REPO=$(echo $REMOTE_URL | sed -e 's/.*github.com[:/]\(.*\)\.git/\1/')
+# Harness Code repo location - parsed dynamically from the remote URL
+REMOTE_URL=$(git remote get-url origin)
+# Strip https://host/ OR user@host: prefix, and any trailing .git
+HARNESS_PATH=$(echo "$REMOTE_URL" | sed -E 's#^https?://[^/]+/##; s#^[^@]+@[^:]+:##; s#\.git$##')
+HARNESS_ACCOUNT=$(echo "$HARNESS_PATH" | cut -d'/' -f1)
+HARNESS_ORG=$(echo "$HARNESS_PATH" | cut -d'/' -f2)
+HARNESS_PROJECT=$(echo "$HARNESS_PATH" | cut -d'/' -f3)
+HARNESS_REPO=$(echo "$HARNESS_PATH" | cut -d'/' -f4)
 
-# If the URL is SSH format (git@github.com:org/repo.git), extract differently
-if [[ $GITHUB_REPO == $REMOTE_URL ]]; then
-  GITHUB_REPO=$(echo $REMOTE_URL | sed -e 's/.*github.com\/\(.*\)\.git/\1/')
+# Derive the UI host from the git host, e.g. git0.harness.io -> harness0.harness.io
+GIT_HOST=$(echo "$REMOTE_URL" | sed -E 's#^https?://##; s#^[^@]+@##; s#[/:].*##')
+HARNESS_UI_HOST=$(echo "$GIT_HOST" | sed -E 's/^git/harness/')
+
+if [ -z "$HARNESS_ACCOUNT" ] || [ -z "$HARNESS_ORG" ] || [ -z "$HARNESS_PROJECT" ] || [ -z "$HARNESS_REPO" ] || [[ "$HARNESS_ACCOUNT" == *@* ]]; then
+  echo "❌ Error: Could not parse Harness account/org/project/repo from remote URL: $REMOTE_URL"
+  exit 1
 fi
 
 # Determine target branch based on RC status
@@ -142,8 +151,8 @@ else
   echo "📊 Regular version detected, PR will target the $MASTER_BRANCH branch"
 fi
 
-# Create PR URL
-PR_URL="https://github.com/$GITHUB_REPO/compare/$TARGET_BRANCH...$RELEASE_BRANCH?expand=1"
+# Create PR URL (Harness Code compare view)
+PR_URL="https://$HARNESS_UI_HOST/ng/account/$HARNESS_ACCOUNT/all/code/orgs/$HARNESS_ORG/projects/$HARNESS_PROJECT/repos/$HARNESS_REPO/pulls/compare/$TARGET_BRANCH...$RELEASE_BRANCH"
 
 echo ""
 echo "🎉 Release preparation completed successfully!"
@@ -153,5 +162,5 @@ open "$PR_URL"
 echo ""
 echo "Next steps:"
 echo "1. Complete the pull request to merge $RELEASE_BRANCH into $TARGET_BRANCH"
-echo "2. After merging, the GitHub workflow will create and push the tag"
+echo "2. After merging, the Harness pipeline will create and push the tag"
 echo ""
