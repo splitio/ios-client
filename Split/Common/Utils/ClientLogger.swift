@@ -1,11 +1,6 @@
-//
-//  Logger.swift
-//  Split
-//
 //  Created by Sebastian Arrubia on 3/5/18.
-//
 
-import Foundation
+#if !COCOAPODS
 import Logging
 
 // Re-export Logger from Logging module for backward compatibility
@@ -19,3 +14,4 @@ typealias TimeChecker = Logging.TimeChecker
 // Re-export for backward compatibility
 typealias LogPrinter = Logging.LogPrinter
 typealias DefaultLogPrinter = Logging.DefaultLogPrinter
+#endif

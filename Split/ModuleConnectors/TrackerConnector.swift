@@ -5,8 +5,8 @@ import Foundation
 
 #if !COCOAPODS
 @_exported import Tracker
+#endif
 
 // Typealiases to keep backwards compatibility before module extraction
 public typealias EventsTracker = Tracker
 typealias DefaultEventsTracker = DefaultTracker
-#endif
