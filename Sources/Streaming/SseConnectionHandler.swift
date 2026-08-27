@@ -1,14 +1,11 @@
-//
-//  SseConnectionHandler.swift
-//  Split
-//
 //  Created by Javier Avrudsky on 27-Oct-2022.
 //  Copyright © 2022 Split. All rights reserved.
-//
 
 import Foundation
+#if !COCOAPODS
 import Concurrency
 import Logging
+#endif
 
 public class SseConnectionHandler: @unchecked Sendable {
     private let clientLock = NSLock()

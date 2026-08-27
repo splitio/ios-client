@@ -10,6 +10,7 @@ import Logging
 
 // MARK: - Private Extensions
 
+#if !COCOAPODS
 private extension String {
     var dataBytes: Data? {
         self.data(using: .utf8)
@@ -21,6 +22,7 @@ private extension Data {
         self.map { String(format: "%02hhx", $0) + " " }.joined()
     }
 }
+#endif
 
 private struct HttpFileUtil {
     static func loadFileData(name: String, type: String, bundle: Bundle) -> Data? {

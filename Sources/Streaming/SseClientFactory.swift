@@ -7,7 +7,9 @@
 //
 
 import Foundation
+#if !COCOAPODS
 import Http
+#endif
 
 public protocol SseClientFactory {
     func create() -> SseClient
