@@ -1,7 +1,7 @@
 //  Http module imports for the Split module
 //  Copyright © 2026 Split. All rights reserved.
 
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 
 import Http
 

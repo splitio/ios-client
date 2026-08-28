@@ -1,6 +1,6 @@
 //  Concurrency module imports for the Split module
 
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 
 import Concurrency
 

@@ -4,7 +4,7 @@
 
 import Foundation
 
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 private extension String {
     func matchRegex(_ pattern: String) -> Bool {
         guard let regex = try? NSRegularExpression(pattern: pattern) else { return false }

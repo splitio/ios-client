@@ -2,7 +2,7 @@
 // Created by Split Team.
 // Copyright © 2025 Split. All rights reserved.
 
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 import Http
 
 // MARK: - Http types for testing

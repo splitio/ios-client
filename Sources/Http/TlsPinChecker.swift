@@ -4,13 +4,13 @@
 
 import Foundation
 import CommonCrypto
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 import Logging
 #endif
 
 // MARK: - Private Extensions
 
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 private extension String {
     var dataBytes: Data? {
         self.data(using: .utf8)

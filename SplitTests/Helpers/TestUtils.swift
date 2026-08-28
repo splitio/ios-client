@@ -8,7 +8,7 @@
 
 import Foundation
 @testable import Split
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 import Http
 #endif
 

@@ -3,11 +3,11 @@
 //  Copyright © 2018 Split. All rights reserved.
 
 import Foundation
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 import Logging
 #endif
 
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 private func += <K, V> ( left: inout [K: V], right: [K: V]) {
     for (key, value) in right {
         left[key] = value

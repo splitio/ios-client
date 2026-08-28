@@ -7,7 +7,7 @@
 //
 
 import Foundation
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 import Http
 #endif
 

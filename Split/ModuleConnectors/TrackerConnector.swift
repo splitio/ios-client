@@ -3,7 +3,7 @@
 
 import Foundation
 
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 @_exported import Tracker
 #endif
 

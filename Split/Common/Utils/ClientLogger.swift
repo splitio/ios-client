@@ -1,6 +1,6 @@
 //  Created by Sebastian Arrubia on 3/5/18.
 
-#if SWIFT_PACKAGE
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 import Logging
 
 // Re-export Logger from Logging module for backward compatibility

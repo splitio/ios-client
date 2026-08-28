@@ -59,7 +59,7 @@ let package = Package(
         ),
         .testTarget(
             name: "BackoffCounterTests",
-            dependencies: [],
+            dependencies: ["BackoffCounter"],
             path: "Sources/BackoffCounter/Tests"
         ),
 
