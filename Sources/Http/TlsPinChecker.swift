@@ -4,13 +4,13 @@
 
 import Foundation
 import CommonCrypto
-#if !COCOAPODS
+#if SWIFT_PACKAGE
 import Logging
 #endif
 
 // MARK: - Private Extensions
 
-#if !COCOAPODS
+#if SWIFT_PACKAGE
 private extension String {
     var dataBytes: Data? {
         self.data(using: .utf8)

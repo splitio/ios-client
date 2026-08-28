@@ -1,6 +1,6 @@
 //  Created by Sebastian Arrubia on 3/5/18.
 
-#if !COCOAPODS
+#if SWIFT_PACKAGE
 import Logging
 
 // Re-export Logger from Logging module for backward compatibility

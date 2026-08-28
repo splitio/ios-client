@@ -1,6 +1,6 @@
 // StreamingTestConnector.swift
 
-#if !COCOAPODS
+#if SWIFT_PACKAGE
 import Streaming
 
 // MARK: - Streaming types for testing

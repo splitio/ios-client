@@ -1,7 +1,7 @@
 //  Http module imports for the Split module
 //  Copyright © 2026 Split. All rights reserved.
 
-#if !COCOAPODS
+#if SWIFT_PACKAGE
 
 import Http
 

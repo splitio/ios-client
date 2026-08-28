@@ -2,7 +2,7 @@
 // Created by Split Team.
 // Copyright © 2025 Split. All rights reserved.
 
-#if !COCOAPODS
+#if SWIFT_PACKAGE
 import Http
 
 // MARK: - Http types for testing
