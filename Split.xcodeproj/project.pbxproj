@@ -7,17 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		035F1E2D37E8B84A5C9A2C7B /* HttpTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP018B28F3E1F2CC4D7F9E /* HttpTask.swift */; };
 		04A4582A0086E509255886BB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
+		05BB70F9EA63A7E3822A60BE /* HttpError.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP007B28F3E1F2CC4D7F9E /* HttpError.swift */; };
+		0606DFAEE073463BCD71B652 /* HttpRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP013B28F3E1F2CC4D7F9E /* HttpRequestManager.swift */; };
+		0A34ADF3488AB206288AF603 /* LogPrinter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B62F259BD9000D1C11 /* LogPrinter.swift */; };
+		0D48272FE062917A17467135 /* SseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EFD30624BCE4810052920D /* SseClient.swift */; };
+		110365792104D05862DC14E0 /* Concurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B69B4718072C5310252A6A /* Concurrency.swift */; };
+		135B6C02D9DA9B3FDE9E1D3F /* BackoffCounterTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F5B253F163A00A945B4 /* BackoffCounterTimer.swift */; };
 		139D737E36D5F2FA1834BB96 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
+		13ED23AA0590037BC38067DE /* HttpSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP015B28F3E1F2CC4D7F9E /* HttpSession.swift */; };
 		1510C1BC357260BA871DBE58 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
+		17622520C371074A216DE6DC /* PublicKeyHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP019B28F3E1F2CC4D7F9E /* PublicKeyHeaders.swift */; };
+		179DF205DDF924F102EC34B8 /* Concurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B69B4718072C5310252A6A /* Concurrency.swift */; };
+		1A86F464480C0C2070BEE257 /* SseClientFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955BB4942820653F00762D7E /* SseClientFactory.swift */; };
+		1F43A1FF05D21D7612A62C0F /* PeriodicTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = PRWMODULE00000002 /* PeriodicTimer.swift */; };
 		2459636933868D053A01BC3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
+		246786D0F7CBFA2A998A9891 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP010B28F3E1F2CC4D7F9E /* HttpParameters.swift */; };
+		24A32B73E79604BD5C98AC40 /* TrackerValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKMODULE00000003 /* TrackerValidation.swift */; };
+		252E0D512C79EDA7548EEBDC /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP009B28F3E1F2CC4D7F9E /* HttpParameter.swift */; };
+		2C5D5D3D738ED9F2356932B8 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP004B28F3E1F2CC4D7F9E /* HttpClient.swift */; };
 		2DF7C3837113F36647769631 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
+		2F47109C0AB9C26C7FBE5D2A /* HttpStreamRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP016B28F3E1F2CC4D7F9E /* HttpStreamRequest.swift */; };
+		2F5E2CA19F1E9A6113F868F0 /* HttpDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP006B28F3E1F2CC4D7F9E /* HttpDataResponse.swift */; };
+		311B56736BE44D1936142C69 /* HttpRequestList.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP012B28F3E1F2CC4D7F9E /* HttpRequestList.swift */; };
 		31AA21DE01A000A7C30630F2 /* SseClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA280A65C72BC92858422C /* SseClientTest.swift */; };
 		31AA22905C46031E68E70266 /* RestClient+SplitChanges.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2B308C842042CD5D4ED3 /* RestClient+SplitChanges.swift */; };
 		31AA2785C12C110A50A5FD4E /* RestClient+TrackEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2847FBCF5577DBE75BA3 /* RestClient+TrackEvents.swift */; };
 		31AA2C1F4964CD9D0769D021 /* RestClient+Impressions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA229CA74193186137A991 /* RestClient+Impressions.swift */; };
 		31AA2D91508DE344F676AB46 /* EndpointFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA29BEEBFD4CFCF2623591 /* EndpointFactory.swift */; };
 		31AA2DCDCA8E9F63F47F7D29 /* SplitEventsManagerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA279035168CE07F14D769 /* SplitEventsManagerStub.swift */; };
+		33B36429B6DDFE0D1656F834 /* SseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSEHANDLER001 /* SseHandler.swift */; };
+		36C71403FD6B50A6F0521318 /* HttpParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP009B28F3E1F2CC4D7F9E /* HttpParameter.swift */; };
 		3B6DEF1A20EA6AE50067435E /* EventDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7820EA6ADF0067435E /* EventDTO.swift */; };
 		3B6DEF1D20EA6AE50067435E /* PeriodicTaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7B20EA6ADF0067435E /* PeriodicTaskManager.swift */; };
 		3B6DEF1F20EA6AE50067435E /* SplitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEE7D20EA6ADF0067435E /* SplitError.swift */; };
@@ -101,7 +122,20 @@
 		3B6DEF8920EA6AE50067435E /* ConcurrentArrayQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0620EA6AE40067435E /* ConcurrentArrayQueue.swift */; };
 		3B6DEF8B20EA6AE50067435E /* DefaultFileStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B6DEF0920EA6AE40067435E /* DefaultFileStorage.swift */; };
 		3BBFF93320EFA2A0005F8C26 /* SplitEventActionTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBFF93220EFA2A0005F8C26 /* SplitEventActionTask.swift */; };
+		3D61923972AF57229B22F523 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDAE97952FA0ADED787D7ACC /* Logging.swift */; };
+		3D75F1E15E7231963E47D22B /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25624E56E6200A7B750 /* EventStreamParser.swift */; };
+		3DCCCFF1A3EB9E751F52FF36 /* HttpSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP015B28F3E1F2CC4D7F9E /* HttpSession.swift */; };
+		4091293CF7130E7B1DF2D9D3 /* HttpStreamResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP017B28F3E1F2CC4D7F9E /* HttpStreamResponse.swift */; };
+		40B3CD693BBDFFC8CE9FF6C7 /* HttpRequestList.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP012B28F3E1F2CC4D7F9E /* HttpRequestList.swift */; };
 		4BDFFE7D7EC1E73084DED283 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
+		4C9C72E2E9704379C9E49597 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDAE97952FA0ADED787D7ACC /* Logging.swift */; };
+		4DB7D2AC738E43128B06F4FF /* SseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59EFD30624BCE4810052920D /* SseClient.swift */; };
+		4ED1B932FE8165DA37D9645F /* HttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP011B28F3E1F2CC4D7F9E /* HttpRequest.swift */; };
+		504815BD919C00280D4F02D4 /* SseClientFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955BB4942820653F00762D7E /* SseClientFactory.swift */; };
+		506DC7D05879B3ABD554EBF5 /* HttpAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP003B28F3E1F2CC4D7F9E /* HttpAuthenticator.swift */; };
+		5129CF2BD7EAA2BD9F4C2770 /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP001B28F3E1F2CC4D7F9E /* Endpoint.swift */; };
+		521F7CB338A1967D82C1B17A /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKMODULE00000001 /* Tracker.swift */; };
+		53419D97AF6F25E14B06E015 /* HttpDataResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP006B28F3E1F2CC4D7F9E /* HttpDataResponse.swift */; };
 		55F2612BD679415B346A4584 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDAE97952FA0ADED787D7ACC /* Logging.swift */; };
 		5903C497210A5E0900A754B0 /* SynchronizedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5903C496210A5E0900A754B0 /* SynchronizedList.swift */; };
 		5905D4CA2555F99D006DA3B1 /* GeneralInfoEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5905D4C02555F99D006DA3B1 /* GeneralInfoEntity.swift */; };
@@ -809,15 +843,34 @@
 		5BF52DF72DE0B60700FEDAFE /* PrerequisitesMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF52DE0B60300FEDAFE /* PrerequisitesMatcher.swift */; };
 		5BF52DF92DE4B8D400FEDAFE /* PrerequisitesMatcherTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52DF82DE4B8CA00FEDAFE /* PrerequisitesMatcherTest.swift */; };
 		5BF52E032DE62F0500FEDAFE /* PrerequisitesMatcherMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BF52E022DE62EFE00FEDAFE /* PrerequisitesMatcherMock.swift */; };
+		5D0176B03D0F08CBAC8DBCEB /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP002B28F3E1F2CC4D7F9E /* HostDomainFilter.swift */; };
+		5E1E461686897766D9901102 /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25624E56E6200A7B750 /* EventStreamParser.swift */; };
+		629CFBC80055E1F0A4C38D03 /* SynchronizedDictionaryComposed.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59110B52F8581ED00229EE9 /* SynchronizedDictionaryComposed.swift */; };
 		63221B6B5C42DCB8268255C1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
+		6376058E04D91D4C7EFB9DDB /* HttpNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP008B28F3E1F2CC4D7F9E /* HttpNotificationHandler.swift */; };
+		65E21D7EC17528BD5EE3C3A1 /* SseConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E501E290B38D2005A473E /* SseConnectionHandler.swift */; };
 		6CE8968BD9DB0E977DFB1D95 /* BackoffCounterConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF0389ED3DEACFCD8CCEAE2 /* BackoffCounterConnector.swift */; };
 		6CE8968BD9DB0E977DFB1D96 /* HttpConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF03890DEADBEEF00000001 /* HttpConnector.swift */; };
 		6CE8968BD9DB0E977DFB1D97 /* PeriodicRecorderWorkerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF03890DEADBEEF00000002 /* PeriodicRecorderWorkerConnector.swift */; };
+		7090ECAA64E71EA41E2B1E48 /* DateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B32F259BD9000D1C11 /* DateProvider.swift */; };
+		70EE98CA58D04070CB74A583 /* TimeChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B72F259BD9000D1C11 /* TimeChecker.swift */; };
+		7616E88F5242F295363285A2 /* Tracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKMODULE00000001 /* Tracker.swift */; };
+		769489F066A3193AE61CB335 /* HttpTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP018B28F3E1F2CC4D7F9E /* HttpTask.swift */; };
 		792B6ABDFAB80B88BD071C2A /* StreamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA2E4E186CA500906D59ED98 /* StreamingTests.swift */; };
+		7AB8D0441B7ABC4A79E55DE1 /* HttpError.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP007B28F3E1F2CC4D7F9E /* HttpError.swift */; };
 		7AC3AD73C9AE9E89827802B9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
+		7B01A8BF9071634421049E73 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B42F259BD9000D1C11 /* Logger.swift */; };
+		7D7471A52F8808A353213FC8 /* PeriodicRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = PRWMODULE00000001 /* PeriodicRecorderWorker.swift */; };
+		7E340B3D8960ECA0E64C2D83 /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP004B28F3E1F2CC4D7F9E /* HttpClient.swift */; };
+		7F9C268D41A6FC7D02CB387D /* TlsPinChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP020B28F3E1F2CC4D7F9E /* TlsPinChecker.swift */; };
+		86EC9D475204DA27194F7DF1 /* HttpResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP014B28F3E1F2CC4D7F9E /* HttpResponse.swift */; };
+		86F978BE957CEFD4F758C57E /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP001B28F3E1F2CC4D7F9E /* Endpoint.swift */; };
 		87BE6DB19968FB343A338104 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
 		88E54A26B0FA48B97D7B6AE3 /* LoggingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23FD80A6B13740C2114DFA2F /* LoggingTests.swift */; };
+		890209FF10F3B2C7A09214FC /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B52F259BD9000D1C11 /* LogLevel.swift */; };
+		8E240AFB629832E1BE98BE14 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B42F259BD9000D1C11 /* Logger.swift */; };
 		924F1EE2D1B93C994C7BF67E /* Concurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44B69B4718072C5310252A6A /* Concurrency.swift */; };
+		92FF0014890AD3ED94297D38 /* PublicKeyHeaders.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP019B28F3E1F2CC4D7F9E /* PublicKeyHeaders.swift */; };
 		945D15B2B918E1875EF7470E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
 		9500D9B72C5ADBDF00383593 /* SegmentsChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9B62C5ADBDF00383593 /* SegmentsChange.swift */; };
 		9500D9B82C5ADBFD00383593 /* SegmentsChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9B62C5ADBDF00383593 /* SegmentsChange.swift */; };
@@ -1053,7 +1106,7 @@
 		958AD2162CA4590200E3DD43 /* MyLargeSegmentsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9500D9C62C610D1700383593 /* MyLargeSegmentsStorage.swift */; };
 		958F98722B1124EC001F35B3 /* SplitBgSynchronizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958F98712B1124EC001F35B3 /* SplitBgSynchronizerTests.swift */; };
 		958F98742B1129D7001F35B3 /* KeyValueStorageMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958F98732B1129D7001F35B3 /* KeyValueStorageMock.swift */; };
-		958FD8A12C51318B00E5609B /* (null) in Sources */ = {isa = PBXBuildFile; };
+		958FD8A12C51318B00E5609B /* BuildFile in Sources */ = {isa = PBXBuildFile; };
 		958FD8A22C5131A000E5609B /* CertificatePinningConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC162C35D9C000C5F2E4 /* CertificatePinningConfig.swift */; };
 		958FD8A32C51321A00E5609B /* FileUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC182C36DE2300C5F2E4 /* FileUtil.swift */; };
 		9594A45F2BFB917100D4E50B /* HashedImpressionDao.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9594A45E2BFB917100D4E50B /* HashedImpressionDao.swift */; };
@@ -1491,12 +1544,28 @@
 		95F7BC272C45C12700C5F2E4 /* TlsPinCheckerMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC262C45C12700C5F2E4 /* TlsPinCheckerMock.swift */; };
 		95F7BC292C46A4C800C5F2E4 /* SecurityHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */; };
 		95F8F06828170473009E09B1 /* multi_client_test.json in Resources */ = {isa = PBXBuildFile; fileRef = 95F8F06728170473009E09B1 /* multi_client_test.json */; };
+		98FE34981BC2F0876B4FCA1F /* SynchronizedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59110B42F8581ED00229EE9 /* SynchronizedDictionary.swift */; };
+		9A2578BB7F81A69B61475C6E /* TimeChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B72F259BD9000D1C11 /* TimeChecker.swift */; };
 		9C0699358203C37B24BF04AC /* Streaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8385B8AD6CE9088364A5CB2 /* Streaming.swift */; };
+		9DE928B3457A504F16B53857 /* SseConnectionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950E501E290B38D2005A473E /* SseConnectionHandler.swift */; };
+		A3F331874601D8B3C14C528E /* HttpRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP011B28F3E1F2CC4D7F9E /* HttpRequest.swift */; };
+		A79A161AB095D99C1682B6AC /* LogLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B52F259BD9000D1C11 /* LogLevel.swift */; };
+		AAC9E5B46A88712094CD9565 /* HttpStreamResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP017B28F3E1F2CC4D7F9E /* HttpStreamResponse.swift */; };
+		ADC666009FDF857C367EFC8E /* PeriodicRecorderWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = PRWMODULE00000001 /* PeriodicRecorderWorker.swift */; };
+		AED02EFCCDB2BB1401EFFF9F /* SynchronizedDictionaryComposed.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59110B52F8581ED00229EE9 /* SynchronizedDictionaryComposed.swift */; };
+		AF1ADEAB51E75EF31E021379 /* SynchronizedDictionarySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59110B62F8581ED00229EE9 /* SynchronizedDictionarySet.swift */; };
 		B3A862C479A657597413B150 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
+		B5223461F6D11E4C37ACC91A /* LogPrinter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B62F259BD9000D1C11 /* LogPrinter.swift */; };
+		B827732F0258D59C77ACBC21 /* HttpParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP010B28F3E1F2CC4D7F9E /* HttpParameters.swift */; };
+		BAD7546EAF12B89297BACE00 /* DateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B9D4B32F259BD9000D1C11 /* DateProvider.swift */; };
+		BCEAEB1F60594602FD892831 /* TrackerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKMODULE00000002 /* TrackerModels.swift */; };
 		C337B35BD6A7AF02703D6C2D /* BackoffCounterConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF0389ED3DEACFCD8CCEAE2 /* BackoffCounterConnector.swift */; };
 		C337B35BD6A7AF02703D6C2E /* HttpConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF03890DEADBEEF00000001 /* HttpConnector.swift */; };
 		C337B35BD6A7AF02703D6C2F /* PeriodicRecorderWorkerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9AF03890DEADBEEF00000002 /* PeriodicRecorderWorkerConnector.swift */; };
+		C34D17EC82293E438A1FD5B4 /* Streaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8385B8AD6CE9088364A5CB2 /* Streaming.swift */; };
+		C51319F5CD9873E33721D46E /* SynchronizedDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59110B42F8581ED00229EE9 /* SynchronizedDictionary.swift */; };
 		C526DE4C2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C526DE4B2D9B09EB0051DAB8 /* ImpressionsPropertiesE2ETest.swift */; };
+		C52766D6F2FED4BF966C6D48 /* TrackerValidation.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKMODULE00000003 /* TrackerValidation.swift */; };
 		C52C57292EEB41350064D049 /* EncryptionKeyValidationIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52C57282EEB41350064D049 /* EncryptionKeyValidationIntegrationTest.swift */; };
 		C52C572B2EEB41450064D049 /* EncryptionKeyValidationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C52C572A2EEB41450064D049 /* EncryptionKeyValidationTest.swift */; };
 		C53207E72EF44A0700418BB1 /* DbEncryptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */; };
@@ -1622,9 +1691,28 @@
 		C5E967602D3849BE00112DAC /* RolloutDefinitionsCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E9675E2D3849BE00112DAC /* RolloutDefinitionsCache.swift */; };
 		C5E967622D395DAA00112DAC /* RolloutCacheManagerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5E967612D395DAA00112DAC /* RolloutCacheManagerTest.swift */; };
 		C60F348461E1AEAFBD8A2B95 /* ConcurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC9B39F58A59192CC0BF2CE7 /* ConcurrencyTests.swift */; };
+		CC78DA857280E066CA76021F /* PeriodicTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = PRWMODULE00000002 /* PeriodicTimer.swift */; };
 		CD311117BB394A70AD6057CD04272DF2 /* DbEncryptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A0EA0213A424C098E507B2544F5CD6F /* DbEncryptionManager.swift */; };
+		CDCD51BE05234480450C620D /* BackoffCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25C24E5C61C00A7B750 /* BackoffCounter.swift */; };
+		D0ABD0F859F4B55304C89EEE /* HttpStreamRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP016B28F3E1F2CC4D7F9E /* HttpStreamRequest.swift */; };
+		D17A9405FC43BAC250E23D8F /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP002B28F3E1F2CC4D7F9E /* HostDomainFilter.swift */; };
+		D2D3333C6B9A9474DFEB44C2 /* HttpAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP003B28F3E1F2CC4D7F9E /* HttpAuthenticator.swift */; };
+		D73BD3BEE262A2C6A048BF92 /* HttpNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP008B28F3E1F2CC4D7F9E /* HttpNotificationHandler.swift */; };
+		D854C642574374F8F9F2FD96 /* TrackerModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKMODULE00000002 /* TrackerModels.swift */; };
+		DD9A0158D56824F7F59E4984 /* Streaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8385B8AD6CE9088364A5CB2 /* Streaming.swift */; };
+		DED9AC7E9249AD647DFFCC6A /* BackoffCounterTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F5F5B253F163A00A945B4 /* BackoffCounterTimer.swift */; };
+		E00193FD4298BB89FDA6CF41 /* HttpDataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP005B28F3E1F2CC4D7F9E /* HttpDataRequest.swift */; };
+		E1278BAA55D8EE011DAC6C57 /* HttpResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP014B28F3E1F2CC4D7F9E /* HttpResponse.swift */; };
+		E4150FD10A830DFF4D3311E5 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59110B32F8581ED00229EE9 /* Atomic.swift */; };
+		E8E18C60C07AC6C4011C6899 /* SynchronizedDictionarySet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59110B62F8581ED00229EE9 /* SynchronizedDictionarySet.swift */; };
+		ED91B03567F8BD41D4103E37 /* HttpDataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP005B28F3E1F2CC4D7F9E /* HttpDataRequest.swift */; };
+		EE6CF2D55940E9DFB58EF578 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = C59110B32F8581ED00229EE9 /* Atomic.swift */; };
 		EVENTPARSER001 /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25624E56E6200A7B750 /* EventStreamParser.swift */; };
+		F00D8159768959ABCB97D4E6 /* SseHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = SSEHANDLER001 /* SseHandler.swift */; };
+		F2A8192AC19048080B756D30 /* HttpRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP013B28F3E1F2CC4D7F9E /* HttpRequestManager.swift */; };
+		F82A4B6AE4FB7771176A2D65 /* BackoffCounter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 595AD25C24E5C61C00A7B750 /* BackoffCounter.swift */; };
 		F933EFDE638A45CFCFC6DD78 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB05351F643A2046D7E1EC50 /* Foundation.framework */; };
+		FA4E819AD088A4B52E5589E6 /* TlsPinChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP020B28F3E1F2CC4D7F9E /* TlsPinChecker.swift */; };
 		HTTP001A28F3E1F2CC4D7F9E /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP001B28F3E1F2CC4D7F9E /* Endpoint.swift */; };
 		HTTP002A28F3E1F2CC4D7F9E /* HostDomainFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP002B28F3E1F2CC4D7F9E /* HostDomainFilter.swift */; };
 		HTTP003A28F3E1F2CC4D7F9E /* HttpAuthenticator.swift in Sources */ = {isa = PBXBuildFile; fileRef = HTTP003B28F3E1F2CC4D7F9E /* HttpAuthenticator.swift */; };
@@ -1691,18 +1779,10 @@
 		TRKCONNBUILD00001 /* TrackerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKCONN00000001 /* TrackerConnector.swift */; };
 		TRKCONNBUILD00002 /* TrackerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKCONN00000001 /* TrackerConnector.swift */; };
 		TRKFWBUILD00001 /* Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = TRKFWREF0000001 /* Tracker.framework */; };
-		TRKFWBUILD00002 /* Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = TRKFWREF0000001 /* Tracker.framework */; };
 		TRKTESTBUILD00001 /* TrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKTEST000000001 /* TrackerTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		0B0464F59CDD8E0FA1830606 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 97B2B9E50D4E8C459EDD712B;
-			remoteInfo = PeriodicRecorderWorker;
-		};
 		29CD94D4149E231C94C1EFA5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
@@ -1716,13 +1796,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 557D062442413680641861B3;
 			remoteInfo = Logging;
-		};
-		339CE452F43B9B5EA8009F0F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 97B2B9E50D4E8C459EDD712B;
-			remoteInfo = PeriodicRecorderWorker;
 		};
 		4D30CDA7F01C934E261DA5FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1759,40 +1832,12 @@
 			remoteGlobalIDString = 9D8CD400B5D02CE8E2249734;
 			remoteInfo = Streaming;
 		};
-		6B69CED613E4B117F9A0B17F /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 726AE72F409B176D8B564D75;
-			remoteInfo = Concurrency;
-		};
 		6E4424077045251A1E0C26AF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 557D062442413680641861B3;
 			remoteInfo = Logging;
-		};
-		6EFF66D88B451C08513AAC2D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A9E90B2EA117111D127AA72A;
-			remoteInfo = Http;
-		};
-		8441E4505A17B1DBFC3E50C6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9D8CD400B5D02CE8E2249734;
-			remoteInfo = Streaming;
-		};
-		8ECD345F685F6A3D27AF0571 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 726AE72F409B176D8B564D75;
-			remoteInfo = Concurrency;
 		};
 		913DF4C0D10717B1823C4982 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1808,34 +1853,6 @@
 			remoteGlobalIDString = 557D062442413680641861B3;
 			remoteInfo = Logging;
 		};
-		95B02CAB28D0BD7A0030EC8C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 557D062442413680641861B3;
-			remoteInfo = Logging;
-		};
-		A2C7DEAE63FCF7BD72965AA9 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D97DC721B1D7717210978C48;
-			remoteInfo = BackoffCounter;
-		};
-		AD7F7B4D7AF1A4A38661D0D6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9D8CD400B5D02CE8E2249734;
-			remoteInfo = Streaming;
-		};
-		AF1F5378E8DE4B0E93975842 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A9E90B2EA117111D127AA72A;
-			remoteInfo = Http;
-		};
 		C2D3330986E425EAE866B8F7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
@@ -1850,35 +1867,7 @@
 			remoteGlobalIDString = 726AE72F409B176D8B564D75;
 			remoteInfo = Concurrency;
 		};
-		DCEC8C1052CE73767C2802BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D97DC721B1D7717210978C48;
-			remoteInfo = BackoffCounter;
-		};
-		ED0C4156420B8E843DF9A23B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 557D062442413680641861B3;
-			remoteInfo = Logging;
-		};
-		TRKPROXY0000001 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = TRKTARGET0000001;
-			remoteInfo = Tracker;
-		};
 		TRKPROXY0000002 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = TRKTARGET0000001;
-			remoteInfo = Tracker;
-		};
-		TRKPROXY0000003 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
 			proxyType = 1;
@@ -2866,7 +2855,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				TRKFWBUILD00002 /* Tracker.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5039,13 +5027,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				626C2B9BBF3ADCABE4527521 /* PBXTargetDependency */,
-				057F2E75772D1309732754A3 /* PBXTargetDependency */,
-				1EE383C26717DE81C42D5244 /* PBXTargetDependency */,
-				E86C21454C5FA11C386AF845 /* PBXTargetDependency */,
-				TRKDEP00000001 /* PBXTargetDependency */,
-				859BBF09A7D55192CDF825BA /* PBXTargetDependency */,
-				AFBE3C6C2B766CFE2077619C /* PBXTargetDependency */,
 			);
 			name = Split;
 			productName = Split;
@@ -5209,13 +5190,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				95B02CAC28D0BD7A0030EC8D /* PBXTargetDependency */,
-				C5B8C0F15A946E32416739CC /* PBXTargetDependency */,
-				05EB2C0E7481565D7F5CD86C /* PBXTargetDependency */,
-				29D4E9A146F0931E6D95B75C /* PBXTargetDependency */,
-				TRKDEP00000002 /* PBXTargetDependency */,
-				EE0FC2C77B831251090C69A4 /* PBXTargetDependency */,
-				286F97EACA423C4489B032D7 /* PBXTargetDependency */,
 			);
 			name = SplitWatchOS;
 			productName = SplitTvOS;
@@ -6124,6 +6098,50 @@
 				953911A8267A4F250040433A /* LRUCache.swift in Sources */,
 				95B17FF9275FCD0A002DC9DF /* TelemetryConfigRecorder.swift in Sources */,
 				954F9AF9256EE55B00140B81 /* GeneralInfoDao.swift in Sources */,
+				4C9C72E2E9704379C9E49597 /* Logging.swift in Sources */,
+				7B01A8BF9071634421049E73 /* Logger.swift in Sources */,
+				0A34ADF3488AB206288AF603 /* LogPrinter.swift in Sources */,
+				BAD7546EAF12B89297BACE00 /* DateProvider.swift in Sources */,
+				890209FF10F3B2C7A09214FC /* LogLevel.swift in Sources */,
+				70EE98CA58D04070CB74A583 /* TimeChecker.swift in Sources */,
+				86F978BE957CEFD4F758C57E /* Endpoint.swift in Sources */,
+				5D0176B03D0F08CBAC8DBCEB /* HostDomainFilter.swift in Sources */,
+				506DC7D05879B3ABD554EBF5 /* HttpAuthenticator.swift in Sources */,
+				2C5D5D3D738ED9F2356932B8 /* HttpClient.swift in Sources */,
+				ED91B03567F8BD41D4103E37 /* HttpDataRequest.swift in Sources */,
+				53419D97AF6F25E14B06E015 /* HttpDataResponse.swift in Sources */,
+				05BB70F9EA63A7E3822A60BE /* HttpError.swift in Sources */,
+				6376058E04D91D4C7EFB9DDB /* HttpNotificationHandler.swift in Sources */,
+				252E0D512C79EDA7548EEBDC /* HttpParameter.swift in Sources */,
+				B827732F0258D59C77ACBC21 /* HttpParameters.swift in Sources */,
+				4ED1B932FE8165DA37D9645F /* HttpRequest.swift in Sources */,
+				40B3CD693BBDFFC8CE9FF6C7 /* HttpRequestList.swift in Sources */,
+				0606DFAEE073463BCD71B652 /* HttpRequestManager.swift in Sources */,
+				86EC9D475204DA27194F7DF1 /* HttpResponse.swift in Sources */,
+				3DCCCFF1A3EB9E751F52FF36 /* HttpSession.swift in Sources */,
+				D0ABD0F859F4B55304C89EEE /* HttpStreamRequest.swift in Sources */,
+				4091293CF7130E7B1DF2D9D3 /* HttpStreamResponse.swift in Sources */,
+				035F1E2D37E8B84A5C9A2C7B /* HttpTask.swift in Sources */,
+				17622520C371074A216DE6DC /* PublicKeyHeaders.swift in Sources */,
+				7F9C268D41A6FC7D02CB387D /* TlsPinChecker.swift in Sources */,
+				F82A4B6AE4FB7771176A2D65 /* BackoffCounter.swift in Sources */,
+				135B6C02D9DA9B3FDE9E1D3F /* BackoffCounterTimer.swift in Sources */,
+				ADC666009FDF857C367EFC8E /* PeriodicRecorderWorker.swift in Sources */,
+				1F43A1FF05D21D7612A62C0F /* PeriodicTimer.swift in Sources */,
+				7616E88F5242F295363285A2 /* Tracker.swift in Sources */,
+				BCEAEB1F60594602FD892831 /* TrackerModels.swift in Sources */,
+				24A32B73E79604BD5C98AC40 /* TrackerValidation.swift in Sources */,
+				98FE34981BC2F0876B4FCA1F /* SynchronizedDictionary.swift in Sources */,
+				AED02EFCCDB2BB1401EFFF9F /* SynchronizedDictionaryComposed.swift in Sources */,
+				E8E18C60C07AC6C4011C6899 /* SynchronizedDictionarySet.swift in Sources */,
+				EE6CF2D55940E9DFB58EF578 /* Atomic.swift in Sources */,
+				110365792104D05862DC14E0 /* Concurrency.swift in Sources */,
+				C34D17EC82293E438A1FD5B4 /* Streaming.swift in Sources */,
+				3D75F1E15E7231963E47D22B /* EventStreamParser.swift in Sources */,
+				0D48272FE062917A17467135 /* SseClient.swift in Sources */,
+				1A86F464480C0C2070BEE257 /* SseClientFactory.swift in Sources */,
+				9DE928B3457A504F16B53857 /* SseConnectionHandler.swift in Sources */,
+				F00D8159768959ABCB97D4E6 /* SseHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6961,7 +6979,7 @@
 				C337B35BD6A7AF02703D6C2F /* PeriodicRecorderWorkerConnector.swift in Sources */,
 				TRKCONNBUILD00002 /* TrackerConnector.swift in Sources */,
 				TRKADAPTBUILD00002 /* TrackerAdapters.swift in Sources */,
-				958FD8A12C51318B00E5609B /* (null) in Sources */,
+				958FD8A12C51318B00E5609B /* BuildFile in Sources */,
 				956A7E17297043130080D53C /* ImpressionsStorage.swift in Sources */,
 				95B02DCD28D0BDE20030EC8B /* split_cache.xcdatamodeld in Sources */,
 				5B343EAD2E26E93B006BEBE7 /* StorageHelper.swift in Sources */,
@@ -7297,6 +7315,50 @@
 				95B02DC928D0BDC30030EC8B /* SpaceDelimitedLocalhostSplitsParser.swift in Sources */,
 				95F7BBC12C077D6100C5F2E4 /* HashedImpressionDao.swift in Sources */,
 				95B02DCA28D0BDC30030EC8B /* YamlLocalhostSplitsParser.swift in Sources */,
+				3D61923972AF57229B22F523 /* Logging.swift in Sources */,
+				8E240AFB629832E1BE98BE14 /* Logger.swift in Sources */,
+				B5223461F6D11E4C37ACC91A /* LogPrinter.swift in Sources */,
+				7090ECAA64E71EA41E2B1E48 /* DateProvider.swift in Sources */,
+				A79A161AB095D99C1682B6AC /* LogLevel.swift in Sources */,
+				9A2578BB7F81A69B61475C6E /* TimeChecker.swift in Sources */,
+				5129CF2BD7EAA2BD9F4C2770 /* Endpoint.swift in Sources */,
+				D17A9405FC43BAC250E23D8F /* HostDomainFilter.swift in Sources */,
+				D2D3333C6B9A9474DFEB44C2 /* HttpAuthenticator.swift in Sources */,
+				7E340B3D8960ECA0E64C2D83 /* HttpClient.swift in Sources */,
+				E00193FD4298BB89FDA6CF41 /* HttpDataRequest.swift in Sources */,
+				2F5E2CA19F1E9A6113F868F0 /* HttpDataResponse.swift in Sources */,
+				7AB8D0441B7ABC4A79E55DE1 /* HttpError.swift in Sources */,
+				D73BD3BEE262A2C6A048BF92 /* HttpNotificationHandler.swift in Sources */,
+				36C71403FD6B50A6F0521318 /* HttpParameter.swift in Sources */,
+				246786D0F7CBFA2A998A9891 /* HttpParameters.swift in Sources */,
+				A3F331874601D8B3C14C528E /* HttpRequest.swift in Sources */,
+				311B56736BE44D1936142C69 /* HttpRequestList.swift in Sources */,
+				F2A8192AC19048080B756D30 /* HttpRequestManager.swift in Sources */,
+				E1278BAA55D8EE011DAC6C57 /* HttpResponse.swift in Sources */,
+				13ED23AA0590037BC38067DE /* HttpSession.swift in Sources */,
+				2F47109C0AB9C26C7FBE5D2A /* HttpStreamRequest.swift in Sources */,
+				AAC9E5B46A88712094CD9565 /* HttpStreamResponse.swift in Sources */,
+				769489F066A3193AE61CB335 /* HttpTask.swift in Sources */,
+				92FF0014890AD3ED94297D38 /* PublicKeyHeaders.swift in Sources */,
+				FA4E819AD088A4B52E5589E6 /* TlsPinChecker.swift in Sources */,
+				CDCD51BE05234480450C620D /* BackoffCounter.swift in Sources */,
+				DED9AC7E9249AD647DFFCC6A /* BackoffCounterTimer.swift in Sources */,
+				7D7471A52F8808A353213FC8 /* PeriodicRecorderWorker.swift in Sources */,
+				CC78DA857280E066CA76021F /* PeriodicTimer.swift in Sources */,
+				521F7CB338A1967D82C1B17A /* Tracker.swift in Sources */,
+				D854C642574374F8F9F2FD96 /* TrackerModels.swift in Sources */,
+				C52766D6F2FED4BF966C6D48 /* TrackerValidation.swift in Sources */,
+				C51319F5CD9873E33721D46E /* SynchronizedDictionary.swift in Sources */,
+				629CFBC80055E1F0A4C38D03 /* SynchronizedDictionaryComposed.swift in Sources */,
+				AF1ADEAB51E75EF31E021379 /* SynchronizedDictionarySet.swift in Sources */,
+				E4150FD10A830DFF4D3311E5 /* Atomic.swift in Sources */,
+				179DF205DDF924F102EC34B8 /* Concurrency.swift in Sources */,
+				DD9A0158D56824F7F59E4984 /* Streaming.swift in Sources */,
+				5E1E461686897766D9901102 /* EventStreamParser.swift in Sources */,
+				4DB7D2AC738E43128B06F4FF /* SseClient.swift in Sources */,
+				504815BD919C00280D4F02D4 /* SseClientFactory.swift in Sources */,
+				65E21D7EC17528BD5EE3C3A1 /* SseConnectionHandler.swift in Sources */,
+				33B36429B6DDFE0D1656F834 /* SseHandler.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7360,41 +7422,11 @@
 			target = A9E90B2EA117111D127AA72A /* Http */;
 			targetProxy = C2D3330986E425EAE866B8F7 /* PBXContainerItemProxy */;
 		};
-		057F2E75772D1309732754A3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Http;
-			target = A9E90B2EA117111D127AA72A /* Http */;
-			targetProxy = 6EFF66D88B451C08513AAC2D /* PBXContainerItemProxy */;
-		};
-		05EB2C0E7481565D7F5CD86C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = BackoffCounter;
-			target = D97DC721B1D7717210978C48 /* BackoffCounter */;
-			targetProxy = DCEC8C1052CE73767C2802BF /* PBXContainerItemProxy */;
-		};
 		088CC2D13FB5674E35E36DD0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = BackoffCounter;
 			target = D97DC721B1D7717210978C48 /* BackoffCounter */;
 			targetProxy = 4E665CD7A039664FBE3FCC15 /* PBXContainerItemProxy */;
-		};
-		1EE383C26717DE81C42D5244 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = BackoffCounter;
-			target = D97DC721B1D7717210978C48 /* BackoffCounter */;
-			targetProxy = A2C7DEAE63FCF7BD72965AA9 /* PBXContainerItemProxy */;
-		};
-		286F97EACA423C4489B032D7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Streaming;
-			target = 9D8CD400B5D02CE8E2249734 /* Streaming */;
-			targetProxy = AD7F7B4D7AF1A4A38661D0D6 /* PBXContainerItemProxy */;
-		};
-		29D4E9A146F0931E6D95B75C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = PeriodicRecorderWorker;
-			target = 97B2B9E50D4E8C459EDD712B /* PeriodicRecorderWorker */;
-			targetProxy = 339CE452F43B9B5EA8009F0F /* PBXContainerItemProxy */;
 		};
 		2C2F867838DA406C6A048533 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7424,12 +7456,6 @@
 			target = 3B6DEE5920EA6A4E0067435E /* Split */;
 			targetProxy = 5B3C16362ED76BAD0068D623 /* PBXContainerItemProxy */;
 		};
-		626C2B9BBF3ADCABE4527521 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Logging;
-			target = 557D062442413680641861B3 /* Logging */;
-			targetProxy = ED0C4156420B8E843DF9A23B /* PBXContainerItemProxy */;
-		};
 		6ADEE051237275D759913649 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Logging;
@@ -7448,65 +7474,17 @@
 			target = A9E90B2EA117111D127AA72A /* Http */;
 			targetProxy = 913DF4C0D10717B1823C4982 /* PBXContainerItemProxy */;
 		};
-		859BBF09A7D55192CDF825BA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Concurrency;
-			target = 726AE72F409B176D8B564D75 /* Concurrency */;
-			targetProxy = 8ECD345F685F6A3D27AF0571 /* PBXContainerItemProxy */;
-		};
 		8F0C1F550C971F31EF67A81A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = PeriodicRecorderWorker;
 			target = 97B2B9E50D4E8C459EDD712B /* PeriodicRecorderWorker */;
 			targetProxy = 4D30CDA7F01C934E261DA5FE /* PBXContainerItemProxy */;
 		};
-		95B02CAC28D0BD7A0030EC8D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Logging;
-			target = 557D062442413680641861B3 /* Logging */;
-			targetProxy = 95B02CAB28D0BD7A0030EC8C /* PBXContainerItemProxy */;
-		};
-		AFBE3C6C2B766CFE2077619C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Streaming;
-			target = 9D8CD400B5D02CE8E2249734 /* Streaming */;
-			targetProxy = 8441E4505A17B1DBFC3E50C6 /* PBXContainerItemProxy */;
-		};
-		C5B8C0F15A946E32416739CC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Http;
-			target = A9E90B2EA117111D127AA72A /* Http */;
-			targetProxy = AF1F5378E8DE4B0E93975842 /* PBXContainerItemProxy */;
-		};
 		C7B80E32947606EF63BE770F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Logging;
 			target = 557D062442413680641861B3 /* Logging */;
 			targetProxy = 2BCAB130D73EC14037F54664 /* PBXContainerItemProxy */;
-		};
-		E86C21454C5FA11C386AF845 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = PeriodicRecorderWorker;
-			target = 97B2B9E50D4E8C459EDD712B /* PeriodicRecorderWorker */;
-			targetProxy = 0B0464F59CDD8E0FA1830606 /* PBXContainerItemProxy */;
-		};
-		EE0FC2C77B831251090C69A4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Concurrency;
-			target = 726AE72F409B176D8B564D75 /* Concurrency */;
-			targetProxy = 6B69CED613E4B117F9A0B17F /* PBXContainerItemProxy */;
-		};
-		TRKDEP00000001 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Tracker;
-			target = TRKTARGET0000001 /* Tracker */;
-			targetProxy = TRKPROXY0000001 /* PBXContainerItemProxy */;
-		};
-		TRKDEP00000002 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = Tracker;
-			target = TRKTARGET0000001 /* Tracker */;
-			targetProxy = TRKPROXY0000003 /* PBXContainerItemProxy */;
 		};
 		TRKTESTDEP0001 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7580,6 +7558,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -7611,6 +7590,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -7682,6 +7662,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VALIDATE_PRODUCT = YES;
@@ -7713,6 +7694,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,4";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -7745,6 +7727,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos watchsimulator watchos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -7777,6 +7760,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -7828,6 +7812,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VALIDATE_PRODUCT = YES;
@@ -7859,6 +7844,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,4";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -7889,6 +7875,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,4";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -8183,6 +8170,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,4";
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -8214,6 +8202,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -8393,6 +8382,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos watchsimulator watchos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VALIDATE_PRODUCT = YES;
@@ -8426,6 +8416,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -8478,6 +8469,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -8528,6 +8520,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos watchsimulator watchos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -8617,6 +8610,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos watchsimulator watchos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -8668,6 +8662,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -8830,6 +8825,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VALIDATE_PRODUCT = YES;
@@ -8882,6 +8878,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VALIDATE_PRODUCT = YES;
@@ -8934,6 +8931,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -8966,6 +8964,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -8997,6 +8996,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -9625,6 +9625,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -9675,6 +9676,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,6";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -9727,6 +9729,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos watchsimulator watchos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VALIDATE_PRODUCT = YES;
@@ -9760,6 +9763,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos watchsimulator watchos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -9792,6 +9796,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos watchsimulator watchos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 12.0;
@@ -9825,6 +9830,7 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos watchsimulator watchos";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) SPLIT_MODULAR";
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 12.0;

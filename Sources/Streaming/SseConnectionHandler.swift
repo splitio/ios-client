@@ -2,7 +2,7 @@
 //  Copyright © 2022 Split. All rights reserved.
 
 import Foundation
-#if !COCOAPODS
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 import Concurrency
 import Logging
 #endif

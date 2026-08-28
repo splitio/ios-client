@@ -1,6 +1,6 @@
 //  Streaming module imports for the Split module
 
-#if !COCOAPODS
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 
 import Streaming
 

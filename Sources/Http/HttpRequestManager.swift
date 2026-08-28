@@ -3,7 +3,7 @@
 //  Copyright © 2020 Split. All rights reserved.
 
 import Foundation
-#if !COCOAPODS
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 import Logging
 #endif
 

@@ -1,6 +1,6 @@
 // ConcurrencyTestConnector.swift
 
-#if !COCOAPODS
+#if SWIFT_PACKAGE || SPLIT_MODULAR
 import Concurrency
 
 // MARK: - Concurrency types for testing
