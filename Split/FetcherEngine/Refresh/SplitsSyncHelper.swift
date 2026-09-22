@@ -84,38 +84,41 @@ class SplitsSyncHelper: @unchecked Sendable {
         do {
             // Perform proxy check before syncing if handler exists
             var shouldClearBeforeUpdate = clearBeforeUpdate
+            var effectiveSince = since
+            var effectiveRbSince = rbSince
             if let proxyHandler = outdatedSplitProxyHandler {
                 proxyHandler.performProxyCheck()
 
                 // If we're in recovery mode, we should clear the cache and reset change numbers
                 if proxyHandler.isRecoveryMode() {
                     shouldClearBeforeUpdate = true
+                    effectiveSince = -1
+                    effectiveRbSince = -1
                 }
             }
 
-            let res = try tryToSync(since: since,
-                                    rbSince: rbSince,
+            var res = try tryToSync(since: effectiveSince,
+                                    rbSince: effectiveRbSince,
                                     till: till,
                                     rbTill: rbTill,
                                     clearBeforeUpdate: shouldClearBeforeUpdate,
                                     headers: headers)
 
-            if res.success {
-                // If we were in recovery mode and sync was successful, reset the proxy check timestamp
-                if let proxyHandler = outdatedSplitProxyHandler, proxyHandler.isRecoveryMode() {
-                    Logger.i("Resetting proxy check timestamp due to successful recovery")
-                    proxyHandler.resetProxyCheckTimestamp()
-                }
-                return res
+            if !res.success {
+                res = try tryToSync(since: res.changeNumber,
+                                    rbSince: res.rbChangeNumber,
+                                    till: res.changeNumber,
+                                    rbTill: res.rbChangeNumber,
+                                    clearBeforeUpdate: shouldClearBeforeUpdate && res.changeNumber == effectiveSince,
+                                    headers: headers,
+                                    useTillParam: true)
             }
 
-            return try tryToSync(since: res.changeNumber,
-                                   rbSince: res.rbChangeNumber,
-                                   till: res.changeNumber,
-                                   rbTill: res.rbChangeNumber,
-                                   clearBeforeUpdate: shouldClearBeforeUpdate && res.changeNumber == since,
-                                   headers: headers,
-                                   useTillParam: true)
+            if res.success, let proxyHandler = outdatedSplitProxyHandler, proxyHandler.isRecoveryMode() {
+                Logger.i("Resetting proxy check timestamp due to successful recovery")
+                proxyHandler.resetProxyCheckTimestamp()
+            }
+            return res
         } catch let error {
             Logger.e("Problem fetching feature flags: %@", error.localizedDescription)
 
@@ -141,14 +144,17 @@ class SplitsSyncHelper: @unchecked Sendable {
         var nextSince = since
         var nextRbSince: Int64? = rbSince
         var attemptCount = 0
+        var shouldClearBeforeUpdate = clearBeforeUpdate
         let goalTill = till ?? -10
         let goalRbTill = rbTill ?? -10
         while attemptCount < maxAttempts {
             let result = try fetchUntil(since: nextSince,
                                         rbSince: nextRbSince,
                                         till: useTillParam ? till : nil,
-                                        clearBeforeUpdate: clearBeforeUpdate,
+                                        clearBeforeUpdate: shouldClearBeforeUpdate,
                                         headers: headers)
+            // Subsequent attempts fetch deltas on top of the snapshot already stored.
+            shouldClearBeforeUpdate = false
             nextSince = result.till
             nextRbSince = result.rbTill ?? -1
 
