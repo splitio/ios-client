@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "Split",
-    platforms: [.iOS(.v9), .macOS(.v10_11), .watchOS(.v7), .tvOS(.v9)],
+    platforms: [.iOS("15.0"), .macOS("12.0"), .watchOS("9.0"), .tvOS("15.0")],
     products: [
         .library(name: "Split", targets: ["Split"])
     ],
@@ -18,5 +18,6 @@ let package = Package(
                 "Split.h"
             ]
         )
-    ]
+    ],
+    swiftLanguageVersions: [.version("6"), .v5]
 )
