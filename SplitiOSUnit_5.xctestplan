@@ -1,19 +1,17 @@
 {
-  "configurations" : [
+  "configurations": [
     {
-      "id" : "4D2BC264-4956-4353-8F84-1D52C51BEA63",
-      "name" : "Configuration 1",
-      "options" : {
-
-      }
+      "id": "4D2BC264-4956-4353-8F84-1D52C51BEA63",
+      "name": "Configuration 1",
+      "options": {}
     }
   ],
-  "defaultOptions" : {
-    "testTimeoutsEnabled" : true
+  "defaultOptions": {
+    "testTimeoutsEnabled": true
   },
-  "testTargets" : [
+  "testTargets": [
     {
-      "skippedTests" : [
+      "skippedTests": [
         "AnyValueValidatorTests",
         "ApiKeyValidatorTests",
         "ArrayBlockingQueueTests",
@@ -43,6 +41,7 @@
         "DestroyTests",
         "EndpointFactoryTest",
         "EndpointTest",
+        "EngineTests",
         "EqualToSemverMatcherTest",
         "EvaluatorTests",
         "EventDTOJsonTest",
@@ -96,6 +95,7 @@
         "ImpressionsToggleTest",
         "ImpressionsTrackerTest",
         "InListSemverMatcherTest",
+        "InMemoryMySegmentsCacheTests",
         "InMemoryTelemetryStorageTest",
         "InRuleBasedSegmentMatcherTest",
         "InitDbCipherTest",
@@ -108,6 +108,7 @@
         "LatencyCounterTests",
         "LegacyHashingTest",
         "LessThanOrEqualToSemverMatcherTest",
+        "LocalhostInstanceTest",
         "LocalhostManagerTests",
         "LocalhostParserTests",
         "LocalhostSplitClientTests",
@@ -119,6 +120,7 @@
         "LoggerTest",
         "MatcherEvalTests",
         "MatcherTests",
+        "MetadataEventsTests",
         "MultiClientEvaluationTest",
         "MultiClientStreamingResetTest",
         "Murmur3HashingTest",
@@ -189,35 +191,36 @@
         "SplitEventsManagerTest",
         "SplitFactoryBuilderTests",
         "SplitIntegrationTests",
-        "SplitIntegrationTests\/testControlTreatment()",
-        "SplitIntegrationTests\/testImpressionsCount()",
-        "SplitIntegrationTests\/testPrerequisites()",
-        "SplitIntegrationTests\/testPrerequisitesSplitView()",
-        "SplitIntegrationTests\/testPrerequisitesTreatmentNotPass()",
-        "SplitIntegrationTests\/testPrerequisitesTreatmentPass()",
-        "SplitIntegrationTests\/testReadyMyLargeSegmentsEnabledError()",
-        "SplitIntegrationTests\/testReadyMyLargeSegmentsEnabledNoWaitMls()",
-        "SplitIntegrationTests\/testReadyMyLargeSegmentsEnabledWaitMls()",
-        "SplitIntegrationTests\/testReadyNoRef()",
+        "SplitIntegrationTests/testControlTreatment()",
+        "SplitIntegrationTests/testImpressionsCount()",
+        "SplitIntegrationTests/testPrerequisites()",
+        "SplitIntegrationTests/testPrerequisitesSplitView()",
+        "SplitIntegrationTests/testPrerequisitesTreatmentNotPass()",
+        "SplitIntegrationTests/testPrerequisitesTreatmentPass()",
+        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledError()",
+        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledNoWaitMls()",
+        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledWaitMls()",
+        "SplitIntegrationTests/testReadyNoRef()",
+        "StreamingControlTest",
         "TelemetryIntegrationTest",
-        "TelemetryIntegrationTest\/testConfig()",
-        "TelemetryIntegrationTest\/testConfigTelemetry()",
-        "TelemetryIntegrationTest\/testHttpError()",
-        "TelemetryIntegrationTest\/testRuntimeAndSyncTelemetry()",
-        "TelemetryIntegrationTest\/testStreamingAblyErrorAndSessionLength()",
-        "TelemetryIntegrationTest\/testStreamingTelemetry()",
-        "UserConsentModeDebugTest\/testUserConsentGranted()",
-        "UserConsentModeNoneTest\/testUserConsentGranted()",
-        "UserConsentModeOptimizedTest\/testUserConsentGranted()"
+        "TelemetryIntegrationTest/testConfig()",
+        "TelemetryIntegrationTest/testConfigTelemetry()",
+        "TelemetryIntegrationTest/testHttpError()",
+        "TelemetryIntegrationTest/testRuntimeAndSyncTelemetry()",
+        "TelemetryIntegrationTest/testStreamingAblyErrorAndSessionLength()",
+        "TelemetryIntegrationTest/testStreamingTelemetry()",
+        "UserConsentModeDebugTest/testUserConsentGranted()",
+        "UserConsentModeNoneTest/testUserConsentGranted()",
+        "UserConsentModeOptimizedTest/testUserConsentGranted()"
       ],
-      "target" : {
-        "containerPath" : "container:Split.xcodeproj",
-        "identifier" : "592C6AA4211B6C99002D120C",
-        "name" : "SplitTestsSwift5"
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "592C6AA4211B6C99002D120C",
+        "name": "SplitTestsSwift5"
       }
     },
     {
-      "skippedTests" : [
+      "skippedTests": [
         "AnyValueValidatorTests",
         "ApiKeyValidatorTests",
         "ArrayBlockingQueueTests",
@@ -247,6 +250,7 @@
         "DestroyTests",
         "EndpointFactoryTest",
         "EndpointTest",
+        "EngineTests",
         "EqualToSemverMatcherTest",
         "EvaluatorTests",
         "EventDTOJsonTest",
@@ -301,6 +305,7 @@
         "ImpressionsToggleTest",
         "ImpressionsTrackerTest",
         "InListSemverMatcherTest",
+        "InMemoryMySegmentsCacheTests",
         "InMemoryTelemetryStorageTest",
         "InRuleBasedSegmentMatcherTest",
         "InitDbCipherTest",
@@ -313,6 +318,7 @@
         "LatencyCounterTests",
         "LegacyHashingTest",
         "LessThanOrEqualToSemverMatcherTest",
+        "LocalhostInstanceTest",
         "LocalhostManagerTests",
         "LocalhostParserTests",
         "LocalhostSplitClientTests",
@@ -324,6 +330,7 @@
         "LoggerTest",
         "MatcherEvalTests",
         "MatcherTests",
+        "MetadataEventsTests",
         "MultiClientEvaluationTest",
         "MultiClientStreamingResetTest",
         "Murmur3HashingTest",
@@ -394,33 +401,34 @@
         "SplitEventsManagerTest",
         "SplitFactoryBuilderTests",
         "SplitIntegrationTests",
-        "SplitIntegrationTests\/testControlTreatment()",
-        "SplitIntegrationTests\/testImpressionsCount()",
-        "SplitIntegrationTests\/testPrerequisites()",
-        "SplitIntegrationTests\/testPrerequisitesSplitView()",
-        "SplitIntegrationTests\/testPrerequisitesTreatmentNotPass()",
-        "SplitIntegrationTests\/testPrerequisitesTreatmentPass()",
-        "SplitIntegrationTests\/testReadyMyLargeSegmentsEnabledError()",
-        "SplitIntegrationTests\/testReadyMyLargeSegmentsEnabledNoWaitMls()",
-        "SplitIntegrationTests\/testReadyMyLargeSegmentsEnabledWaitMls()",
-        "SplitIntegrationTests\/testReadyNoRef()",
+        "SplitIntegrationTests/testControlTreatment()",
+        "SplitIntegrationTests/testImpressionsCount()",
+        "SplitIntegrationTests/testPrerequisites()",
+        "SplitIntegrationTests/testPrerequisitesSplitView()",
+        "SplitIntegrationTests/testPrerequisitesTreatmentNotPass()",
+        "SplitIntegrationTests/testPrerequisitesTreatmentPass()",
+        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledError()",
+        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledNoWaitMls()",
+        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledWaitMls()",
+        "SplitIntegrationTests/testReadyNoRef()",
+        "StreamingControlTest",
         "TelemetryIntegrationTest",
-        "TelemetryIntegrationTest\/testConfig()",
-        "TelemetryIntegrationTest\/testConfigTelemetry()",
-        "TelemetryIntegrationTest\/testHttpError()",
-        "TelemetryIntegrationTest\/testRuntimeAndSyncTelemetry()",
-        "TelemetryIntegrationTest\/testStreamingAblyErrorAndSessionLength()",
-        "TelemetryIntegrationTest\/testStreamingTelemetry()",
-        "UserConsentModeDebugTest\/testUserConsentGranted()",
-        "UserConsentModeNoneTest\/testUserConsentGranted()",
-        "UserConsentModeOptimizedTest\/testUserConsentGranted()"
+        "TelemetryIntegrationTest/testConfig()",
+        "TelemetryIntegrationTest/testConfigTelemetry()",
+        "TelemetryIntegrationTest/testHttpError()",
+        "TelemetryIntegrationTest/testRuntimeAndSyncTelemetry()",
+        "TelemetryIntegrationTest/testStreamingAblyErrorAndSessionLength()",
+        "TelemetryIntegrationTest/testStreamingTelemetry()",
+        "UserConsentModeDebugTest/testUserConsentGranted()",
+        "UserConsentModeNoneTest/testUserConsentGranted()",
+        "UserConsentModeOptimizedTest/testUserConsentGranted()"
       ],
-      "target" : {
-        "containerPath" : "container:Split.xcodeproj",
-        "identifier" : "5B3C16342ED76BAD0068D623",
-        "name" : "SplitTestsSwift6"
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "5B3C16342ED76BAD0068D623",
+        "name": "SplitTestsSwift6"
       }
     }
   ],
-  "version" : 1
+  "version": 1
 }
