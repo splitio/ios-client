@@ -67,8 +67,8 @@ class DefaultNotificationHelper: NotificationHelper, @unchecked Sendable {
     static let didBecomeActiveNotification = NSApplication.didBecomeActiveNotification
 
 #elseif os(watchOS)
-    static let didEnterBgNotification = WKExtension.applicationDidEnterBackgroundNotification
-    static let didBecomeActiveNotification = WKExtension.applicationDidBecomeActiveNotification
+    static let didEnterBgNotification = WKApplication.didEnterBackgroundNotification
+    static let didBecomeActiveNotification = WKApplication.didBecomeActiveNotification
 
 #endif
 
