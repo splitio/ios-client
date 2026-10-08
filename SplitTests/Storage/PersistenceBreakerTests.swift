@@ -55,7 +55,7 @@ class PersistenceBreakerTests: XCTestCase {
             }
         }
         
-        waitForExpectations(timeout: 2.0)
+        wait(for: [expectation], timeout: 2.0)
         XCTAssertFalse(breaker.isPersistenceEnabled,
                       "Concurrent disable() calls should be thread-safe")
     }
@@ -83,7 +83,7 @@ class PersistenceBreakerTests: XCTestCase {
             }
         }
 
-        waitForExpectations(timeout: 5.0)
+        wait(for: [expectation], timeout: 5.0)
         XCTAssertEqual(100, readResults.count,
                       "All reads should complete without crashes")
         XCTAssertFalse(breaker.isPersistenceEnabled,
