@@ -11,9 +11,9 @@ This SDK is designed to work with Split, the platform for controlled rollouts, s
   s.license          = { :type => 'Apache 2.0', :file => 'LICENSE' }
   s.author           = { 'Patricio Echague' => 'pato@split.io', 'Sebastian Arrubia' => 'sebastian@split.io', 'Fernando Martin' => 'fernando@split.io'}
   s.source = { :git => 'https://github.com/splitio/ios-client.git', :tag => s.version.to_s }
-  s.platforms = { :ios => "12.0", :osx => "10.13", :watchos => "7.0", :tvos => "12.0" }
+  s.platforms = { :ios => "15.0", :osx => "12.0", :watchos => "9.0", :tvos => "15.0" }
   s.frameworks = 'Foundation'
-  s.swift_versions = ['4.0', '4.2', '5.0', '5.1', '5.2', '5.3']
+  s.swift_versions = ['4.0', '4.2', '5.0', '5.1', '5.2', '5.3', '6.0']
   s.resources = "Split/Storage/split_cache.xcdatamodeld"
   s.source_files = 'Split/**/*.{swift}', 'Sources/**/*.swift'
   s.exclude_files = 'Sources/**/Tests/**/*'
