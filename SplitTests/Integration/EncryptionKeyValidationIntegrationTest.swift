@@ -155,14 +155,6 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         let testDb = TestingHelper.createTestDatabase(name: testDbName, queue: DispatchQueue.global(), helper: dbHelper)
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
         
-        #if swift(>=6.0)
-        nonisolated(unsafe) var originalSplitCount = 0
-        nonisolated(unsafe) var originalChangeNumber: Int64 = 0
-        #else
-        var originalSplitCount = 0
-        var originalChangeNumber: Int64 = 0
-        #endif
-        
         let dataExp = expectation(description: "Data cached")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
             dataExp.fulfill()
