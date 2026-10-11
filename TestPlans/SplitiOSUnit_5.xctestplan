@@ -1,18 +1,18 @@
 {
-  "configurations" : [
+  "configurations": [
     {
-      "id" : "4D2BC264-4956-4353-8F84-1D52C51BEA63",
-      "name" : "Configuration 1",
-      "options" : {}
+      "id": "4D2BC264-4956-4353-8F84-1D52C51BEA63",
+      "name": "Configuration 1",
+      "options": {}
     }
   ],
-  "defaultOptions" : {
-    "testTimeoutsEnabled" : true
+  "defaultOptions": {
+    "testTimeoutsEnabled": true
   },
-  "testTargets" : [
+  "testTargets": [
     {
-      "parallelizable" : true,
-      "skippedTests" : [
+      "parallelizable": true,
+      "skippedTests": [
         "AnyValueValidatorTests",
         "ApiKeyValidatorTests",
         "AttributesEvaluationTest",
@@ -196,6 +196,7 @@
         "SplitsDecoderTest",
         "SplitsEncoderTest",
         "SplitsPersistenceBreakerIntegrationTest",
+        "SplitsProxyRecoveryTests",
         "SplitsStorageTest",
         "SplitsStorageTrafficTypesTests",
         "SplitsSyncHelperTest",
@@ -248,14 +249,14 @@
         "UserKeyEncondingTest",
         "VersionTest"
       ],
-      "target" : {
-        "containerPath" : "container:Split.xcodeproj",
-        "identifier" : "592C6AA4211B6C99002D120C",
-        "name" : "SplitTestsSwift5"
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "592C6AA4211B6C99002D120C",
+        "name": "SplitTestsSwift5"
       }
     },
     {
-      "skippedTests" : [
+      "skippedTests": [
         "AnyValueValidatorTests",
         "ApiKeyValidatorTests",
         "AttributesEvaluationTest",
@@ -439,6 +440,7 @@
         "SplitsDecoderTest",
         "SplitsEncoderTest",
         "SplitsPersistenceBreakerIntegrationTest",
+        "SplitsProxyRecoveryTests",
         "SplitsStorageTest",
         "SplitsStorageTrafficTypesTests",
         "SplitsSyncHelperTest",
@@ -491,12 +493,12 @@
         "UserKeyEncondingTest",
         "VersionTest"
       ],
-      "target" : {
-        "containerPath" : "container:Split.xcodeproj",
-        "identifier" : "5B3C16342ED76BAD0068D623",
-        "name" : "SplitTestsSwift6"
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "5B3C16342ED76BAD0068D623",
+        "name": "SplitTestsSwift6"
       }
     }
   ],
-  "version" : 1
+  "version": 1
 }
