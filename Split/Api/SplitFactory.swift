@@ -68,3 +68,8 @@ import Foundation
     ///
     var version: String { get }
 }
+
+// Default implementation
+public extension SplitFactory {
+    var version: String { Version.semantic }
+}
