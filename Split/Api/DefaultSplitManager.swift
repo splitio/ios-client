@@ -95,9 +95,8 @@ import Foundation
             }
         }
 
-        let splitName = featureName.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        let filtered = splits.filter { return ( splitName == $0.name?.lowercased() ) }
-        return filtered.count > 0 ? filtered[0] : nil
+        let splitName = featureName.trimmingCharacters(in: .whitespacesAndNewlines)
+        return splits.first(where: { $0.name?.caseInsensitiveCompare(splitName) == .orderedSame })
     }
 }
 
