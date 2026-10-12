@@ -30,4 +30,21 @@ class VersionTest: XCTestCase {
         XCTAssertEqual(Version.semantic, DefaultSplitFactory.sdkVersion)
     }
 
+    func testFactoryProtocolDefaultVersionUsesSemantic() {
+        let factory: SplitFactory = FactoryWithoutVersionOverride()
+
+        XCTAssertEqual(factory.version, Version.semantic)
+    }
+}
+
+/// Conforms to SplitFactory without implementing `version`, so the protocol default is used.
+private final class FactoryWithoutVersionOverride: SplitFactory {
+    var client: SplitClient { SplitClientStub() }
+    var manager: SplitManager { SplitManagerStub() }
+    var userConsent: UserConsent { .granted }
+
+    func client(key: Key) -> SplitClient { client }
+    func client(matchingKey: String) -> SplitClient { client }
+    func client(matchingKey: String, bucketingKey: String?) -> SplitClient { client }
+    func setUserConsent(enabled: Bool) {}
 }
