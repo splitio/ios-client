@@ -62,9 +62,9 @@ final class SplitsProxyRecoveryTests: XCTestCase {
 
         fixture.fetcher.error = nil
         fixture.fetcher.response = { since, rbSince, _ in
-            fixture.change(since: since, rbSince: rbSince,
-                           flags: since == -1 ? [flag] : [],
-                           segments: rbSince == -1 ? [segment] : [])
+            self.fixture.change(since: since, rbSince: rbSince,
+                                flags: since == -1 ? [flag] : [],
+                                segments: rbSince == -1 ? [segment] : [])
         }
         XCTAssertEqual(try fixture.helper().sync(since: 100, rbSince: 200).success, true)
         XCTAssertNotNil(fixture.flags.get(name: "unchanged_flag"))
