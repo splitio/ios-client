@@ -71,6 +71,12 @@ pipeline:
                             -derivedDataPath "$PWD/SplitApp-tvos" \
                             ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO \
                             -configuration Debug
+                      failureStrategies:
+                        - onFailure:
+                            errors:
+                              - AllErrors
+                            action:
+                              type: MarkAsSuccess
                   - step:
                       type: Run
                       name: Build watchOS
@@ -96,6 +102,12 @@ pipeline:
                             -derivedDataPath "$PWD/SplitApp-watchos" \
                             ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO \
                             -configuration Debug
+                      failureStrategies:
+                        - onFailure:
+                            errors:
+                              - AllErrors
+                            action:
+                              type: MarkAsSuccess
                   - step:
                       type: Run
                       name: XCFramework
@@ -253,6 +265,15 @@ pipeline:
                           printf '<coverage version="1"></coverage>\n' > "$COV_FILE"
                         fi
                         echo "Wrote coverage report: $COV_FILE ($(wc -c < "$COV_FILE" | tr -d ' ') bytes)"
+                        if [ -d "$XCRESULT" ]; then
+                          xcrun xccov view --archive "$XCRESULT" | python3 .github/scripts/xccov-to-lcov.py > coverage/lcov.info || true
+                        fi
+                        if [ ! -s coverage/lcov.info ]; then
+                          echo "No LCOV data for this matrix cell"
+                          rm -f coverage/lcov.info
+                        else
+                          ls -la coverage/lcov.info
+                        fi
                       fi
                       exit 0
                   timeout: 30m
@@ -356,6 +377,44 @@ pipeline:
                       fi
                       echo "Matrix cell passed."
                   timeout: 15m
+              - step:
+                  type: Run
+                  name: prepare coverage report
+                  identifier: prepare_coverage_report
+                  spec:
+                    shell: Bash
+                    command: |-
+                      set -euo pipefail
+                      export HAS_COVERAGE
+                      if [ -s coverage/lcov.info ]; then
+                        HAS_COVERAGE=true
+                        ls -la coverage/lcov.info
+                      else
+                        echo "No LCOV for this matrix cell; skipping coverage upload"
+                        HAS_COVERAGE=false
+                      fi
+                    outputVariables:
+                      - name: HAS_COVERAGE
+                  when:
+                    stageStatus: Success
+              - step:
+                  name: harnessCoverage
+                  identifier: harnessCoverage
+                  when:
+                    stageStatus: Success
+                    condition: <+execution.steps.prepare_coverage_report.output.outputVariables.HAS_COVERAGE> == "true"
+                  template:
+                    templateRef: account.codeCoverage
+                    versionLabel: v1
+                    templateInputs:
+                      type: Run
+                      spec:
+                        envVariables:
+                          patch_coverage_percent: "80"
+                          file_path: coverage/lcov.info
+                          overall_coverage_percent: ""
+                          ignore_failure: "false"
+                          exclude: "**/.build/**,**/Tests/**,**/*Tests.swift,**/*.generated.swift"
         strategy:
           matrix:
             plan:

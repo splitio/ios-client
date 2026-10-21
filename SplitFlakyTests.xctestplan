@@ -1,17 +1,17 @@
 {
-  "configurations": [
+  "configurations" : [
     {
-      "id": "E7DDD49F-D1B3-450D-A169-F9C5F87808BC",
-      "name": "Configuration 1",
-      "options": {}
+      "id" : "E7DDD49F-D1B3-450D-A169-F9C5F87808BC",
+      "name" : "Configuration 1",
+      "options" : {}
     }
   ],
-  "defaultOptions": {
-    "testTimeoutsEnabled": true
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
   },
-  "testTargets": [
+  "testTargets" : [
     {
-      "skippedTests": [
+      "skippedTests" : [
         "AnyValueValidatorTests",
         "ApiKeyValidatorTests",
         "ArrayBlockingQueueTests",
@@ -196,16 +196,6 @@
         "SplitEventsManagerTest",
         "SplitFactoryBuilderTests",
         "SplitIntegrationTests",
-        "SplitIntegrationTests/testControlTreatment()",
-        "SplitIntegrationTests/testImpressionsCount()",
-        "SplitIntegrationTests/testPrerequisites()",
-        "SplitIntegrationTests/testPrerequisitesSplitView()",
-        "SplitIntegrationTests/testPrerequisitesTreatmentNotPass()",
-        "SplitIntegrationTests/testPrerequisitesTreatmentPass()",
-        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledError()",
-        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledNoWaitMls()",
-        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledWaitMls()",
-        "SplitIntegrationTests/testReadyNoRef()",
         "SplitManagerTest",
         "SplitSdkTimeoutTests",
         "SplitSdkUpdatePollingTest",
@@ -277,14 +267,14 @@
         "UserKeyEncondingTest",
         "VersionTest"
       ],
-      "target": {
-        "containerPath": "container:Split.xcodeproj",
-        "identifier": "5B3C16342ED76BAD0068D623",
-        "name": "SplitTestsSwift6"
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "5B3C16342ED76BAD0068D623",
+        "name" : "SplitTestsSwift6"
       }
     },
     {
-      "skippedTests": [
+      "skippedTests" : [
         "AnyValueValidatorTests",
         "ApiKeyValidatorTests",
         "ArrayBlockingQueueTests",
@@ -469,16 +459,6 @@
         "SplitEventsManagerTest",
         "SplitFactoryBuilderTests",
         "SplitIntegrationTests",
-        "SplitIntegrationTests/testControlTreatment()",
-        "SplitIntegrationTests/testImpressionsCount()",
-        "SplitIntegrationTests/testPrerequisites()",
-        "SplitIntegrationTests/testPrerequisitesSplitView()",
-        "SplitIntegrationTests/testPrerequisitesTreatmentNotPass()",
-        "SplitIntegrationTests/testPrerequisitesTreatmentPass()",
-        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledError()",
-        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledNoWaitMls()",
-        "SplitIntegrationTests/testReadyMyLargeSegmentsEnabledWaitMls()",
-        "SplitIntegrationTests/testReadyNoRef()",
         "SplitManagerTest",
         "SplitSdkTimeoutTests",
         "SplitSdkUpdatePollingTest",
@@ -550,12 +530,12 @@
         "UserKeyEncondingTest",
         "VersionTest"
       ],
-      "target": {
-        "containerPath": "container:Split.xcodeproj",
-        "identifier": "592C6AA4211B6C99002D120C",
-        "name": "SplitTestsSwift5"
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "592C6AA4211B6C99002D120C",
+        "name" : "SplitTestsSwift5"
       }
     }
   ],
-  "version": 1
+  "version" : 1
 }
