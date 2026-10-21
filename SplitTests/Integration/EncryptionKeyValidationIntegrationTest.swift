@@ -155,21 +155,13 @@ class EncryptionKeyValidationIntegrationTest: XCTestCase {
         let testDb = TestingHelper.createTestDatabase(name: testDbName, queue: DispatchQueue.global(), helper: dbHelper)
         let generalInfoDao = CoreDataGeneralInfoDao(coreDataHelper: dbHelper)
         
-        #if swift(>=6.0)
-        nonisolated(unsafe) var originalSplitCount = 0
-        nonisolated(unsafe) var originalChangeNumber: Int64 = 0
-        #else
-        var originalSplitCount = 0
-        var originalChangeNumber: Int64 = 0
-        #endif
-        
         let dataExp = expectation(description: "Data cached")
         DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-            originalSplitCount = testDb.splitDao.getAll().count
-            originalChangeNumber = generalInfoDao.longValue(info: .splitsChangeNumber) ?? 0
             dataExp.fulfill()
         }
         wait(for: [dataExp], timeout: 3)
+        let originalSplitCount = testDb.splitDao.getAll().count
+        let originalChangeNumber = generalInfoDao.longValue(info: .splitsChangeNumber) ?? 0
         
         // 2. Re-initialize SDK (key is still valid)
         let factory = createFactory(encryptionEnabled: true)

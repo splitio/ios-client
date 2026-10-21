@@ -738,25 +738,21 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         removeDatabaseFiles(databaseName: databaseName)
 
         let postQueue = DispatchQueue(label: "two-coord-post-queue")
-        var clientAPostCount = 0
-        var clientBPostCount = 0
+        var postedIterations = Set<Int>()
 
         let evaluationCountA = 30000
         let evaluationCountB = 6000
+        let expectedTotal = evaluationCountA + evaluationCountB
 
-        // Client A dispatcher: count posted impressions
+        // Both factories read the whole shared table, so the same row can be posted by both.
+        // Tracking unique iterations keeps duplicates from masking a real loss.
         let dispatcherA = buildOrphanTestDispatcher { request in
-            postQueue.sync {
-                clientAPostCount += self.parseImpressionCount(from: request)
-            }
+            postQueue.sync { postedIterations.formUnion(self.parseImpressionIterations(from: request)) }
             return TestDispatcherResponse(code: 200)
         }
 
-        // Client B dispatcher: count posted impressions
         let dispatcherB = buildOrphanTestDispatcher { request in
-            postQueue.sync {
-                clientBPostCount += self.parseImpressionCount(from: request)
-            }
+            postQueue.sync { postedIterations.formUnion(self.parseImpressionIterations(from: request)) }
             return TestDispatcherResponse(code: 200)
         }
 
@@ -798,50 +794,49 @@ class ImpressionsPropertiesE2ETest: XCTestCase {
         // Step 5-6: Client B does its own evaluations (more concurrent writes).
         generateImpressions(client: clientB, count: evaluationCountB, startIndex: evaluationCountA)
 
-        // Wait for async inserts + flush cycles to settle on both coordinators.
-        usleep(5_000_000)
-
-        // Extra flush rounds to drain anything remaining.
-        clientA.flush()
-        clientB.flush()
-        usleep(5_000_000)
-
-        clientA.flush()
-        clientB.flush()
-        usleep(3_000_000)
-
-        // Use a FRESH coordinator to get a clean view of the SQLite file.
+        // A FRESH coordinator gives a clean view of the SQLite file.
         guard let helperVerify = CoreDataHelperBuilder.build(databaseName: databaseName) else {
             XCTFail("Failed to create verification DB helper")
             return
         }
         let dbVerify = TestingHelper.createTestDatabase(name: databaseName, helper: helperVerify)
 
-        // Count active impressions (recoverable)
-        let activeDbCount = dbVerify.impressionDao.getBy(createdAt: 0,
-                                                          status: StorageRecordStatus.active,
-                                                          maxRows: 1_000_000).count
+        // Impressions go through the serial flush queue and async Core Data inserts, so how long
+        // they take to land depends on the runner. Keep flushing until every iteration is either
+        // posted or still stored, instead of sleeping a fixed time.
+        let deadline = Date().addingTimeInterval(Self.drainTimeoutSecs)
+        var accountedIterations = Set<Int>()
+        repeat {
+            clientA.flush()
+            clientB.flush()
+            usleep(Self.drainPollIntervalMicros) // Lets the queued flushes run before checking again
+            let storedIterations = dbVerify.impressionDao.getBy(createdAt: 0, status: StorageRecordStatus.active, maxRows: 1_000_000).compactMap(impressionIteration)
+            accountedIterations = postQueue.sync { postedIterations }.union(storedIterations)
+        } while accountedIterations.count < expectedTotal && Date() < deadline
 
-        var finalAPosted = 0
-        var finalBPosted = 0
-        postQueue.sync {
-            finalAPosted = clientAPostCount
-            finalBPosted = clientBPostCount
-        }
-
-        let totalPosted = finalAPosted + finalBPosted
-        let totalAccountedFor = totalPosted + activeDbCount
-        let expectedTotal = evaluationCountA + evaluationCountB
-
-        // Every impression must be either posted or recoverable (active in DB).
-        XCTAssertGreaterThanOrEqual(totalAccountedFor, expectedTotal,
-            "All impressions must be accounted for: "
-            + "posted(\(totalPosted)) + db_active(\(activeDbCount)) "
-            + "should be >= expected(\(expectedTotal)).")
+        XCTAssertEqual(accountedIterations, Set(0..<expectedTotal), "Every impression must be posted or still stored. Missing: \(expectedTotal - accountedIterations.count)")
 
         cleanupClient(clientA)
         cleanupClient(clientB)
-        removeDatabaseFiles(databaseName: databaseName)
+        // The database files are not removed here: the Core Data coordinators of both factories and the
+        // verifier are still open, and unlinking an open SQLite file corrupts the in-flight writes.
+        // The next run removes them before starting.
+    }
+
+    private static let drainTimeoutSecs: TimeInterval = 60
+    private static let drainPollIntervalMicros: useconds_t = 1_000_000
+
+    /// Parses the `iteration` property of every impression in an HTTP request body.
+    private func parseImpressionIterations(from request: HttpDataRequest) -> [Int] {
+        guard let body = request.body?.stringRepresentation.utf8 else { return [] }
+        guard let tests = try? Json.decodeFrom(json: String(body), to: [ImpressionsTest].self) else { return [] }
+        return tests.flatMap(\.keyImpressions).compactMap(impressionIteration)
+    }
+
+    private func impressionIteration(_ impression: KeyImpression) -> Int? {
+        guard let data = impression.properties?.data(using: .utf8),
+              let properties = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        return properties["iteration"] as? Int
     }
 
     /// Parses the number of individual impressions from an HTTP request body.
