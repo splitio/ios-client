@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5B7A00012F00000100000002 /* MultiFactoryTimeCheckerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7A00012F00000100000001 /* MultiFactoryTimeCheckerTest.swift */; };
+		5B7A00012F00000100000003 /* MultiFactoryTimeCheckerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B7A00012F00000100000001 /* MultiFactoryTimeCheckerTest.swift */; };
 		31AA2036872EEC62D9EDF4AB /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA22D3DA2B022F2E7F3231 /* Endpoint.swift */; };
 		31AA21DE01A000A7C30630F2 /* SseClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA280A65C72BC92858422C /* SseClientTest.swift */; };
 		31AA228978A886748090A790 /* HttpStreamResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31AA2744A2006D558FCBE8CE /* HttpStreamResponse.swift */; };
@@ -1706,6 +1708,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5B7A00012F00000100000001 /* MultiFactoryTimeCheckerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiFactoryTimeCheckerTest.swift; sourceTree = "<group>"; };
 		31AA215F3C0E2305966CD52F /* HttpStreamRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HttpStreamRequest.swift; sourceTree = "<group>"; };
 		31AA229CA74193186137A991 /* RestClient+Impressions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RestClient+Impressions.swift"; sourceTree = "<group>"; };
 		31AA22D3DA2B022F2E7F3231 /* Endpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
@@ -3844,6 +3847,7 @@
 				95E81941287894DA00D99093 /* LoggerTest.swift */,
 				9595C1A1274573DA0092123F /* AttributesEvaluationTest.swift */,
 				5946783922E1147600F94E58 /* SplitIntegrationTest.swift */,
+				5B7A00012F00000100000001 /* MultiFactoryTimeCheckerTest.swift */,
 				95737E0D2AD474A9007FD15C /* FlagSetsIntegrationTest.swift */,
 				596A7B722358E142004F6139 /* SplitSdkTimeoutTest.swift */,
 				596A7B70235729B5004F6139 /* DestroyTest.swift */,
@@ -5301,6 +5305,7 @@
 				595AD20C24DDCB0E00A7B750 /* SseAuthenticatorTest.swift in Sources */,
 				C5A501DA2D88A7E900206F82 /* RuleBasedSegmentDaoStub.swift in Sources */,
 				5946783A22E1147600F94E58 /* SplitIntegrationTest.swift in Sources */,
+				5B7A00012F00000100000002 /* MultiFactoryTimeCheckerTest.swift in Sources */,
 				955AAB8B283FB2EB00ADFB07 /* HttpUniqueKeyRecorderTests.swift in Sources */,
 				C5DF6F7A2D3FF114007C7737 /* RolloutCacheManagerIntegrationTest.swift in Sources */,
 				593225FC24A40AA900496D8B /* HttpResponseTest.swift in Sources */,
@@ -5684,6 +5689,7 @@
 				5B3C16FD2ED76BAD0068D623 /* SseAuthenticatorTest.swift in Sources */,
 				5B3C16FE2ED76BAD0068D623 /* RuleBasedSegmentDaoStub.swift in Sources */,
 				5B3C16FF2ED76BAD0068D623 /* SplitIntegrationTest.swift in Sources */,
+				5B7A00012F00000100000003 /* MultiFactoryTimeCheckerTest.swift in Sources */,
 				5B3C17002ED76BAD0068D623 /* HttpUniqueKeyRecorderTests.swift in Sources */,
 				5B3C17012ED76BAD0068D623 /* RolloutCacheManagerIntegrationTest.swift in Sources */,
 				5B3C17022ED76BAD0068D623 /* HttpResponseTest.swift in Sources */,
