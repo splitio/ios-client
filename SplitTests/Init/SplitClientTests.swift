@@ -116,7 +116,7 @@ class SplitClientTests: XCTestCase {
     func testAddEventListenerCallsMultipleListenersOnSdkReady() {
         let config = SplitClientConfig()
         config.logLevel = .verbose
-        let localEventsManager = DefaultSplitEventsManager(config: config)
+        let localEventsManager = DefaultSplitEventsManager(config: config, timeChecker: TimeChecker.forTesting())
         localEventsManager.start()
 
         let localClient = DefaultSplitClient(config: config, key: key,

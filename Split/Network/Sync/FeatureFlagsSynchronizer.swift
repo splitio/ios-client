@@ -35,6 +35,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
     private var periodicSplitsSyncWorker: PeriodicSyncWorker?
     private var broadcasterChannel: SyncEventBroadcaster
     private var isDestroyed = Atomic(false)
+    private let timeChecker: TimeChecker
 
     init(splitConfig: SplitClientConfig,
          storageContainer: SplitStorageContainer,
@@ -44,8 +45,10 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
         = ConcurrentDictionary<SplitsUpdateChangeNumber, RetryableSyncWorker>(),
          splitsFilterQueryString: String,
          flagsSpec: String,
-         splitEventsManager: SplitEventsManager) {
+         splitEventsManager: SplitEventsManager,
+         timeChecker: TimeChecker) {
 
+        self.timeChecker = timeChecker
         self.splitConfig = splitConfig
         self.storageContainer = storageContainer
         self.syncWorkerFactory = syncWorkerFactory
@@ -108,7 +111,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
             Logger.v("Notifying Splits loaded from cache")
             TimeChecker.logInterval("Time for ready from cache process", startTime: start)
-            TimeChecker.logInterval("Time until feature flags process ended")
+            self.timeChecker.logInterval("Time until feature flags process ended")
         }
     }
 

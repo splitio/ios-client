@@ -9,32 +9,26 @@ import Foundation
 
 struct TimeChecker {
 
-    #if swift(>=6.0)
-        nonisolated(unsafe) private static var startTime: Int64 = 0
-    #else
-        private static var startTime: Int64 = 0
-    #endif
-    
-    private static let tag = "[SPTPRF] "
+    let factoryId: Int
+    let startTime: Int64
+
+    private static let tag = "[SPTPRF]"
     private static let showTimestamp = true
     private static let showSinceMsg = true
-    static func start() {
-        startTime = Date.nowMillis()
-        Logger.v("\(tag) TimeChecker started at: \(startTime)")
+
+    private var factoryTag: String {
+        return "\(TimeChecker.tag)[F\(factoryId)] "
     }
 
-    static func logInterval(_ msg: String) {
+    func logInterval(_ msg: String) {
         let now = Date.nowMillis()
         let interval = now - startTime
-        Logger.v("\(tag) \(msg) \(formatTimestamp(now)) \(formatIntervalSinceStart(interval))")
-    }
-
-    static func logTime(_ msg: String) {
-        Logger.v("\(tag) \(msg) \(formatIntervalSinceStart(Date.nowMillis()))")
+        Logger.v("\(factoryTag) \(msg) \(TimeChecker.formatTimestamp(now)) "
+                 + "\(TimeChecker.formatIntervalSinceStart(interval))")
     }
 
     static func logInterval(_ msg: String, startTime: Int64) {
-        Logger.v("\(tag) \(msg) \(Date.nowMillis() - startTime) ms \(formatTimestamp(Date.nowMillis()))")
+        Logger.v("\(TimeChecker.tag)  \(msg) \(Date.nowMillis() - startTime) ms \(formatTimestamp(Date.nowMillis()))")
     }
 
     static func formatInterval(_ interval: Int64) -> String {

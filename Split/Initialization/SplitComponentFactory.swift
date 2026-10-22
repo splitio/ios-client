@@ -51,8 +51,10 @@ class SplitComponentFactory {
     private var flagsSpec = Spec.flagsSpec
     private var catalog = SplitComponentCatalog()
     private let validationLogger = DefaultValidationMessageLogger()
+    private let timeChecker: TimeChecker
 
-    init(splitClientConfig: SplitClientConfig, apiKey: String, userKey: String) {
+    init(splitClientConfig: SplitClientConfig, apiKey: String, userKey: String, timeChecker: TimeChecker) {
+        self.timeChecker = timeChecker
         self.splitClientConfig = splitClientConfig
         self.apiKey = apiKey
         self.userKey = userKey
@@ -119,7 +121,8 @@ class SplitComponentFactory {
             broadcasterChannel: try getSyncEventBroadcaster(),
             splitsFilterQueryString: splitsFilterQueryString,
             flagsSpec: flagsSpec,
-            splitEventsManager: getSplitEventsManagerCoordinator()) as FeatureFlagsSynchronizer
+            splitEventsManager: getSplitEventsManagerCoordinator(),
+            timeChecker: timeChecker) as FeatureFlagsSynchronizer
         catalog.add(component: component)
         return component
     }
@@ -195,7 +198,7 @@ class SplitComponentFactory {
         if let obj = catalog.get(for: AnyByKeyFacade.self) as? ByKeyFacade {
             return obj
         }
-        let component: ByKeyFacade = DefaultByKeyFacade()
+        let component: ByKeyFacade = DefaultByKeyFacade(timeChecker: timeChecker)
         catalog.add(component: component)
         return component
     }

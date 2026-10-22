@@ -41,10 +41,6 @@ class MultiFactoryTimeCheckerTest: XCTestCase {
         Logger.shared.printer = savedPrinter
     }
 
-    /// Single switch for the assertions that need the per-factory `[F<id>]` tagged output.
-    /// Keep false until the FME-20428 fix is in; true enables tag and per-key-path checks.
-    private let postFixAssertionsEnabled = false // flip to true in the FME-20428 fix PR
-
     func testSdkReadyIntervalsAreMeasuredFromEachFactoryStart() {
         printerStub.clear()
         let testStart = Int(Date.nowMillis())
@@ -57,7 +53,7 @@ class MultiFactoryTimeCheckerTest: XCTestCase {
         let clientA = buildClient(apiKey: "99049fd8653247c5ea42bc3c1ae2c6a42bc1", gated: true, ready: readyA)
         let afterBuildA = Int(Date.nowMillis())
 
-        // Let A run alone for a while, then build B (which resets the static baseline pre-fix)
+        // Let A run alone for a while, then build B
         let wait = XCTestExpectation(description: "gap")
         wait.isInverted = true
         _ = XCTWaiter().wait(for: [wait], timeout: Double(gapMillis) / 1000.0)
@@ -79,8 +75,6 @@ class MultiFactoryTimeCheckerTest: XCTestCase {
         let maxInterval = readyLines.map { $0.interval }.max() ?? 0
         XCTAssertGreaterThanOrEqual(maxInterval, minimum,
                                     "A's SDK_READY interval was measured from B's start: \(readyLines)")
-
-        guard postFixAssertionsEnabled else { return }
 
         let ffLines = lines(Self.featureFlagsMsg, since: testStart)
         let segLines = lines(Self.segmentsMsg, since: testStart)

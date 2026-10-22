@@ -142,7 +142,7 @@ class TestSplitFactory: SplitFactory {
                                                            eventsSyncHelper: eventsSyncHelper,
                                                            telemetryProducer: storageContainer.telemetryStorage)
 
-        let byKeyFacade = DefaultByKeyFacade()
+        let byKeyFacade = DefaultByKeyFacade(timeChecker: TimeChecker.forTesting())
         let broadcasterChannel = DefaultSyncEventBroadcaster()
 
         let fFlagsSynchronizer = DefaultFeatureFlagsSynchronizer(splitConfig: splitConfig,
@@ -151,7 +151,8 @@ class TestSplitFactory: SplitFactory {
                                                                  broadcasterChannel: broadcasterChannel,
                                                                  splitsFilterQueryString: splitsFilterQueryString,
                                                                  flagsSpec: "1.1",
-                                                                 splitEventsManager: eventsManager)
+                                                                 splitEventsManager: eventsManager,
+                                                                 timeChecker: TimeChecker.forTesting())
 
         self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,
                                             defaultUserKey: key.matchingKey,
@@ -220,6 +221,7 @@ class TestSplitFactory: SplitFactory {
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: nil,
                                              propertyValidator: propertyValidator,
+                                             timeChecker: TimeChecker.forTesting(),
                                              factory: self)
     }
 

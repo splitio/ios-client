@@ -119,6 +119,7 @@ class SplitClientManagerTest: XCTestCase {
                                                 anyValueValidator: DefaultAnyValueValidator(),
                                                 validationLogger: DefaultValidationMessageLogger()
                                              ),
+                                             timeChecker: TimeChecker.forTesting(),
                                              factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
     }
 

@@ -46,7 +46,7 @@ class LocalhostTests: XCTestCase {
 
         config.offlineRefreshRate = 1
 
-        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
+        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle, timeChecker: TimeChecker.forTesting())
         let client = factory.client
         let manager = factory.manager
 
@@ -164,7 +164,7 @@ class LocalhostTests: XCTestCase {
         let config = SplitClientConfig()
         config.offlineRefreshRate = 1
         config.splitFile = "localhost_legacy.splits"
-        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
+        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle, timeChecker: TimeChecker.forTesting())
         let client = factory.client
         let manager = factory.manager
         
@@ -245,7 +245,7 @@ class LocalhostTests: XCTestCase {
         config.fallbackTreatments = fallbackConfiguration
         config.offlineRefreshRate = 1
         config.splitFile = "localhost_legacy.splits"
-        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
+        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle, timeChecker: TimeChecker.forTesting())
         let client = factory.client
         
         let readyExp = XCTestExpectation()
@@ -262,7 +262,7 @@ class LocalhostTests: XCTestCase {
         let config = SplitClientConfig()
         config.offlineRefreshRate = 1
         config.splitFile = "localhost_yml.yml"
-        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle)
+        factory = LocalhostSplitFactory(key: Key(matchingKey: "key"), config: config, bundle: bundle, timeChecker: TimeChecker.forTesting())
         let client = factory.client
 
         let readyExp = XCTestExpectation()
