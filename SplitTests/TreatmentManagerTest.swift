@@ -32,7 +32,7 @@ class TreatmentManagerTest: XCTestCase {
 
         impressionsLogger = ImpressionsLoggerStub()
         validationLogger = ValidationMessageLoggerStub()
-        attributesStorage = DefaultAttributesStorage()
+        attributesStorage = DefaultAttributesStorage(timeChecker: TimeChecker.forTesting())
         telemetryProducer = TelemetryStorageStub()
         flagSetsCache = FlagSetsCacheMock()
         propertyValidator = PropertyValidatorStub()

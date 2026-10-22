@@ -45,7 +45,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
         Version.sdk
     }
 
-    init(key: Key, config: SplitClientConfig, bundle: Bundle) {
+    init(key: Key, config: SplitClientConfig, bundle: Bundle, timeChecker: TimeChecker) {
         Logger.d("Initializing localhost mode")
         self.config = config
         self.bundle = bundle
@@ -65,6 +65,7 @@ public class LocalhostSplitFactory: NSObject, SplitFactory {
                                                splitsStorage: splitsStorage,
                                                synchronizer: synchronizer,
                                                eventsManagerCoordinator: eventsManager,
+                                               timeChecker: timeChecker,
                                                factory: self)
 
         self.synchronizer.synchronize()

@@ -22,6 +22,10 @@ class LogPrinterStub: LogPrinter, @unchecked Sendable {
         }
     }
 
+    func logsSnapshot() -> [String] {
+        queue.sync { self.logs }
+    }
+
     func clear() {
         queue.sync {
             self.logs.removeAll()

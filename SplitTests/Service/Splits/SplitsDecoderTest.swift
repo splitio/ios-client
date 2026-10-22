@@ -15,7 +15,7 @@ class SplitsDecoderTest: XCTestCase {
 
     func testDecodeOneThread() throws {
 
-        let decoder = SplitsParallelDecoder(minTaskPerThread: 15)
+        let decoder = SplitsParallelDecoder(minTaskPerThread: 15, timeChecker: TimeChecker.forTesting())
         let jsons = Array(loadJsonSplits()[..<10])
 
         let splits = decoder.decode(jsons)
@@ -26,7 +26,7 @@ class SplitsDecoderTest: XCTestCase {
 
     func testDecodeTwoThreads() throws {
 
-        let decoder = SplitsParallelDecoder(minTaskPerThread: 15)
+        let decoder = SplitsParallelDecoder(minTaskPerThread: 15, timeChecker: TimeChecker.forTesting())
         let jsons = Array(loadJsonSplits()[0..<30])
 
         let splits = decoder.decode(jsons)
@@ -37,7 +37,7 @@ class SplitsDecoderTest: XCTestCase {
 
     func testDecodeMultiThreads() throws {
 
-        let decoder = SplitsParallelDecoder(minTaskPerThread: 10)
+        let decoder = SplitsParallelDecoder(minTaskPerThread: 10, timeChecker: TimeChecker.forTesting())
         let jsons = loadJsonSplits(times: 10)
 
         let splits = decoder.decode(jsons)

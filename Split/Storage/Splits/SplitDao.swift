@@ -30,11 +30,13 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao, @unchecked Sendable {
     private let decoder: SplitsDecoder
     private let encoder: SplitsEncoder
     private var cipher: Cipher?
+    private let timeChecker: TimeChecker
 
-    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
-        self.decoder = SplitsParallelDecoder(cipher: cipher)
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil, timeChecker: TimeChecker) {
+        self.decoder = SplitsParallelDecoder(cipher: cipher, timeChecker: timeChecker)
         self.encoder = SplitsParallelEncoder(cipher: cipher)
         self.cipher = cipher
+        self.timeChecker = timeChecker
         super.init(coreDataHelper: coreDataHelper)
     }
 
@@ -86,7 +88,7 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao, @unchecked Sendable {
             let jsonSplits = self.coreDataHelper.fetch(entity: .split)
                 .compactMap { return $0 as? SplitEntity }
                 .compactMap { return $0.body }
-            TimeChecker.logInterval("Time to load feature flags", startTime: start)
+            self.timeChecker.logInterval("Time to load feature flags", since: start)
             splits = self.decoder.decode(jsonSplits).map { $0 }
         }
         return splits ?? []

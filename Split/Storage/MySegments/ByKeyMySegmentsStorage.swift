@@ -21,21 +21,24 @@ class DefaultByKeyMySegmentsStorage: ByKeyMySegmentsStorage, @unchecked Sendable
 
     private let mySegmentsStorage: MySegmentsStorage
     private let userKey: String
+    private let timeChecker: TimeChecker
 
     var changeNumber: Int64 {
         return mySegmentsStorage.changeNumber(forKey: userKey) ?? -1
     }
 
     init(mySegmentsStorage: MySegmentsStorage,
-         userKey: String) {
+         userKey: String,
+         timeChecker: TimeChecker) {
         self.mySegmentsStorage = mySegmentsStorage
         self.userKey = userKey
+        self.timeChecker = timeChecker
     }
 
     func loadLocal() {
         let start = Date.nowMillis()
         mySegmentsStorage.loadLocal(forKey: userKey)
-        TimeChecker.logInterval("Time to load segments from cache", startTime: start)
+        timeChecker.logInterval("Time to load segments from cache", since: start)
     }
 
     func getAll() -> Set<String> {

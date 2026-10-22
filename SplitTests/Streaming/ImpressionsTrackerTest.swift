@@ -364,7 +364,7 @@ class ImpressionsTrackerTest: XCTestCase {
                                                      persistentRuleBasedSegmentsStorage: PersistentRuleBasedSegmentsStorageStub(),
                                                      targetingRulesPersistenceBreaker: DefaultPersistenceBreaker())
 
-        let apiFacade = try! SplitApiFacade.builder()
+        let apiFacade = try! SplitApiFacade.builder(timeChecker: TimeChecker.forTesting())
             .setUserKey("userKey")
             .setRestClient(RestClientStub())
             .setSplitConfig(SplitClientConfig())
