@@ -186,6 +186,8 @@ class MultiFactoryTimeCheckerTest: XCTestCase {
         config.impressionRefreshRate = 999999
         config.eventsPushRate = 999999
         config.sdkReadyTimeOut = 20000
+        // Telemetry disabled: random sampling adds a second sdkReady subscription that duplicates the SDK_READY log line.
+        config.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: false)
 
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
