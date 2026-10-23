@@ -40,7 +40,8 @@ struct SplitDatabaseHelper {
                                       userKey: String,
                                       databaseName: String,
                                       telemetryStorage: TelemetryStorage?,
-                                      testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
+                                      testDatabase: SplitDatabase?,
+                                      timeChecker: TimeChecker) throws -> SplitStorageContainer {
         let dbKey = buildDbKey(prefix: splitClientConfig.prefix, sdkKey: apiKey)
         
         let lock = storageLock(for: dbKey)
@@ -84,7 +85,8 @@ struct SplitDatabaseHelper {
             }
             splitDatabase = try openDatabase(dataFolderName: databaseName,
                                              cipher: cipher,
-                                             dbHelper: dbHelper)
+                                             dbHelper: dbHelper,
+                                             timeChecker: timeChecker)
         }
 
         guard let splitDatabase = splitDatabase else {
@@ -114,7 +116,8 @@ struct SplitDatabaseHelper {
         let mySegmentsStorage = openMySegmentsStorage(database: splitDatabase, generalInfoStorage: generalInfoStorage)
         let myLargeSegmentsStorage = openMyLargeSegmentsStorage(database: splitDatabase, generalInfoStorage: generalInfoStorage)
         let attributesStorage = openAttributesStorage(database: splitDatabase,
-                                                      splitClientConfig: splitClientConfig)
+                                                      splitClientConfig: splitClientConfig,
+                                                      timeChecker: timeChecker)
 
         let uniqueKeyStorage: PersistentUniqueKeysStorage =
             DefaultPersistentUniqueKeysStorage(database: splitDatabase,
@@ -156,9 +159,10 @@ struct SplitDatabaseHelper {
 
     static func openDatabase(dataFolderName: String,
                              cipher: Cipher?,
-                             dbHelper: CoreDataHelper) throws -> SplitDatabase {
+                             dbHelper: CoreDataHelper,
+                             timeChecker: TimeChecker) throws -> SplitDatabase {
 
-        return CoreDataSplitDatabase(coreDataHelper: dbHelper, cipher: cipher)
+        return CoreDataSplitDatabase(coreDataHelper: dbHelper, cipher: cipher, timeChecker: timeChecker)
     }
 
     static func openPersistentSplitsStorage(database: SplitDatabase) -> PersistentSplitsStorage {
@@ -200,10 +204,12 @@ struct SplitDatabaseHelper {
     }
 
     static func openAttributesStorage(database: SplitDatabase,
-                                      splitClientConfig: SplitClientConfig) -> AttributesStorage {
+                                      splitClientConfig: SplitClientConfig,
+                                      timeChecker: TimeChecker) -> AttributesStorage {
         return DefaultAttributesStorage(
             persistentAttributesStorage: splitClientConfig.persistentAttributesEnabled ?
-            openPersistentAttributesStorage(database: database) : nil
+            openPersistentAttributesStorage(database: database) : nil,
+            timeChecker: timeChecker
         )
     }
 

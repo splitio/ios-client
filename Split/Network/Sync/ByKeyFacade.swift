@@ -46,6 +46,11 @@ class DefaultByKeyFacade: ByKeyFacade, @unchecked Sendable {
 
     private let byKeyComponents = SplitKeyDictionary<ByKeyComponentGroup>()
     private var isPollingEnabled = Atomic(false)
+    private let timeChecker: TimeChecker
+
+    init(timeChecker: TimeChecker) {
+        self.timeChecker = timeChecker
+    }
 
     var matchingKeys: Set<String> {
         return Set(byKeyComponents.all.keys.map { $0.matchingKey })
@@ -79,7 +84,7 @@ class DefaultByKeyFacade: ByKeyFacade, @unchecked Sendable {
             group.attributesStorage.loadLocal()
             group.eventsManager.notifyInternalEvent(.attributesLoadedFromCache)
         }
-        TimeChecker.logInterval("Time until attributes loaded from cache")
+        timeChecker.logInterval("Time until attributes loaded from cache")
     }
 
     func startPeriodicSync() {

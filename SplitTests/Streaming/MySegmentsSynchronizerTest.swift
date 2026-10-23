@@ -41,6 +41,7 @@ class MySegmentsSynchronizerTest: XCTestCase {
                                                        myLargeSegmentsStorage: myLargeSegmentsStorage,
                                                        syncWorkerFactory: syncWorkerFactory,
                                                        eventsManager: eventsManager,
+                                                       timeChecker: TimeChecker.forTesting(),
                                                        timerManager: timerManager)
     }
 

@@ -151,6 +151,7 @@
         "MetadataEventsTests",
         "MultiClientEvaluationTest",
         "MultiClientStreamingResetTest",
+        "MultiFactoryTimeCheckerTest",
         "Murmur3HashingTest",
         "MyLargeSegmentsStorageTests",
         "MySegmentServerErrorTest",
@@ -216,7 +217,6 @@
         "SplitEventsManagerTest",
         "SplitFactoryBuilderTests",
         "SplitManagerTest",
-        "SplitSdkTimeoutTests",
         "SplitSdkUpdatePollingTest",
         "SplitValidatorTests",
         "SplitsBgSyncWorkerTest",
@@ -226,6 +226,7 @@
         "SplitsEncoderTest",
         "SplitsPersistenceBreakerIntegrationTest",
         "SplitsStorageTrafficTypesTests",
+        "SplitsSyncHelperTest",
         "SplitsSyncHelperWithProxyHandlerTests",
         "SplitsSyncWorkerTest",
         "SplitsSyncWorkerTest/testChangedFlagsSpecString()",
@@ -278,7 +279,6 @@
         "UserConsentModeDebugTest",
         "UserConsentModeNoneTest",
         "UserConsentModeOptimizedTest",
-        "UserKeyEncondingTest",
         "VersionTest"
       ],
       "target" : {
@@ -405,6 +405,7 @@
         "MetadataEventsTests",
         "MultiClientEvaluationTest",
         "MultiClientStreamingResetTest",
+        "MultiFactoryTimeCheckerTest",
         "Murmur3HashingTest",
         "MyLargeSegmentsStorageTests",
         "MySegmentServerErrorTest",
@@ -470,7 +471,6 @@
         "SplitEventsManagerTest",
         "SplitFactoryBuilderTests",
         "SplitManagerTest",
-        "SplitSdkTimeoutTests",
         "SplitSdkUpdatePollingTest",
         "SplitValidatorTests",
         "SplitsBgSyncWorkerTest",
@@ -480,6 +480,7 @@
         "SplitsEncoderTest",
         "SplitsPersistenceBreakerIntegrationTest",
         "SplitsStorageTrafficTypesTests",
+        "SplitsSyncHelperTest",
         "SplitsSyncHelperWithProxyHandlerTests",
         "SplitsSyncWorkerTest",
         "SplitsSyncWorkerTest/testChangedFlagsSpecString()",
@@ -532,7 +533,6 @@
         "UserConsentModeDebugTest",
         "UserConsentModeNoneTest",
         "UserConsentModeOptimizedTest",
-        "UserKeyEncondingTest",
         "VersionTest"
       ],
       "target" : {

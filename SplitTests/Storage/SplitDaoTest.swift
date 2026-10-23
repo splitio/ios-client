@@ -22,11 +22,13 @@ class SplitDaoTest: XCTestCase {
         let cipherKey = IntegrationHelper.dummyCipherKey
         let queue = DispatchQueue(label: "split dao test")
         splitDao = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
-                                                                                  dispatchQueue: queue))
+                                                                                  dispatchQueue: queue),
+                                    timeChecker: TimeChecker.forTesting())
 
         splitDaoAes128Cbc = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test",
                                                                                   dispatchQueue: queue),
-                                             cipher: DefaultCipher(cipherKey: cipherKey))
+                                             cipher: DefaultCipher(cipherKey: cipherKey),
+                                             timeChecker: TimeChecker.forTesting())
         let splits = createSplits()
         splitDao.insertOrUpdate(splits: splits)
         splitDaoAes128Cbc.insertOrUpdate(splits: splits)
@@ -114,9 +116,10 @@ class SplitDaoTest: XCTestCase {
         // One with encryption and the other without it
         let helper = IntegrationCoreDataHelper.get(databaseName: "test",
                                                dispatchQueue: DispatchQueue(label: "split dao test"))
-        splitDao = CoreDataSplitDao(coreDataHelper: helper)
+        splitDao = CoreDataSplitDao(coreDataHelper: helper, timeChecker: TimeChecker.forTesting())
         splitDaoAes128Cbc = CoreDataSplitDao(coreDataHelper: helper,
-                                                       cipher: cipher)
+                                             cipher: cipher,
+                                             timeChecker: TimeChecker.forTesting())
 
         // create impressions and get one encrypted feature name
         let splits = createSplits()

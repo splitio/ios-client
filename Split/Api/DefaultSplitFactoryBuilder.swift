@@ -25,6 +25,7 @@ import Foundation
     private let apiKeyValidator: ApiKeyValidator
     var validationLogger: ValidationMessageLogger
     private let validationTag = "factory instantiation"
+    private static let factoryCounter = AtomicInt(0)
     private var params: SplitFactoryParams = SplitFactoryParams()
 
     private let moreThanOneFactoryMessage = """
@@ -113,7 +114,9 @@ import Foundation
     }
 
     public func build() -> SplitFactory? {
-        TimeChecker.start()
+        let timeChecker = TimeChecker(factoryId: DefaultSplitFactoryBuilder.factoryCounter.addAndGet(1),
+                                      startTime: Date.nowMillis())
+        Logger.v("[SPTPRF][F\(timeChecker.factoryId)] TimeChecker started at: \(timeChecker.startTime)")
         if !params.config.serviceEndpoints.allEndpointsValid {
             Logger.e("Could not create the factory, there are invalid endpoints")
             if let message = params.config.serviceEndpoints.endpointsInvalidMessage {
@@ -160,10 +163,11 @@ import Foundation
         if params.apiKey.uppercased() == kApiKeyLocalhost {
             factory = LocalhostSplitFactory(key: params.key,
                                             config: params.config,
-                                            bundle: bundle)
+                                            bundle: bundle,
+                                            timeChecker: timeChecker)
         } else {
             do {
-                factory = try DefaultSplitFactory(params)
+                factory = try DefaultSplitFactory(params, timeChecker: timeChecker)
             } catch ComponentError.notFound(let name) {
                 Logger.e("Component was not created properly: \(name)")
             } catch {

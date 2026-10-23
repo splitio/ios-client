@@ -15,10 +15,12 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher, @unchecked Sendable {
     private let restClient: RestClientSplitChanges
     private let syncHelper: SyncHelper
     private let resource = Resource.splits
+    private let timeChecker: TimeChecker
 
-    init(restClient: RestClientSplitChanges, syncHelper: SyncHelper) {
+    init(restClient: RestClientSplitChanges, syncHelper: SyncHelper, timeChecker: TimeChecker) {
         self.restClient = restClient
         self.syncHelper = syncHelper
+        self.timeChecker = timeChecker
     }
 
     func execute(since: Int64, rbSince: Int64?, till: Int64?, headers: HttpHeaders? = nil, spec: String? = nil) throws -> TargetingRulesChange {
@@ -32,8 +34,9 @@ class DefaultHttpSplitFetcher: HttpSplitFetcher, @unchecked Sendable {
         // Use provided spec or default to Spec.flagsSpec
         let effectiveSpec = spec ?? Spec.flagsSpec
 
+        let timeChecker = self.timeChecker
         restClient.getSplitChanges(since: since, rbSince: rbSince, till: till, headers: headers, spec: effectiveSpec) { result in
-            TimeChecker.logInterval("Time to fetch targeting rules", startTime: startTime)
+            timeChecker.logInterval("Time to fetch targeting rules", since: startTime)
             requestResult = result
             semaphore.signal()
         }

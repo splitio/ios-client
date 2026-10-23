@@ -49,10 +49,12 @@ class UserConsentModeNoneTest: XCTestCase {
 
         evaluate(client: client)
 
-        // Impressions count and keys are saved when app goes to bg and previous
-        // and on flush() call
+        // Impressions count and keys are saved when app goes to bg and on flush() call.
+        // flush() is queued after the impressions pushed by evaluate(), so it
+        // records them even if the bg call ran before they were tracked.
         notificationHelper.simulateApplicationDidEnterBackground()
         notificationHelper.simulateApplicationDidBecomeActive()
+        client.flush()
         wait(for: [keysExp, countExp], timeout: 10.0)
 
         XCTAssertTrue(keysPosted)

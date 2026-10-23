@@ -145,11 +145,11 @@ struct TestingHelper {
     static func createTestDatabase(name: String, queue: DispatchQueue? = nil) -> SplitDatabase {
         let newQueue = queue ?? DispatchQueue(label: "testqueue", target: DispatchQueue.test)
         let helper = IntegrationCoreDataHelper.get(databaseName: name, dispatchQueue: newQueue)
-        return CoreDataSplitDatabase(coreDataHelper: helper)
+        return CoreDataSplitDatabase(coreDataHelper: helper, timeChecker: TimeChecker.forTesting())
     }
 
     static func createTestDatabase(name: String, queue: DispatchQueue? = nil, helper: CoreDataHelper) -> SplitDatabase {
-        return CoreDataSplitDatabase(coreDataHelper: helper)
+        return CoreDataSplitDatabase(coreDataHelper: helper, timeChecker: TimeChecker.forTesting())
     }
 
     static func createTelemetryConfig() -> TelemetryConfig {
@@ -203,7 +203,7 @@ struct TestingHelper {
     }
 
     static func createApiFacade() -> SplitApiFacade {
-        return try! SplitApiFacade.builder()
+        return try! SplitApiFacade.builder(timeChecker: TimeChecker.forTesting())
             .setUserKey("userKey")
             .setRestClient(RestClientStub())
             .setSplitConfig(SplitClientConfig())

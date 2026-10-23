@@ -23,10 +23,12 @@ class DefaultAttributesStorage: AttributesStorage, @unchecked Sendable {
 
     private let inMemoryAttributes: SynchronizedDictionaryComposed<String, String>
     private let persistentStorage: PersistentAttributesStorage?
+    private let timeChecker: TimeChecker
 
-    init(persistentAttributesStorage: PersistentAttributesStorage? = nil) {
+    init(persistentAttributesStorage: PersistentAttributesStorage? = nil, timeChecker: TimeChecker) {
         persistentStorage = persistentAttributesStorage
         inMemoryAttributes = SynchronizedDictionaryComposed()
+        self.timeChecker = timeChecker
     }
 
     func loadLocal(forKey key: String) {
@@ -34,7 +36,7 @@ class DefaultAttributesStorage: AttributesStorage, @unchecked Sendable {
         if let attributes = persistentStorage?.getAll(forKey: key) {
             inMemoryAttributes.set(attributes, forKey: key)
         }
-        TimeChecker.logInterval("Time to load attributes from cache", startTime: start)
+        timeChecker.logInterval("Time to load attributes from cache", since: start)
     }
 
     func set(_ attributes: [String: Any], forKey key: String) {

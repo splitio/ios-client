@@ -32,6 +32,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer, @unchecked Sendable
     private var syncTaskByCnCatalog: ConcurrentDictionary<String, RetryableSyncWorker>?
 
     private let eventsManager: SplitEventsManager
+    private let timeChecker: TimeChecker
     private var isDestroyed = Atomic(false)
     private let userKey: String
     private var timerManager: TimersManager?
@@ -43,8 +44,10 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer, @unchecked Sendable
          myLargeSegmentsStorage: ByKeyMySegmentsStorage,
          syncWorkerFactory: MySegmentsSyncWorkerFactory,
          eventsManager: SplitEventsManager,
+         timeChecker: TimeChecker,
          timerManager: TimersManager?) {
 
+        self.timeChecker = timeChecker
         self.userKey = userKey
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
@@ -84,7 +87,7 @@ class DefaultMySegmentsSynchronizer: MySegmentsSynchronizer, @unchecked Sendable
             self.eventsManager.notifyInternalEvent(.mySegmentsLoadedFromCache)
             self.myLargeSegmentsStorage.loadLocal()
             self.eventsManager.notifyInternalEvent(.myLargeSegmentsLoadedFromCache)
-            TimeChecker.logInterval("Time until my segments loaded from cache")
+            self.timeChecker.logInterval("Time until my segments loaded from cache")
             let msChangeNumber = self.mySegmentsStorage.changeNumber
             let mlsChangeNumber = self.myLargeSegmentsStorage.changeNumber
             self.syncChangeNumbers?.set(SegmentsChangeNumber(msChangeNumber: msChangeNumber,
