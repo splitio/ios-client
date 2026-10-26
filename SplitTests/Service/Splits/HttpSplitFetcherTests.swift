@@ -21,7 +21,8 @@ class HttpSplitFetcherTests: XCTestCase {
         restClient = RestClientStub()
         telemetryProducer = TelemetryStorageStub()
         fetcher = DefaultHttpSplitFetcher(restClient: restClient,
-                                          syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer))
+                                          syncHelper: DefaultSyncHelper(telemetryProducer: telemetryProducer),
+                                          timeChecker: TimeChecker.forTesting())
     }
 
     func testServerNoReachable() {

@@ -27,7 +27,8 @@ class AttributesStorageTests: XCTestCase {
     
     override func setUp() {
         persistentStorage = PersistentAttributesStorageStub()
-        attributesStorage = DefaultAttributesStorage(persistentAttributesStorage: persistentStorage)
+        attributesStorage = DefaultAttributesStorage(persistentAttributesStorage: persistentStorage,
+                                                     timeChecker: TimeChecker.forTesting())
     }
 
     func testNoLoaded() {

@@ -36,6 +36,8 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
     private let mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory
     private let propertyValidator: PropertyValidator
     private let fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
+    
+    private let timeChecker: TimeChecker
 
     init(config: SplitClientConfig,
          key: Key,
@@ -50,8 +52,10 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
          eventsManagerCoordinator: SplitEventsManagerCoordinator,
          mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory,
          telemetryStopwatch: Stopwatch?,
-         propertyValidator: PropertyValidator) {
+         propertyValidator: PropertyValidator,
+         timeChecker: TimeChecker) {
 
+        self.timeChecker = timeChecker
         self.defaultKey = key
         self.apiFacade = apiFacade
         self.byKeyRegistry = byKeyFacade
@@ -144,7 +148,7 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
 
     private func createClient(forKey key: Key) -> SplitClient {
 
-        let eventsManager = DefaultSplitEventsManager(config: config)
+        let eventsManager = DefaultSplitEventsManager(config: config, timeChecker: timeChecker)
         let treatmentManager = buildTreatmentManager(key: key, eventsManager: eventsManager)
 
 
@@ -194,6 +198,7 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
                                       myLargeSegmentsStorage: buildMyLargeSegmentsStorage(forKey: matchingKey),
                                       syncWorkerFactory: mySegmentsSyncWorkerFactory,
                                       eventsManager: eventsManager,
+                                      timeChecker: timeChecker,
                                       timerManager: config.syncEnabled ? DefaultTimersManager() : nil)
 
         let byKeyGroup = ByKeyComponentGroup(splitClient: client,
@@ -207,13 +212,15 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
     private func buildMySegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage {
         return DefaultByKeyMySegmentsStorage(
             mySegmentsStorage: storageContainer.mySegmentsStorage,
-            userKey: key)
+            userKey: key,
+            timeChecker: timeChecker)
     }
 
     private func buildMyLargeSegmentsStorage(forKey key: String) -> ByKeyMySegmentsStorage {
         return DefaultByKeyMySegmentsStorage(
             mySegmentsStorage: storageContainer.myLargeSegmentsStorage,
-            userKey: key)
+            userKey: key,
+            timeChecker: timeChecker)
     }
 
     private func attributesStorage(forKey key: String) -> ByKeyAttributesStorage {

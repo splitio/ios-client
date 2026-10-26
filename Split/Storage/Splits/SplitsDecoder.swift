@@ -15,9 +15,11 @@ protocol SplitsDecoder {
 struct SplitsParallelDecoder: SplitsDecoder, @unchecked Sendable {
     private var minTaskPerThread: Int
     private let serialDecoder: SplitsSerialDecoder
-    init(minTaskPerThread: Int = 10, cipher: Cipher? = nil) {
+    private let timeChecker: TimeChecker
+    init(minTaskPerThread: Int = 10, cipher: Cipher? = nil, timeChecker: TimeChecker) {
         self.minTaskPerThread = minTaskPerThread
         self.serialDecoder = SplitsSerialDecoder(cipher: cipher)
+        self.timeChecker = timeChecker
     }
 
     func decode(_ list: [String]) -> [Split] {
@@ -57,7 +59,7 @@ struct SplitsParallelDecoder: SplitsDecoder, @unchecked Sendable {
             }
         }
         queue.waitUntilAllOperationsAreFinished()
-        TimeChecker.logInterval("Time to parse loaded splits", startTime: start)
+        timeChecker.logInterval("Time to parse loaded splits", since: start)
         return splits
     }
 }

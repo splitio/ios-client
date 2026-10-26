@@ -16,7 +16,7 @@ class ByKeyFacadeTest: XCTestCase {
     var componentGroups: [Key: ByKeyComponentGroup]!
 
     override func setUp() {
-        byKeyFacade = DefaultByKeyFacade()
+        byKeyFacade = DefaultByKeyFacade(timeChecker: TimeChecker.forTesting())
         componentGroups = [Key: ByKeyComponentGroup]()
         for i in 0..<10 {
             let key = buildKey(i)

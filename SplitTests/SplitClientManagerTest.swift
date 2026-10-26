@@ -101,7 +101,8 @@ class SplitClientManagerTest: XCTestCase {
         let storageContainer = try! SplitDatabaseHelper.buildStorageContainer(
             splitClientConfig: config, apiKey: IntegrationHelper.dummyApiKey,
             userKey: key.matchingKey, databaseName: "dummy",
-            telemetryStorage: telemetryProducer, testDatabase: splitDatabase)
+            telemetryStorage: telemetryProducer, testDatabase: splitDatabase,
+            timeChecker: TimeChecker.forTesting())
         clientManager = DefaultClientManager(config: config,
                                              key: key,
                                              splitManager: splitManager,
@@ -118,7 +119,8 @@ class SplitClientManagerTest: XCTestCase {
                                              propertyValidator: DefaultPropertyValidator(
                                                 anyValueValidator: DefaultAnyValueValidator(),
                                                 validationLogger: DefaultValidationMessageLogger()
-                                             ))
+                                             ),
+                                             timeChecker: TimeChecker.forTesting())
     }
 
     override func tearDown() {
