@@ -103,7 +103,8 @@ class FeatureFlagsSynchronizerTest: XCTestCase {
                                                        syncTaskByChangeNumberCatalog: updateWorkerCatalog,
                                                        splitsFilterQueryString: queryString ?? "",
                                                        flagsSpec: "1.2",
-                                                       splitEventsManager: eventsManager)
+                                                       splitEventsManager: eventsManager,
+                                                       timeChecker: TimeChecker.forTesting())
         return synchronizer
     }
 

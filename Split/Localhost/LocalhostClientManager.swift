@@ -27,14 +27,17 @@ class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
     private let evaluator: Evaluator
     private let splitsStorage: SplitsStorage
     private let splitManager: SplitManager
+    private let timeChecker: TimeChecker
 
     init(config: SplitClientConfig,
          key: Key,
          splitManager: SplitManager,
          splitsStorage: SplitsStorage,
          synchronizer: FeatureFlagsSynchronizer,
-         eventsManagerCoordinator: SplitEventsManagerCoordinator) {
+         eventsManagerCoordinator: SplitEventsManagerCoordinator,
+         timeChecker: TimeChecker) {
 
+        self.timeChecker = timeChecker
         self.defaultKey = key
         self.config = config
         self.splitManager = splitManager
@@ -79,7 +82,7 @@ class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
             return group.client
         }
         
-        let newEventsManager = eventsManager ?? DefaultSplitEventsManager(config: config)
+        let newEventsManager = eventsManager ?? DefaultSplitEventsManager(config: config, timeChecker: timeChecker)
         let newClient = LocalhostSplitClient(key: key,
                                              splitsStorage: splitsStorage,
                                              eventsManager: newEventsManager,

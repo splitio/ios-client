@@ -9,8 +9,8 @@
 import Foundation
 
 struct SplitApiFacade {
-    static func builder() -> SplitApiFacadeBuilder {
-        return SplitApiFacadeBuilder()
+    static func builder(timeChecker: TimeChecker) -> SplitApiFacadeBuilder {
+        return SplitApiFacadeBuilder(timeChecker: timeChecker)
     }
 
     let splitsFetcher: HttpSplitFetcher
@@ -35,6 +35,11 @@ class SplitApiFacadeBuilder: @unchecked Sendable {
     private var streamingHttpClient: HttpClient?
     private var splitsQueryString: String = ""
     private var telemetryStorage: TelemetryStorage?
+    private let timeChecker: TimeChecker
+
+    init(timeChecker: TimeChecker) {
+        self.timeChecker = timeChecker
+    }
 
     func setUserKey(_ userKey: String) -> SplitApiFacadeBuilder {
         self.userKey = userKey
@@ -84,7 +89,8 @@ class SplitApiFacadeBuilder: @unchecked Sendable {
 
         let splitsFetcher
             = DefaultHttpSplitFetcher(restClient: restClient,
-                                      syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage))
+                                      syncHelper: DefaultSyncHelper(telemetryProducer: telemetryStorage),
+                                      timeChecker: timeChecker)
 
         let mySegmentsFetcher: HttpMySegmentsFetcher
             = DefaultHttpMySegmentsFetcher(restClient: restClient,

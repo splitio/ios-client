@@ -49,7 +49,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory, @unchecked Sendable {
     }
 
     // MARK: Initializer
-    init(_ params: SplitFactoryParams) throws {
+    init(_ params: SplitFactoryParams, timeChecker: TimeChecker) throws {
         super.init()
         
         // Certificate Pinning
@@ -58,7 +58,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory, @unchecked Sendable {
         // Components
         let components = SplitComponentFactory(splitClientConfig: params.config,
                                                apiKey: params.apiKey,
-                                               userKey: params.key.matchingKey)
+                                               userKey: params.key.matchingKey,
+                                               timeChecker: timeChecker)
 
         // Creating Events Manager first speeds up init process
         let eventsManager = components.getSplitEventsManagerCoordinator()
@@ -113,7 +114,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory, @unchecked Sendable {
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: params.initStopwatch,
-                                             propertyValidator: components.getPropertyValidator())
+                                             propertyValidator: components.getPropertyValidator(),
+                                             timeChecker: timeChecker)
 
         components.destroy()
 

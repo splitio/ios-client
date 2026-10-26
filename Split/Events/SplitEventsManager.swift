@@ -28,8 +28,10 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
     private let processQueue: DispatchQueue
     private let dataAccessQueue: DispatchQueue
     private var isStarted: Bool
+    private let timeChecker: TimeChecker
 
-    init(config: SplitClientConfig) {
+    init(config: SplitClientConfig, timeChecker: TimeChecker) {
+        self.timeChecker = timeChecker
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process")
         self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data", target: DispatchQueue.general)
         self.isStarted = false
@@ -232,20 +234,21 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
     private func executeTask(event: SplitEventWithMetadata, task: SplitEventTask) {
 
         let eventName = task.event.toString()
+        let timeChecker = self.timeChecker
 
         if task.runInBackground {
-            TimeChecker.logInterval("Previous to run \(eventName) in Background")
+            timeChecker.logInterval("Previous to run \(eventName) in Background")
 
             let queue = task.takeQueue() ?? DispatchQueue.general
             queue.async {
-                TimeChecker.logInterval("Running \(eventName) in Background queue \(queue)")
+                timeChecker.logInterval("Running \(eventName) in Background queue \(queue)")
                 task.run(event.metadata)
             }
             return
         }
 
         DispatchQueue.main.async {
-            TimeChecker.logInterval("Running event on main: \(eventName)")
+            timeChecker.logInterval("Running event on main: \(eventName)")
             // UI Updates
             task.run(event.metadata)
         }

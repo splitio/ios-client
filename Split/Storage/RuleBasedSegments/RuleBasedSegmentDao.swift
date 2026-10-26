@@ -22,11 +22,13 @@ class CoreDataRuleBasedSegmentDao: BaseCoreDataDao, RuleBasedSegmentDao, @unchec
     private let decoder: RuleBasedSegmentsDecoder
     private let encoder: RuleBasedSegmentsEncoder
     private var cipher: Cipher?
+    private let timeChecker: TimeChecker
 
-    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil) {
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil, timeChecker: TimeChecker) {
         self.decoder = RuleBasedSegmentsSerialDecoder(cipher: cipher)
         self.encoder = RuleBasedSegmentsSerialEncoder(cipher: cipher)
         self.cipher = cipher
+        self.timeChecker = timeChecker
         super.init(coreDataHelper: coreDataHelper)
     }
 
@@ -77,7 +79,7 @@ class CoreDataRuleBasedSegmentDao: BaseCoreDataDao, RuleBasedSegmentDao, @unchec
             let jsonSegments = self.coreDataHelper.fetch(entity: .ruleBasedSegment)
                 .compactMap { return $0 as? RuleBasedSegmentEntity }
                 .compactMap { return $0.body }
-            TimeChecker.logInterval("Time to load rule based segments", startTime: start)
+            self.timeChecker.logInterval("Time to load rule based segments", since: start)
             segments = self.decoder.decode(jsonSegments).map { $0 }
         }
         return segments ?? []

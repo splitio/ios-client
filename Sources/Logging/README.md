@@ -53,9 +53,9 @@ Logger.shared.printer = MyPrinter()
 ```swift
 import Logging
 
-TimeChecker.start()
+let timeChecker = TimeChecker(factoryId: 1, startTime: Logger.shared.dateProvider.nowMillis())
 // ... do work ...
-TimeChecker.logInterval("Finished work")
+timeChecker.logInterval("Finished work")
 ```
 
 ## Notes

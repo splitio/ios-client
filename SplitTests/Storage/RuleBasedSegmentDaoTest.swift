@@ -19,12 +19,14 @@ class RuleBasedSegmentDaoTest: XCTestCase {
         let cipherKey = IntegrationHelper.dummyCipherKey
         let queue = DispatchQueue(label: "rule based segment dao test")
         ruleBasedSegmentDao = CoreDataRuleBasedSegmentDao(
-            coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test", dispatchQueue: queue)
+            coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test", dispatchQueue: queue),
+            timeChecker: TimeChecker.forTesting()
         )
 
         ruleBasedSegmentDaoAes128Cbc = CoreDataRuleBasedSegmentDao(
             coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "test", dispatchQueue: queue),
-            cipher: DefaultCipher(cipherKey: cipherKey)
+            cipher: DefaultCipher(cipherKey: cipherKey),
+            timeChecker: TimeChecker.forTesting()
         )
 
         let segments = createRuleBasedSegments()
@@ -143,9 +145,11 @@ class RuleBasedSegmentDaoTest: XCTestCase {
         // One with encryption and the other without it
         let helper = IntegrationCoreDataHelper.get(databaseName: "test",
                                                   dispatchQueue: DispatchQueue(label: "rule based segment dao test"))
-        ruleBasedSegmentDao = CoreDataRuleBasedSegmentDao(coreDataHelper: helper)
+        ruleBasedSegmentDao = CoreDataRuleBasedSegmentDao(coreDataHelper: helper,
+                                                          timeChecker: TimeChecker.forTesting())
         ruleBasedSegmentDaoAes128Cbc = CoreDataRuleBasedSegmentDao(coreDataHelper: helper,
-                                                                  cipher: cipher)
+                                                                  cipher: cipher,
+                                                                  timeChecker: TimeChecker.forTesting())
 
         // create segments and get one encrypted segment name
         let segments = createRuleBasedSegments()

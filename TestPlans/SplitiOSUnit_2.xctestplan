@@ -150,6 +150,9 @@
         "MatcherEvalTests",
         "MatcherTests",
         "MetadataEventsTests",
+        "MultiClientEvaluationTest",
+        "MultiClientStreamingResetTest",
+        "MultiFactoryTimeCheckerTest",
         "Murmur3HashingTest",
         "MyLargeSegmentsStorageTests",
         "MySegmentServerErrorTest",
@@ -217,7 +220,6 @@
         "SplitEventsManagerTest",
         "SplitFactoryBuilderTests",
         "SplitManagerTest",
-        "SplitSdkTimeoutTests",
         "SplitSdkUpdatePollingTest",
         "SplitValidatorTests",
         "SplitsBgSyncWorkerTest",
@@ -278,7 +280,6 @@
         "UserConsentModeDebugTest",
         "UserConsentModeNoneTest",
         "UserConsentModeOptimizedTest",
-        "UserKeyEncondingTest",
         "VersionTest"
       ],
       "target" : {
@@ -404,6 +405,9 @@
         "MatcherEvalTests",
         "MatcherTests",
         "MetadataEventsTests",
+        "MultiClientEvaluationTest",
+        "MultiClientStreamingResetTest",
+        "MultiFactoryTimeCheckerTest",
         "Murmur3HashingTest",
         "MyLargeSegmentsStorageTests",
         "MySegmentServerErrorTest",
@@ -471,7 +475,6 @@
         "SplitEventsManagerTest",
         "SplitFactoryBuilderTests",
         "SplitManagerTest",
-        "SplitSdkTimeoutTests",
         "SplitSdkUpdatePollingTest",
         "SplitValidatorTests",
         "SplitsBgSyncWorkerTest",
@@ -532,7 +535,6 @@
         "UserConsentModeDebugTest",
         "UserConsentModeNoneTest",
         "UserConsentModeOptimizedTest",
-        "UserKeyEncondingTest",
         "VersionTest"
       ],
       "target" : {

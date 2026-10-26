@@ -21,7 +21,8 @@ class ByKeyMySegmentsStorageTests: XCTestCase {
     override func setUp() {
         mySegmentsStorage = MySegmentsStorageStub()
         byKeyMySegmentsStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage,
-                                                               userKey: userKey)
+                                                               userKey: userKey,
+                                                               timeChecker: TimeChecker.forTesting())
     }
 
     func testNoLoaded() {

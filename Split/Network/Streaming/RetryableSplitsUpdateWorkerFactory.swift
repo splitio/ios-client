@@ -269,17 +269,20 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
     let myLargeSegmentsStorage: MySegmentsStorage
     let mySegmentsFetcher: HttpMySegmentsFetcher
     let telemetryProducer: TelemetryProducer?
+    let timeChecker: TimeChecker
 
     init(splitConfig: SplitClientConfig,
          mySegmentsStorage: MySegmentsStorage,
          myLargeSegmentsStorage: MySegmentsStorage,
          mySegmentsFetcher: HttpMySegmentsFetcher,
-         telemetryProducer: TelemetryProducer?) {
+         telemetryProducer: TelemetryProducer?,
+         timeChecker: TimeChecker) {
         self.splitConfig = splitConfig
         self.mySegmentsStorage = mySegmentsStorage
         self.myLargeSegmentsStorage = myLargeSegmentsStorage
         self.mySegmentsFetcher = mySegmentsFetcher
         self.telemetryProducer = telemetryProducer
+        self.timeChecker = timeChecker
     }
 
     func createRetryableMySegmentsSyncWorker(forKey key: String,
@@ -290,8 +293,10 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
 
         let backoffBase =  splitConfig.generalRetryBackoffBase
         let mySegmentsBackoffCounter = DefaultBackoffCounter(backoffBase: backoffBase)
-        let msByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
-        let mlsByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: myLargeSegmentsStorage, userKey: key)
+        let msByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key,
+                                                           timeChecker: timeChecker)
+        let mlsByKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: myLargeSegmentsStorage, userKey: key,
+                                                            timeChecker: timeChecker)
         let changeNumbers = changeNumbers ?? SegmentsChangeNumber(msChangeNumber: msByKeyStorage.changeNumber,
                                                                   mlsChangeNumber: mlsByKeyStorage.changeNumber)
         let syncHelper = DefaultSegmentsSyncHelper(userKey: key,
@@ -311,8 +316,10 @@ class DefaultMySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory {
 
     func createPeriodicMySegmentsSyncWorker(forKey key: String,
                                             eventsManager: SplitEventsManager) -> PeriodicSyncWorker {
-        let byKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key)
-        let byKeyLargeStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: myLargeSegmentsStorage, userKey: key)
+        let byKeyStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: mySegmentsStorage, userKey: key,
+                                                         timeChecker: timeChecker)
+        let byKeyLargeStorage = DefaultByKeyMySegmentsStorage(mySegmentsStorage: myLargeSegmentsStorage, userKey: key,
+                                                              timeChecker: timeChecker)
         let syncHelper = DefaultSegmentsSyncHelper(userKey: key,
                                                    segmentsFetcher: mySegmentsFetcher,
                                                    mySegmentsStorage: byKeyStorage,

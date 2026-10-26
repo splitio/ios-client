@@ -147,6 +147,10 @@ struct BackgroundSyncExecutor: @unchecked Sendable {
         self.mapKey = SplitDatabaseHelper.buildDbKey(prefix: prefix, sdkKey: apiKey)
         self.userKeys = userKeys
 
+        // Background tasks run without a factory, so they get their own TimeChecker.
+        // Factory ids start at 1, so 0 identifies this background context in the logs.
+        let timeChecker = TimeChecker(factoryId: 0, startTime: Date.nowMillis())
+
         let encryptionLevel = DbEncryptionManager.currentEncryptionLevel(dbKey: mapKey)
         let cipher: Cipher? = encryptionLevel != .none
             ? DbEncryptionManager.currentEncryptionKey(for: mapKey).map { DefaultCipher(cipherKey: $0) }
@@ -161,7 +165,8 @@ struct BackgroundSyncExecutor: @unchecked Sendable {
 
         guard let splitDatabase = try? SplitDatabaseHelper.openDatabase(dataFolderName: databaseName,
                                                                         cipher: cipher,
-                                                                        dbHelper: dbHelper) else {
+                                                                        dbHelper: dbHelper,
+                                                                        timeChecker: timeChecker) else {
             throw GenericError.couldNotCreateCache
         }
         let splitsStorage = SplitDatabaseHelper.openPersistentSplitsStorage(database: splitDatabase)
@@ -184,7 +189,8 @@ struct BackgroundSyncExecutor: @unchecked Sendable {
                                            reachabilityChecker: ReachabilityWrapper())
 
         let splitsFetcher = DefaultHttpSplitFetcher(restClient: restClient,
-                                                    syncHelper: DefaultSyncHelper(telemetryProducer: nil))
+                                                    syncHelper: DefaultSyncHelper(telemetryProducer: nil),
+                                                    timeChecker: timeChecker)
 
         self.mySegmentsFetcher = DefaultHttpMySegmentsFetcher(restClient: restClient, 
                                                               syncHelper: DefaultSyncHelper(telemetryProducer: nil))

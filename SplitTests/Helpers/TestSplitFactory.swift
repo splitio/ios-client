@@ -78,7 +78,8 @@ class TestSplitFactory: SplitFactory {
 
         let storageContainer = try SplitDatabaseHelper.buildStorageContainer(
             splitClientConfig: splitConfig, apiKey: IntegrationHelper.dummyApiKey,
-            userKey: key.matchingKey, databaseName: "dummy", telemetryStorage: nil, testDatabase: splitDatabase)
+            userKey: key.matchingKey, databaseName: "dummy", telemetryStorage: nil, testDatabase: splitDatabase,
+            timeChecker: TimeChecker.forTesting())
 
         if let splitsUpdateTimeStamp = splitsUpdateTimeStamp {
             storageContainer.generalInfoStorage.setUpdateTimestamp(timestamp: splitsUpdateTimeStamp)
@@ -99,7 +100,7 @@ class TestSplitFactory: SplitFactory {
                                            endpointFactory: endpointFactory,
                                            reachabilityChecker: reachabilityChecker)
 
-        let apiFacadeBuilder = SplitApiFacade.builder().setUserKey(key.matchingKey)
+        let apiFacadeBuilder = SplitApiFacade.builder(timeChecker: TimeChecker.forTesting()).setUserKey(key.matchingKey)
             .setSplitConfig(splitConfig).setRestClient(restClient).setEventsManager(eventsManager)
             .setStorageContainer(storageContainer).setSplitsQueryString(splitsFilterQueryString)
 
@@ -142,7 +143,7 @@ class TestSplitFactory: SplitFactory {
                                                            eventsSyncHelper: eventsSyncHelper,
                                                            telemetryProducer: storageContainer.telemetryStorage)
 
-        let byKeyFacade = DefaultByKeyFacade()
+        let byKeyFacade = DefaultByKeyFacade(timeChecker: TimeChecker.forTesting())
         let broadcasterChannel = DefaultSyncEventBroadcaster()
 
         let fFlagsSynchronizer = DefaultFeatureFlagsSynchronizer(splitConfig: splitConfig,
@@ -151,7 +152,8 @@ class TestSplitFactory: SplitFactory {
                                                                  broadcasterChannel: broadcasterChannel,
                                                                  splitsFilterQueryString: splitsFilterQueryString,
                                                                  flagsSpec: "1.1",
-                                                                 splitEventsManager: eventsManager)
+                                                                 splitEventsManager: eventsManager,
+                                                                 timeChecker: TimeChecker.forTesting())
 
         self.synchronizer = SynchronizerSpy(splitConfig: splitConfig,
                                             defaultUserKey: key.matchingKey,
@@ -184,7 +186,8 @@ class TestSplitFactory: SplitFactory {
             mySegmentsStorage: storageContainer.mySegmentsStorage,
             myLargeSegmentsStorage: storageContainer.myLargeSegmentsStorage,
             mySegmentsFetcher: apiFacade.mySegmentsFetcher,
-            telemetryProducer: storageContainer.telemetryStorage)
+            telemetryProducer: storageContainer.telemetryStorage,
+            timeChecker: TimeChecker.forTesting())
 
         let logger = DefaultValidationMessageLogger()
         let propertyValidator = DefaultPropertyValidator(anyValueValidator: DefaultAnyValueValidator(), validationLogger: logger)
@@ -226,7 +229,8 @@ class TestSplitFactory: SplitFactory {
                                              eventsManagerCoordinator: eventsManager,
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: nil,
-                                             propertyValidator: propertyValidator)
+                                             propertyValidator: propertyValidator,
+                                             timeChecker: TimeChecker.forTesting())
     }
 
     func client(matchingKey: String) -> SplitClient {
