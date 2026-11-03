@@ -1,61 +1,87 @@
 {
-  "configurations" : [
+  "configurations": [
     {
-      "id" : "4F2A5094-0E71-4794-9717-92482220A968",
-      "name" : "Common",
-      "options" : {
-
-      }
+      "id": "4F2A5094-0E71-4794-9717-92482220A968",
+      "name": "Common",
+      "options": {}
     },
     {
-      "enabled" : false,
-      "id" : "00529E1C-25A9-4843-8676-E48C4769483F",
-      "name" : "WatchOS",
-      "options" : {
-        "targetForVariableExpansion" : {
-          "containerPath" : "container:Split.xcodeproj",
-          "identifier" : "95B02CA328D0BD790030EC8B",
-          "name" : "WatchOS"
+      "enabled": false,
+      "id": "00529E1C-25A9-4843-8676-E48C4769483F",
+      "name": "WatchOS",
+      "options": {
+        "targetForVariableExpansion": {
+          "containerPath": "container:Split.xcodeproj",
+          "identifier": "95B02CA328D0BD790030EC8B",
+          "name": "WatchOS"
         }
       }
     }
   ],
-  "defaultOptions" : {
-    "codeCoverage" : false,
-    "environmentVariableEntries" : [
+  "defaultOptions": {
+    "codeCoverage": false,
+    "environmentVariableEntries": [
       {
-        "key" : "com.apple.CoreData.ConcurrencyDebug",
-        "value" : "1"
+        "key": "com.apple.CoreData.ConcurrencyDebug",
+        "value": "1"
       }
     ],
-    "targetForVariableExpansion" : {
-      "containerPath" : "container:Split.xcodeproj",
-      "identifier" : "3B6DEE5920EA6A4E0067435E",
-      "name" : "Split"
+    "targetForVariableExpansion": {
+      "containerPath": "container:Split.xcodeproj",
+      "identifier": "3B6DEE5920EA6A4E0067435E",
+      "name": "Split"
     }
   },
-  "testTargets" : [
+  "testTargets": [
     {
-      "target" : {
-        "containerPath" : "container:Split.xcodeproj",
-        "identifier" : "5B3C16342ED76BAD0068D623",
-        "name" : "SplitTestsSwift6"
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "5B3C16342ED76BAD0068D623",
+        "name": "SplitTestsSwift6"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Split.xcodeproj",
-        "identifier" : "592C6AA4211B6C99002D120C",
-        "name" : "SplitTestsSwift5"
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "592C6AA4211B6C99002D120C",
+        "name": "SplitTestsSwift5"
       }
     },
     {
-      "target" : {
-        "containerPath" : "container:Split.xcodeproj",
-        "identifier" : "8000B2F11F535D99847B28BE",
-        "name" : "LoggingTests"
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "8000B2F11F535D99847B28BE",
+        "name": "LoggingTests"
+      }
+    },
+    {
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "22075E2EBDA25D78FC291C40",
+        "name": "HttpTests"
+      }
+    },
+    {
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "98E47A3720C1455A8A6DBD5E",
+        "name": "BackoffCounterTests"
+      }
+    },
+    {
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "60EAB5B278980408CA33AD72",
+        "name": "PeriodicRecorderWorkerTests"
+      }
+    },
+    {
+      "target": {
+        "containerPath": "container:Split.xcodeproj",
+        "identifier": "TRKTARGET0000002",
+        "name": "TrackerTests"
       }
     }
   ],
-  "version" : 1
+  "version": 1
 }
