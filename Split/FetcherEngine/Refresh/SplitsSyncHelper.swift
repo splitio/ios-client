@@ -84,17 +84,22 @@ class SplitsSyncHelper: @unchecked Sendable {
         do {
             // Perform proxy check before syncing if handler exists
             var shouldClearBeforeUpdate = clearBeforeUpdate
+            var effectiveSince = since
+            var effectiveRbSince = rbSince
             if let proxyHandler = outdatedSplitProxyHandler {
                 proxyHandler.performProxyCheck()
 
                 // If we're in recovery mode, we should clear the cache and reset change numbers
                 if proxyHandler.isRecoveryMode() {
                     shouldClearBeforeUpdate = true
+                    // Storage will be cleared, so request a full snapshot instead of a delta
+                    effectiveSince = -1
+                    effectiveRbSince = -1
                 }
             }
 
-            let res = try tryToSync(since: since,
-                                    rbSince: rbSince,
+            let res = try tryToSync(since: effectiveSince,
+                                    rbSince: effectiveRbSince,
                                     till: till,
                                     rbTill: rbTill,
                                     clearBeforeUpdate: shouldClearBeforeUpdate,
@@ -113,7 +118,7 @@ class SplitsSyncHelper: @unchecked Sendable {
                                    rbSince: res.rbChangeNumber,
                                    till: res.changeNumber,
                                    rbTill: res.rbChangeNumber,
-                                   clearBeforeUpdate: shouldClearBeforeUpdate && res.changeNumber == since,
+                                   clearBeforeUpdate: shouldClearBeforeUpdate && res.changeNumber == effectiveSince,
                                    headers: headers,
                                    useTillParam: true)
         } catch let error {

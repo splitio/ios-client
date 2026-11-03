@@ -17,6 +17,8 @@ class OutdatedProxyIntegrationTest: XCTestCase {
     var outdatedProxy = false
     var simulatedProxyError = false
     var recoveryHit = false
+    var splitRequestUrls = [String]()
+    let urlsLock = NSLock()
     var testDatabase: SplitDatabase!
     let sdkReadyExp = XCTestExpectation(description: "SDK READY Expectation")
     
@@ -25,6 +27,7 @@ class OutdatedProxyIntegrationTest: XCTestCase {
         outdatedProxy = false
         simulatedProxyError = false
         recoveryHit = false
+        splitRequestUrls = []
         
         // Create test database
         testDatabase = TestingHelper.createTestDatabase(name: "outdated_proxy_test")
@@ -59,12 +62,26 @@ class OutdatedProxyIntegrationTest: XCTestCase {
         // Set last proxy check timestamp to 62 minutes ago
         let generalInfoDao = testDatabase.generalInfoDao
         generalInfoDao.update(info: GeneralInfo.lastProxyUpdateTimestamp, longValue: (Date.nowMillis() - 62 * 60 * 1000))
+        // Seed realistic positive change numbers (prior successful fallback-mode sync)
+        generalInfoDao.update(info: GeneralInfo.splitsChangeNumber, longValue: 1506703262000)
+        generalInfoDao.update(info: GeneralInfo.ruleBasedSegmentsChangeNumber, longValue: 1506703262000)
         
         let client = getReadyClient()
         
         XCTAssertNotNil(client)
         XCTAssertTrue(recoveryHit && !outdatedProxy)
         XCTAssertFalse(simulatedProxyError)
+        
+        urlsLock.lock()
+        let urls = splitRequestUrls
+        urlsLock.unlock()
+        XCTAssertFalse(urls.isEmpty)
+        // The first split request must be a full snapshot request, not a delta
+        XCTAssertTrue(urls.first?.contains("since=-1&rbSince=-1") == true, "First request: \(urls.first ?? "none")")
+        XCTAssertFalse(urls.contains { $0.contains("since=1506703262000") })
+        
+        // Full snapshot present in storage
+        XCTAssertTrue(testDatabase.splitDao.getAll().contains { $0.name == "recovered_split" })
     }
     
     // MARK: - Helper Methods
@@ -96,11 +113,19 @@ class OutdatedProxyIntegrationTest: XCTestCase {
                 }
                 
                 if !self.outdatedProxy {
+                    self.urlsLock.lock()
+                    self.splitRequestUrls.append(request.url.absoluteString)
+                    self.urlsLock.unlock()
                     if request.url.absoluteString.contains("?s=1.3&since=-1&rbSince=-1") {
                         self.recoveryHit = true
                     }
                 }
                 
+                if !self.outdatedProxy, self.getSinceFromUri(request.url) == "-1" {
+                    let split = "{\"name\":\"recovered_split\",\"trafficTypeName\":\"user\",\"status\":\"ACTIVE\",\"killed\":false,\"defaultTreatment\":\"off\",\"changeNumber\":1,\"trafficAllocation\":100,\"seed\":1,\"algo\":2,\"conditions\":[]}"
+                    let body = "{\"ff\": {\"d\":[\(split)], \"s\": -1, \"t\": 1 }, \"rbs\": {\"d\":[], \"s\": -1, \"t\": 1 }}"
+                    return TestDispatcherResponse(code: 200, data: Data(body.utf8))
+                }
                 // Return a default split changes response
                 return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptySplitChanges(since: 1, till: 1).utf8))
             }
