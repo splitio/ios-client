@@ -105,7 +105,13 @@ class TelemetryTest: XCTestCase {
             sdkReadyExp.fulfill()
         }
 
-        wait(for: [sdkReadyExp], timeout: 10)
+        // Telemetry is recorded asynchronously after SDK ready, so wait for it explicitly
+        let telemetryRecordedExp = XCTNSPredicateExpectation(
+            predicate: NSPredicate { _, _ in
+                self.telemetryStorage.getTimeUntilReady() > 0
+                    && self.telemetryStorage.getTimeUntilReadyFromCache() > 0
+            }, object: nil)
+        wait(for: [sdkReadyExp, telemetryRecordedExp], timeout: 10)
 
         let timeUntilReady = telemetryStorage.getTimeUntilReady()
         let timeUntilReadyFromCache = telemetryStorage.getTimeUntilReadyFromCache()

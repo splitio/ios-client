@@ -133,6 +133,8 @@ final class RolloutCacheManagerIntegrationTest: XCTestCase {
     private func preloadDB(updateTimestamp: Int64?, lastClearTimestamp: Int64?, changeNumber: Int64?) {
         let split = TestingHelper.buildSplit(name: "test_split", treatment: "test_treatment")
         testDb.splitDao.insertOrUpdate(split: split)
+        // Simulates a device that already went through the one-time integrity reset.
+        testDb.generalInfoDao.update(info: .cacheIntegrityVersion, longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
         if let updateTimestamp = updateTimestamp {
             testDb.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: updateTimestamp)
         }

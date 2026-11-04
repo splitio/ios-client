@@ -5,6 +5,8 @@ protocol GeneralInfoStorage {
     func setUpdateTimestamp(timestamp: Int64)
     func getRolloutCacheLastClearTimestamp() -> Int64
     func setRolloutCacheLastClearTimestamp(timestamp: Int64)
+    func getCacheIntegrityVersion() -> Int64
+    func setCacheIntegrityVersion(_ version: Int64)
     func getSplitsFilterQueryString() -> String
     func setSplitsFilterQueryString(filterQueryString: String)
     func getFlagSpec() -> String
@@ -57,6 +59,14 @@ class DefaultGeneralInfoStorage: GeneralInfoStorage, @unchecked Sendable {
 
     func setRolloutCacheLastClearTimestamp(timestamp: Int64) {
         generalInfoDao.update(info: .rolloutCacheLastClearTimestamp, longValue: timestamp)
+    }
+
+    func getCacheIntegrityVersion() -> Int64 {
+        return generalInfoDao.longValue(info: .cacheIntegrityVersion) ?? 0
+    }
+
+    func setCacheIntegrityVersion(_ version: Int64) {
+        generalInfoDao.update(info: .cacheIntegrityVersion, longValue: version)
     }
 
     func getSplitsFilterQueryString() -> String {

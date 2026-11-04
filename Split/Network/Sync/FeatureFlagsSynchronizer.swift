@@ -251,8 +251,10 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
 
                 if toDelete.count > 0 {
                     splitsStorage.delete(splitNames: toDelete)
-                    storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
                 }
+                // Any filter change needs a full fetch: a broadened or removed filter deletes nothing,
+                // but flags excluded by the old filter would never be returned by a delta sync.
+                storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
                 generalInfoStorage.setSplitsFilterQueryString(filterQueryString: currentSplitsQueryString)
             }
         }

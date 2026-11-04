@@ -16,6 +16,7 @@ enum GeneralInfo: String {
     case bySetsFilter = "bySetsFilter"
     case flagsSpec = "flagsSpec"
     case rolloutCacheLastClearTimestamp = "rolloutCacheLastClearTimestamp"
+    case cacheIntegrityVersion = "cacheIntegrityVersion"
     case ruleBasedSegmentsChangeNumber = "ruleBasedSegmentsChangeNumber"
     case lastProxyUpdateTimestamp = "lastProxyCheckTimestamp"
     case segmentsInUse = "segmentsInUse"
