@@ -15,7 +15,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
 
     var mySegmentsStorage: MySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
-    var backoffCounter: ReconnectBackoffCounterStub!
+    var backoffCounter: BackoffCounterStub!
     var mySegmentsSyncWorker: PeriodicMySegmentsSyncWorker!
     let userKey = "CUSTOMER_ID"
     var config: SplitClientConfig!
@@ -24,7 +24,7 @@ class PeriodicMySegmentsSyncWorkerTest: XCTestCase {
     override func setUp() {
         mySegmentsStorage = MySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
-        backoffCounter = ReconnectBackoffCounterStub()
+        backoffCounter = BackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
         config = SplitClientConfig()
         syncHelper = SegmentsSyncHelperMock()

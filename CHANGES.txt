@@ -1,3 +1,10 @@
+3.8.0: (Nov 5, 2026)
+- Fixed an issue where cached definitions could be lost during proxy recovery.
+- Added Xcode 27 compatibility.
+- Raised the minimum iOS deployment target to 15.0.
+- Fixed an HTTP memory leak.
+- Split the SDK into internal Swift Package modules (Logging, Http, BackoffCounter, Concurrency, Streaming, Tracker, PeriodicRecorderWorker).
+
 3.7.2: (Oct 23, 2026)
 - Improved the accuracy of internal SDK initialization timing logs when multiple factories are created in the same process.
 

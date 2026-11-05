@@ -6,6 +6,7 @@ class GeneralInfoStorageMock: GeneralInfoStorage, @unchecked Sendable {
     let queue = DispatchQueue(label: "test", target: .global())
     var updateTimestamp: Int64 = 0
     var rolloutCacheLastClearTimestamp: Int64 = 0
+    var cacheIntegrityVersion: Int64 = DefaultRolloutCacheManager.cacheIntegrityVersion
     var splitsFilterQueryString: String = ""
     var flagsSpec = ""
     var ruleBasedSegmentsChangeNumber: Int64 = -1
@@ -27,6 +28,14 @@ class GeneralInfoStorageMock: GeneralInfoStorage, @unchecked Sendable {
 
     func setRolloutCacheLastClearTimestamp(timestamp: Int64) {
         rolloutCacheLastClearTimestamp = timestamp
+    }
+
+    func getCacheIntegrityVersion() -> Int64 {
+        return cacheIntegrityVersion
+    }
+
+    func setCacheIntegrityVersion(_ version: Int64) {
+        cacheIntegrityVersion = version
     }
 
     func getSplitsFilterQueryString() -> String {

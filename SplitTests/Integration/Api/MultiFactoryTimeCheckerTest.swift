@@ -12,7 +12,7 @@ import XCTest
 class MultiFactoryTimeCheckerTest: XCTestCase {
 
     private let gapMillis = 2000
-    private var savedLevel: SplitLogLevel!
+    private var savedLevel: LogLevel!
     private var savedPrinter: LogPrinter!
     private var printerStub: LogPrinterStub!
     private var gate: DispatchSemaphore!

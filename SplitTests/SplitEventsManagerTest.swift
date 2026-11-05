@@ -322,7 +322,6 @@ class SplitEventsManagerTest: XCTestCase, @unchecked Sendable {
         let task = SplitEventActionTask(action: handler,
                                         event: .sdkReady,
                                         runInBackground: false,
-                                        factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey),
                                         queue: nil)
 
         // Run & test
@@ -343,7 +342,7 @@ class SplitEventsManagerTest: XCTestCase, @unchecked Sendable {
             XCTAssertEqual(handlerMetadata.names, names)
             taskExp.fulfill()
         }
-        let task = SplitEventActionTask(action: handler, event: .sdkReady, runInBackground: false, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey), queue: nil)
+        let task = SplitEventActionTask(action: handler, event: .sdkReady, runInBackground: false, queue: nil)
 
         // Run & test
         task.run(metadata)
@@ -360,7 +359,7 @@ class SplitEventsManagerTest: XCTestCase, @unchecked Sendable {
             XCTAssertEqual(handlerMetadata.isInitialCacheLoad, freshInstall)
             taskExp.fulfill()
         }
-        let task = SplitEventActionTask(action: handler, event: .sdkReady, runInBackground: false, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey), queue: nil)
+        let task = SplitEventActionTask(action: handler, event: .sdkReady, runInBackground: false, queue: nil)
 
         // Run & test
         task.run(metadata)
@@ -385,7 +384,7 @@ class TestTask: SplitEventActionTask, @unchecked Sendable {
     init(exp: XCTestExpectation?, label: String = "", action: SplitActionWithMetadata<EventMetadata>? = nil, metadata: EventMetadata? = nil) {
         self.exp = exp
         self.label = label
-        super.init(action: action ?? { _ in }, event: .sdkReady, factory: SplitFactoryStub(apiKey: IntegrationHelper.dummyApiKey))
+        super.init(action: action ?? { _ in }, event: .sdkReady)
     }
 
     override func run(_ metadata: EventMetadata?) {

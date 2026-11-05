@@ -142,7 +142,7 @@ def discover_universe(root: Path) -> Tuple[Set[str], Dict[str, Set[str]]]:
 
 
 def plan_path(name: str) -> Path:
-    return REPO_ROOT / f"{name}.xctestplan"
+    return REPO_ROOT / "TestPlans" / f"{name}.xctestplan"
 
 
 def load_plan(name: str) -> dict:

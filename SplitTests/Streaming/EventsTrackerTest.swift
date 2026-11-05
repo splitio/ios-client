@@ -22,12 +22,20 @@ class EventsTrackerTest: XCTestCase {
         synchronizer = SynchronizerStub()
         telemetryProducer = TelemetryStorageStub()
         propertyValidator = PropertyValidatorStub()
-        eventsTracker = DefaultEventsTracker(config: SplitClientConfig(),
-                                             synchronizer: synchronizer,
-                                             eventValidator: EventValidatorStub(),
-                                             propertyValidator: propertyValidator,
-                                             validationLogger: DefaultValidationMessageLogger(),
-                                             telemetryProducer: telemetryProducer)
+        let config = SplitClientConfig()
+        eventsTracker = DefaultEventsTracker(
+            defaultTrafficType: config.trafficType,
+            initialEventSizeInBytes: config.initialEventSizeInBytes,
+            eventValidator: EventValidatorAdapterStub(stub: EventValidatorStub()),
+            propertyValidator: PropertyValidatorAdapterStub(stub: propertyValidator!),
+            logger: TrackerLoggerAdapterStub(),
+            onEventPush: { [weak self] event in
+                self?.synchronizer.pushEvent(event: event.toEventDTO())
+            },
+            onTrackLatency: { [weak self] latency in
+                self?.telemetryProducer?.recordLatency(method: .track, latency: latency)
+            }
+        )
     }
     
     func testTrackEnabled() {
@@ -96,4 +104,57 @@ class EventsTrackerTest: XCTestCase {
                        , telemetryProducer.methodLatencies[.track] ?? -1)
         XCTAssertEqual(synchronizer.pushEventCalled, enabled)
     }
+}
+
+// MARK: - Tracker Adapter Stubs for Tests
+
+final class EventValidatorAdapterStub: TrackerEventValidator, @unchecked Sendable {
+    private let stub: EventValidatorStub
+    
+    init(stub: EventValidatorStub) {
+        self.stub = stub
+    }
+    
+    func validate(key: String?,
+                  trafficTypeName: String?,
+                  eventTypeId: String?,
+                  value: Double?,
+                  properties: [String: Any]?,
+                  isSdkReady: Bool) -> TrackerValidationError? {
+        guard let errorInfo = stub.validate(key: key,
+                                             trafficTypeName: trafficTypeName,
+                                             eventTypeId: eventTypeId,
+                                             value: value,
+                                             properties: properties,
+                                             isSdkReady: isSdkReady) else {
+            return nil
+        }
+        return TrackerValidationError(isError: errorInfo.isError, message: errorInfo.errorMessage)
+    }
+}
+
+final class PropertyValidatorAdapterStub: TrackerPropertyValidator, @unchecked Sendable {
+    private let stub: PropertyValidatorStub
+    
+    init(stub: PropertyValidatorStub) {
+        self.stub = stub
+    }
+    
+    func validate(properties: [String: Any]?,
+                  initialSizeInBytes: Int,
+                  validationTag: String) -> TrackerPropertyResult {
+        let result = stub.validate(properties: properties,
+                                   initialSizeInBytes: initialSizeInBytes,
+                                   validationTag: validationTag)
+        return TrackerPropertyResult(isValid: result.isValid,
+                                     validatedProperties: result.validatedProperties,
+                                     sizeInBytes: result.sizeInBytes,
+                                     errorMessage: result.errorMessage)
+    }
+}
+
+final class TrackerLoggerAdapterStub: TrackerLogger, @unchecked Sendable {
+    func log(errorInfo: TrackerValidationError, tag: String) {}
+    func e(message: String, tag: String) {}
+    func v(_ message: String) {}
 }

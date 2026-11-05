@@ -8,6 +8,9 @@
 
 import Foundation
 @testable import Split
+#if SWIFT_PACKAGE || SPLIT_MODULAR
+import Http
+#endif
 
 class TestUtils {
     static func buildImpressionsFromJson(content: String) throws -> [ImpressionsTest] {

@@ -138,9 +138,9 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
         let changeNumberConfig = SplitsUpdateChangeNumber(flags: changeNumber, rbs: rbsChangeNumber)
 
         if syncTaskByChangeNumberCatalog.value(forKey: changeNumberConfig) == nil {
-            let reconnectBackoff = DefaultReconnectBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
+            let backoffCounter = DefaultBackoffCounter(backoffBase: splitConfig.generalRetryBackoffBase)
             var worker = syncWorkerFactory.createRetryableSplitsUpdateWorker(changeNumber: changeNumberConfig,
-                                                                             reconnectBackoffCounter: reconnectBackoff)
+                                                                             backoffCounter: backoffCounter)
             syncTaskByChangeNumberCatalog.setValue(worker, forKey: changeNumberConfig)
             worker.start()
             worker.completion = {[weak self] success in
@@ -251,8 +251,10 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
 
                 if toDelete.count > 0 {
                     splitsStorage.delete(splitNames: toDelete)
-                    storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
                 }
+                // Any filter change needs a full fetch: a broadened or removed filter deletes nothing,
+                // but flags excluded by the old filter would never be returned by a delta sync.
+                storageContainer.splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: -1)
                 generalInfoStorage.setSplitsFilterQueryString(filterQueryString: currentSplitsQueryString)
             }
         }

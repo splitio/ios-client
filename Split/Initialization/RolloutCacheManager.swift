@@ -5,6 +5,11 @@ protocol RolloutCacheManager {
 }
 
 class DefaultRolloutCacheManager: RolloutCacheManager {
+    /// Bump to force a one-time full resync of persisted rollout definitions on devices whose
+    /// stored value is lower. History:
+    /// 1: caches written by 3.3.0-3.7.x may be partially populated after a proxy recovery
+    ///    (flags missing with a change number > -1).
+    static let cacheIntegrityVersion: Int64 = 1
     private let kMinCacheClearDays = 1
     private let generalInfoStorage: GeneralInfoStorage
     private let rolloutCacheConfiguration: RolloutCacheConfiguration
@@ -23,7 +28,15 @@ class DefaultRolloutCacheManager: RolloutCacheManager {
             listener()
         }
 
-        if shouldClear() {
+        if generalInfoStorage.getCacheIntegrityVersion() < Self.cacheIntegrityVersion {
+            // Nothing cached (fresh install): nothing to repair, just stamp the version.
+            if generalInfoStorage.getSplitsChangeNumber() != -1
+                || generalInfoStorage.getRuleBasedSegmentsChangeNumber() != -1 {
+                Logger.v("Resetting rollout definitions cache for integrity version \(Self.cacheIntegrityVersion)")
+                clear()
+            }
+            generalInfoStorage.setCacheIntegrityVersion(Self.cacheIntegrityVersion)
+        } else if shouldClear() {
             clear()
         }
     }

@@ -13,7 +13,6 @@ protocol SplitClientManager: AnyObject {
     func get(forKey key: Key) -> SplitClient
     func flush()
     func destroy(forKey key: Key)
-    var splitFactory: SplitFactory? { get }
 }
 
 class DefaultClientManager: SplitClientManager, @unchecked Sendable {
@@ -40,8 +39,6 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
     
     private let timeChecker: TimeChecker
 
-    weak var splitFactory: SplitFactory?
-
     init(config: SplitClientConfig,
          key: Key,
          splitManager: SplitManager,
@@ -56,8 +53,7 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
          mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory,
          telemetryStopwatch: Stopwatch?,
          propertyValidator: PropertyValidator,
-         timeChecker: TimeChecker,
-         factory: SplitFactory) {
+         timeChecker: TimeChecker) {
 
         self.timeChecker = timeChecker
         self.defaultKey = key
@@ -76,7 +72,6 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
 
         self.eventsTracker = eventsTracker
         self.propertyValidator = propertyValidator
-        self.splitFactory = factory
         
         fallbackTreatmentsCalculator = DefaultFallbackTreatmentsCalculator(fallbacksConfig: config.fallbackTreatments)
         evaluator = DefaultEvaluator(splitsStorage: storageContainer.splitsStorage,

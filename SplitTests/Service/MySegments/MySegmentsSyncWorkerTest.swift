@@ -16,7 +16,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
     var mySegmentsStorage: ByKeyMySegmentsStorageStub!
     var myLargeSegmentsStorage: ByKeyMySegmentsStorageStub!
     var eventsManager: SplitEventsManagerMock!
-    var backoffCounter: ReconnectBackoffCounterStub!
+    var backoffCounter: BackoffCounterStub!
     var mySegmentsSyncWorker: RetryableMySegmentsSyncWorker!
     var changeNumbers: SegmentsChangeNumber!
     var syncHelper: SegmentsSyncHelperMock!
@@ -25,7 +25,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsStorage = ByKeyMySegmentsStorageStub()
         myLargeSegmentsStorage = ByKeyMySegmentsStorageStub()
         eventsManager = SplitEventsManagerMock()
-        backoffCounter = ReconnectBackoffCounterStub()
+        backoffCounter = BackoffCounterStub()
 
         eventsManager.isSegmentsReadyFired = false
         changeNumbers = SegmentsChangeNumber(msChangeNumber: -1, mlsChangeNumber: 100)
@@ -34,7 +34,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsSyncWorker = RetryableMySegmentsSyncWorker(
                                                              telemetryProducer: TelemetryStorageStub(),
                                                              eventsManager: eventsManager,
-                                                             reconnectBackoffCounter: backoffCounter,
+                                                             backoffCounter: backoffCounter,
                                                              avoidCache: false,
                                                              changeNumbers: changeNumbers,
                                                              syncHelper: syncHelper)
@@ -104,7 +104,7 @@ class MySegmentsSyncWorkerTest: XCTestCase {
         mySegmentsSyncWorker = RetryableMySegmentsSyncWorker(
             telemetryProducer: TelemetryStorageStub(),
             eventsManager: eventsManager,
-            reconnectBackoffCounter: backoffCounter,
+            backoffCounter: backoffCounter,
             avoidCache: true,
             changeNumbers: changeNumbers(mlsChangeNumber: 100),
             syncHelper: syncHelper)

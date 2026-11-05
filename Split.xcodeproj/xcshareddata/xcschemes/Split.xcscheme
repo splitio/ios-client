@@ -38,59 +38,59 @@
       </MacroExpansion>
       <TestPlans>
          <TestPlanReference
-            reference = "container:SplitiOSUnit.xctestplan">
+            reference = "container:TestPlans/SplitiOSUnit.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSIntegration.xctestplan">
+            reference = "container:TestPlans/SplitiOSIntegration.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSFull.xctestplan"
+            reference = "container:TestPlans/SplitiOSFull.xctestplan"
             default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSStreaming.xctestplan">
+            reference = "container:TestPlans/SplitiOSStreaming.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitStreamingUT.xctestplan">
+            reference = "container:TestPlans/SplitStreamingUT.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitPushManagerUT.xctestplan">
+            reference = "container:TestPlans/SplitPushManagerUT.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSStreaming_1.xctestplan">
+            reference = "container:TestPlans/SplitiOSStreaming_1.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSStreaming_2.xctestplan">
+            reference = "container:TestPlans/SplitiOSStreaming_2.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSUnit_1.xctestplan">
+            reference = "container:TestPlans/SplitiOSUnit_1.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSUnit_2.xctestplan">
+            reference = "container:TestPlans/SplitiOSUnit_2.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSUnit_3.xctestplan">
+            reference = "container:TestPlans/SplitiOSUnit_3.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSUnit_4.xctestplan">
+            reference = "container:TestPlans/SplitiOSUnit_4.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SemVer.xctestplan">
+            reference = "container:TestPlans/SemVer.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSIntegration_1.xctestplan">
+            reference = "container:TestPlans/SplitiOSIntegration_1.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSHalf_1.xctestplan">
+            reference = "container:TestPlans/SplitiOSHalf_1.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSHalf_2.xctestplan">
+            reference = "container:TestPlans/SplitiOSHalf_2.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitiOSUnit_5.xctestplan">
+            reference = "container:TestPlans/SplitiOSUnit_5.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:SplitFlakyTests.xctestplan">
+            reference = "container:TestPlans/SplitFlakyTests.xctestplan">
          </TestPlanReference>
       </TestPlans>
    </TestAction>

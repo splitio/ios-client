@@ -11,25 +11,22 @@ class SplitEventActionTask: SplitEventTask, @unchecked Sendable {
     private var queue: DispatchQueue?
     var event: SplitEvent
     var runInBackground: Bool = false
-    var factory: SplitFactory
 
-    init<T: EventMetadata>(action: @escaping SplitActionWithMetadata<T>, event: SplitEvent, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
-        
+    init<T: EventMetadata>(action: @escaping SplitActionWithMetadata<T>, event: SplitEvent, runInBackground: Bool = false, queue: DispatchQueue? = nil) {
+
         self.event = event
         self.runInBackground = runInBackground
         self.queue = queue
-        self.factory = factory
-        
+
         // Preserve the concrete type using type erasure container
         self.eventHandlerWithMetadata = TypedEventMetadataHandler(action: action)
     }
-      
-    init(action: @escaping SplitAction, event: SplitEvent, runInBackground: Bool = false, factory: SplitFactory, queue: DispatchQueue? = nil) {
+
+    init(action: @escaping SplitAction, event: SplitEvent, runInBackground: Bool = false, queue: DispatchQueue? = nil) {
          self.eventHandler = action
          self.event = event
          self.runInBackground = runInBackground
          self.queue = queue
-         self.factory = factory
     }
 
     func takeQueue() -> DispatchQueue? {

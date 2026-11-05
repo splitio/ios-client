@@ -27,16 +27,16 @@ class BaseRetryableSyncWorker: RetryableSyncWorker, @unchecked Sendable {
 
     var completion: SyncCompletion?
     var errorHandler: ErrorHandler?
-    private var reconnectBackoffCounter: ReconnectBackoffCounter
+    private var backoffCounter: BackoffCounter
     private let eventsManager: SplitEventsManager
     private var isRunning: Atomic<Bool> = Atomic(false)
     private let syncQueue = DispatchQueue.general
 
     init(eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter) {
+         backoffCounter: BackoffCounter) {
 
         self.eventsManager = eventsManager
-        self.reconnectBackoffCounter = reconnectBackoffCounter
+        self.backoffCounter = backoffCounter
     }
 
     func start() {
@@ -46,7 +46,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker, @unchecked Sendable {
                 return
             }
             self.isRunning.set(true)
-            self.reconnectBackoffCounter.resetCounter()
+            self.backoffCounter.resetCounter()
             do {
                 try self.fetchFromRemoteLoop()
             } catch {
@@ -68,7 +68,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker, @unchecked Sendable {
         while isRunning.value, !success {
             success = try fetchFromRemote()
             if !success {
-                let retryTimeInSeconds = reconnectBackoffCounter.getNextRetryTime()
+                let retryTimeInSeconds = backoffCounter.getNextRetryTime()
                 Logger.d("Retrying fetch in: \(retryTimeInSeconds)")
                 ThreadUtils.delay(seconds: retryTimeInSeconds)
             }
@@ -92,7 +92,7 @@ class BaseRetryableSyncWorker: RetryableSyncWorker, @unchecked Sendable {
     }
 
     func resetBackoffCounter() {
-        reconnectBackoffCounter.resetCounter()
+        backoffCounter.resetCounter()
     }
 
     // This methods should be overrided by child class
@@ -118,7 +118,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
          splitChangeProcessor: SplitChangeProcessor,
          ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
          eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter,
+         backoffCounter: BackoffCounter,
          splitConfig: SplitClientConfig) {
 
         self.splitFetcher = splitFetcher
@@ -134,7 +134,7 @@ class RetryableSplitsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendable {
                                            generalInfoStorage: generalInfoStorage,
                                            splitConfig: splitConfig)
         super.init(eventsManager: eventsManager,
-                   reconnectBackoffCounter: reconnectBackoffCounter)
+                   backoffCounter: backoffCounter)
     }
 
     // MARK: INITIAL SYNC & POLLING
@@ -199,7 +199,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker, @unchecked Sendable 
          ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessor,
          changeNumber: SplitsUpdateChangeNumber,
          eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter,
+         backoffCounter: BackoffCounter,
          splitConfig: SplitClientConfig) {
 
         self.splitsFetcher = splitsFetcher
@@ -218,7 +218,7 @@ class RetryableSplitsUpdateWorker: BaseRetryableSyncWorker, @unchecked Sendable 
                                            generalInfoStorage: generalInfoStorage,
                                            splitConfig: splitConfig)
         super.init(eventsManager: eventsManager,
-                   reconnectBackoffCounter: reconnectBackoffCounter)
+                   backoffCounter: backoffCounter)
     }
 
     override func fetchFromRemote() throws -> Bool {

@@ -28,7 +28,6 @@ class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
     private let splitsStorage: SplitsStorage
     private let splitManager: SplitManager
     private let timeChecker: TimeChecker
-    weak var splitFactory: SplitFactory?
 
     init(config: SplitClientConfig,
          key: Key,
@@ -36,8 +35,7 @@ class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
          splitsStorage: SplitsStorage,
          synchronizer: FeatureFlagsSynchronizer,
          eventsManagerCoordinator: SplitEventsManagerCoordinator,
-         timeChecker: TimeChecker,
-         factory: SplitFactory) {
+         timeChecker: TimeChecker) {
 
         self.timeChecker = timeChecker
         self.defaultKey = key
@@ -46,7 +44,6 @@ class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
         self.synchronizer = synchronizer
         self.eventsManagerCoordinator = eventsManagerCoordinator
         self.splitsStorage = splitsStorage
-        self.splitFactory = factory
         
         evaluator = DefaultEvaluator(splitsStorage: splitsStorage,
                                      mySegmentsStorage: EmptyMySegmentsStorage(),
@@ -87,7 +84,7 @@ class LocalhostClientManager: SplitClientManager, @unchecked Sendable {
         
         let newEventsManager = eventsManager ?? DefaultSplitEventsManager(config: config, timeChecker: timeChecker)
         let newClient = LocalhostSplitClient(key: key,
-                                             splitsStorage: splitsStorage, clientManager: self,
+                                             splitsStorage: splitsStorage,
                                              eventsManager: newEventsManager,
                                              evaluator: evaluator)
 

@@ -126,11 +126,11 @@ public class SplitClientConfig: NSObject {
     @available(*, deprecated, message: "Use logLevel instead")
     @objc public var isDebugModeEnabled: Bool {
         get {
-            return Logger.shared.level == .debug
+            return SplitLogLevel.from(Logger.shared.level) == .debug
         }
         set {
             if Logger.shared.level == .none {
-                Logger.shared.level = newValue ? .debug : .none
+                Logger.shared.level = newValue ? SplitLogLevel.debug.toLogLevel() : .none
             }
         }
     }
@@ -142,11 +142,11 @@ public class SplitClientConfig: NSObject {
     @available(*, deprecated, message: "Use logLevel instead")
     @objc public var isVerboseModeEnabled: Bool {
         get {
-            return Logger.shared.level == .verbose
+            return SplitLogLevel.from(Logger.shared.level) == .verbose
         }
         set {
             if Logger.shared.level == .none {
-                Logger.shared.level = newValue ? .verbose : .none
+                Logger.shared.level = newValue ? SplitLogLevel.verbose.toLogLevel() : .none
             }
         }
     }
@@ -155,15 +155,15 @@ public class SplitClientConfig: NSObject {
     /// Swift only method
     public var logLevel: SplitLogLevel {
         get {
-            return Logger.shared.level
+            return SplitLogLevel.from(Logger.shared.level)
         }
         set {
-            Logger.shared.level = newValue
+            Logger.shared.level = newValue.toLogLevel()
         }
     }
 
     @objc public func set(logLevel: String) {
-        Logger.shared.level = SplitLogLevel(rawValue: logLevel) ?? .none
+        Logger.shared.level = (SplitLogLevel(rawValue: logLevel) ?? .none).toLogLevel()
     }
 
     ///

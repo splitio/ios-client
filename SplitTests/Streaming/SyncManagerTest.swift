@@ -263,6 +263,9 @@ class SyncManagerTest: XCTestCase {
             default:
                 print("nones")
             }
+            
+            nHelper.removeAllObservers()
+            syncManager.stop()
         }
     }
 

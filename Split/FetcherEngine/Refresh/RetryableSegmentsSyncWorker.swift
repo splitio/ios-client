@@ -23,7 +23,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendabl
 
     init(telemetryProducer: TelemetryRuntimeProducer?,
          eventsManager: SplitEventsManager,
-         reconnectBackoffCounter: ReconnectBackoffCounter,
+         backoffCounter: BackoffCounter,
          avoidCache: Bool,
          changeNumbers: SegmentsChangeNumber,
          syncHelper: SegmentsSyncHelper) {
@@ -35,7 +35,7 @@ class RetryableMySegmentsSyncWorker: BaseRetryableSyncWorker, @unchecked Sendabl
         self.syncHelper = syncHelper
 
         super.init(eventsManager: eventsManager,
-                   reconnectBackoffCounter: reconnectBackoffCounter)
+                   backoffCounter: backoffCounter)
     }
 
     override func fetchFromRemote() throws -> Bool {
@@ -154,8 +154,8 @@ class DefaultSegmentsSyncHelper: SegmentsSyncHelper {
                            headers: HttpHeaders? = nil,
                            useTillParam: Bool = false) throws -> SegmentsSyncResult {
 
-        let backoffCounter = DefaultReconnectBackoffCounter(backoffBase: backoffTimeBaseInSecs,
-                                                            maxTimeLimit: backoffTimeMaxInSecs)
+        let backoffCounter = DefaultBackoffCounter(backoffBase: backoffTimeBaseInSecs,
+                                                   maxTimeLimit: backoffTimeMaxInSecs)
         var attemptCount = 0
         let goalTill = SegmentsChangeNumber(msChangeNumber: msTill, mlsChangeNumber: mlsTill)
         let till = useTillParam ? goalTill.max() : nil

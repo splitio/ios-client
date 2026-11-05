@@ -20,7 +20,7 @@ class SplitsSyncWorkerTest: XCTestCase {
     var splitChangeProcessor: SplitChangeProcessorStub!
     var ruleBasedSegmentChangeProcessor: RuleBasedSegmentChangeProcessorStub!
     var eventsManager: SplitEventsManagerMock!
-    var backoffCounter: ReconnectBackoffCounterStub!
+    var backoffCounter: BackoffCounterStub!
     var splitsSyncWorker: RetryableSplitsSyncWorker!
 
     override func setUp() {
@@ -33,7 +33,7 @@ class SplitsSyncWorkerTest: XCTestCase {
         splitChangeProcessor = SplitChangeProcessorStub()
         ruleBasedSegmentChangeProcessor = RuleBasedSegmentChangeProcessorStub()
         eventsManager = SplitEventsManagerMock()
-        backoffCounter = ReconnectBackoffCounterStub()
+        backoffCounter = BackoffCounterStub()
         eventsManager.isSplitsReadyFired = false
     }
 
@@ -46,7 +46,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                      eventsManager: eventsManager,
-                                                     reconnectBackoffCounter: backoffCounter,
+                                                     backoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
 
         var resultIsSuccess = false
@@ -75,7 +75,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                      eventsManager: eventsManager,
-                                                     reconnectBackoffCounter: backoffCounter,
+                                                     backoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)
@@ -103,7 +103,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                      eventsManager: eventsManager,
-                                                     reconnectBackoffCounter: backoffCounter,
+                                                     backoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
 
         splitFetcher.splitChanges = [nil]
@@ -135,7 +135,7 @@ class SplitsSyncWorkerTest: XCTestCase {
                                                      splitChangeProcessor: splitChangeProcessor,
                                                      ruleBasedSegmentChangeProcessor: ruleBasedSegmentChangeProcessor,
                                                      eventsManager: eventsManager,
-                                                     reconnectBackoffCounter: backoffCounter,
+                                                     backoffCounter: backoffCounter,
                                                      splitConfig: SplitClientConfig())
 
         let change = SplitChange(splits: [], since: 200, till: 200)

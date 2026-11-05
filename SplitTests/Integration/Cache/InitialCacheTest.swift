@@ -49,6 +49,8 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
 
         wait(for: [dbExp], timeout: 10.0)
 
@@ -110,6 +112,8 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
 
         wait(for: [dbExp], timeout: 10.0)
         
@@ -179,6 +183,8 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: Date().unixTimestamp())
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
 
         wait(for: [dbExp], timeout: 10.0)
 
@@ -248,6 +254,8 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .splitsFilterQueryString, stringValue: "")
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
 
         wait(for: [dbExp], timeout: 10.0)
 
@@ -330,6 +338,8 @@ class InitialCacheTest: XCTestCase {
         splitDatabase.generalInfoDao.update(info: .splitsUpdateTimestamp, longValue: 10)
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 300)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: "1.1")
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
 
         wait(for: [dbExp], timeout: 10.0)
 

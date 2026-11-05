@@ -8,9 +8,8 @@
 
 import Foundation
 
-protocol RecorderWorker {
-    func flush()
-}
+// RecorderWorker protocol is defined in Sources/PeriodicRecorderWorker/PeriodicRecorderWorker.swift
+// and is available via @_exported import (SPM) or direct inclusion (CocoaPods).
 
 protocol RecorderSyncHelper {
     associatedtype Item

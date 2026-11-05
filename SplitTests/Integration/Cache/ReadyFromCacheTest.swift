@@ -39,6 +39,8 @@ class ReadyFromCacheTest: XCTestCase {
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].featureFlags.splits[0])
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -98,6 +100,8 @@ class ReadyFromCacheTest: XCTestCase {
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].featureFlags.splits[0])
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -216,6 +220,8 @@ class ReadyFromCacheTest: XCTestCase {
         splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].featureFlags.splits[0])
         splitDatabase.generalInfoDao.update(info: .splitsChangeNumber, longValue: 100)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
@@ -283,7 +289,8 @@ class ReadyFromCacheTest: XCTestCase {
         XCTAssertEqual("on2", treatmentsReady[1])
 
         XCTAssertEqual(100, receivedChangeNumber[1])
-        XCTAssertEqual(1000, receivedChangeNumber[2])
+        // The filter changed between runs: the cache is reset, so the next sync is a full fetch.
+        XCTAssertEqual(-1, receivedChangeNumber[2])
 
     }
 
@@ -294,6 +301,8 @@ class ReadyFromCacheTest: XCTestCase {
         loadChanges1()
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
 
         let split =  changes[0].featureFlags.splits[0]
         let split1Name = "split1"
@@ -401,6 +410,8 @@ class ReadyFromCacheTest: XCTestCase {
         splitDatabase.attributesDao.syncUpdate(userKey: userKey, attributes: ["isEnabled": true])
         splitDatabase.splitDao.syncInsertOrUpdate(split: split1)
         splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
 
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
