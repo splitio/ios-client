@@ -434,8 +434,6 @@ pipeline:
             scheme:
               - SplitTestsSwift5
               - SplitTestsSwift6
-            # Account Mac entitlement is 4. Test waits for Build, so the
-            # matrix can use the full entitlement.
             maxConcurrency: 4
         when:
           pipelineStatus: Success
@@ -464,7 +462,7 @@ pipeline:
                   identifier: run_sonarqube_scan
                   spec:
                     shell: Sh
-                    command: |
+                    command: |-
                       set -euo pipefail
 
                       mkdir -p coverage
@@ -551,6 +549,9 @@ pipeline:
                           - AllErrors
                         action:
                           type: MarkAsSuccess
+                  when:
+                    stageStatus: Success
+                    condition: "false"
         when:
           pipelineStatus: All
           condition: <+pipeline.stages.Build.status> == "SUCCEEDED"
