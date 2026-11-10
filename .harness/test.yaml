@@ -436,5 +436,5 @@ pipeline:
               - SplitTestsSwift6
             maxConcurrency: 4
         when:
-          pipelineStatus: Success
-          condition: <+pipeline.stages.Build.status> == "SUCCEEDED"
+          pipelineStatus: All
+          condition: <+pipeline.stages.Build.status> == "SUCCEEDED" || <+pipeline.stages.Build.status> == "IGNORE_FAILED"
