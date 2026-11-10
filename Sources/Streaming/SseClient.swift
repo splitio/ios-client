@@ -3,9 +3,9 @@
 
 import Foundation
 #if SWIFT_PACKAGE || SPLIT_MODULAR
-import Concurrency
-import Http
-import Logging
+import SplitConcurrency
+import SplitHttp
+import SplitLogging
 #endif
 
 public struct SseClientConstants {

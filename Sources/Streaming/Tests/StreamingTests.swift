@@ -1,5 +1,5 @@
 import XCTest
-@testable import Streaming
+@testable import SplitStreaming
 
 final class StreamingTests: XCTestCase {
     func testExample() {

@@ -3,8 +3,8 @@
 
 import Foundation
 #if SWIFT_PACKAGE || SPLIT_MODULAR
-import Concurrency
-import Logging
+import SplitConcurrency
+import SplitLogging
 #endif
 
 public class SseConnectionHandler: @unchecked Sendable {

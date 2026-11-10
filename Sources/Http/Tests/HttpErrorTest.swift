@@ -3,7 +3,7 @@
 
 import Foundation
 import XCTest
-@testable import Http
+@testable import SplitHttp
 
 class HttpErrorTest: XCTestCase {
 

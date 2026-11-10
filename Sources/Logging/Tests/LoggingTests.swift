@@ -3,7 +3,7 @@
 //  Copyright © 2022 Split. All rights reserved.
 
 import Foundation
-@testable import Logging
+@testable import SplitLogging
 
 import XCTest
 

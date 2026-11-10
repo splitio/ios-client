@@ -5,7 +5,7 @@
 import Foundation
 import CommonCrypto
 #if SWIFT_PACKAGE || SPLIT_MODULAR
-import Logging
+import SplitLogging
 #endif
 
 // MARK: - Private Extensions
