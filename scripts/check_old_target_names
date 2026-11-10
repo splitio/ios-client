@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# check_old_target_names - fail when a pre-rename SwiftPM target name is still used
+# as a module name.
+#
+# Usage:
+#   scripts/check_old_target_names
+#
+# The SwiftPM targets were renamed with the Split prefix (SplitLogging, SplitHttp,
+# SplitConcurrency, SplitStreaming, SplitTracker, SplitBackoffCounter,
+# SplitPeriodicRecorderWorker). The old names are:
+#   Logging, Http, Concurrency, Streaming, Tracker, BackoffCounter, PeriodicRecorderWorker
+#
+# Scanned:
+#   - Swift sources under Split/, Sources/ and Tests/ (Tests/PackageResolution excluded)
+#     for `import <Old>` lines.
+#   - Split.podspec and every file under scripts/ (this script and scripts/git-hooks
+#     excluded) for `import <Old>` lines.
+#   - Sources/README.md: every backticked old name (it only lists modules).
+#   - Sources/*/README.md: `import <Old>` lines, `# <Old>` titles, and module mentions
+#     such as "The `<Old>` module" or "the <Old> module".
+#
+# Not scanned: CHANGES.txt (historical entries) and Tests/PackageResolution fixtures
+# (they intentionally import swift-log's `Logging`). Ordinary words that happen to
+# match (a `Tracker` type, "streaming requests") are not module names and are not
+# matched here.
+#
+# Exit status: 0 when no old module name is found, 1 when any is found (each hit is
+# printed as file:line), 2 when the repository layout cannot be read.
+
+set -u
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+SELF="$(basename "$0")"
+
+OLD='Logging|Http|Concurrency|Streaming|Tracker|BackoffCounter|PeriodicRecorderWorker'
+IMPORT_RE="(^|[^A-Za-z0-9_])import[[:space:]]+($OLD)([^A-Za-z0-9_]|\$)"
+
+if [ ! -d "$REPO_ROOT/Sources" ] || [ ! -d "$REPO_ROOT/scripts" ]; then
+    echo "error: $REPO_ROOT does not look like the repository root" >&2
+    exit 2
+fi
+
+hits=0
+
+# report <file> <extended-regex> [label]
+# Prints file:line for each match, counts the hit.
+scan() {
+    local file="$1" re="$2" label="$3" line
+    while IFS= read -r line; do
+        echo "$line  [$label]"
+        hits=$((hits + 1))
+    done < <(grep -nE "$re" "$file" 2>/dev/null | sed "s|^|${file#$REPO_ROOT/}:|")
+}
+
+# Swift sources and tests: imports only.
+while IFS= read -r file; do
+    scan "$file" "$IMPORT_RE" "old module import"
+done < <(find "$REPO_ROOT/Split" "$REPO_ROOT/Sources" "$REPO_ROOT/Tests" \
+    -name '*.swift' -not -path "$REPO_ROOT/Tests/PackageResolution/*" 2>/dev/null)
+
+# Podspec and scripts: imports only.
+scan "$REPO_ROOT/Split.podspec" "$IMPORT_RE" "old module import"
+while IFS= read -r file; do
+    [ "$(basename "$file")" = "$SELF" ] && continue
+    scan "$file" "$IMPORT_RE" "old module import"
+done < <(find "$REPO_ROOT/scripts" -type f -not -path "$REPO_ROOT/scripts/git-hooks/*")
+
+# Sources/README.md: every backticked old name is a module name in that file.
+scan "$REPO_ROOT/Sources/README.md" "\`($OLD)\`" "old module name (README)"
+scan "$REPO_ROOT/Sources/README.md" "$IMPORT_RE" "old module import (README)"
+
+# Sources/*/README.md: imports, titles and module mentions.
+MODULE_RE="(\`($OLD)\` module|(the|this|a|an) ($OLD) module)"
+TITLE_RE="^#[[:space:]]+($OLD)[[:space:]]*\$"
+while IFS= read -r file; do
+    [ "$file" = "$REPO_ROOT/Sources/README.md" ] && continue
+    scan "$file" "$IMPORT_RE" "old module import (README)"
+    scan "$file" "$TITLE_RE" "old module title (README)"
+    scan "$file" "$MODULE_RE" "old module mention (README)"
+done < <(find "$REPO_ROOT/Sources" -mindepth 2 -maxdepth 2 -name README.md 2>/dev/null)
+
+if [ "$hits" -gt 0 ]; then
+    echo "check_old_target_names: $hits old target name(s) used as module names"
+    exit 1
+fi
+echo "check_old_target_names: no old target names used as module names"
+exit 0
