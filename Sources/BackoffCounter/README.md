@@ -1,4 +1,4 @@
-# BackoffCounter
+# SplitBackoffCounter
 
 A thread-safe exponential backoff implementation for retry logic.
 

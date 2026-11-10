@@ -1,13 +1,13 @@
 # Modular build layout
 
-Internal modules (`Logging`, `Http`, `Concurrency`, `BackoffCounter`,
-`PeriodicRecorderWorker`, `Tracker`, `Streaming`) live here; the rest in `Split/`.
+Internal modules (`SplitLogging`, `SplitHttp`, `SplitConcurrency`, `SplitBackoffCounter`,
+`SplitPeriodicRecorderWorker`, `SplitTracker`, `SplitStreaming`) live here; the rest in `Split/`.
 
 Three channels, two packaging shapes:
 
 | Channel | Shape |
 |---|---|
-| **SPM** | modular — separate modules (`import Http`, …) |
+| **SPM** | modular — separate modules (`import SplitHttp`, …) |
 | **Xcode module targets** | modular |
 | **CocoaPods / Carthage / xcframework** | flattened — one `Split` module/framework |
 
@@ -19,7 +19,7 @@ the `typealias` bridges in `Split/ModuleConnectors/`, and helpers duplicated wit
 
 ```swift
 #if SWIFT_PACKAGE || SPLIT_MODULAR
-import Logging
+import SplitLogging
 #endif
 ```
 

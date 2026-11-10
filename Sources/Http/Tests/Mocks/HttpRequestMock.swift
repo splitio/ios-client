@@ -3,7 +3,7 @@
 //  Copyright © 2020 Split. All rights reserved.
 
 import Foundation
-@testable import Http
+@testable import SplitHttp
 
 class HttpRequestMock: HttpRequest, @unchecked Sendable {
     var pinnedCredentialFail: Bool = false

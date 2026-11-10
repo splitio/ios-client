@@ -4,7 +4,7 @@
 
 import Foundation
 import XCTest
-@testable import BackoffCounter
+@testable import SplitBackoffCounter
 
 class BackoffCounterTest: XCTestCase {
 

@@ -3,7 +3,7 @@
 //  Copyright © 2020 Split. All rights reserved.
 
 import Foundation
-@testable import Http
+@testable import SplitHttp
 
 class HttpRequestManagerMock: HttpRequestManager, @unchecked Sendable {
 

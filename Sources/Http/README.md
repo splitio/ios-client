@@ -1,10 +1,10 @@
-# Http
+# SplitHttp
 
 A lightweight, modular HTTP networking layer for Swift applications.
 
 ## Overview
 
-The `Http` module provides a clean abstraction over `URLSession` for making HTTP requests. It supports both standard data requests and streaming connections, with built-in support for TLS certificate pinning.
+The `SplitHttp` module provides a clean abstraction over `URLSession` for making HTTP requests. It supports both standard data requests and streaming connections, with built-in support for TLS certificate pinning.
 
 ## Features
 

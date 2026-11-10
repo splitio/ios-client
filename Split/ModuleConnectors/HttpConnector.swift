@@ -3,31 +3,31 @@
 
 #if SWIFT_PACKAGE || SPLIT_MODULAR
 
-import Http
+import SplitHttp
 
 // Re-export only CertificatePinningStatus for SDK consumers, to be used by the handlers
-@_exported import enum Http.CertificatePinningStatus
+@_exported import enum SplitHttp.CertificatePinningStatus
 
 // MARK: - Internal use
-typealias HttpClient = Http.HttpClient
-typealias HttpResponse = Http.HttpResponse
-typealias HttpSessionConfig = Http.HttpSessionConfig
-typealias HttpAuthenticator = Http.HttpAuthenticator
-typealias HttpNotificationHandler = Http.HttpNotificationHandler
-typealias HttpHeaders = Http.HttpHeaders
-typealias HttpParameters = Http.HttpParameters
-typealias HttpParameter = Http.HttpParameter
-typealias HttpError = Http.HttpError
-typealias HttpCode = Http.HttpCode
-typealias HttpStreamRequest = Http.HttpStreamRequest
-typealias Endpoint = Http.Endpoint
-typealias CredentialPin = Http.CredentialPin
-typealias KeyHashAlgo = Http.KeyHashAlgo
-typealias CertificatePinningCompleteStatus = Http.CertificatePinningCompleteStatus
-typealias DefaultHttpClient = Http.DefaultHttpClient
-typealias DefaultTlsPinChecker = Http.DefaultTlsPinChecker
-typealias TlsPinChecker = Http.TlsPinChecker
-typealias TlsCertificateParser = Http.TlsCertificateParser
-typealias AlgoHelper = Http.AlgoHelper
-typealias InternalHttpErrorCode = Http.InternalHttpErrorCode
+typealias HttpClient = SplitHttp.HttpClient
+typealias HttpResponse = SplitHttp.HttpResponse
+typealias HttpSessionConfig = SplitHttp.HttpSessionConfig
+typealias HttpAuthenticator = SplitHttp.HttpAuthenticator
+typealias HttpNotificationHandler = SplitHttp.HttpNotificationHandler
+typealias HttpHeaders = SplitHttp.HttpHeaders
+typealias HttpParameters = SplitHttp.HttpParameters
+typealias HttpParameter = SplitHttp.HttpParameter
+typealias HttpError = SplitHttp.HttpError
+typealias HttpCode = SplitHttp.HttpCode
+typealias HttpStreamRequest = SplitHttp.HttpStreamRequest
+typealias Endpoint = SplitHttp.Endpoint
+typealias CredentialPin = SplitHttp.CredentialPin
+typealias KeyHashAlgo = SplitHttp.KeyHashAlgo
+typealias CertificatePinningCompleteStatus = SplitHttp.CertificatePinningCompleteStatus
+typealias DefaultHttpClient = SplitHttp.DefaultHttpClient
+typealias DefaultTlsPinChecker = SplitHttp.DefaultTlsPinChecker
+typealias TlsPinChecker = SplitHttp.TlsPinChecker
+typealias TlsCertificateParser = SplitHttp.TlsCertificateParser
+typealias AlgoHelper = SplitHttp.AlgoHelper
+typealias InternalHttpErrorCode = SplitHttp.InternalHttpErrorCode
 #endif

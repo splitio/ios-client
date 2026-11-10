@@ -1,4 +1,4 @@
-# PeriodicRecorderWorker
+# SplitPeriodicRecorderWorker
 
 A module that provides periodic execution of flush operations for recorder workers.
 
@@ -12,7 +12,7 @@ This module contains:
 ## Usage
 
 ```swift
-import PeriodicRecorderWorker
+import SplitPeriodicRecorderWorker
 
 // Create a recorder worker that implements the RecorderWorker protocol
 class MyRecorderWorker: RecorderWorker {

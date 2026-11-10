@@ -1,5 +1,5 @@
 import XCTest
-@testable import Concurrency
+@testable import SplitConcurrency
 
 final class ConcurrencyTests: XCTestCase {
     func testExample() {

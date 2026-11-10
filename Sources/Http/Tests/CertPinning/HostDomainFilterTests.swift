@@ -4,7 +4,7 @@
 
 import Foundation
 import XCTest
-@testable import Http
+@testable import SplitHttp
 
 class CredentialPinParserTests: XCTestCase {
 

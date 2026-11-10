@@ -9,7 +9,7 @@
 import Foundation
 @testable import Split
 #if SWIFT_PACKAGE || SPLIT_MODULAR
-import Http
+import SplitHttp
 #endif
 
 class TestUtils {
