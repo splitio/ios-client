@@ -57,6 +57,28 @@ if [ "${#fixtures[@]}" -eq 0 ]; then
     exit 2
 fi
 
+# Naming check: every target and testTarget in the manifests must carry the
+# Split prefix. JFBCrypt (template-only vendored C target) is exempt.
+check_target_names() {
+    local bad=0 manifest file
+    for manifest in Package.swift Package.swift.template; do
+        file="$REPO_ROOT/$manifest"
+        [ -f "$file" ] || continue
+        while IFS= read -r tname; do
+            case "$tname" in
+                Split*|JFBCrypt) ;;
+                *) echo "naming: $manifest target '$tname' lacks the Split prefix"; bad=1 ;;
+            esac
+        done < <(awk '/\.(target|testTarget|binaryTarget)\(/ {f=1; next} f && /name:/ {match($0, /"[^"]+"/); print substr($0, RSTART+1, RLENGTH-2); f=0}' "$file")
+    done
+    return $bad
+}
+
+if ! check_target_names; then
+    echo "check_package_resolution: target naming check failed"
+    exit 1
+fi
+
 failed=0
 
 run_fixture() {
