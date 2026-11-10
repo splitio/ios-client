@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+# check_package_resolution - verify that consumers of this package resolve and build
+# alongside common third-party dependencies (SwiftPM package graph check).
+#
+# Usage:
+#   scripts/check_package_resolution [fixture ...]
+#
+#   With no arguments every fixture under Tests/PackageResolution/ runs.
+#   Pass fixture directory names (e.g. SwiftLog Lumberjack Control) to run a subset.
+#
+# Fixtures are consumer packages. Each depends on this repository by local path
+# ("../../.." in the fixture manifest) and on one third-party package. The
+# "Control" fixture is the negative control (no name collision) and must pass.
+# A fixture whose output contains
+#   target names need to be unique across the package graph
+# is reported as a collision failure.
+#
+# For each fixture the script copies it to a temporary directory, rewrites the
+# relative local path to this checkout's absolute path, then runs
+#   swift package resolve && swift build
+# there. Nothing is written into the tracked tree (.build/ and Package.resolved
+# stay in the temporary copy).
+#
+# Exit status: 0 when every selected fixture resolves and builds, 1 when any
+# fixture fails (the control included), 2 on bad arguments.
+#
+# CI: this script is not wired into any pipeline. Run it locally or add a step
+# in a CI file owned by a separate change.
+
+set -u
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+FIXTURE_ROOT="$REPO_ROOT/Tests/PackageResolution"
+COLLISION_MESSAGE="target names need to be unique across the package graph"
+
+if [ "$#" -gt 0 ]; then
+    fixtures=("$@")
+    for name in "${fixtures[@]}"; do
+        if [ ! -f "$FIXTURE_ROOT/$name/Package.swift" ]; then
+            echo "error: no fixture named '$name' under $FIXTURE_ROOT" >&2
+            exit 2
+        fi
+    done
+else
+    fixtures=()
+    for dir in "$FIXTURE_ROOT"/*/; do
+        name="$(basename "$dir")"
+        if [ -f "$dir/Package.swift" ]; then
+            fixtures+=("$name")
+        fi
+    done
+fi
+
+if [ "${#fixtures[@]}" -eq 0 ]; then
+    echo "error: no fixtures found under $FIXTURE_ROOT" >&2
+    exit 2
+fi
+
+failed=0
+
+run_fixture() {
+    local name="$1"
+    local src="$FIXTURE_ROOT/$name"
+    local work
+    work="$(mktemp -d "${TMPDIR:-/tmp}/pkgres-$name.XXXXXX")"
+
+    cp -R "$src/." "$work/"
+    rm -rf "$work/.build" "$work/Package.resolved"
+    sed "s|\"\.\./\.\./\.\.\"|\"$REPO_ROOT\"|" "$work/Package.swift" > "$work/Package.swift.tmp" \
+        && mv "$work/Package.swift.tmp" "$work/Package.swift"
+
+    local log="$work/output.log"
+    local status=0
+    echo "=== fixture: $name ($src)"
+    (cd "$work" && swift package resolve && swift build) > "$log" 2>&1 || status=$?
+    cat "$log"
+
+    local collision=0
+    if grep -q "$COLLISION_MESSAGE" "$log"; then
+        collision=1
+        echo "[$name] COLLISION: $COLLISION_MESSAGE"
+    fi
+
+    rm -rf "$work"
+
+    if [ "$status" -eq 0 ] && [ "$collision" -eq 0 ]; then
+        echo "=== $name: PASS"
+        return 0
+    fi
+    if [ "$name" = "Control" ]; then
+        echo "=== $name: FAIL (control must resolve and build)"
+    else
+        echo "=== $name: FAIL"
+    fi
+    return 1
+}
+
+for name in "${fixtures[@]}"; do
+    run_fixture "$name" || failed=1
+done
+
+if [ "$failed" -ne 0 ]; then
+    echo "check_package_resolution: one or more fixtures failed"
+    exit 1
+fi
+echo "check_package_resolution: all fixtures passed"
+exit 0
