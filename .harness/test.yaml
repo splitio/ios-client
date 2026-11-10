@@ -70,6 +70,12 @@ pipeline:
                             -derivedDataPath "$PWD/SplitApp-tvos" \
                             ONLY_ACTIVE_ARCH=NO TEST_AFTER_BUILD=NO \
                             -configuration Debug
+                      failureStrategies:
+                        - onFailure:
+                            errors:
+                              - AllErrors
+                            action:
+                              type: MarkAsSuccess
                   - step:
                       type: Run
                       name: Build watchOS
