@@ -1,4 +1,4 @@
-# Logging
+# SplitLogging
 
 ## What this module provides
 
@@ -15,7 +15,7 @@
 The module ships with a `DefaultDateProvider` that uses `Foundation.Date`, so it works out of the box. You can still supply a custom `DateProvider` if you need different formatting or a custom clock:
 
 ```swift
-import Logging
+import SplitLogging
 
 // Optional: override the default provider
 Logger.shared.dateProvider = MyCustomDateProvider()
@@ -25,7 +25,7 @@ Logger.shared.level = .info
 ### 2) Log
 
 ```swift
-import Logging
+import SplitLogging
 
 Logger.i("SDK initialized")
 Logger.w("Something looks off", ["context": "value"])
@@ -35,7 +35,7 @@ Logger.e("Something failed")
 ### Optional: customize output
 
 ```swift
-import Logging
+import SplitLogging
 
 final class MyPrinter: LogPrinter {
   func stdout(_ items: Any...) {
@@ -51,7 +51,7 @@ Logger.shared.printer = MyPrinter()
 `TimeChecker` uses `Logger.shared.dateProvider` by default.
 
 ```swift
-import Logging
+import SplitLogging
 
 let timeChecker = TimeChecker(factoryId: 1, startTime: Logger.shared.dateProvider.nowMillis())
 // ... do work ...
@@ -69,5 +69,5 @@ timeChecker.logInterval("Finished work")
 From the repository root:
 
 ```bash
-swift test --filter LoggingTests
+swift test --filter SplitLoggingTests
 ```

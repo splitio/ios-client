@@ -1,4 +1,4 @@
-# Tracker
+# SplitTracker
 
 A module that provides event tracking functionality with validation and logging.
 
@@ -14,7 +14,7 @@ This module contains:
 ## Usage
 
 ```swift
-import Tracker
+import SplitTracker
 
 // Create validator implementations
 class MyEventValidator: TrackerEventValidator {
