@@ -8,13 +8,13 @@ let package = Package(
     products: [
         .library(name: "Split", targets: ["Split"]),
     
-        .library(name: "SplitCommons", targets: ["Logging", "Http", "BackoffCounter", "PeriodicRecorderWorker", "Tracker", "Concurrency", "Streaming"]),],
+        .library(name: "SplitCommons", targets: ["SplitLogging", "SplitHttp", "SplitBackoffCounter", "SplitPeriodicRecorderWorker", "SplitTracker", "SplitConcurrency", "SplitStreaming"]),],
     targets: [
         
         // MARK: Split
         .target(
             name: "Split",
-            dependencies: ["BackoffCounter", "Concurrency", "Http", "Logging", "PeriodicRecorderWorker", "Streaming", "Tracker"],
+            dependencies: ["SplitBackoffCounter", "SplitConcurrency", "SplitHttp", "SplitLogging", "SplitPeriodicRecorderWorker", "SplitStreaming", "SplitTracker"],
             path: "Split",
             exclude: [
                 "Common/Yaml/LICENSE",
@@ -26,88 +26,90 @@ let package = Package(
         // MARK: External Modules
         // Logging
         .target(
-            name: "Logging",
+            name: "SplitLogging",
             dependencies: [],
             path: "Sources/Logging",
             exclude: ["Tests", "README.md"]
         ),
         .testTarget(
-            name: "LoggingTests",
-            dependencies: ["Logging"],
+            name: "SplitLoggingTests",
+            dependencies: ["SplitLogging"],
             path: "Sources/Logging/Tests"
         ),
         
         // Http
         .target(
-            name: "Http",
-            dependencies: ["Logging"],
+            name: "SplitHttp",
+            dependencies: ["SplitLogging"],
             path: "Sources/Http",
             exclude: ["Tests", "README.md"]
         ),
         .testTarget(
-            name: "HttpTests",
-            dependencies: ["Http"],
+            name: "SplitHttpTests",
+            dependencies: ["SplitHttp"],
             path: "Sources/Http/Tests"
         ),
         
         // BackoffCounter
         .target(
-            name: "BackoffCounter",
-            dependencies: ["Logging"],
+            name: "SplitBackoffCounter",
+            dependencies: ["SplitLogging"],
             path: "Sources/BackoffCounter",
             exclude: ["Tests", "README.md"]
         ),
         .testTarget(
-            name: "BackoffCounterTests",
-            dependencies: ["BackoffCounter"],
+            name: "SplitBackoffCounterTests",
+            dependencies: ["SplitBackoffCounter"],
             path: "Sources/BackoffCounter/Tests"
         ),
 
         // PeriodicRecorderWorker
         .target(
-            name: "PeriodicRecorderWorker",
+            name: "SplitPeriodicRecorderWorker",
             dependencies: [],
             path: "Sources/PeriodicRecorderWorker",
             exclude: ["Tests", "README.md"]
         ),
         .testTarget(
-            name: "PeriodicRecorderWorkerTests",
-            dependencies: ["PeriodicRecorderWorker"],
+            name: "SplitPeriodicRecorderWorkerTests",
+            dependencies: ["SplitPeriodicRecorderWorker"],
             path: "Sources/PeriodicRecorderWorker/Tests"
         ),
         
         // Tracker
         .target(
-            name: "Tracker",
+            name: "SplitTracker",
             dependencies: [],
             path: "Sources/Tracker",
             exclude: ["Tests", "README.md"]
         ),
         .testTarget(
-            name: "TrackerTests",
-            dependencies: ["Tracker"],
+            name: "SplitTrackerTests",
+            dependencies: ["SplitTracker"],
             path: "Sources/Tracker/Tests"
         ),
         
         .target(
-            name: "Concurrency",
+            name: "SplitConcurrency",
             dependencies: [],
+            path: "Sources/Concurrency",
             exclude: ["Tests", "README.md"]
         ),
         .testTarget(
-            name: "ConcurrencyTests",
-            dependencies: ["Concurrency"],
+            name: "SplitConcurrencyTests",
+            dependencies: ["SplitConcurrency"],
             path: "Sources/Concurrency/Tests"
         ),
 
         .target(
-            name: "Streaming",
-            dependencies: ["Concurrency", "Http", "Logging"],
+            name: "SplitStreaming",
+            dependencies: ["SplitConcurrency", "SplitHttp", "SplitLogging"],
+            path: "Sources/Streaming",
             exclude: ["Tests", "README.md"]
         ),
         .testTarget(
-            name: "StreamingTests",
-            dependencies: ["Streaming"],
+            name: "SplitStreamingTests",
+            dependencies: ["SplitStreaming"],
             path: "Sources/Streaming/Tests"
         ),
         // #INJECT_TARGET

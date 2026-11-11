@@ -1,3 +1,6 @@
+3.8.1: (Nov 11, 2026)
+- Renamed the internal Swift Package modules and Xcode module frameworks with a Split prefix to avoid name collisions with other packages.
+
 3.8.0: (Nov 5, 2026)
 - Fixed an issue where cached definitions could be lost during proxy recovery.
 - Added Xcode 27 compatibility.

@@ -2,15 +2,15 @@
 
 #if SWIFT_PACKAGE || SPLIT_MODULAR
 
-import Streaming
+import SplitStreaming
 
 // MARK: - Internal use
-typealias EventStreamParser = Streaming.EventStreamParser
-typealias SseClient = Streaming.SseClient
-typealias DefaultSseClient = Streaming.DefaultSseClient
-typealias SseClientConstants = Streaming.SseClientConstants
-typealias SseClientFactory = Streaming.SseClientFactory
-typealias DefaultSseClientFactory = Streaming.DefaultSseClientFactory
-typealias SseConnectionHandler = Streaming.SseConnectionHandler
-typealias SseHandler = Streaming.SseHandler
+typealias EventStreamParser = SplitStreaming.EventStreamParser
+typealias SseClient = SplitStreaming.SseClient
+typealias DefaultSseClient = SplitStreaming.DefaultSseClient
+typealias SseClientConstants = SplitStreaming.SseClientConstants
+typealias SseClientFactory = SplitStreaming.SseClientFactory
+typealias DefaultSseClientFactory = SplitStreaming.DefaultSseClientFactory
+typealias SseConnectionHandler = SplitStreaming.SseConnectionHandler
+typealias SseHandler = SplitStreaming.SseHandler
 #endif

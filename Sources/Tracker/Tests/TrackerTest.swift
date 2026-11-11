@@ -2,7 +2,7 @@
 //  Copyright © 2022 Split. All rights reserved.
 
 import XCTest
-@testable import Tracker
+@testable import SplitTracker
 
 class TrackerTest: XCTestCase {
 

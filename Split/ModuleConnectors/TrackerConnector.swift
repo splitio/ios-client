@@ -4,7 +4,7 @@
 import Foundation
 
 #if SWIFT_PACKAGE || SPLIT_MODULAR
-@_exported import Tracker
+@_exported import SplitTracker
 #endif
 
 // Typealiases to keep backwards compatibility before module extraction

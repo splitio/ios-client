@@ -5,5 +5,5 @@ import Foundation
 
 // We can export the entire module because in this case *all* components should be public.
 #if SWIFT_PACKAGE || SPLIT_MODULAR
-@_exported import BackoffCounter
+@_exported import SplitBackoffCounter
 #endif

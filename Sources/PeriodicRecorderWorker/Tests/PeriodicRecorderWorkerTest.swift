@@ -3,7 +3,7 @@
 //  Copyright © 2020 Split. All rights reserved.
 
 import XCTest
-@testable import PeriodicRecorderWorker
+@testable import SplitPeriodicRecorderWorker
 
 final class RecorderWorkerStub: RecorderWorker, @unchecked Sendable {
     var flushCallCount = 0

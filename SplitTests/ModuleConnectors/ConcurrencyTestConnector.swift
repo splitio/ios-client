@@ -1,13 +1,13 @@
 // ConcurrencyTestConnector.swift
 
 #if SWIFT_PACKAGE || SPLIT_MODULAR
-import Concurrency
+import SplitConcurrency
 
 // MARK: - Concurrency types for testing
 
-typealias Atomic = Concurrency.Atomic
-typealias AtomicInt = Concurrency.AtomicInt
-typealias SynchronizedDictionary = Concurrency.SynchronizedDictionary
-typealias SynchronizedDictionaryComposed = Concurrency.SynchronizedDictionaryComposed
-typealias SynchronizedDictionarySet = Concurrency.SynchronizedDictionarySet
+typealias Atomic = SplitConcurrency.Atomic
+typealias AtomicInt = SplitConcurrency.AtomicInt
+typealias SynchronizedDictionary = SplitConcurrency.SynchronizedDictionary
+typealias SynchronizedDictionaryComposed = SplitConcurrency.SynchronizedDictionaryComposed
+typealias SynchronizedDictionarySet = SplitConcurrency.SynchronizedDictionarySet
 #endif
