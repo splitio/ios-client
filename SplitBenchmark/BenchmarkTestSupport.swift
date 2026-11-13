@@ -44,6 +44,10 @@ final class FakeBenchmarkDriver: BenchmarkDriver, @unchecked Sendable {
     private(set) var shutdownCalls = 0
     var thermalReadCount: Int { lock.lock(); defer { lock.unlock() }; return thermalReads }
 
+    var buildCount: Int { lock.lock(); defer { lock.unlock() }; return specs.count }
+
+    func advanceClock(by nanos: UInt64) { lock.lock(); clock += nanos; lock.unlock() }
+
     func now() -> UInt64 {
         lock.lock()
         defer { lock.unlock() }

@@ -147,6 +147,7 @@ final class BenchmarkScenarioRunner {
         }
 
         let thermalBefore = driver.thermalState()
+        log("thermal:before")
         let records = specs.map { _ in Record() }
 
         switch mode {
@@ -163,6 +164,7 @@ final class BenchmarkScenarioRunner {
         for (index, spec) in specs.enumerated() { try awaitReady(spec.position, records[index]) }
 
         let thermalAfter = driver.thermalState()
+        log("thermal:after")
         return makeRows(specs, records, thermalBefore, thermalAfter, wallClockStart,
                         deleted: deleted, populated: populated)
     }

@@ -86,4 +86,48 @@ class BenchmarkScenarioBETest: XCTestCase {
             XCTAssertEqual(error as? BenchmarkRunnerError, .buildFailed(position: 1))
         }
     }
+
+    func test_populatedThisRun_trueWhenEitherKeyWasAbsent() throws {
+        for cached in [[BenchmarkScenarioRunner.apiKeyA], [BenchmarkScenarioRunner.apiKeyB]] {
+            let driver = driver()
+            driver.cachedKeys = Set(cached)
+            let runner = BenchmarkScenarioRunner(arguments: try BenchmarkTestFixtures.arguments("B"), driver: driver,
+                                                 payload: BenchmarkTestFixtures.payload())
+            let rows = try runner.run()
+            XCTAssertEqual(rows.map { BenchmarkTestFixtures.values($0)["populatedThisRun"] }, ["true", "true"], "\(cached)")
+        }
+    }
+
+    func test_thermalBeforePrecedesFirstBuild_thermalAfterFollowsEveryReady() throws {
+        let driver = driver()
+        let runner = BenchmarkScenarioRunner(arguments: try BenchmarkTestFixtures.arguments("B"), driver: driver,
+                                             payload: BenchmarkTestFixtures.payload())
+        _ = try runner.run()
+
+        let events = runner.events
+        let before = try XCTUnwrap(events.firstIndex(of: "thermal:before"))
+        let after = try XCTUnwrap(events.firstIndex(of: "thermal:after"))
+        XCTAssertLessThan(before, try XCTUnwrap(events.firstIndex(of: "build:1:start:main")))
+        XCTAssertGreaterThan(after, try XCTUnwrap(events.firstIndex(of: "ready:1")))
+        XCTAssertGreaterThan(after, try XCTUnwrap(events.firstIndex(of: "ready:2")))
+    }
+
+    func test_t11IsTakenInsideTheCallback_atFireTime() throws {
+        let driver = FakeBenchmarkDriver()
+        driver.readyMode = .manual
+        let runner = BenchmarkScenarioRunner(arguments: try BenchmarkTestFixtures.arguments("A"), driver: driver,
+                                             payload: BenchmarkTestFixtures.payload())
+        DispatchQueue.global().async {
+            _ = driver.waitUntil(timeout: 5) { driver.buildCount == 1 }
+            driver.advanceClock(by: 1_000_000)
+            driver.fire(position: 1)
+        }
+
+        let rows = try runner.run()
+
+        let values = BenchmarkTestFixtures.values(rows[0])
+        let t0 = UInt64(values["T0"] ?? "") ?? 0
+        let t11 = UInt64(values["T11"] ?? "") ?? 0
+        XCTAssertGreaterThanOrEqual(t11 - t0, 1_000_000)
+    }
 }
