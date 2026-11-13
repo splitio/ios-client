@@ -18,6 +18,7 @@ protocol SplitEventsManager: AnyObject, Sendable {
 }
 
 class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
+    private let seam: InternalSeam
     private let readingRefreshTime: Int
 
     private var sdkReadyTimeStart: Int64
@@ -30,7 +31,8 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
     private var isStarted: Bool
     private let timeChecker: TimeChecker
 
-    init(config: SplitClientConfig, timeChecker: TimeChecker) {
+    init(config: SplitClientConfig, timeChecker: TimeChecker, seam: InternalSeam = InternalSeam()) {
+        self.seam = seam
         self.timeChecker = timeChecker
         self.processQueue = DispatchQueue(label: "split-evt-mngr-process")
         self.dataAccessQueue = DispatchQueue(label: "split-evt-mngr-data", target: DispatchQueue.general)
@@ -51,6 +53,7 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
     }
 
     func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {
+        if event.type == seam.suppressedInternalEvent { return }
         processQueue.async { [weak self] in
             guard let self = self else { return }
             Logger.v("Event \(event) notified")

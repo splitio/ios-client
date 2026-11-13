@@ -62,7 +62,8 @@ class SplitComponentFactory {
 
     func buildStorageContainer(databaseName: String,
                                telemetryStorage: TelemetryStorage?,
-                               testDatabase: SplitDatabase?) throws -> SplitStorageContainer {
+                               testDatabase: SplitDatabase?,
+                               seam: InternalSeam = InternalSeam()) throws -> SplitStorageContainer {
         let component: SplitStorageContainer =
         try SplitDatabaseHelper.buildStorageContainer(splitClientConfig: splitClientConfig,
                                                       apiKey: apiKey,
@@ -70,7 +71,8 @@ class SplitComponentFactory {
                                                       databaseName: databaseName,
                                                       telemetryStorage: telemetryStorage,
                                                       testDatabase: testDatabase,
-                                                      timeChecker: timeChecker)
+                                                      timeChecker: timeChecker,
+                                                      seam: seam)
         catalog.add(component: component)
         return component
     }

@@ -38,6 +38,7 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
     private let fallbackTreatmentsCalculator: FallbackTreatmentsCalculator
     
     private let timeChecker: TimeChecker
+    private let seam: InternalSeam
 
     init(config: SplitClientConfig,
          key: Key,
@@ -53,8 +54,10 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
          mySegmentsSyncWorkerFactory: MySegmentsSyncWorkerFactory,
          telemetryStopwatch: Stopwatch?,
          propertyValidator: PropertyValidator,
-         timeChecker: TimeChecker) {
+         timeChecker: TimeChecker,
+         seam: InternalSeam = InternalSeam()) {
 
+        self.seam = seam
         self.timeChecker = timeChecker
         self.defaultKey = key
         self.apiFacade = apiFacade
@@ -148,7 +151,7 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
 
     private func createClient(forKey key: Key) -> SplitClient {
 
-        let eventsManager = DefaultSplitEventsManager(config: config, timeChecker: timeChecker)
+        let eventsManager = DefaultSplitEventsManager(config: config, timeChecker: timeChecker, seam: seam)
         let treatmentManager = buildTreatmentManager(key: key, eventsManager: eventsManager)
 
 

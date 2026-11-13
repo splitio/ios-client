@@ -152,6 +152,101 @@ class SplitsDecoderTest: XCTestCase {
         XCTAssertNotEqual(ThreadUtils.processCount(totalTaskCount: 11, minTaskPerThread: 10), cores)
     }
 
+    // MARK: - Internal injection seam
+
+    func test_seam_defaultWidth_equalsProcessCountTaskCount() throws {
+        let flags = try loadFlags(100)
+
+        _ = SplitsParallelDecoder(minTaskPerThread: 10, timeChecker: TimeChecker.forTesting(), seam: InternalSeam())
+            .decode(flags)
+
+        XCTAssertEqual(taskCountLogs(),
+                       [ThreadUtils.processCount(totalTaskCount: 100, minTaskPerThread: 10)])
+    }
+
+    func test_seam_widthOverride1_logsTaskCount1() throws {
+        let flags = try loadFlags(11)
+
+        let splits = SplitsParallelDecoder(minTaskPerThread: 10, timeChecker: TimeChecker.forTesting(),
+                                           seam: InternalSeam(decoderWidth: 1)).decode(flags)
+
+        XCTAssertEqual(taskCountLogs(), [1])
+        let actual = splits.map(entry).sorted { ($0.name ?? "") < ($1.name ?? "") }
+        XCTAssertEqual(actual, try loadGolden(11))
+    }
+
+    func test_seam_chunkRunner_observesEveryChunk() throws {
+        let flags = try loadFlags(100)
+        let lock = NSLock()
+        nonisolated(unsafe) var starts = [Int]()
+        nonisolated(unsafe) var finishes = [Int]()
+        let runner: DecodeChunkRunner = { index, run in
+            lock.lock(); starts.append(index); lock.unlock()
+            run()
+            lock.lock(); finishes.append(index); lock.unlock()
+        }
+
+        let splits = SplitsParallelDecoder(minTaskPerThread: 10, timeChecker: TimeChecker.forTesting(),
+                                           seam: InternalSeam(decodeChunkRunner: runner)).decode(flags)
+
+        let taskCount = try XCTUnwrap(taskCountLogs().first)
+        XCTAssertGreaterThan(taskCount, 1)
+        let chunkSize = 100 / taskCount
+        let expectedChunks = (100 + chunkSize - 1) / chunkSize
+        lock.lock()
+        XCTAssertEqual(starts.sorted(), Array(0..<expectedChunks))
+        XCTAssertEqual(finishes.sorted(), Array(0..<expectedChunks))
+        lock.unlock()
+        let actual = splits.map(entry).sorted { ($0.name ?? "") < ($1.name ?? "") }
+        XCTAssertEqual(actual, try loadGolden(100))
+    }
+
+    func test_seam_chunkRunner_canHoldChunkZero() throws {
+        let flags = try loadFlags(100)
+        let gate = DispatchSemaphore(value: 0)
+        let chunkZeroEntered = XCTestExpectation(description: "chunk 0 entered")
+        let decodeReturned = XCTestExpectation(description: "decode returned")
+        let decodeFinished = XCTestExpectation(description: "decode finished")
+        let runner: DecodeChunkRunner = { index, run in
+            if index == 0 {
+                chunkZeroEntered.fulfill()
+                gate.wait()
+            }
+            run()
+        }
+        let decoder = SplitsParallelDecoder(minTaskPerThread: 10, timeChecker: TimeChecker.forTesting(),
+                                            seam: InternalSeam(decodeChunkRunner: runner))
+        nonisolated(unsafe) var count = 0
+        DispatchQueue.global().async {
+            count = decoder.decode(flags).count
+            decodeReturned.fulfill()
+            decodeFinished.fulfill()
+        }
+
+        wait(for: [chunkZeroEntered], timeout: 30)
+        let notYet = XCTWaiter().wait(for: [decodeReturned], timeout: 0.5)
+        XCTAssertEqual(notYet, .timedOut, "decode must not return while chunk 0 is gated")
+
+        gate.signal()
+        wait(for: [decodeFinished], timeout: 30)
+        XCTAssertEqual(count, 100)
+    }
+
+    func test_seam_widthReachesDecoderThroughDao() throws {
+        let queue = DispatchQueue(label: "seam dao test")
+        let dao = CoreDataSplitDao(coreDataHelper: IntegrationCoreDataHelper.get(databaseName: "seam_dao_test",
+                                                                                dispatchQueue: queue),
+                                   timeChecker: TimeChecker.forTesting(),
+                                   seam: InternalSeam(decoderWidth: 1))
+        dao.insertOrUpdate(splits: SplitsSerialDecoder(cipher: nil).decode(try loadFlags(11)))
+        printerStub.clear()
+
+        let loaded = dao.getAll()
+
+        XCTAssertEqual(loaded.count, 11)
+        XCTAssertEqual(taskCountLogs(), [1])
+    }
+
     // MARK: - Helpers
 
     private struct DecodedEntry: Codable, Equatable {

@@ -12,11 +12,31 @@ protocol SplitsDecoder {
     func decode(_ list: [String]) -> [Split]
 }
 
+typealias DecodeChunkRunner = @Sendable (_ chunkIndex: Int, _ run: () -> Void) -> Void
+
+/// Internal injection points. The default value is the production behaviour.
+struct InternalSeam: Sendable {
+    var decoderWidth: Int?
+    var decodeChunkRunner: DecodeChunkRunner
+    var suppressedInternalEvent: SplitInternalEvent?
+
+    init(decoderWidth: Int? = nil,
+         decodeChunkRunner: @escaping DecodeChunkRunner = { _, run in run() },
+         suppressedInternalEvent: SplitInternalEvent? = nil) {
+        self.decoderWidth = decoderWidth
+        self.decodeChunkRunner = decodeChunkRunner
+        self.suppressedInternalEvent = suppressedInternalEvent
+    }
+}
+
 struct SplitsParallelDecoder: SplitsDecoder, @unchecked Sendable {
     private var minTaskPerThread: Int
     private let serialDecoder: SplitsSerialDecoder
     private let timeChecker: TimeChecker
-    init(minTaskPerThread: Int = 10, cipher: Cipher? = nil, timeChecker: TimeChecker) {
+    private let seam: InternalSeam
+    init(minTaskPerThread: Int = 10, cipher: Cipher? = nil, timeChecker: TimeChecker,
+         seam: InternalSeam = InternalSeam()) {
+        self.seam = seam
         self.minTaskPerThread = minTaskPerThread
         self.serialDecoder = SplitsSerialDecoder(cipher: cipher)
         self.timeChecker = timeChecker
@@ -39,22 +59,34 @@ struct SplitsParallelDecoder: SplitsDecoder, @unchecked Sendable {
                                       target: DispatchQueue(label: "split-parallel-parsing-data-conc",
                                                             attributes: .concurrent))
 
-        let taskCount = ThreadUtils.processCount(totalTaskCount: list.count, minTaskPerThread: minTaskPerThread)
+        let taskCount = min(ThreadUtils.processCount(totalTaskCount: list.count, minTaskPerThread: minTaskPerThread),
+                            max(1, seam.decoderWidth ?? Int.max))
         let chunkSize = Int(list.count / taskCount)
         Logger.v("Task count for parallel decoding: \(taskCount)")
         Logger.v("Chunck size for parallel decoding: \(chunkSize)")
 
         if taskCount == 1 {
-            return serialDecoder.decode(list)
+            #if swift(>=6.0)
+            nonisolated(unsafe) var serialResult = [Split]()
+            #else
+            var serialResult = [Split]()
+            #endif
+            seam.decodeChunkRunner(0) {
+                serialResult = serialDecoder.decode(list)
+            }
+            return serialResult
         }
 
         let queue = OperationQueue()
         queue.maxConcurrentOperationCount = taskCount
-        list.chunked(into: chunkSize).forEach { chunk in
+        let runner = seam.decodeChunkRunner
+        list.chunked(into: chunkSize).enumerated().forEach { index, chunk in
             queue.addOperation {
-                let parsed = serialDecoder.decode(chunk)
-                dataQueue.sync {
-                    splits.append(contentsOf: parsed)
+                runner(index) {
+                    let parsed = serialDecoder.decode(chunk)
+                    dataQueue.sync {
+                        splits.append(contentsOf: parsed)
+                    }
                 }
             }
         }

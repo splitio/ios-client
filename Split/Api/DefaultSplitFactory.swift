@@ -70,7 +70,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory, @unchecked Sendable {
 
         let storageContainer = try components.buildStorageContainer(databaseName: databaseName,
                                                                     telemetryStorage: params.telemetryStorage,
-                                                                    testDatabase: params.testDatabase)
+                                                                    testDatabase: params.testDatabase,
+                                                                    seam: params.internalSeam)
 
         let rolloutCacheConfig = params.config.rolloutCacheConfiguration ?? RolloutCacheConfiguration.builder().build()
         let rolloutCacheManager = DefaultRolloutCacheManager(generalInfoStorage: storageContainer.generalInfoStorage,
@@ -115,7 +116,8 @@ public class DefaultSplitFactory: NSObject, SplitFactory, @unchecked Sendable {
                                              mySegmentsSyncWorkerFactory: mySegmentsSyncWorkerFactory,
                                              telemetryStopwatch: params.initStopwatch,
                                              propertyValidator: components.getPropertyValidator(),
-                                             timeChecker: timeChecker)
+                                             timeChecker: timeChecker,
+                                             seam: params.internalSeam)
 
         components.destroy()
 
