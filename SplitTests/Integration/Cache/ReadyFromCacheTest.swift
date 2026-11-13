@@ -156,6 +156,95 @@ class ReadyFromCacheTest: XCTestCase {
         client.destroy()
     }
 
+    // MARK: Ready-gate: one suppressed internal event at a time (R2)
+    // Each test withholds one internal event through the internal seam and asserts that
+    // sdkReadyFromCache does not fire. Absence is asserted after a sentinel, sdkReadyTimedOut,
+    // which comes from an internal event that is never suppressed, has been observed.
+
+    func test_gate_cachePath_withoutSplitsLoadedFromCache_noReadyFromCache() {
+        assertNoReadyFromCache(suppressing: .splitsLoadedFromCache, seededCache: true)
+    }
+
+    func test_gate_cachePath_withoutMySegmentsLoadedFromCache_noReadyFromCache() {
+        assertNoReadyFromCache(suppressing: .mySegmentsLoadedFromCache, seededCache: true)
+    }
+
+    func test_gate_cachePath_withoutMyLargeSegmentsLoadedFromCache_noReadyFromCache() {
+        assertNoReadyFromCache(suppressing: .myLargeSegmentsLoadedFromCache, seededCache: true)
+    }
+
+    func test_gate_cachePath_withoutAttributesLoadedFromCache_noReadyFromCache() {
+        assertNoReadyFromCache(suppressing: .attributesLoadedFromCache, seededCache: true)
+    }
+
+    func test_gate_freshInstall_withoutSplitsUpdated_noReadyFromCache() {
+        assertNoReadyFromCache(suppressing: .splitsUpdated, seededCache: false)
+    }
+
+    func test_gate_freshInstall_withoutMySegmentsUpdated_noReadyFromCache() {
+        assertNoReadyFromCache(suppressing: .mySegmentsUpdated, seededCache: false)
+    }
+
+    func test_gate_freshInstall_withoutMyLargeSegmentsUpdated_noReadyFromCache() {
+        assertNoReadyFromCache(suppressing: .myLargeSegmentsUpdated, seededCache: false)
+    }
+
+    private func assertNoReadyFromCache(suppressing event: SplitInternalEvent,
+                                        seededCache: Bool,
+                                        file: StaticString = #filePath,
+                                        line: UInt = #line) {
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
+        if seededCache {
+            splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].featureFlags.splits[0])
+            splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+            splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
+        } else {
+            // Fresh install: the splits endpoint answers right away, so the three "updated" events are the only gate
+            globalCacheReadyFired.set(true)
+        }
+
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+
+        let cacheReadyExp = XCTestExpectation(description: "sdkReadyFromCache must not fire")
+        cacheReadyExp.isInverted = true
+        let sentinelExp = XCTestExpectation(description: "sdkReadyTimedOut sentinel")
+        var cacheReadyFired = false
+        var readyFired = false
+
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(splitDatabase)
+        _ = builder.setInternalSeam(InternalSeam(suppressedInternalEvent: event))
+        let factory = builder.setApiKey(IntegrationHelper.dummyApiKey)
+            .setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
+            .setConfig(basicSplitConfig()).build()!
+        let client = factory.client
+
+        client.on(event: SplitEvent.sdkReadyFromCache) {
+            cacheReadyFired = true
+            cacheReadyExp.fulfill()
+        }
+        client.on(event: SplitEvent.sdkReady) {
+            readyFired = true
+        }
+        client.on(event: SplitEvent.sdkReadyTimedOut) {
+            sentinelExp.fulfill()
+        }
+
+        wait(for: [sentinelExp], timeout: 10)
+        wait(for: [cacheReadyExp], timeout: 0.5)
+
+        XCTAssertFalse(cacheReadyFired, "sdkReadyFromCache fired with \(event) suppressed", file: file, line: line)
+        XCTAssertFalse(readyFired, "sdkReady fired with \(event) suppressed", file: file, line: line)
+
+        client.destroy()
+    }
+
     func testExistingSplitsAndNoConnection() {
         // When feature flags and connection not available, ready from cache should be fired and Ready should NOT be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
