@@ -41,7 +41,8 @@ struct SplitDatabaseHelper {
                                       databaseName: String,
                                       telemetryStorage: TelemetryStorage?,
                                       testDatabase: SplitDatabase?,
-                                      timeChecker: TimeChecker) throws -> SplitStorageContainer {
+                                      timeChecker: TimeChecker,
+                                      seam: InternalSeam = InternalSeam()) throws -> SplitStorageContainer {
         let dbKey = buildDbKey(prefix: splitClientConfig.prefix, sdkKey: apiKey)
         
         let lock = storageLock(for: dbKey)
@@ -86,7 +87,8 @@ struct SplitDatabaseHelper {
             splitDatabase = try openDatabase(dataFolderName: databaseName,
                                              cipher: cipher,
                                              dbHelper: dbHelper,
-                                             timeChecker: timeChecker)
+                                             timeChecker: timeChecker,
+                                             seam: seam)
         }
 
         guard let splitDatabase = splitDatabase else {
@@ -160,9 +162,10 @@ struct SplitDatabaseHelper {
     static func openDatabase(dataFolderName: String,
                              cipher: Cipher?,
                              dbHelper: CoreDataHelper,
-                             timeChecker: TimeChecker) throws -> SplitDatabase {
+                             timeChecker: TimeChecker,
+                             seam: InternalSeam = InternalSeam()) throws -> SplitDatabase {
 
-        return CoreDataSplitDatabase(coreDataHelper: dbHelper, cipher: cipher, timeChecker: timeChecker)
+        return CoreDataSplitDatabase(coreDataHelper: dbHelper, cipher: cipher, timeChecker: timeChecker, seam: seam)
     }
 
     static func openPersistentSplitsStorage(database: SplitDatabase) -> PersistentSplitsStorage {

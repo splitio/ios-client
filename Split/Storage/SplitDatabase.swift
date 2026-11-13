@@ -77,9 +77,11 @@ class CoreDataSplitDatabase: SplitDatabase, TestSplitDatabase, @unchecked Sendab
     let coreDataHelper: CoreDataHelper
 
     // Passing a cipher allows using one from created by the Customer in the future
-    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil, timeChecker: TimeChecker) {
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil, timeChecker: TimeChecker,
+         seam: InternalSeam = InternalSeam()) {
         self.coreDataHelper = coreDataHelper
-        self.splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper, cipher: cipher, timeChecker: timeChecker)
+        self.splitDao = CoreDataSplitDao(coreDataHelper: coreDataHelper, cipher: cipher, timeChecker: timeChecker,
+                                      seam: seam)
         self.eventDao = CoreDataEventDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.impressionDao = CoreDataImpressionDao(coreDataHelper: coreDataHelper, cipher: cipher)
         self.impressionsCountDao = CoreDataImpressionsCountDao(coreDataHelper: coreDataHelper, cipher: cipher)

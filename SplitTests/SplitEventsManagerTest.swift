@@ -60,6 +60,34 @@ class SplitEventsManagerTest: XCTestCase, @unchecked Sendable {
         eventManager.stop()
     }
 
+    func test_seam_suppressedEvent_notDelivered() {
+        let config = SplitClientConfig()
+        let suppressed = DefaultSplitEventsManager(config: config, timeChecker: TimeChecker.forTesting(),
+                                                   seam: InternalSeam(suppressedInternalEvent: .splitsLoadedFromCache))
+        let normal = DefaultSplitEventsManager(config: config, timeChecker: TimeChecker.forTesting(),
+                                               seam: InternalSeam())
+        let suppressedFired = XCTestExpectation(description: "cache ready with suppression")
+        suppressedFired.isInverted = true
+        let normalFired = XCTestExpectation(description: "cache ready without suppression")
+        suppressed.register(event: .sdkReadyFromCache, task: TestTask(exp: suppressedFired))
+        normal.register(event: .sdkReadyFromCache, task: TestTask(exp: normalFired))
+        suppressed.start()
+        normal.start()
+
+        for manager in [suppressed, normal] {
+            manager.notifyInternalEvent(SplitInternalEvent.mySegmentsLoadedFromCache)
+            manager.notifyInternalEvent(SplitInternalEvent.myLargeSegmentsLoadedFromCache)
+            manager.notifyInternalEvent(SplitInternalEvent.splitsLoadedFromCache)
+            manager.notifyInternalEvent(SplitInternalEvent.attributesLoadedFromCache)
+        }
+
+        wait(for: [normalFired, suppressedFired], timeout: 3)
+        XCTAssertTrue(normal.eventAlreadyTriggered(event: .sdkReadyFromCache))
+        XCTAssertFalse(suppressed.eventAlreadyTriggered(event: .sdkReadyFromCache))
+        suppressed.stop()
+        normal.stop()
+    }
+
     func testSdkReadyFromCacheAndReady() {
 
         let config: SplitClientConfig = SplitClientConfig()

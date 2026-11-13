@@ -96,6 +96,12 @@ import Foundation
     }
 
     @discardableResult
+    func setInternalSeam(_ seam: InternalSeam) -> SplitFactoryBuilder {
+        params.internalSeam = seam
+        return self
+    }
+
+    @discardableResult
     func setTestDatabase(_ database: SplitDatabase) -> SplitFactoryBuilder {
         params.testDatabase = database
         return self
@@ -193,6 +199,7 @@ import Foundation
 struct SplitFactoryParams {
     var notificationHelper: NotificationHelper?
     var testDatabase: SplitDatabase?
+    var internalSeam: InternalSeam = InternalSeam()
     var reachabilityChecker: HostReachabilityChecker?
     var httpClient: HttpClient?
     var apiKey: String = ""

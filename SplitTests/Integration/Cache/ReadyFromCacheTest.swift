@@ -95,6 +95,67 @@ class ReadyFromCacheTest: XCTestCase {
         client.destroy()
     }
 
+    func test_seam_noSuppression_readyFiresAsAtHead() {
+        // When feature flags and connection available, ready from cache and Ready should be fired
+        let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)
+        splitDatabase.splitDao.syncInsertOrUpdate(split: changes[0].featureFlags.splits[0])
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        splitDatabase.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                                  longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
+
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildTestDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        let splitConfig = basicSplitConfig()
+
+        let readyExp = XCTestExpectation()
+        let cacheReadyExp = XCTestExpectation()
+
+        var readyFired = false
+        var cacheReadyFired = false
+
+        let key: Key = Key(matchingKey: IntegrationHelper.dummyUserKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(splitDatabase)
+        builder.setInternalSeam(InternalSeam())
+        let factory = builder.setApiKey(IntegrationHelper.dummyApiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+
+        let client = factory.client
+
+        client.on(event: SplitEvent.sdkReadyFromCache) {
+            cacheReadyExp.fulfill()
+            cacheReadyFired = true
+        }
+
+        client.on(event: SplitEvent.sdkReady) {
+            readyExp.fulfill()
+            readyFired = true
+        }
+
+        client.on(event: SplitEvent.sdkReadyTimedOut) {
+            readyExp.fulfill()
+        }
+
+        wait(for: [cacheReadyExp], timeout: 10)
+        let treatmentCache = client.getTreatment(splitName)
+
+        globalCacheReadyFired.set(true)
+
+        wait(for: [readyExp], timeout: 10)
+        let treatmentReady = client.getTreatment(splitName)
+
+        XCTAssertTrue(cacheReadyFired)
+        XCTAssertTrue(readyFired)
+        XCTAssertEqual("on0", treatmentCache)
+        XCTAssertEqual("on1", treatmentReady)
+
+        client.destroy()
+    }
+
     func testExistingSplitsAndNoConnection() {
         // When feature flags and connection not available, ready from cache should be fired and Ready should NOT be fired
         let splitDatabase = TestingHelper.createTestDatabase(name: "ready_from_cache_test", queue: dbqueue)

@@ -32,8 +32,9 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao, @unchecked Sendable {
     private var cipher: Cipher?
     private let timeChecker: TimeChecker
 
-    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil, timeChecker: TimeChecker) {
-        self.decoder = SplitsParallelDecoder(cipher: cipher, timeChecker: timeChecker)
+    init(coreDataHelper: CoreDataHelper, cipher: Cipher? = nil, timeChecker: TimeChecker,
+         seam: InternalSeam = InternalSeam()) {
+        self.decoder = SplitsParallelDecoder(cipher: cipher, timeChecker: timeChecker, seam: seam)
         self.encoder = SplitsParallelEncoder(cipher: cipher)
         self.cipher = cipher
         self.timeChecker = timeChecker
