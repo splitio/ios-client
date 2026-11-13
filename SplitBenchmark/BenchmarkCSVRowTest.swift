@@ -36,8 +36,48 @@ class BenchmarkCSVRowTest: XCTestCase {
         return Dictionary(uniqueKeysWithValues: zip(BenchmarkCSVRow.columns, row.fields))
     }
 
+    private let issue27Columns = [
+        "scenario", "sha", "runIndex", "buildVariant", "width", "fixtureSeed", "fixtureHash",
+        "T0", "T1", "T2", "T3", "T5",
+        "T6_filterSplitsInCache_start", "T6_filterSplitsInCache_end",
+        "T6_forceParsing_start", "T6_forceParsing_end",
+        "T6_loadLocal_start", "T6_loadLocal_end", "T6Count",
+        "T7", "T8", "T10",
+        "coldEnd_splitsUpdated", "coldEnd_mySegmentsUpdated", "coldEnd_myLargeSegmentsUpdated",
+        "T11", "flagSpecHasChanged", "filterHasChanged", "forceParsingRan", "cacheHit", "decodeCount",
+        "thermalStateBefore", "thermalStateAfter", "idleGapSeconds", "installState", "wallClockStart",
+        "readyAPI"]
+
+    func test_issue27Columns_keepOrderAsPrefix_runnerColumnsAppended() {
+        XCTAssertEqual(Array(BenchmarkCSVRow.columns.prefix(issue27Columns.count)), issue27Columns)
+        XCTAssertEqual(Array(BenchmarkCSVRow.columns.dropFirst(issue27Columns.count)),
+                       ["factoryIndex", "apiKeyIdentity", "bothReadyNs", "t8ToFireNs", "deletedBeforeMeasure",
+                        "populatedThisRun", "payloadMultiplier"])
+    }
+
+    func test_extras_landInTheirOwnColumns_andDefaultToEmpty() throws {
+        let extras = BenchmarkRowExtras(factoryIndex: "2", apiKeyIdentity: "keyB", bothReadyNs: "99", t8ToFireNs: "7",
+                                        deletedBeforeMeasure: "true", populatedThisRun: "false",
+                                        payloadMultiplier: "4")
+        let full = BenchmarkCSVRow(arguments: try arguments(), fixtureSeed: 1, fixtureHash: "h", t0: 1, t11: 2,
+                                   marks: [], thermalBefore: .nominal, thermalAfter: .nominal,
+                                   wallClockStart: Date(timeIntervalSince1970: 0), extras: extras)
+        let plain = try row(marks: [])
+
+        let values = dictionary(full)
+        XCTAssertEqual(values["factoryIndex"], "2")
+        XCTAssertEqual(values["apiKeyIdentity"], "keyB")
+        XCTAssertEqual(values["bothReadyNs"], "99")
+        XCTAssertEqual(values["t8ToFireNs"], "7")
+        XCTAssertEqual(values["deletedBeforeMeasure"], "true")
+        XCTAssertEqual(values["populatedThisRun"], "false")
+        XCTAssertEqual(values["payloadMultiplier"], "4")
+        XCTAssertEqual(plain.fields.count, BenchmarkCSVRow.columns.count)
+        XCTAssertEqual(Array(plain.fields.suffix(7)), Array(repeating: "", count: 7))
+    }
+
     func test_columnOrder_isFixed() {
-        XCTAssertEqual(BenchmarkCSVRow.columns, [
+        XCTAssertEqual(Array(BenchmarkCSVRow.columns.prefix(issue27Columns.count)), [
             "scenario", "sha", "runIndex", "buildVariant", "width", "fixtureSeed", "fixtureHash",
             "T0", "T1", "T2", "T3", "T5",
             "T6_filterSplitsInCache_start", "T6_filterSplitsInCache_end",

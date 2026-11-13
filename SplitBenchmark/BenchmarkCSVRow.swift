@@ -12,6 +12,21 @@
 
 import Foundation
 
+/// Columns appended by the scenario runner. Empty strings leave a column empty (not applicable).
+struct BenchmarkRowExtras: Equatable {
+    /// Build position within the process: 1 is the factory whose build() started first.
+    var factoryIndex = ""
+    /// Which API key the factory used ("keyA" or "keyB").
+    var apiKeyIdentity = ""
+    /// Latest ready-from-cache T11 minus earliest T0, two-factory scenarios only.
+    var bothReadyNs = ""
+    /// T11 minus the "T8 splitsLoadedFromCache notified" mark: callback dispatch latency inside the SDK.
+    var t8ToFireNs = ""
+    var deletedBeforeMeasure = ""
+    var populatedThisRun = ""
+    var payloadMultiplier = ""
+}
+
 struct BenchmarkCSVRow: Equatable {
 
     typealias Mark = (name: String, nanos: UInt64)
@@ -25,7 +40,10 @@ struct BenchmarkCSVRow: Equatable {
         "T7", "T8", "T10",
         "coldEnd_splitsUpdated", "coldEnd_mySegmentsUpdated", "coldEnd_myLargeSegmentsUpdated",
         "T11", "flagSpecHasChanged", "filterHasChanged", "forceParsingRan", "cacheHit", "decodeCount",
-        "thermalStateBefore", "thermalStateAfter", "idleGapSeconds", "installState", "wallClockStart", "readyAPI"
+        "thermalStateBefore", "thermalStateAfter", "idleGapSeconds", "installState", "wallClockStart", "readyAPI",
+        // Appended by the scenario runner (issue 28). The prefix above never changes; new columns go at the end.
+        "factoryIndex", "apiKeyIdentity", "bothReadyNs", "t8ToFireNs", "deletedBeforeMeasure", "populatedThisRun",
+        "payloadMultiplier"
     ]
 
     /// Field values in `columns` order.
@@ -55,7 +73,7 @@ struct BenchmarkCSVRow: Equatable {
 
     init(arguments: BenchmarkArguments, fixtureSeed: UInt64, fixtureHash: String, t0: UInt64, t11: UInt64,
          marks: [Mark], thermalBefore: ProcessInfo.ThermalState, thermalAfter: ProcessInfo.ThermalState,
-         wallClockStart: Date) {
+         wallClockStart: Date, extras: BenchmarkRowExtras = BenchmarkRowExtras()) {
         var values = [String: String]()
         values["scenario"] = arguments.scenario.rawValue
         values["sha"] = arguments.sha
@@ -86,6 +104,13 @@ struct BenchmarkCSVRow: Equatable {
         values["installState"] = arguments.installState.rawValue
         values["wallClockStart"] = Self.iso8601(wallClockStart)
         values["readyAPI"] = arguments.readyAPI.rawValue
+        values["factoryIndex"] = extras.factoryIndex
+        values["apiKeyIdentity"] = extras.apiKeyIdentity
+        values["bothReadyNs"] = extras.bothReadyNs
+        values["t8ToFireNs"] = extras.t8ToFireNs
+        values["deletedBeforeMeasure"] = extras.deletedBeforeMeasure
+        values["populatedThisRun"] = extras.populatedThisRun
+        values["payloadMultiplier"] = extras.payloadMultiplier
 
         fields = Self.columns.map { values[$0] ?? "" }
     }

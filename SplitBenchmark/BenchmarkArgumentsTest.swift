@@ -44,9 +44,31 @@ class BenchmarkArgumentsTest: XCTestCase {
     }
 
     func test_everyScenario_accepted() throws {
-        for name in ["A", "B", "C", "C2", "D", "E"] {
+        for name in ["A", "B", "C", "C2", "D", "E", "C-bg", "stress2x", "stress4x"] {
             XCTAssertEqual(try BenchmarkArguments.parse(["-benchScenario", name]).scenario.rawValue, name)
         }
+    }
+
+    func test_payloadMultiplier_perScenario() {
+        XCTAssertEqual(BenchmarkScenario.stress2x.payloadMultiplier, 2)
+        XCTAssertEqual(BenchmarkScenario.stress4x.payloadMultiplier, 4)
+        for scenario in BenchmarkScenario.allCases where scenario != .stress2x && scenario != .stress4x {
+            XCTAssertEqual(scenario.payloadMultiplier, 1, scenario.rawValue)
+        }
+    }
+
+    func test_csvPath_andFixtureSize_parsed_withDefaults() throws {
+        let given = try BenchmarkArguments.parse(["-benchScenario", "A", "-benchCSVPath", "/tmp/x.csv",
+                                                  "-benchFixtureSize", "small", "-benchEndpoint", "http://h:1"])
+        let defaults = try BenchmarkArguments.parse(["-benchScenario", "A"])
+
+        XCTAssertEqual(given.csvPath, "/tmp/x.csv")
+        XCTAssertEqual(given.fixtureSize, .small)
+        XCTAssertEqual(given.endpoint, "http://h:1")
+        XCTAssertNil(defaults.endpoint)
+        XCTAssertNil(defaults.csvPath)
+        XCTAssertEqual(defaults.fixtureSize, .large)
+        XCTAssertThrowsError(try BenchmarkArguments.parse(["-benchScenario", "A", "-benchFixtureSize", "huge"]))
     }
 
     func test_unknownScenario_throws() {
