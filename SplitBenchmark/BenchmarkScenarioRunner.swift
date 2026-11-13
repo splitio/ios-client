@@ -198,6 +198,7 @@ final class BenchmarkScenarioRunner {
         guard driver.waitUntil(timeout: readyTimeout, { arrived.value == specs.count }) else {
             throw BenchmarkRunnerError.buildFailed(position: 0)
         }
+        log("barrier:released")
         for _ in specs { gate.signal() }
         guard driver.waitUntil(timeout: readyTimeout, { released.value == specs.count }) else {
             throw BenchmarkRunnerError.buildFailed(position: 0)

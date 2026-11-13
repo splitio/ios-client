@@ -81,6 +81,20 @@ class BenchmarkScenarioCTest: XCTestCase {
         XCTAssertNotEqual(a, b)
     }
 
+    func test_cBackground_barrierReleasedBeforeBothBuildStarts() throws {
+        let driver = FakeBenchmarkDriver()
+        let runner = BenchmarkScenarioRunner(arguments: try BenchmarkTestFixtures.arguments("C-bg"), driver: driver,
+                                             payload: BenchmarkTestFixtures.payload())
+        _ = try runner.run()
+
+        let events = runner.events
+        let released = try XCTUnwrap(events.firstIndex(of: "barrier:released"))
+        for start in ["build:1:start:bg", "build:2:start:bg"] {
+            let index = try XCTUnwrap(events.firstIndex(of: start), start)
+            XCTAssertGreaterThan(index, released, start)
+        }
+    }
+
     func test_cBackground_bothBuildsStartBeforeEitherReturns_onBackgroundQueues() throws {
         let driver = FakeBenchmarkDriver()
         driver.waitForPeer = [1, 2]
