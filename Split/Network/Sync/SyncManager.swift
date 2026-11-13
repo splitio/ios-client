@@ -27,6 +27,7 @@ class DefaultSyncManager: SyncManager, @unchecked Sendable {
     private var isPollingEnabled: Atomic<Bool> = Atomic(false)
     private var isPaused: Atomic<Bool> = Atomic(false)
     private var syncGuardian: SyncGuardian
+    private let timeChecker: TimeChecker?
 
     init(splitConfig: SplitClientConfig,
          pushNotificationManager: PushNotificationManager?,
@@ -34,7 +35,9 @@ class DefaultSyncManager: SyncManager, @unchecked Sendable {
          notificationHelper: NotificationHelper,
          synchronizer: Synchronizer,
          syncGuardian: SyncGuardian,
-         broadcasterChannel: SyncEventBroadcaster) {
+         broadcasterChannel: SyncEventBroadcaster,
+         timeChecker: TimeChecker? = nil) {
+        self.timeChecker = timeChecker
         self.splitConfig = splitConfig
         self.pushNotificationManager = pushNotificationManager
         self.synchronizer = synchronizer
@@ -72,6 +75,7 @@ class DefaultSyncManager: SyncManager, @unchecked Sendable {
     }
 
     private func loadData() {
+        timeChecker?.logInterval("T3 SyncManager loadData entered")
         synchronizer.loadSplitsFromCache()
         synchronizer.loadMySegmentsFromCache()
         synchronizer.loadAttributesFromCache()

@@ -216,7 +216,8 @@ class SplitComponentFactory {
             .setSynchronizer(try getSynchronizer())
             .setNotificationHelper(notificationHelper ?? DefaultNotificationHelper.instance)
             .setSyncBroadcaster(try getSyncEventBroadcaster())
-            .setSplitConfig(splitClientConfig).build()
+            .setSplitConfig(splitClientConfig)
+            .setTimeChecker(timeChecker).build()
         catalog.add(component: component)
         return component
     }

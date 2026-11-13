@@ -106,7 +106,8 @@ struct SplitDatabaseHelper {
         let splitsStorage = openSplitsStorage(database: splitDatabase,
                                               flagSetsCache: flagSetsCache,
                                               generalInfoStorage: generalInfoStorage,
-                                              persistenceBreaker: targetingRulesPersistenceBreaker)
+                                              persistenceBreaker: targetingRulesPersistenceBreaker,
+                                              timeChecker: timeChecker)
 
         let persistentImpressionsStorage = openPersistentImpressionsStorage(database: splitDatabase)
         let impressionsStorage = openImpressionsStorage(persistentStorage: persistentImpressionsStorage)
@@ -178,10 +179,12 @@ struct SplitDatabaseHelper {
 
     static func openSplitsStorage(database: SplitDatabase,
                                   flagSetsCache: FlagSetsCache, generalInfoStorage: GeneralInfoStorage,
-                                  persistenceBreaker: PersistenceBreaker) -> SplitsStorage {
+                                  persistenceBreaker: PersistenceBreaker,
+                                  timeChecker: TimeChecker? = nil) -> SplitsStorage {
         return DefaultSplitsStorage(persistentSplitsStorage: openPersistentSplitsStorage(database: database),
                                     flagSetsCache: flagSetsCache, generalInfoStorage: generalInfoStorage,
-                                    persistenceBreaker: persistenceBreaker)
+                                    persistenceBreaker: persistenceBreaker,
+                                    timeChecker: timeChecker)
     }
 
     static func openPersistentMySegmentsStorage(database: SplitDatabase) -> PersistentMySegmentsStorage {

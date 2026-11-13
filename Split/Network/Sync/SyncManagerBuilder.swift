@@ -19,6 +19,7 @@ class SyncManagerBuilder: @unchecked Sendable {
     private var byKeyFacade: ByKeyFacade?
     private var broadcasterChannel: SyncEventBroadcaster?
     private var notificationHelper: NotificationHelper = DefaultNotificationHelper.instance
+    private var timeChecker: TimeChecker?
 
     func setUserKey(_ userKey: String) -> SyncManagerBuilder {
         self.userKey = userKey
@@ -65,6 +66,11 @@ class SyncManagerBuilder: @unchecked Sendable {
         return self
     }
 
+    func setTimeChecker(_ timeChecker: TimeChecker) -> SyncManagerBuilder {
+        self.timeChecker = timeChecker
+        return self
+    }
+
     func build() throws -> SyncManager {
 
         guard let config = self.splitConfig,
@@ -90,7 +96,8 @@ class SyncManagerBuilder: @unchecked Sendable {
                                   notificationHelper: notificationHelper,
                                   synchronizer: synchronizer,
                                   syncGuardian: syncGuardian,
-                                  broadcasterChannel: broadcasterChannel)
+                                  broadcasterChannel: broadcasterChannel,
+                                  timeChecker: timeChecker)
     }
 
     private func buildSseBackoffTimer(config: SplitClientConfig) -> BackoffCounterTimer {

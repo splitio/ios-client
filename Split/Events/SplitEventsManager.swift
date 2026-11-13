@@ -54,6 +54,12 @@ class DefaultSplitEventsManager: SplitEventsManager, @unchecked Sendable {
 
     func notifyInternalEvent(_ event: SplitInternalEventWithMetadata) {
         if event.type == seam.suppressedInternalEvent { return }
+        switch event.type {
+        case .splitsUpdated: timeChecker.logInterval("ColdEnd splitsUpdated notified")
+        case .mySegmentsUpdated: timeChecker.logInterval("ColdEnd mySegmentsUpdated notified")
+        case .myLargeSegmentsUpdated: timeChecker.logInterval("ColdEnd myLargeSegmentsUpdated notified")
+        default: break
+        }
         processQueue.async { [weak self] in
             guard let self = self else { return }
             Logger.v("Event \(event) notified")

@@ -72,6 +72,7 @@ public class DefaultSplitFactory: NSObject, SplitFactory, @unchecked Sendable {
                                                                     telemetryStorage: params.telemetryStorage,
                                                                     testDatabase: params.testDatabase,
                                                                     seam: params.internalSeam)
+        timeChecker.logInterval("T1 storage container built")
 
         let rolloutCacheConfig = params.config.rolloutCacheConfiguration ?? RolloutCacheConfiguration.builder().build()
         let rolloutCacheManager = DefaultRolloutCacheManager(generalInfoStorage: storageContainer.generalInfoStorage,
