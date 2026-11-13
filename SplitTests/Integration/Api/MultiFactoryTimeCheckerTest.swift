@@ -18,6 +18,7 @@ class MultiFactoryTimeCheckerTest: XCTestCase {
     private var gate: DispatchSemaphore!
     private var gateHits: AtomicInt!
     private var clients = [SplitClient]()
+    private let clientsLock = NSLock()
 
     override func setUp() {
         savedLevel = Logger.shared.level
@@ -258,6 +259,64 @@ class MultiFactoryTimeCheckerTest: XCTestCase {
                        "T8 must not be logged on a cold run with an empty cache: \(cold.map { $0.line })")
     }
 
+    // MARK: - Exactly once (issue-20)
+
+    private final class FactorySlot {
+        var client: SplitClient?
+        let cacheCount = AtomicInt(0)
+    }
+
+    func test_twoFactories_readyFromCacheOncePerFactory() {
+        printerStub.clear()
+        let testStart = Int(Date.nowMillis())
+        let mark = printerStub.logsSnapshot().count
+
+        // Two factories, each with its own seeded cache, built concurrently in one process
+        let apiKeys = ["99049fd8653247c5ea42bc3c1ae2c6a42bc6", "99049fd8653247c5ea42bc3c1ae2c6a42bc7"]
+        let databases = [seededCacheDatabase(), seededCacheDatabase()]
+        let slots = [FactorySlot(), FactorySlot()]
+        DispatchQueue.concurrentPerform(iterations: 2) { index in
+            slots[index].client = buildCachedClient(apiKey: apiKeys[index], database: databases[index])
+        }
+        guard let clientA = slots[0].client, let clientB = slots[1].client else {
+            return XCTFail("Both factories must build")
+        }
+
+        let cacheA = XCTestExpectation(description: "A sdkReadyFromCache")
+        let cacheB = XCTestExpectation(description: "B sdkReadyFromCache")
+        let secondA = XCTestExpectation(description: "A second sdkReadyFromCache")
+        secondA.isInverted = true
+        let secondB = XCTestExpectation(description: "B second sdkReadyFromCache")
+        secondB.isInverted = true
+        let readyA = XCTestExpectation(description: "A ready")
+        let readyB = XCTestExpectation(description: "B ready")
+
+        observeCacheReady(clientA, count: slots[0].cacheCount, first: cacheA, second: secondA)
+        observeCacheReady(clientB, count: slots[1].cacheCount, first: cacheB, second: secondB)
+        clientA.on(event: SplitEvent.sdkReady) { readyA.fulfill() }
+        clientB.on(event: SplitEvent.sdkReady) { readyB.fulfill() }
+
+        XCTAssertEqual(.completed, XCTWaiter().wait(for: [cacheA, cacheB, readyA, readyB], timeout: 15))
+        // No second sdkReadyFromCache may follow for either factory
+        XCTAssertEqual(.completed, XCTWaiter().wait(for: [secondA, secondB], timeout: 0.5))
+
+        XCTAssertEqual(slots[0].cacheCount.value, 1, "Factory A must fire sdkReadyFromCache exactly once")
+        XCTAssertEqual(slots[1].cacheCount.value, 1, "Factory B must fire sdkReadyFromCache exactly once")
+
+        // [SPTPRF] identity: the SDK_READY lines of this test carry two distinct [F<id>] tags, one per factory.
+        // Other [SPTPRF] lines are not asserted here: database-level lines use the test database's own timeChecker.
+        let readyLines = lines(Self.readyMsg, since: testStart)
+        let readyTags = Set(readyLines.compactMap { $0.tag })
+        XCTAssertEqual(readyLines.count, 2, "Expected exactly one SDK_READY line per factory: \(readyLines)")
+        XCTAssertEqual(readyTags.count, 2, "SDK_READY lines must carry two distinct tags: \(readyLines)")
+
+        let stage = stageLines(from: mark)
+        for tag in readyTags {
+            XCTAssertFalse(stage.filter { $0.tag == tag }.isEmpty,
+                           "Factory tag \(tag) has no [SPTPRF] lines: \(stage.map { $0.line })")
+        }
+    }
+
     // MARK: - Helpers
 
     private struct StageLine {
@@ -357,6 +416,60 @@ class MultiFactoryTimeCheckerTest: XCTestCase {
         let client = factory.client
         clients.append(client)
         client.on(event: SplitEvent.sdkReady) { ready.fulfill() }
+        return client
+    }
+
+    private func seededCacheDatabase() -> SplitDatabase {
+        let database = TestingHelper.createTestDatabase(name: UUID().uuidString)
+        database.splitDao.syncInsertOrUpdate(split: TestingHelper.buildSplit(name: "mf_split", treatment: "on"))
+        database.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+        database.generalInfoDao.update(info: .cacheIntegrityVersion,
+                                       longValue: DefaultRolloutCacheManager.cacheIntegrityVersion)
+        return database
+    }
+
+    private func observeCacheReady(_ client: SplitClient, count: AtomicInt,
+                                   first: XCTestExpectation, second: XCTestExpectation) {
+        client.on(event: SplitEvent.sdkReadyFromCache) {
+            if count.getAndAdd(1) == 0 {
+                first.fulfill()
+            } else {
+                second.fulfill()
+            }
+        }
+    }
+
+    /// Same config as buildClient, without registering any event. Safe to call from concurrent threads.
+    private func buildCachedClient(apiKey: String, database: SplitDatabase) -> SplitClient {
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildDispatcher(gated: false),
+                                                          streamingHandler: { request in
+            TestStreamResponseBinding.createFor(request: request, code: 200)
+        })
+        let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+
+        let config = SplitClientConfig()
+        config.serviceEndpoints = IntegrationHelper.mockServiceEndpoint
+        config.streamingEnabled = false
+        config.featuresRefreshRate = 9999
+        config.segmentsRefreshRate = 9999
+        config.impressionRefreshRate = 999999
+        config.eventsPushRate = 999999
+        config.sdkReadyTimeOut = 20000
+        // Telemetry disabled: random sampling adds a second sdkReady subscription that duplicates the SDK_READY log line.
+        config.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: false)
+
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(database)
+        let factory = builder.setApiKey(apiKey)
+            .setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
+            .setConfig(config).build()!
+        let client = factory.client
+        clientsLock.lock()
+        clients.append(client)
+        clientsLock.unlock()
         return client
     }
 
