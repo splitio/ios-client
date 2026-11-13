@@ -46,6 +46,9 @@ class FixtureGeneratorTest: XCTestCase {
     func test_sameSeed_sameHash() throws {
         let a = try FixtureGenerator.generate(size: .small, seed: FixtureGenerator.defaultSeed,
                                               outputDir: outputDir("a"))
+        // The clock is in whole seconds, so wait past a second boundary: output that
+        // depends on wall-clock time would then differ between the two runs.
+        Thread.sleep(forTimeInterval: 1.1)
         let b = try FixtureGenerator.generate(size: .small, seed: FixtureGenerator.defaultSeed,
                                               outputDir: outputDir("b"))
         XCTAssertEqual(a.sha256, b.sha256)
