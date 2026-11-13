@@ -131,7 +131,161 @@ class MultiFactoryTimeCheckerTest: XCTestCase {
         XCTAssertLessThan(sA.interval, rA.interval, "\(segLines)")
     }
 
+    // MARK: - Stage marks (issue-25)
+
+    private static let t1 = "T1 storage container built"
+    private static let t2 = "T2 cache validated"
+    private static let t3 = "T3 SyncManager loadData entered"
+    private static let t5 = "T5 splits load started"
+    private static let t6LoadStart = "T6 decode start [loadLocal]"
+    private static let t6LoadEnd = "T6 decode end [loadLocal]"
+    private static let t7 = "T7 processUpdated done"
+    private static let t8 = "T8 splitsLoadedFromCache notified"
+    private static let t10 = "T10 large segments loaded"
+
+    func test_stageMarks_T1_to_T10_loggedOncePerFactory_inOrder() {
+        printerStub.clear()
+        let database = TestingHelper.createTestDatabase(name: UUID().uuidString)
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc3"
+
+        // Cold run populates the shared database
+        let coldReady = XCTestExpectation(description: "cold ready")
+        _ = buildClient(apiKey: apiKey, gated: false, ready: coldReady, database: database)
+        XCTAssertEqual(.completed, XCTWaiter().wait(for: [coldReady], timeout: 15))
+        destroyClients()
+
+        // Warm run: a second factory on the same database
+        let mark = printerStub.logsSnapshot().count
+        let warmReady = XCTestExpectation(description: "warm ready")
+        _ = buildClient(apiKey: apiKey, gated: false, ready: warmReady, database: database)
+        XCTAssertEqual(.completed, XCTWaiter().wait(for: [warmReady], timeout: 15))
+
+        let afterMark = stageLines(from: mark)
+        let t1Lines = stageLine(Self.t1, in: afterMark)
+        XCTAssertEqual(t1Lines.count, 1, "Expected one T1 line from the warm factory: \(afterMark.map { $0.line })")
+        guard let warmTag = t1Lines.first?.tag else { return XCTFail("T1 line without [F<id>] tag") }
+        let warm = afterMark.filter { $0.tag == warmTag }
+
+        for msg in [Self.t1, Self.t2, Self.t3, Self.t5, Self.t6LoadStart, Self.t6LoadEnd,
+                    Self.t7, Self.t8, Self.t10] {
+            XCTAssertEqual(stageLine(msg, in: warm).count, 1,
+                           "'\(msg)' must be logged exactly once per factory: \(warm.map { $0.line })")
+        }
+
+        let sequence = [Self.t1, Self.t2, Self.t3, Self.t5, Self.t6LoadStart, Self.t6LoadEnd, Self.t7, Self.t8]
+        let positions = sequence.map { stageLine($0, in: warm).first?.index ?? -1 }
+        XCTAssertFalse(positions.contains(-1), "Missing stage marks: \(positions)")
+        XCTAssertEqual(positions, positions.sorted(), "Stage marks out of order (array index): \(sequence) at \(positions)")
+
+        let t3Index = stageLine(Self.t3, in: warm).first?.index ?? -1
+        let t10Index = stageLine(Self.t10, in: warm).first?.index ?? -1
+        XCTAssertGreaterThan(t10Index, t3Index, "T10 must follow T3 (array index)")
+    }
+
+    func test_t6_callSiteLabels_startAndEnd() {
+        printerStub.clear()
+        let database = TestingHelper.createTestDatabase(name: UUID().uuidString)
+        let apiKey = "99049fd8653247c5ea42bc3c1ae2c6a42bc4"
+
+        let coldReady = XCTestExpectation(description: "cold ready")
+        _ = buildClient(apiKey: apiKey, gated: false, ready: coldReady, database: database)
+        XCTAssertEqual(.completed, XCTWaiter().wait(for: [coldReady], timeout: 15))
+        destroyClients()
+
+        // Warm run with a changed filter so filterSplitsInCache takes the filter branch
+        let mark = printerStub.logsSnapshot().count
+        let syncConfig = SyncConfig.builder()
+            .addSplitFilter(SplitFilter.byName(["mf_split"]))
+            .build()
+        let warmReady = XCTestExpectation(description: "warm ready")
+        _ = buildClient(apiKey: apiKey, gated: false, ready: warmReady, database: database, syncConfig: syncConfig)
+        XCTAssertEqual(.completed, XCTWaiter().wait(for: [warmReady], timeout: 15))
+
+        let afterMark = stageLines(from: mark)
+        let t1Lines = stageLine(Self.t1, in: afterMark)
+        XCTAssertEqual(t1Lines.count, 1, "\(afterMark.map { $0.line })")
+        guard let warmTag = t1Lines.first?.tag else { return XCTFail("T1 line without [F<id>] tag") }
+        let warm = afterMark.filter { $0.tag == warmTag }
+
+        let labels = ["T6 decode start [loadLocal]", "T6 decode end [loadLocal]",
+                      "T6 decode start [filterSplitsInCache]", "T6 decode end [filterSplitsInCache]"]
+        for msg in labels {
+            XCTAssertEqual(stageLine(msg, in: warm).count, 1,
+                           "'\(msg)' must be logged exactly once: \(warm.map { $0.line })")
+        }
+        let runClass = warm.filter { $0.line.contains(" RunClass ") && $0.line.contains("filterHasChanged=true") }
+        XCTAssertEqual(runClass.count, 1, "Expected one RunClass line with filterHasChanged=true: \(warm.map { $0.line })")
+    }
+
+    func test_t6_forceParsing_startAndEnd_onceEach() {
+        printerStub.clear()
+        let database = TestingHelper.createTestDatabase(name: UUID().uuidString)
+        let generalInfoStorage = DefaultGeneralInfoStorage(database: database)
+        let storage = DefaultSplitsStorage(
+            persistentSplitsStorage: DefaultPersistentSplitsStorage(database: database),
+            flagSetsCache: DefaultFlagSetsCache(setsInFilter: nil),
+            generalInfoStorage: generalInfoStorage,
+            persistenceBreaker: DefaultPersistenceBreaker(),
+            timeChecker: TimeChecker(factoryId: 77, startTime: Date.nowMillis()))
+        printerStub.clear()
+
+        storage.forceParsing()
+
+        let all = stageLines(from: 0)
+        XCTAssertEqual(stageLine("T6 decode start [forceParsing]", in: all).count, 1, "\(all.map { $0.line })")
+        XCTAssertEqual(stageLine("T6 decode end [forceParsing]", in: all).count, 1, "\(all.map { $0.line })")
+    }
+
+    func test_coldRun_coldEndMarksOncePerFactory_T8Absent_T5Present() {
+        printerStub.clear()
+        let database = TestingHelper.createTestDatabase(name: UUID().uuidString)
+        let ready = XCTestExpectation(description: "cold ready")
+        _ = buildClient(apiKey: "99049fd8653247c5ea42bc3c1ae2c6a42bc5", gated: false, ready: ready,
+                        database: database)
+        XCTAssertEqual(.completed, XCTWaiter().wait(for: [ready], timeout: 15))
+
+        let all = stageLines(from: 0)
+        let t1Lines = stageLine(Self.t1, in: all)
+        XCTAssertEqual(t1Lines.count, 1, "\(all.map { $0.line })")
+        guard let tag = t1Lines.first?.tag else { return XCTFail("T1 line without [F<id>] tag") }
+        let cold = all.filter { $0.tag == tag }
+
+        for msg in ["ColdEnd splitsUpdated notified", "ColdEnd mySegmentsUpdated notified",
+                    "ColdEnd myLargeSegmentsUpdated notified", Self.t5] {
+            XCTAssertEqual(stageLine(msg, in: cold).count, 1, "'\(msg)' must be logged exactly once: \(cold.map { $0.line })")
+        }
+        XCTAssertEqual(stageLine(Self.t8, in: cold).count, 0,
+                       "T8 must not be logged on a cold run with an empty cache: \(cold.map { $0.line })")
+    }
+
     // MARK: - Helpers
+
+    private struct StageLine {
+        let index: Int
+        let tag: String?
+        let line: String
+    }
+
+    private func stageLines(from mark: Int) -> [StageLine] {
+        let tagRegex = try! NSRegularExpression(pattern: #"\[F(\d+)\]"#)
+        var result = [StageLine]()
+        for (index, line) in printerStub.logsSnapshot().enumerated() where index >= mark && line.contains("[SPTPRF]") {
+            result.append(StageLine(index: index, tag: firstMatch(tagRegex, line)?.first, line: line))
+        }
+        return result
+    }
+
+    /// Matches " <msg> at " so a label such as "T6 decode start [loadLocal]" never matches a sibling.
+    private func stageLine(_ msg: String, in lines: [StageLine]) -> [StageLine] {
+        lines.filter { $0.line.contains(" \(msg) at ") }
+    }
+
+    private func destroyClients() {
+        for client in clients {
+            client.destroy()
+        }
+        clients = []
+    }
 
     private static let readyMsg = "Running event on main: SDK_READY"
     private static let featureFlagsMsg = "Time until feature flags process ended"
@@ -170,7 +324,8 @@ class MultiFactoryTimeCheckerTest: XCTestCase {
         return result
     }
 
-    private func buildClient(apiKey: String, gated: Bool, ready: XCTestExpectation) -> SplitClient {
+    private func buildClient(apiKey: String, gated: Bool, ready: XCTestExpectation,
+                             database: SplitDatabase? = nil, syncConfig: SyncConfig? = nil) -> SplitClient {
         let session = HttpSessionMock()
         let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildDispatcher(gated: gated),
                                                           streamingHandler: { request in
@@ -188,11 +343,14 @@ class MultiFactoryTimeCheckerTest: XCTestCase {
         config.sdkReadyTimeOut = 20000
         // Telemetry disabled: random sampling adds a second sdkReady subscription that duplicates the SDK_READY log line.
         config.telemetryConfigHelper = TelemetryConfigHelperStub(enabled: false)
+        if let syncConfig = syncConfig {
+            config.sync = syncConfig
+        }
 
         let builder = DefaultSplitFactoryBuilder()
         _ = builder.setHttpClient(httpClient)
         _ = builder.setReachabilityChecker(ReachabilityMock())
-        _ = builder.setTestDatabase(TestingHelper.createTestDatabase(name: UUID().uuidString))
+        _ = builder.setTestDatabase(database ?? TestingHelper.createTestDatabase(name: UUID().uuidString))
         let factory = builder.setApiKey(apiKey)
             .setKey(Key(matchingKey: IntegrationHelper.dummyUserKey))
             .setConfig(config).build()!

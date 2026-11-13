@@ -111,6 +111,7 @@ class DefaultClientManager: SplitClientManager, @unchecked Sendable {
             guard let self = self else {
                 return
             }
+            self.timeChecker.logInterval("T2 cache validated")
             Logger.v("Cache validated; starting sync manager")
             self.syncManager.start()
         }

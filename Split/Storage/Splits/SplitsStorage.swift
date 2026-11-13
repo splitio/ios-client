@@ -37,6 +37,7 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
     private let flagSetsCache: FlagSetsCache
     private let generalInfoStorage: GeneralInfoStorage
     private let persistenceBreaker: PersistenceBreaker
+    private let timeChecker: TimeChecker?
     
     private(set) var changeNumber: Int64 = -1
     private(set) var updateTimestamp: Int64 = -1
@@ -44,7 +45,9 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
     init(persistentSplitsStorage: PersistentSplitsStorage,
          flagSetsCache: FlagSetsCache,
          generalInfoStorage: GeneralInfoStorage,
-         persistenceBreaker: PersistenceBreaker) {
+         persistenceBreaker: PersistenceBreaker,
+         timeChecker: TimeChecker? = nil) {
+        self.timeChecker = timeChecker
         self.persistentStorage = persistentSplitsStorage
         self.inMemorySplits = SynchronizedDictionary()
         self.trafficTypes = SynchronizedDictionary()
@@ -54,11 +57,14 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
     }
 
     func loadLocal() {
+        timeChecker?.logInterval("T6 decode start [loadLocal]")
         let snapshot = persistentStorage.getSplitsSnapshot()
+        timeChecker?.logInterval("T6 decode end [loadLocal]")
         let active = snapshot.splits.filter { $0.status == .active }
         let archived = snapshot.splits.filter { $0.status == .archived }
         _ = processUpdated(splits: active, active: true)
         _ = processUpdated(splits: archived, active: false)
+        timeChecker?.logInterval("T7 processUpdated done")
         changeNumber = snapshot.changeNumber
         updateTimestamp = snapshot.updateTimestamp
     }
@@ -245,7 +251,9 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
     
     func forceParsing() { // Parse all Splits
         var segmentsInUse: Int64 = 0
+        timeChecker?.logInterval("T6 decode start [forceParsing]")
         let activeSplits = persistentStorage.getSplitsSnapshot().splits.filter( { $0.status == .active } )
+        timeChecker?.logInterval("T6 decode end [forceParsing]")
         
         for split in activeSplits {
             guard let splitName = split.name else { continue }

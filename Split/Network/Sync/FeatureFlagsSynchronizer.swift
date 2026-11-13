@@ -87,6 +87,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
         
         DispatchQueue.general.async { [weak self] in
             guard let self = self else { return }
+            self.timeChecker.logInterval("T5 splits load started")
             
             let start = Date.nowMillis()
             self.filterSplitsInCache()
@@ -107,6 +108,7 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
             // Events & Logs
             if splitsStorage.getAll().count > 0 {
                 self.splitEventsManager.notifyInternalEvent(SplitInternalEventWithMetadata(.splitsLoadedFromCache, metadata: nil, extra: splitsStorage.updateTimestamp))
+                self.timeChecker.logInterval("T8 splitsLoadedFromCache notified")
             }
             self.broadcasterChannel.push(event: .splitLoadedFromCache)
             Logger.v("Notifying Splits loaded from cache")
@@ -217,10 +219,13 @@ class DefaultFeatureFlagsSynchronizer: FeatureFlagsSynchronizer, @unchecked Send
 
         let filterHasChanged = currentSplitsQueryString != generalInfoStorage.getSplitsFilterQueryString()
         let flagsSpecHasChanged = flagsSpec != generalInfoStorage.getFlagSpec()
+        timeChecker.logInterval("RunClass flagSpecHasChanged=\(flagsSpecHasChanged) filterHasChanged=\(filterHasChanged)")
 
         // if neither the filter nor the flags spec have changed, we don't need to do anything
         if filterHasChanged || flagsSpecHasChanged {
+            timeChecker.logInterval("T6 decode start [filterSplitsInCache]")
             let splitsInCache = splitsStorage.getAll()
+            timeChecker.logInterval("T6 decode end [filterSplitsInCache]")
 
             if flagsSpecHasChanged {
                 // when flagsSpec has changed, we delete everything
