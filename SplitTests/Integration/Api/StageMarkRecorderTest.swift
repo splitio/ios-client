@@ -57,7 +57,7 @@ class StageMarkRecorderTest: XCTestCase {
         }
         XCTAssertTrue(coldNames.contains { $0.hasPrefix("RunClass flagSpecHasChanged=") }, "\(coldNames)")
         XCTAssertFalse(coldNames.contains(Self.t8), "T8 must not be recorded on cold run: \(coldNames)")
-        assertNonDecreasing(cold.marks)
+        assertNonDecreasing(Self.sequenceMarks(cold.marks))
 
         let warm = StageMarkBuffer()
         XCTAssertTrue(runFactory(apiKey: apiKey, database: database, recorder: warm.sink))
@@ -74,9 +74,18 @@ class StageMarkRecorderTest: XCTestCase {
         guard !positions.contains(-1) else { return XCTFail("Missing marks: \(positions)") }
         XCTAssertEqual(positions, positions.sorted(), "Out of order: \(sequence) at \(positions)")
         XCTAssertGreaterThan(names.firstIndex(of: Self.t10) ?? -1, names.firstIndex(of: Self.t3) ?? Int.max)
-        assertNonDecreasing(marks)
+        assertNonDecreasing(Self.sequenceMarks(marks))
         let nanos = positions.map { marks[$0].nanos }
         XCTAssertEqual(nanos, nanos.sorted(), "First occurrences must be non-decreasing: \(nanos)")
+        // ColdEnd marks fire from other threads, so they are not in the ordered sequence. Each must be
+        // present once and not earlier than T8.
+        let t8Nanos = marks[positions[positions.count - 1]].nanos
+        for coldEnd in Self.coldEnds {
+            let matches = marks.filter { $0.name == coldEnd }
+            XCTAssertEqual(matches.count, 1, "warm '\(coldEnd)': \(names)")
+            XCTAssertGreaterThanOrEqual(matches.first?.nanos ?? 0, t8Nanos,
+                                        "'\(coldEnd)' earlier than T8: \(names)")
+        }
     }
 
     // b. Default: no recorder, behaviour unchanged
@@ -122,7 +131,32 @@ class StageMarkRecorderTest: XCTestCase {
         XCTAssertTrue(printerStub.logsSnapshot().filter { $0.contains("[SPTPRF]") }.isEmpty)
     }
 
+    // e. Concurrent appends through the sink are neither lost nor duplicated
+    func test_concurrentSinkAppends_countExact_noMarkLost() {
+        let threads = 8
+        let perThread = 500
+        let buffer = StageMarkBuffer()
+        let sink = buffer.sink
+        DispatchQueue.concurrentPerform(iterations: threads) { thread in
+            for index in 0..<perThread {
+                sink("thread \(thread) mark \(index)", UInt64(index))
+            }
+        }
+        let names = buffer.marks.map { $0.name }
+        XCTAssertEqual(names.count, threads * perThread, "Exact count of concurrent appends")
+        XCTAssertEqual(Set(names).count, names.count, "Duplicate marks recorded")
+        let expected = Set((0..<threads).flatMap { thread in
+            (0..<perThread).map { "thread \(thread) mark \($0)" }
+        })
+        XCTAssertEqual(Set(names), expected, "Marks lost or unexpected")
+    }
+
     // MARK: - Helpers
+
+    // Marks emitted in sequence on one thread; ColdEnd marks are excluded (they fire from other threads).
+    private static func sequenceMarks(_ marks: [(name: String, nanos: UInt64)]) -> [(name: String, nanos: UInt64)] {
+        marks.filter { !coldEnds.contains($0.name) }
+    }
 
     private func assertNonDecreasing(_ marks: [(name: String, nanos: UInt64)],
                                      file: StaticString = #filePath, line: UInt = #line) {
