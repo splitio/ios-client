@@ -619,6 +619,8 @@
 		5B3C171B2ED76BAD0068D623 /* FetcherThrottleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9583C2CE2C91C74D001298C8 /* FetcherThrottleTests.swift */; };
 		5B3C171C2ED76BAD0068D623 /* UniqueKeysRecorderWorkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955AAB8C283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift */; };
 		5B3C171D2ED76BAD0068D623 /* TelemetryConfigHelperStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */; };
+		A26A0000000000000000B602 /* FixtureGeneratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A000000000000000000F2 /* FixtureGeneratorTest.swift */; };
+		A26A0000000000000000B601 /* FixtureGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A000000000000000000F1 /* FixtureGenerator.swift */; };
 		5B3C171E2ED76BAD0068D623 /* SplitsEncoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E2D297ED7600080D53C /* SplitsEncoderTest.swift */; };
 		5B3C171F2ED76BAD0068D623 /* SseClientMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59ED408724EABD4700EF7B09 /* SseClientMock.swift */; };
 		5B3C17202ED76BAD0068D623 /* StreamingIntegrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5921ED412538EA39000D6C8B /* StreamingIntegrationHelper.swift */; };
@@ -1068,6 +1070,8 @@
 		956A7E21297590DF0080D53C /* Array+Chunked.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E1F297590DF0080D53C /* Array+Chunked.swift */; };
 		956A7E252979F2290080D53C /* SplitsEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E242979F2290080D53C /* SplitsEncoder.swift */; };
 		956A7E2C297ECB110080D53C /* SplitsDecoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E2B297ECB110080D53C /* SplitsDecoderTest.swift */; };
+		A26A0000000000000000B502 /* FixtureGeneratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A000000000000000000F2 /* FixtureGeneratorTest.swift */; };
+		A26A0000000000000000B501 /* FixtureGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A000000000000000000F1 /* FixtureGenerator.swift */; };
 		956A7E2E297ED7600080D53C /* SplitsEncoderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E2D297ED7600080D53C /* SplitsEncoderTest.swift */; };
 		956A7E31297EE5A60080D53C /* ComputeProcessCountTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E30297EE5A60080D53C /* ComputeProcessCountTest.swift */; };
 		956A7E33297EF8B10080D53C /* SplitsEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956A7E242979F2290080D53C /* SplitsEncoder.swift */; };
@@ -2465,6 +2469,8 @@
 		956A7E1F297590DF0080D53C /* Array+Chunked.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Chunked.swift"; sourceTree = "<group>"; };
 		956A7E242979F2290080D53C /* SplitsEncoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsEncoder.swift; sourceTree = "<group>"; };
 		956A7E2B297ECB110080D53C /* SplitsDecoderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitsDecoderTest.swift; sourceTree = "<group>"; };
+		A26A000000000000000000F2 /* FixtureGeneratorTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FixtureGeneratorTest.swift; sourceTree = "<group>"; };
+		A26A000000000000000000F1 /* FixtureGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FixtureGenerator.swift; sourceTree = "<group>"; };
 		956A7E2D297ED7600080D53C /* SplitsEncoderTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplitsEncoderTest.swift; sourceTree = "<group>"; };
 		956A7E30297EE5A60080D53C /* ComputeProcessCountTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputeProcessCountTest.swift; sourceTree = "<group>"; };
 		956D17CC260D1B700037F575 /* ChangesCheckerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangesCheckerMock.swift; sourceTree = "<group>"; };
@@ -3815,6 +3821,8 @@
 				95737E152ADEC794007FD15C /* StreamingTestingHelper.swift */,
 				95ED4A9726497EEA00FD3569 /* TestSplitFactory.swift */,
 				DEADBEEF00000000000000A1 /* TimeChecker+Testing.swift */,
+				A26A000000000000000000F1 /* FixtureGenerator.swift */,
+				A26A000000000000000000F2 /* FixtureGeneratorTest.swift */,
 				95B4369F26F1487400E1EB9C /* TestingData.swift */,
 				952BF5FB278DF66700FF6181 /* TelemetryConfigHelperStub.swift */,
 				95F7BC282C46A4C800C5F2E4 /* SecurityHelper.swift */,
@@ -6485,6 +6493,8 @@
 				9583C2CF2C91C74D001298C8 /* FetcherThrottleTests.swift in Sources */,
 				955AAB8D283FF14E00ADFB07 /* UniqueKeysRecorderWorkerTests.swift in Sources */,
 				952BF5FC278DF66700FF6181 /* TelemetryConfigHelperStub.swift in Sources */,
+				A26A0000000000000000B502 /* FixtureGeneratorTest.swift in Sources */,
+				A26A0000000000000000B501 /* FixtureGenerator.swift in Sources */,
 				956A7E2E297ED7600080D53C /* SplitsEncoderTest.swift in Sources */,
 				59ED408824EABD4700EF7B09 /* SseClientMock.swift in Sources */,
 				5921ED422538EA39000D6C8B /* StreamingIntegrationHelper.swift in Sources */,
@@ -6872,6 +6882,8 @@
 				5B3C171B2ED76BAD0068D623 /* FetcherThrottleTests.swift in Sources */,
 				5B3C171C2ED76BAD0068D623 /* UniqueKeysRecorderWorkerTests.swift in Sources */,
 				5B3C171D2ED76BAD0068D623 /* TelemetryConfigHelperStub.swift in Sources */,
+				A26A0000000000000000B602 /* FixtureGeneratorTest.swift in Sources */,
+				A26A0000000000000000B601 /* FixtureGenerator.swift in Sources */,
 				5B3C171E2ED76BAD0068D623 /* SplitsEncoderTest.swift in Sources */,
 				5B3C171F2ED76BAD0068D623 /* SseClientMock.swift in Sources */,
 				5B3C17202ED76BAD0068D623 /* StreamingIntegrationHelper.swift in Sources */,
