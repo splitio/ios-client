@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B27E00000000000000000114 /* BenchmarkArguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E0000000000000000010F /* BenchmarkArguments.swift */; };
+		B27E00000000000000000115 /* BenchmarkCSVRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000110 /* BenchmarkCSVRow.swift */; };
+		B27E00000000000000000116 /* BenchmarkArgumentsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000111 /* BenchmarkArgumentsTest.swift */; };
+		B27E00000000000000000117 /* BenchmarkCSVRowTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000112 /* BenchmarkCSVRowTest.swift */; };
+		B27E00000000000000000118 /* BenchmarkSeamSmokeTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000113 /* BenchmarkSeamSmokeTest.swift */; };
+		B27E00000000000000000119 /* FixtureGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A26A000000000000000000F1 /* FixtureGenerator.swift */; };
+		B27E0000000000000000011A /* LogPrinterStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E8193F2878922000D99093 /* LogPrinterStub.swift */; };
+		B27E0000000000000000011B /* TimeChecker+Testing.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEADBEEF00000000000000A1 /* TimeChecker+Testing.swift */; };
+		B27E0000000000000000010E /* Split.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B6DEE5A20EA6A4E0067435E /* Split.framework */; };
 		C0DE17E5A11C4B7E9D3F2A01 /* CacheIntegrityResyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE17E5A11C4B7E9D3F2A02 /* CacheIntegrityResyncTest.swift */; };
 		C0DE17E5A11C4B7E9D3F2A03 /* CacheIntegrityResyncTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE17E5A11C4B7E9D3F2A02 /* CacheIntegrityResyncTest.swift */; };
 		4D2F8A6B1E0C47359A8B3F12 /* ProxyRecoveryTransportErrorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7A1C3E5D9F2484A9C6E1D07 /* ProxyRecoveryTransportErrorTest.swift */; };
@@ -1819,6 +1828,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		B27E00000000000000000106 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B6DEE5920EA6A4E0067435E;
+			remoteInfo = Split;
+		};
 		29CD94D4149E231C94C1EFA5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
@@ -1934,6 +1950,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B27E0000000000000000010F /* BenchmarkArguments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkArguments.swift; sourceTree = "<group>"; };
+		B27E00000000000000000110 /* BenchmarkCSVRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkCSVRow.swift; sourceTree = "<group>"; };
+		B27E00000000000000000111 /* BenchmarkArgumentsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkArgumentsTest.swift; sourceTree = "<group>"; };
+		B27E00000000000000000112 /* BenchmarkCSVRowTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkCSVRowTest.swift; sourceTree = "<group>"; };
+		B27E00000000000000000113 /* BenchmarkSeamSmokeTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkSeamSmokeTest.swift; sourceTree = "<group>"; };
+		B27E00000000000000000102 /* SplitBenchmark.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitBenchmark.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0DE17E5A11C4B7E9D3F2A02 /* CacheIntegrityResyncTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheIntegrityResyncTest.swift; sourceTree = "<group>"; };
 		B7A1C3E5D9F2484A9C6E1D07 /* ProxyRecoveryTransportErrorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyRecoveryTransportErrorTest.swift; sourceTree = "<group>"; };
 		00FA33CEC442E498D96D7700 /* BackoffCounterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BackoffCounterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2873,6 +2895,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		B27E00000000000000000105 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B27E0000000000000000010E /* Split.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		020B54F29090B10B36E722EE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3027,6 +3057,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B27E00000000000000000103 /* SplitBenchmark */ = {
+			isa = PBXGroup;
+			children = (
+				B27E0000000000000000010F /* BenchmarkArguments.swift */,
+				B27E00000000000000000110 /* BenchmarkCSVRow.swift */,
+				B27E00000000000000000111 /* BenchmarkArgumentsTest.swift */,
+				B27E00000000000000000112 /* BenchmarkCSVRowTest.swift */,
+				B27E00000000000000000113 /* BenchmarkSeamSmokeTest.swift */,
+			);
+			path = SplitBenchmark;
+			sourceTree = "<group>";
+		};
 		09594BE53BC4B1E633601B3A /* Logging */ = {
 			isa = PBXGroup;
 			children = (
@@ -3125,6 +3167,7 @@
 			children = (
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
+				B27E00000000000000000103 /* SplitBenchmark */,
 				TESTPLANS0001 /* TestPlans */,
 				237E67ECC8C144123A55D057 /* Sources */,
 				95825BA1271F004700A0CDAD /* Resources */,
@@ -3145,6 +3188,7 @@
 				95825BA0271F004700A0CDAD /* Split_Split.bundle */,
 				95B02CA428D0BD790030EC8B /* SplitWatchOS.framework */,
 				5B3C18042ED76BAD0068D623 /* SplitTestsSwift6.xctest */,
+				B27E00000000000000000102 /* SplitBenchmark.xctest */,
 				A84C2F1D387F870A3749BCE7 /* Logging.framework */,
 				06B656827046A8E6AFD642E8 /* LoggingTests.xctest */,
 				B53126909B1A56DEF7508435 /* Http.framework */,
@@ -5051,6 +5095,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		B27E00000000000000000101 /* SplitBenchmark */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B27E00000000000000000108 /* Build configuration list for PBXNativeTarget "SplitBenchmark" */;
+			buildPhases = (
+				B27E00000000000000000104 /* Sources */,
+				B27E00000000000000000105 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B27E00000000000000000107 /* PBXTargetDependency */,
+			);
+			name = SplitBenchmark;
+			productName = SplitBenchmark;
+			productReference = B27E00000000000000000102 /* SplitBenchmark.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		22075E2EBDA25D78FC291C40 /* HttpTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 08C301C6CA80A5AD19D35511 /* Build configuration list for PBXNativeTarget "HttpTests" */;
@@ -5442,6 +5503,7 @@
 				3B6DEE5920EA6A4E0067435E /* Split */,
 				592C6AA4211B6C99002D120C /* SplitTestsSwift5 */,
 				5B3C16342ED76BAD0068D623 /* SplitTestsSwift6 */,
+				B27E00000000000000000101 /* SplitBenchmark */,
 				95825B9F271F004700A0CDAD /* Split_Split */,
 				95B02CA328D0BD790030EC8B /* SplitWatchOS */,
 				557D062442413680641861B3 /* Logging */,
@@ -5792,6 +5854,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		B27E00000000000000000104 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B27E00000000000000000114 /* BenchmarkArguments.swift in Sources */,
+				B27E00000000000000000115 /* BenchmarkCSVRow.swift in Sources */,
+				B27E00000000000000000116 /* BenchmarkArgumentsTest.swift in Sources */,
+				B27E00000000000000000117 /* BenchmarkCSVRowTest.swift in Sources */,
+				B27E00000000000000000118 /* BenchmarkSeamSmokeTest.swift in Sources */,
+				B27E00000000000000000119 /* FixtureGenerator.swift in Sources */,
+				B27E0000000000000000011A /* LogPrinterStub.swift in Sources */,
+				B27E0000000000000000011B /* TimeChecker+Testing.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0E28252CD1002AC39C50D612 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -7524,6 +7601,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B27E00000000000000000107 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3B6DEE5920EA6A4E0067435E /* Split */;
+			targetProxy = B27E00000000000000000106 /* PBXContainerItemProxy */;
+		};
 		00138F23528BBE19F65842D2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Http;
@@ -7603,6 +7685,176 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		B27E0000000000000000010C /* Release-Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MACOSX_DEPLOYMENT_TARGET = 12.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = NO;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "watchsimulator watchos macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 6.0;
+				TVOS_DEPLOYMENT_TARGET = 15.4;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 9.0;
+			};
+			name = "Release-Benchmark";
+		};
+		B27E0000000000000000010D /* Release-Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALLOW_TARGET_PLATFORM_SPECIALIZATION = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				ENABLE_TESTABILITY = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = $PROJECT_DIR;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = Split/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				"IPHONEOS_DEPLOYMENT_TARGET[sdk=macosx*]" = 10.13;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MARKETING_VERSION = 2.5.1;
+				MODULEMAP_FILE = modules.modulemap;
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.Split;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator iphoneos driverkit appletvsimulator appletvos";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_INCLUDE_PATHS = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TVOS_DEPLOYMENT_TARGET = 15.0;
+				USER_HEADER_SEARCH_PATHS = "";
+				USE_HEADERMAP = YES;
+			};
+			name = "Release-Benchmark";
+		};
+		B27E00000000000000000109 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitBenchmark;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B27E0000000000000000010A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitBenchmark;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		B27E0000000000000000010B /* Release-Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitBenchmark;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release-Benchmark;
+		};
 		0506F60ABB74FEF1E0B19A54 /* Debug-Swift6 */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -10053,6 +10305,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		B27E00000000000000000108 /* Build configuration list for PBXNativeTarget "SplitBenchmark" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B27E00000000000000000109 /* Debug */,
+				B27E0000000000000000010A /* Release */,
+				B27E0000000000000000010B /* Release-Benchmark */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		08C301C6CA80A5AD19D35511 /* Build configuration list for PBXNativeTarget "HttpTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -10115,6 +10377,7 @@
 				C59D18C82EDA131D002C86FB /* Debug-Swift5 */,
 				C59D18CE2EDA1327002C86FB /* Debug-Swift6 */,
 				3B6DEE6120EA6A4E0067435E /* Release */,
+				B27E0000000000000000010C /* Release-Benchmark */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -10126,6 +10389,7 @@
 				C59D18C92EDA131D002C86FB /* Debug-Swift5 */,
 				C59D18CF2EDA1327002C86FB /* Debug-Swift6 */,
 				3B6DEE6420EA6A4E0067435E /* Release */,
+				B27E0000000000000000010D /* Release-Benchmark */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
