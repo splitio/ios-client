@@ -71,7 +71,7 @@ class StageMarkRecorderTest: XCTestCase {
 
         let sequence = [Self.t1, Self.t2, Self.t3, Self.t5, Self.t6LoadStart, Self.t6LoadEnd, Self.t7, Self.t8]
         let positions = sequence.map { names.firstIndex(of: $0) ?? -1 }
-        XCTAssertFalse(positions.contains(-1), "Missing marks: \(positions)")
+        guard !positions.contains(-1) else { return XCTFail("Missing marks: \(positions)") }
         XCTAssertEqual(positions, positions.sorted(), "Out of order: \(sequence) at \(positions)")
         XCTAssertGreaterThan(names.firstIndex(of: Self.t10) ?? -1, names.firstIndex(of: Self.t3) ?? Int.max)
         assertNonDecreasing(marks)
