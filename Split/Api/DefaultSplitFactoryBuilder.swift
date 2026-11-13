@@ -8,6 +8,10 @@
 
 import Foundation
 
+#if SWIFT_PACKAGE || SPLIT_MODULAR
+@_spi(SplitInternal) import SplitLogging
+#endif
+
 ///
 /// Default implementation of factory builder.
 /// This class is intended to use as a kind of Director in the future. It will use
@@ -121,7 +125,8 @@ import Foundation
 
     public func build() -> SplitFactory? {
         let timeChecker = TimeChecker(factoryId: DefaultSplitFactoryBuilder.factoryCounter.addAndGet(1),
-                                      startTime: Date.nowMillis())
+                                      startTime: Date.nowMillis(),
+                                      markSink: params.internalSeam.markRecorder)
         Logger.v("[SPTPRF][F\(timeChecker.factoryId)] TimeChecker started at: \(timeChecker.startTime)")
         if !params.config.serviceEndpoints.allEndpointsValid {
             Logger.e("Could not create the factory, there are invalid endpoints")
