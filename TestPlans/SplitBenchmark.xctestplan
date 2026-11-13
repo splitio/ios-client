@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "B27E0000-0000-4000-8000-000000000001",
+      "name" : "Release-Benchmark",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Split.xcodeproj",
+        "identifier" : "B27E00000000000000000101",
+        "name" : "SplitBenchmark"
+      }
+    }
+  ],
+  "version" : 1
+}
