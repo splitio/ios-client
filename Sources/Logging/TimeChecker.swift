@@ -14,9 +14,20 @@ public struct TimeChecker {
     private static let showTimestamp = true
     private static let showSinceMsg = true
 
+    private let markSink: (@Sendable (String, UInt64) -> Void)?
+
     public init(factoryId: Int, startTime: Int64) {
         self.factoryId = factoryId
         self.startTime = startTime
+        self.markSink = nil
+    }
+
+    /// Internal: records a monotonic mark for every `logInterval(_:)` call.
+    @_spi(SplitInternal)
+    public init(factoryId: Int, startTime: Int64, markSink: (@Sendable (String, UInt64) -> Void)?) {
+        self.factoryId = factoryId
+        self.startTime = startTime
+        self.markSink = markSink
     }
 
     private var factoryTag: String {
@@ -24,6 +35,7 @@ public struct TimeChecker {
     }
 
     public func logInterval(_ msg: String, dateProvider: DateProvider? = nil) {
+        markSink?(msg, DispatchTime.now().uptimeNanoseconds)
         let provider = dateProvider ?? Logger.shared.dateProvider
         let now = provider.nowMillis()
         let interval = now - startTime

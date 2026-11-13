@@ -19,13 +19,16 @@ struct InternalSeam: Sendable {
     var decoderWidth: Int?
     var decodeChunkRunner: DecodeChunkRunner
     var suppressedInternalEvent: SplitInternalEvent?
+    var markRecorder: (@Sendable (String, UInt64) -> Void)?
 
     init(decoderWidth: Int? = nil,
          decodeChunkRunner: @escaping DecodeChunkRunner = { _, run in run() },
-         suppressedInternalEvent: SplitInternalEvent? = nil) {
+         suppressedInternalEvent: SplitInternalEvent? = nil,
+         markRecorder: (@Sendable (String, UInt64) -> Void)? = nil) {
         self.decoderWidth = decoderWidth
         self.decodeChunkRunner = decodeChunkRunner
         self.suppressedInternalEvent = suppressedInternalEvent
+        self.markRecorder = markRecorder
     }
 }
 
