@@ -1,0 +1,12 @@
+[
+  "{\"name\": \"flag_001\", \"trafficTypeName\": \"user\", \"status\": \"ACTIVE\", \"killed\": false, \"changeNumber\": 1700000001, \"sets\": [\"set_a\", \"set_b\"]}",
+  "{\"name\": \"flag_002\", \"trafficTypeName\": \"account\", \"status\": \"ACTIVE\", \"killed\": false, \"changeNumber\": 1700000002, \"sets\": []}",
+  "{\"name\": \"flag_003\", \"trafficTypeName\": \"user\", \"status\": \"ARCHIVED\", \"killed\": false, \"changeNumber\": 1700000003, \"sets\": [\"set_a\"]}",
+  "{\"name\": \"flag_004\", \"trafficTypeName\": \"account\", \"status\": \"ACTIVE\", \"killed\": false, \"changeNumber\": 1700000004}",
+  "{\"name\": \"flag_005\", \"trafficTypeName\": \"user\", \"status\": \"ACTIVE\", \"killed\": true, \"changeNumber\": 1700000005, \"sets\": [\"set_a\", \"set_b\"]}",
+  "{\"name\": \"flag_006\", \"trafficTypeName\": \"account\", \"status\": \"ARCHIVED\", \"killed\": false, \"changeNumber\": 1700000006, \"sets\": []}",
+  "{\"name\": \"flag_007\", \"trafficTypeName\": \"user\", \"status\": \"ACTIVE\", \"killed\": false, \"changeNumber\": 1700000007, \"sets\": [\"set_a\"]}",
+  "{\"name\": \"flag_008\", \"trafficTypeName\": \"account\", \"status\": \"ACTIVE\", \"killed\": false, \"changeNumber\": 1700000008}",
+  "{\"name\": \"flag_009\", \"trafficTypeName\": \"user\", \"status\": \"ARCHIVED\", \"killed\": false, \"changeNumber\": 1700000009, \"sets\": [\"set_a\", \"set_b\"]}",
+  "{\"name\": \"flag_010\", \"trafficTypeName\": \"account\", \"status\": \"ACTIVE\", \"killed\": true, \"changeNumber\": 1700000010, \"sets\": []}"
+]

@@ -205,6 +205,12 @@
 		592C6AEB211CBBB0002D120C /* murmur3-sample-data-v2.csv in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE1211CBBB0002D120C /* murmur3-sample-data-v2.csv */; };
 		592C6AED211CBBB0002D120C /* splitchanges_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE3211CBBB0002D120C /* splitchanges_2.json */; };
 		592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE4211CBBB0002D120C /* splitchanges_1.json */; };
+		257BC38C4F3A47A4F58BBD23 /* decoder_flags_10.json in Resources */ = {isa = PBXBuildFile; fileRef = 141D8C67C729824CA8D756DD /* decoder_flags_10.json */; };
+		D65C1537EDB15CF76538236D /* decoder_flags_11.json in Resources */ = {isa = PBXBuildFile; fileRef = 8C902F3520998025B7B64680 /* decoder_flags_11.json */; };
+		CB691091D441570CEBDC4EAC /* decoder_flags_100.json in Resources */ = {isa = PBXBuildFile; fileRef = BC3FC5CEE4B89176396D4DC2 /* decoder_flags_100.json */; };
+		BAFEF1ECD1C147BA9BF0082C /* decoder_golden_10.json in Resources */ = {isa = PBXBuildFile; fileRef = 5C74A2AD0CC247C0EA9A0CF6 /* decoder_golden_10.json */; };
+		85EFCDE051BB5FAB61CDFF52 /* decoder_golden_11.json in Resources */ = {isa = PBXBuildFile; fileRef = BE28F32AC18A724C688DF393 /* decoder_golden_11.json */; };
+		5D2A7EE13C447454C978EE13 /* decoder_golden_100.json in Resources */ = {isa = PBXBuildFile; fileRef = 392B8EB1AF5AE2E141E7A7FE /* decoder_golden_100.json */; };
 		592D2CFA22088606007458F9 /* ConcurrentDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 592D2CF922088606007458F9 /* ConcurrentDictionary.swift */; };
 		593225F824A384B300496D8B /* EndpointFactoryTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593225F724A384B300496D8B /* EndpointFactoryTest.swift */; };
 		593225FA24A3855700496D8B /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 593225F924A3855700496D8B /* TestHelper.swift */; };
@@ -770,6 +776,12 @@
 		5B3C17BE2ED76BAD0068D623 /* SplitiOSUnit_2.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95DF58EB2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan */; };
 		5B3C17BF2ED76BAD0068D623 /* SplitiOSUnit_3.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 95DF58F72BEC5432009220B8 /* SplitiOSUnit_3.xctestplan */; };
 		5B3C17C02ED76BAD0068D623 /* splitchanges_1.json in Resources */ = {isa = PBXBuildFile; fileRef = 592C6AE4211CBBB0002D120C /* splitchanges_1.json */; };
+		802A64BFEC8AE53ABD613349 /* decoder_flags_10.json in Resources */ = {isa = PBXBuildFile; fileRef = 141D8C67C729824CA8D756DD /* decoder_flags_10.json */; };
+		B13CE645B38BB4B005A25F46 /* decoder_flags_11.json in Resources */ = {isa = PBXBuildFile; fileRef = 8C902F3520998025B7B64680 /* decoder_flags_11.json */; };
+		D815EEEA02C0D617F2F4202E /* decoder_flags_100.json in Resources */ = {isa = PBXBuildFile; fileRef = BC3FC5CEE4B89176396D4DC2 /* decoder_flags_100.json */; };
+		3C7B1EE0D834FA2D337B21A9 /* decoder_golden_10.json in Resources */ = {isa = PBXBuildFile; fileRef = 5C74A2AD0CC247C0EA9A0CF6 /* decoder_golden_10.json */; };
+		691BCA0BFC8B578769D89310 /* decoder_golden_11.json in Resources */ = {isa = PBXBuildFile; fileRef = BE28F32AC18A724C688DF393 /* decoder_golden_11.json */; };
+		87451B08811E39890AD1B8B1 /* decoder_golden_100.json in Resources */ = {isa = PBXBuildFile; fileRef = 392B8EB1AF5AE2E141E7A7FE /* decoder_golden_100.json */; };
 		5B3C17C12ED76BAD0068D623 /* attributes_test_split.json in Resources */ = {isa = PBXBuildFile; fileRef = 9595C1A7274574220092123F /* attributes_test_split.json */; };
 		5B3C17C22ED76BAD0068D623 /* rsa_3072_cert.pem.der in Resources */ = {isa = PBXBuildFile; fileRef = 95F7BC032C1CE84500C5F2E4 /* rsa_3072_cert.pem.der */; };
 		5B3C17C32ED76BAD0068D623 /* push_msg-segment_updV2.txt in Resources */ = {isa = PBXBuildFile; fileRef = 95B2498326F3E19300B34507 /* push_msg-segment_updV2.txt */; };
@@ -2077,6 +2089,12 @@
 		592C6AE1211CBBB0002D120C /* murmur3-sample-data-v2.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "murmur3-sample-data-v2.csv"; path = "SplitTests/Resources/murmur3-sample-data-v2.csv"; sourceTree = SOURCE_ROOT; };
 		592C6AE3211CBBB0002D120C /* splitchanges_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_2.json; path = SplitTests/Resources/splitchanges_2.json; sourceTree = SOURCE_ROOT; };
 		592C6AE4211CBBB0002D120C /* splitchanges_1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = splitchanges_1.json; path = SplitTests/Resources/splitchanges_1.json; sourceTree = SOURCE_ROOT; };
+		141D8C67C729824CA8D756DD /* decoder_flags_10.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = decoder_flags_10.json; path = SplitTests/Resources/Decoder/decoder_flags_10.json; sourceTree = SOURCE_ROOT; };
+		8C902F3520998025B7B64680 /* decoder_flags_11.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = decoder_flags_11.json; path = SplitTests/Resources/Decoder/decoder_flags_11.json; sourceTree = SOURCE_ROOT; };
+		BC3FC5CEE4B89176396D4DC2 /* decoder_flags_100.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = decoder_flags_100.json; path = SplitTests/Resources/Decoder/decoder_flags_100.json; sourceTree = SOURCE_ROOT; };
+		5C74A2AD0CC247C0EA9A0CF6 /* decoder_golden_10.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = decoder_golden_10.json; path = SplitTests/Resources/Decoder/decoder_golden_10.json; sourceTree = SOURCE_ROOT; };
+		BE28F32AC18A724C688DF393 /* decoder_golden_11.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = decoder_golden_11.json; path = SplitTests/Resources/Decoder/decoder_golden_11.json; sourceTree = SOURCE_ROOT; };
+		392B8EB1AF5AE2E141E7A7FE /* decoder_golden_100.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = decoder_golden_100.json; path = SplitTests/Resources/Decoder/decoder_golden_100.json; sourceTree = SOURCE_ROOT; };
 		592D2CF922088606007458F9 /* ConcurrentDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConcurrentDictionary.swift; sourceTree = "<group>"; };
 		593225F724A384B300496D8B /* EndpointFactoryTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointFactoryTest.swift; sourceTree = "<group>"; };
 		593225F924A3855700496D8B /* TestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
@@ -3934,6 +3952,12 @@
 				592C6AE1211CBBB0002D120C /* murmur3-sample-data-v2.csv */,
 				592C6AE0211CBBB0002D120C /* regex.csv */,
 				592C6AE4211CBBB0002D120C /* splitchanges_1.json */,
+				141D8C67C729824CA8D756DD /* decoder_flags_10.json */,
+				8C902F3520998025B7B64680 /* decoder_flags_11.json */,
+				BC3FC5CEE4B89176396D4DC2 /* decoder_flags_100.json */,
+				5C74A2AD0CC247C0EA9A0CF6 /* decoder_golden_10.json */,
+				BE28F32AC18A724C688DF393 /* decoder_golden_11.json */,
+				392B8EB1AF5AE2E141E7A7FE /* decoder_golden_100.json */,
 				95737E112AD6D016007FD15C /* splitchanges_flagsets.json */,
 				592C6AE3211CBBB0002D120C /* splitchanges_2.json */,
 				592C6ADD211CBBB0002D120C /* splitchanges_3.json */,
@@ -5469,6 +5493,12 @@
 				95DF58EC2BEBBE9D009220B8 /* SplitiOSUnit_2.xctestplan in Resources */,
 				95DF58F82BEC5432009220B8 /* SplitiOSUnit_3.xctestplan in Resources */,
 				592C6AEE211CBBB0002D120C /* splitchanges_1.json in Resources */,
+				257BC38C4F3A47A4F58BBD23 /* decoder_flags_10.json in Resources */,
+				D65C1537EDB15CF76538236D /* decoder_flags_11.json in Resources */,
+				CB691091D441570CEBDC4EAC /* decoder_flags_100.json in Resources */,
+				BAFEF1ECD1C147BA9BF0082C /* decoder_golden_10.json in Resources */,
+				85EFCDE051BB5FAB61CDFF52 /* decoder_golden_11.json in Resources */,
+				5D2A7EE13C447454C978EE13 /* decoder_golden_100.json in Resources */,
 				9595C1A8274574220092123F /* attributes_test_split.json in Resources */,
 				95F7BC092C1CE84500C5F2E4 /* rsa_3072_cert.pem.der in Resources */,
 				95B2498426F3E19300B34507 /* push_msg-segment_updV2.txt in Resources */,
@@ -5568,6 +5598,12 @@
 				5B3C17BE2ED76BAD0068D623 /* SplitiOSUnit_2.xctestplan in Resources */,
 				5B3C17BF2ED76BAD0068D623 /* SplitiOSUnit_3.xctestplan in Resources */,
 				5B3C17C02ED76BAD0068D623 /* splitchanges_1.json in Resources */,
+				802A64BFEC8AE53ABD613349 /* decoder_flags_10.json in Resources */,
+				B13CE645B38BB4B005A25F46 /* decoder_flags_11.json in Resources */,
+				D815EEEA02C0D617F2F4202E /* decoder_flags_100.json in Resources */,
+				3C7B1EE0D834FA2D337B21A9 /* decoder_golden_10.json in Resources */,
+				691BCA0BFC8B578769D89310 /* decoder_golden_11.json in Resources */,
+				87451B08811E39890AD1B8B1 /* decoder_golden_100.json in Resources */,
 				5B3C17C12ED76BAD0068D623 /* attributes_test_split.json in Resources */,
 				5B3C17C22ED76BAD0068D623 /* rsa_3072_cert.pem.der in Resources */,
 				5B3C17C32ED76BAD0068D623 /* push_msg-segment_updV2.txt in Resources */,
