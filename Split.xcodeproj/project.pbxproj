@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C4200000000000000000B100 /* BenchmarkArguments.swift in Sources (host) */ = {isa = PBXBuildFile; fileRef = B27E0000000000000000010F /* BenchmarkArguments.swift */; };
+		C4200000000000000000B101 /* BenchmarkCSVRow.swift in Sources (host) */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000110 /* BenchmarkCSVRow.swift */; };
+		C4200000000000000000B102 /* BenchmarkDriver.swift in Sources (host) */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000120 /* BenchmarkDriver.swift */; };
+		C4200000000000000000B103 /* BenchmarkRealDriver.swift in Sources (host) */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000130 /* BenchmarkRealDriver.swift */; };
+		C4200000000000000000B104 /* BenchmarkScenarioRunner.swift in Sources (host) */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000122 /* BenchmarkScenarioRunner.swift */; };
+		C4200000000000000000B105 /* BenchmarkRunner.swift in Sources (host) */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000124 /* BenchmarkRunner.swift */; };
+		C4200000000000000000B106 /* FixtureGenerator.swift in Sources (host) */ = {isa = PBXBuildFile; fileRef = A26A000000000000000000F1 /* FixtureGenerator.swift */; };
+		C4200000000000000000B107 /* BenchmarkDirectLaunch.swift in Sources (host) */ = {isa = PBXBuildFile; fileRef = C4200000000000000000F002 /* BenchmarkDirectLaunch.swift */; };
+		C4200000000000000000B108 /* AppDelegate.swift in Sources (host) */ = {isa = PBXBuildFile; fileRef = C4200000000000000000F003 /* AppDelegate.swift */; };
+		C4200000000000000000B1F0 /* Split.framework in Frameworks (host) */ = {isa = PBXBuildFile; fileRef = 3B6DEE5A20EA6A4E0067435E /* Split.framework */; };
+		C4200000000000000000B1F1 /* Split.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3B6DEE5A20EA6A4E0067435E /* Split.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C4200000000000000000B001 /* BenchmarkHostTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4200000000000000000F001 /* BenchmarkHostTest.swift */; };
+		C4200000000000000000B002 /* BenchmarkDirectLaunch.swift in Sources (bundle) */ = {isa = PBXBuildFile; fileRef = C4200000000000000000F002 /* BenchmarkDirectLaunch.swift */; };
 		B29A00000000000000000001 /* BenchmarkAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29A00000000000000000011 /* BenchmarkAnalysis.swift */; };
 		B29A00000000000000000002 /* BenchmarkAnalysisTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29A00000000000000000012 /* BenchmarkAnalysisTest.swift */; };
 		B29A00000000000000000003 /* BenchmarkAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = B29A00000000000000000011 /* BenchmarkAnalysis.swift */; };
@@ -1844,6 +1857,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		C4200000000000000000D001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3B6DEE5920EA6A4E0067435E;
+			remoteInfo = Split;
+		};
+		C4200000000000000000D002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C42000000000000000000001;
+			remoteInfo = SplitBenchmarkHost;
+		};
 		B27E00000000000000000106 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3B6DEE5120EA6A4D0067435E /* Project object */;
@@ -1945,6 +1972,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		C4200000000000000000C103 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C4200000000000000000B1F1 /* Split.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		592C6AF2211CBED7002D120C /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1966,6 +2004,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C4200000000000000000F003 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C4200000000000000000F004 /* SplitBenchmarkHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SplitBenchmarkHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4200000000000000000F001 /* BenchmarkHostTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkHostTest.swift; sourceTree = "<group>"; };
+		C4200000000000000000F002 /* BenchmarkDirectLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkDirectLaunch.swift; sourceTree = "<group>"; };
 		B29A00000000000000000011 /* BenchmarkAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkAnalysis.swift; sourceTree = "<group>"; };
 		B29A00000000000000000012 /* BenchmarkAnalysisTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkAnalysisTest.swift; sourceTree = "<group>"; };
 		B27E0000000000000000010F /* BenchmarkArguments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkArguments.swift; sourceTree = "<group>"; };
@@ -2925,6 +2967,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C4200000000000000000C102 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C4200000000000000000B1F0 /* Split.framework in Frameworks (host) */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B27E00000000000000000105 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3087,6 +3137,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C4200000000000000000A001 /* SplitBenchmarkHost */ = {
+			isa = PBXGroup;
+			children = (
+				C4200000000000000000F003 /* AppDelegate.swift */,
+				C4200000000000000000F002 /* BenchmarkDirectLaunch.swift */,
+			);
+			path = SplitBenchmarkHost;
+			sourceTree = "<group>";
+		};
 		B29A00000000000000000021 /* Benchmark */ = {
 			isa = PBXGroup;
 			children = (
@@ -3116,6 +3175,7 @@
 				B27E00000000000000000124 /* BenchmarkRunner.swift */,
 				B27E00000000000000000122 /* BenchmarkScenarioRunner.swift */,
 				B27E00000000000000000120 /* BenchmarkDriver.swift */,
+				C4200000000000000000F001 /* BenchmarkHostTest.swift */,
 			);
 			path = SplitBenchmark;
 			sourceTree = "<group>";
@@ -3219,6 +3279,7 @@
 				3B6DEE5C20EA6A4E0067435E /* Split */,
 				592C6AA6211B6C99002D120C /* SplitTests */,
 				B27E00000000000000000103 /* SplitBenchmark */,
+				C4200000000000000000A001 /* SplitBenchmarkHost */,
 				TESTPLANS0001 /* TestPlans */,
 				237E67ECC8C144123A55D057 /* Sources */,
 				95825BA1271F004700A0CDAD /* Resources */,
@@ -3240,6 +3301,7 @@
 				95B02CA428D0BD790030EC8B /* SplitWatchOS.framework */,
 				5B3C18042ED76BAD0068D623 /* SplitTestsSwift6.xctest */,
 				B27E00000000000000000102 /* SplitBenchmark.xctest */,
+				C4200000000000000000F004 /* SplitBenchmarkHost.app */,
 				A84C2F1D387F870A3749BCE7 /* Logging.framework */,
 				06B656827046A8E6AFD642E8 /* LoggingTests.xctest */,
 				B53126909B1A56DEF7508435 /* Http.framework */,
@@ -5147,6 +5209,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		C42000000000000000000001 /* SplitBenchmarkHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4200000000000000000E001 /* Build configuration list for PBXNativeTarget "SplitBenchmarkHost" */;
+			buildPhases = (
+				C4200000000000000000C101 /* Sources */,
+				C4200000000000000000C102 /* Frameworks */,
+				C4200000000000000000C103 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C4200000000000000000D011 /* PBXTargetDependency */,
+			);
+			name = SplitBenchmarkHost;
+			productName = SplitBenchmarkHost;
+			productReference = C4200000000000000000F004 /* SplitBenchmarkHost.app */;
+			productType = "com.apple.product-type.application";
+		};
 		B27E00000000000000000101 /* SplitBenchmark */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B27E00000000000000000108 /* Build configuration list for PBXNativeTarget "SplitBenchmark" */;
@@ -5158,6 +5238,7 @@
 			);
 			dependencies = (
 				B27E00000000000000000107 /* PBXTargetDependency */,
+				C4200000000000000000D012 /* PBXTargetDependency */,
 			);
 			name = SplitBenchmark;
 			productName = SplitBenchmark;
@@ -5556,6 +5637,7 @@
 				592C6AA4211B6C99002D120C /* SplitTestsSwift5 */,
 				5B3C16342ED76BAD0068D623 /* SplitTestsSwift6 */,
 				B27E00000000000000000101 /* SplitBenchmark */,
+				C42000000000000000000001 /* SplitBenchmarkHost */,
 				95825B9F271F004700A0CDAD /* Split_Split */,
 				95B02CA328D0BD790030EC8B /* SplitWatchOS */,
 				557D062442413680641861B3 /* Logging */,
@@ -5906,6 +5988,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C4200000000000000000C101 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C4200000000000000000B100 /* BenchmarkArguments.swift in Sources (host) */,
+				C4200000000000000000B101 /* BenchmarkCSVRow.swift in Sources (host) */,
+				C4200000000000000000B102 /* BenchmarkDriver.swift in Sources (host) */,
+				C4200000000000000000B103 /* BenchmarkRealDriver.swift in Sources (host) */,
+				C4200000000000000000B104 /* BenchmarkScenarioRunner.swift in Sources (host) */,
+				C4200000000000000000B105 /* BenchmarkRunner.swift in Sources (host) */,
+				C4200000000000000000B106 /* FixtureGenerator.swift in Sources (host) */,
+				C4200000000000000000B107 /* BenchmarkDirectLaunch.swift in Sources (host) */,
+				C4200000000000000000B108 /* AppDelegate.swift in Sources (host) */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B27E00000000000000000104 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5916,6 +6014,8 @@
 				B27E00000000000000000117 /* BenchmarkCSVRowTest.swift in Sources */,
 				B27E00000000000000000118 /* BenchmarkSeamSmokeTest.swift in Sources */,
 				B27E00000000000000000119 /* FixtureGenerator.swift in Sources */,
+				C4200000000000000000B001 /* BenchmarkHostTest.swift in Sources */,
+				C4200000000000000000B002 /* BenchmarkDirectLaunch.swift in Sources (bundle) */,
 				B27E00000000000000000139 /* BenchmarkRealScenariosTest.swift in Sources */,
 				B27E00000000000000000137 /* BenchmarkRunTest.swift in Sources */,
 				B27E00000000000000000135 /* BenchmarkPayloadTest.swift in Sources */,
@@ -7669,6 +7769,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		C4200000000000000000D011 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3B6DEE5920EA6A4E0067435E /* Split */;
+			targetProxy = C4200000000000000000D001 /* PBXContainerItemProxy */;
+		};
+		C4200000000000000000D012 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C42000000000000000000001 /* SplitBenchmarkHost */;
+			targetProxy = C4200000000000000000D002 /* PBXContainerItemProxy */;
+		};
 		B27E00000000000000000107 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3B6DEE5920EA6A4E0067435E /* Split */;
@@ -7753,6 +7863,72 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		C4200000000000000000E011 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTABILITY = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitBenchmarkHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C4200000000000000000E012 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitBenchmarkHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C4200000000000000000E013 /* Release-Benchmark */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitBenchmarkHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release-Benchmark;
+		};
 		B27E0000000000000000010C /* Release-Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7867,6 +8043,7 @@
 		B27E00000000000000000109 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -7879,6 +8056,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitBenchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SplitBenchmarkHost.app/SplitBenchmarkHost";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -7887,6 +8065,7 @@
 		B27E0000000000000000010A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
@@ -7898,6 +8077,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitBenchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SplitBenchmarkHost.app/SplitBenchmarkHost";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -7906,6 +8086,7 @@
 		B27E0000000000000000010B /* Release-Benchmark */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_TESTABILITY = YES;
@@ -7918,6 +8099,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.split.framework.SplitBenchmark;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SplitBenchmarkHost.app/SplitBenchmarkHost";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -10373,6 +10555,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C4200000000000000000E001 /* Build configuration list for PBXNativeTarget "SplitBenchmarkHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4200000000000000000E011 /* Debug */,
+				C4200000000000000000E012 /* Release */,
+				C4200000000000000000E013 /* Release-Benchmark */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B27E00000000000000000108 /* Build configuration list for PBXNativeTarget "SplitBenchmark" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
