@@ -415,6 +415,54 @@ class BenchmarkAnalysisTest: XCTestCase {
         XCTAssertFalse(result.improvementPasses)
     }
 
+    private func noisyFixture(sign: Double) -> (baseline: [Double], candidate: [Double], blocks: [Int]) {
+        let baseline: [Double] = (0..<40).map { 100 + Double(($0 * 7) % 11) }
+        let deltas: [Double] = (0..<40).map { sign * Double(($0 * 37) % 101) / 4 }
+        return (baseline, zip(baseline, deltas).map { $0 + $1 }, Array(0..<40))
+    }
+
+    func test_oneSidedBounds_regressionUsesUpperEnd_noisyDeltas() throws {
+        let data = noisyFixture(sign: 1)   // candidate - baseline: point 12.125, CI [8.625, 16.25]
+        let ci = try XCTUnwrap(BenchmarkAnalysis.pairedBlockBootstrap(
+            baseline: data.baseline, candidate: data.candidate, blocks: data.blocks, seed: 42))
+        XCTAssertLessThan(ci.lower, ci.point)
+        XCTAssertLessThan(ci.point, ci.upper)
+        // 14 sits strictly between lower and upper: the upper bound fails it, the lower bound would pass it.
+        let bounds = try XCTUnwrap(BenchmarkAnalysis.oneSidedBounds(
+            baseline: data.baseline, candidate: data.candidate, blocks: data.blocks,
+            regressionThresholdMs: 14, improvementThresholdMs: 14, seed: 42))
+        XCTAssertEqual(bounds.regressionUpper, ci.upper)
+        XCTAssertEqual(bounds.regressionUpper, 16.25)
+        XCTAssertGreaterThan(bounds.regressionUpper, ci.point)
+        XCTAssertFalse(bounds.regressionPasses)
+        XCTAssertTrue(ci.lower <= 14)
+        let loose = try XCTUnwrap(BenchmarkAnalysis.oneSidedBounds(
+            baseline: data.baseline, candidate: data.candidate, blocks: data.blocks,
+            regressionThresholdMs: 16.25, improvementThresholdMs: 14, seed: 42))
+        XCTAssertTrue(loose.regressionPasses)
+    }
+
+    func test_oneSidedBounds_improvementUsesLowerEnd_noisyDeltas() throws {
+        let data = noisyFixture(sign: -1)  // baseline - candidate: point 12.125, CI [8.625, 16.25]
+        let ci = try XCTUnwrap(BenchmarkAnalysis.pairedBlockBootstrap(
+            baseline: data.candidate, candidate: data.baseline, blocks: data.blocks, seed: 42))
+        XCTAssertLessThan(ci.lower, ci.point)
+        XCTAssertLessThan(ci.point, ci.upper)
+        // 10 sits strictly between lower and upper: the lower bound fails it, the upper bound would pass it.
+        let bounds = try XCTUnwrap(BenchmarkAnalysis.oneSidedBounds(
+            baseline: data.baseline, candidate: data.candidate, blocks: data.blocks,
+            regressionThresholdMs: 100, improvementThresholdMs: 10, seed: 42))
+        XCTAssertEqual(bounds.improvementLower, ci.lower)
+        XCTAssertEqual(bounds.improvementLower, 8.625)
+        XCTAssertLessThan(bounds.improvementLower, ci.point)
+        XCTAssertFalse(bounds.improvementPasses)
+        XCTAssertTrue(ci.upper >= 10)
+        let easier = try XCTUnwrap(BenchmarkAnalysis.oneSidedBounds(
+            baseline: data.baseline, candidate: data.candidate, blocks: data.blocks,
+            regressionThresholdMs: 100, improvementThresholdMs: 8.625, seed: 42))
+        XCTAssertTrue(easier.improvementPasses)
+    }
+
     // MARK: 5, 6. Minimum runs and noisy baseline
 
     private func comparisonInputs(pairs: Int) -> (baseline: [Double], candidate: [Double], blocks: [Int]) {

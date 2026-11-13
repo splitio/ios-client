@@ -518,7 +518,8 @@ enum BenchmarkAnalysis {
         let runCount: Int
         let completeRunCount: Int
         let stages: [Stage]
-        /// Distinct marks across the stages of the complete runs.
+        /// Union of the marks across all complete runs (not one chain's length): with mixed branches it can exceed
+        /// any single run's chain. It sets the per-mark arm of the R13 tolerance.
         let markCount: Int
         let medianTotalMs: Double?
         let sumOfStageMedians: Double
