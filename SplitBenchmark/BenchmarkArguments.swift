@@ -19,6 +19,20 @@ enum BenchmarkScenario: String, CaseIterable {
     case c2 = "C2"
     case d = "D"
     case e = "E"
+    /// C with the two build() calls issued from two background queues behind a barrier.
+    case cBackground = "C-bg"
+    /// One factory, payload at 2x and 4x the flag count of the chosen fixture size.
+    case stress2x = "stress2x"
+    case stress4x = "stress4x"
+
+    /// Flag-count multiplier of the payload; 1 for every non-stress scenario.
+    var payloadMultiplier: Int {
+        switch self {
+        case .stress2x: return 2
+        case .stress4x: return 4
+        default: return 1
+        }
+    }
 }
 
 enum LoggingVariant: String {
@@ -56,6 +70,12 @@ struct BenchmarkArguments: Equatable {
     var sha = ""
     var runIndex = 0
     var fixturePath = ""
+    /// Fixture size used when no fixture path is given and for the stress multipliers.
+    var fixtureSize = FixtureSize.large
+    /// CSV output path; nil means Documents/benchmark.csv.
+    var csvPath: String?
+    /// Base URL for the SDK and events endpoints; nil keeps the offline default (127.0.0.1:1, cache path only).
+    var endpoint: String?
     /// Width override for the D5 sweep; nil leaves the decoder width untouched.
     var width: Int?
     var logging = LoggingVariant.on
@@ -101,6 +121,12 @@ struct BenchmarkArguments: Equatable {
         result.standalone = standalone
         result.sha = values["-benchSHA"] ?? ""
         result.fixturePath = values["-benchFixturePath"] ?? ""
+        result.csvPath = values["-benchCSVPath"]
+        result.endpoint = values["-benchEndpoint"]
+        if let text = values["-benchFixtureSize"] {
+            guard let value = FixtureSize(rawValue: text) else { throw invalid("-benchFixtureSize", text) }
+            result.fixtureSize = value
+        }
         if let text = values["-benchRunIndex"] {
             guard let value = Int(text) else { throw invalid("-benchRunIndex", text) }
             result.runIndex = value

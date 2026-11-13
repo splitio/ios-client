@@ -1829,6 +1829,18 @@
 		TRKCONNBUILD00002 /* TrackerConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKCONN00000001 /* TrackerConnector.swift */; };
 		TRKFWBUILD00001 /* Tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = TRKFWREF0000001 /* Tracker.framework */; };
 		TRKTESTBUILD00001 /* TrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = TRKTEST000000001 /* TrackerTest.swift */; };
+		B27E00000000000000000121 /* BenchmarkDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000120 /* BenchmarkDriver.swift */; };
+		B27E00000000000000000123 /* BenchmarkScenarioRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000122 /* BenchmarkScenarioRunner.swift */; };
+		B27E00000000000000000125 /* BenchmarkRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000124 /* BenchmarkRunner.swift */; };
+		B27E00000000000000000127 /* BenchmarkTestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000126 /* BenchmarkTestSupport.swift */; };
+		B27E00000000000000000129 /* BenchmarkScenarioCTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000128 /* BenchmarkScenarioCTest.swift */; };
+		B27E0000000000000000012B /* BenchmarkScenarioBETest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E0000000000000000012A /* BenchmarkScenarioBETest.swift */; };
+		B27E0000000000000000012D /* BenchmarkScenarioDTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E0000000000000000012C /* BenchmarkScenarioDTest.swift */; };
+		B27E00000000000000000131 /* BenchmarkRealDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000130 /* BenchmarkRealDriver.swift */; };
+		B27E00000000000000000133 /* BenchmarkBuilderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000132 /* BenchmarkBuilderTest.swift */; };
+		B27E00000000000000000135 /* BenchmarkPayloadTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000134 /* BenchmarkPayloadTest.swift */; };
+		B27E00000000000000000137 /* BenchmarkRunTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000136 /* BenchmarkRunTest.swift */; };
+		B27E00000000000000000139 /* BenchmarkRealScenariosTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = B27E00000000000000000138 /* BenchmarkRealScenariosTest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2898,6 +2910,18 @@
 		TRKMODULE00000003 /* TrackerValidation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerValidation.swift; sourceTree = "<group>"; };
 		TRKMODULE00000004 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		TRKTEST000000001 /* TrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerTest.swift; sourceTree = "<group>"; };
+		B27E00000000000000000120 /* BenchmarkDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkDriver.swift; sourceTree = "<group>"; };
+		B27E00000000000000000122 /* BenchmarkScenarioRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkScenarioRunner.swift; sourceTree = "<group>"; };
+		B27E00000000000000000124 /* BenchmarkRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkRunner.swift; sourceTree = "<group>"; };
+		B27E00000000000000000126 /* BenchmarkTestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkTestSupport.swift; sourceTree = "<group>"; };
+		B27E00000000000000000128 /* BenchmarkScenarioCTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkScenarioCTest.swift; sourceTree = "<group>"; };
+		B27E0000000000000000012A /* BenchmarkScenarioBETest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkScenarioBETest.swift; sourceTree = "<group>"; };
+		B27E0000000000000000012C /* BenchmarkScenarioDTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkScenarioDTest.swift; sourceTree = "<group>"; };
+		B27E00000000000000000130 /* BenchmarkRealDriver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkRealDriver.swift; sourceTree = "<group>"; };
+		B27E00000000000000000132 /* BenchmarkBuilderTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkBuilderTest.swift; sourceTree = "<group>"; };
+		B27E00000000000000000134 /* BenchmarkPayloadTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkPayloadTest.swift; sourceTree = "<group>"; };
+		B27E00000000000000000136 /* BenchmarkRunTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkRunTest.swift; sourceTree = "<group>"; };
+		B27E00000000000000000138 /* BenchmarkRealScenariosTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkRealScenariosTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3080,6 +3104,18 @@
 				B27E00000000000000000111 /* BenchmarkArgumentsTest.swift */,
 				B27E00000000000000000112 /* BenchmarkCSVRowTest.swift */,
 				B27E00000000000000000113 /* BenchmarkSeamSmokeTest.swift */,
+				B27E00000000000000000138 /* BenchmarkRealScenariosTest.swift */,
+				B27E00000000000000000136 /* BenchmarkRunTest.swift */,
+				B27E00000000000000000134 /* BenchmarkPayloadTest.swift */,
+				B27E00000000000000000132 /* BenchmarkBuilderTest.swift */,
+				B27E00000000000000000130 /* BenchmarkRealDriver.swift */,
+				B27E0000000000000000012C /* BenchmarkScenarioDTest.swift */,
+				B27E0000000000000000012A /* BenchmarkScenarioBETest.swift */,
+				B27E00000000000000000128 /* BenchmarkScenarioCTest.swift */,
+				B27E00000000000000000126 /* BenchmarkTestSupport.swift */,
+				B27E00000000000000000124 /* BenchmarkRunner.swift */,
+				B27E00000000000000000122 /* BenchmarkScenarioRunner.swift */,
+				B27E00000000000000000120 /* BenchmarkDriver.swift */,
 			);
 			path = SplitBenchmark;
 			sourceTree = "<group>";
@@ -5880,6 +5916,18 @@
 				B27E00000000000000000117 /* BenchmarkCSVRowTest.swift in Sources */,
 				B27E00000000000000000118 /* BenchmarkSeamSmokeTest.swift in Sources */,
 				B27E00000000000000000119 /* FixtureGenerator.swift in Sources */,
+				B27E00000000000000000139 /* BenchmarkRealScenariosTest.swift in Sources */,
+				B27E00000000000000000137 /* BenchmarkRunTest.swift in Sources */,
+				B27E00000000000000000135 /* BenchmarkPayloadTest.swift in Sources */,
+				B27E00000000000000000133 /* BenchmarkBuilderTest.swift in Sources */,
+				B27E00000000000000000131 /* BenchmarkRealDriver.swift in Sources */,
+				B27E0000000000000000012D /* BenchmarkScenarioDTest.swift in Sources */,
+				B27E0000000000000000012B /* BenchmarkScenarioBETest.swift in Sources */,
+				B27E00000000000000000129 /* BenchmarkScenarioCTest.swift in Sources */,
+				B27E00000000000000000127 /* BenchmarkTestSupport.swift in Sources */,
+				B27E00000000000000000125 /* BenchmarkRunner.swift in Sources */,
+				B27E00000000000000000123 /* BenchmarkScenarioRunner.swift in Sources */,
+				B27E00000000000000000121 /* BenchmarkDriver.swift in Sources */,
 				B27E0000000000000000011A /* LogPrinterStub.swift in Sources */,
 				B27E0000000000000000011B /* TimeChecker+Testing.swift in Sources */,
 			);
