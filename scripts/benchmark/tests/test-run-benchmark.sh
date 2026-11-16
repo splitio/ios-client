@@ -62,6 +62,11 @@ for mode in devicectl simctl xctest; do
   [ "$want" = "$got" ] && [ "$n_run" = 6 ] && [ "$n_launch" = 6 ] && [ "$n_sha" = 6 ]
   check "sha_in_every_launch_$mode" "$([ $? = 0 ] && echo ok)" "runs=$n_run launches=$n_launch sha=$n_sha"
 done
+# 6b. devicectl parses app args as its own flags unless `--` separates them; simctl and xctest must not get it.
+grep -- 'devicectl device process launch' "$TMP/cmds-devicectl.txt" | grep -qE -- " com.split.framework.SplitBenchmarkHost -- -benchScenario "
+check devicectl_launch_has_double_dash_before_app_args "$([ $? = 0 ] && echo ok)" "$(grep -m1 -- 'process launch' "$TMP/cmds-devicectl.txt")"
+! grep -- ' -- ' "$TMP/cmds-simctl.txt" "$TMP/cmds-xctest.txt" | grep -q .
+check no_double_dash_in_simctl_xctest "$([ $? = 0 ] && echo ok)" ""
 diff "$EXPECTED/commands-devicectl.txt" "$TMP/cmds-devicectl.txt" > "$TMP/diff.txt"
 check commands_devicectl_match_expected "$([ $? = 0 ] && echo ok)" "$(head -5 "$TMP/diff.txt")"
 diff "$EXPECTED/commands-simctl.txt" "$TMP/cmds-simctl.txt" > "$TMP/diff.txt"

@@ -94,6 +94,8 @@ build_launch() { # scenario role idx
       LAUNCH=(test-without-building -xctestrun "$(app_of "$2")" -destination "$d" -only-testing:SplitBenchmark/BenchmarkRunTest/test_runScenarioFromLaunchArguments)
       return;;
   esac
+  # devicectl would parse the app's -flags as its own; `--` ends its options.
+  [ $MODE = devicectl ] && LAUNCH=("${LAUNCH[@]}" --)
   LAUNCH=("${LAUNCH[@]}" $ARGS)
 }
 
