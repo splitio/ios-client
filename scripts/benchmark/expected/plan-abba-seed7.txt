@@ -1,0 +1,21 @@
+# plan seed=7 mode=devicectl scenarios=A,B blocks=2 idleGapSeconds=5 warmups=4 measured=16
+001 WARMUP discarded scenario=A build=baseline sha=base111 runIndex=1
+002 WARMUP discarded scenario=A build=candidate sha=cand222 runIndex=2
+003 WARMUP discarded scenario=B build=baseline sha=base111 runIndex=3
+004 WARMUP discarded scenario=B build=candidate sha=cand222 runIndex=4
+005 MEASURED scenario=B build=baseline sha=base111 runIndex=5 block=1
+006 MEASURED scenario=B build=candidate sha=cand222 runIndex=6 block=1
+007 MEASURED scenario=B build=candidate sha=cand222 runIndex=7 block=1
+008 MEASURED scenario=B build=baseline sha=base111 runIndex=8 block=1
+009 MEASURED scenario=A build=baseline sha=base111 runIndex=9 block=1
+010 MEASURED scenario=A build=candidate sha=cand222 runIndex=10 block=1
+011 MEASURED scenario=A build=candidate sha=cand222 runIndex=11 block=1
+012 MEASURED scenario=A build=baseline sha=base111 runIndex=12 block=1
+013 MEASURED scenario=B build=baseline sha=base111 runIndex=13 block=2
+014 MEASURED scenario=B build=candidate sha=cand222 runIndex=14 block=2
+015 MEASURED scenario=B build=candidate sha=cand222 runIndex=15 block=2
+016 MEASURED scenario=B build=baseline sha=base111 runIndex=16 block=2
+017 MEASURED scenario=A build=baseline sha=base111 runIndex=17 block=2
+018 MEASURED scenario=A build=candidate sha=cand222 runIndex=18 block=2
+019 MEASURED scenario=A build=candidate sha=cand222 runIndex=19 block=2
+020 MEASURED scenario=A build=baseline sha=base111 runIndex=20 block=2
