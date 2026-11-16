@@ -1,0 +1,25 @@
+# plan seed=3 mode=devicectl scenarios=A blocks=1 idleGapSeconds=5 warmups=2 measured=4
+    xcrun devicectl device copy from --device DEV123 --domain-type appDataContainer --domain-identifier com.split.framework.SplitBenchmarkHost --source Documents/benchmark.csv --destination WORK/runs/000.csv
+001 WARMUP discarded scenario=A build=baseline sha=base111 runIndex=1
+    xcrun devicectl device install app --device DEV123 BASE.app
+    xcrun devicectl device process launch --console --terminate-existing --json-output WORK/runs/001.launch.json --device DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA base111 -benchRunIndex 1 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun devicectl device copy from --device DEV123 --domain-type appDataContainer --domain-identifier com.split.framework.SplitBenchmarkHost --source Documents/benchmark.csv --destination WORK/runs/001.csv
+002 WARMUP discarded scenario=A build=candidate sha=cand222 runIndex=2
+    xcrun devicectl device install app --device DEV123 CAND.app
+    xcrun devicectl device process launch --console --terminate-existing --json-output WORK/runs/002.launch.json --device DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA cand222 -benchRunIndex 2 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun devicectl device copy from --device DEV123 --domain-type appDataContainer --domain-identifier com.split.framework.SplitBenchmarkHost --source Documents/benchmark.csv --destination WORK/runs/002.csv
+003 MEASURED scenario=A build=baseline sha=base111 runIndex=3 block=1
+    xcrun devicectl device install app --device DEV123 BASE.app
+    xcrun devicectl device process launch --console --terminate-existing --json-output WORK/runs/003.launch.json --device DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA base111 -benchRunIndex 3 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun devicectl device copy from --device DEV123 --domain-type appDataContainer --domain-identifier com.split.framework.SplitBenchmarkHost --source Documents/benchmark.csv --destination WORK/runs/003.csv
+004 MEASURED scenario=A build=candidate sha=cand222 runIndex=4 block=1
+    xcrun devicectl device install app --device DEV123 CAND.app
+    xcrun devicectl device process launch --console --terminate-existing --json-output WORK/runs/004.launch.json --device DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA cand222 -benchRunIndex 4 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun devicectl device copy from --device DEV123 --domain-type appDataContainer --domain-identifier com.split.framework.SplitBenchmarkHost --source Documents/benchmark.csv --destination WORK/runs/004.csv
+005 MEASURED scenario=A build=candidate sha=cand222 runIndex=5 block=1
+    xcrun devicectl device process launch --console --terminate-existing --json-output WORK/runs/005.launch.json --device DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA cand222 -benchRunIndex 5 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun devicectl device copy from --device DEV123 --domain-type appDataContainer --domain-identifier com.split.framework.SplitBenchmarkHost --source Documents/benchmark.csv --destination WORK/runs/005.csv
+006 MEASURED scenario=A build=baseline sha=base111 runIndex=6 block=1
+    xcrun devicectl device install app --device DEV123 BASE.app
+    xcrun devicectl device process launch --console --terminate-existing --json-output WORK/runs/006.launch.json --device DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA base111 -benchRunIndex 6 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun devicectl device copy from --device DEV123 --domain-type appDataContainer --domain-identifier com.split.framework.SplitBenchmarkHost --source Documents/benchmark.csv --destination WORK/runs/006.csv

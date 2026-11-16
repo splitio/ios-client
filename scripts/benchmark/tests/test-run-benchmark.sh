@@ -78,7 +78,7 @@ for mode in simctl devicectl xctest; do
   W="$TMP/w-$mode"; OUT="$TMP/results-$mode.csv"; : > "$TMP/log-$mode"; rm -rf "$TMP/c-$mode"
   extra=()
   [ $mode = xctest ] && extra=(--simulator)
-  STUB_LOG="$TMP/log-$mode" STUB_CONTAINER="$TMP/c-$mode" STUB_THERMAL_AFTER_AT=7 \
+  STUB_LOG="$TMP/log-$mode" STUB_CONTAINER="$TMP/c-$mode" STUB_THERMAL_AFTER_AT=4 \
     BENCH_XCRUN="$HERE/stub-tool.sh xcrun" BENCH_XCODEBUILD="$HERE/stub-tool.sh xcodebuild" \
     "$DRIVER" --mode $mode --device SIM-ID --scenarios A --blocks 1 --seed 3 --baseline-sha base111 --baseline-app BASE.app \
       --candidate-sha cand222 --candidate-app CAND.app --idle-gap 0 --workdir "$W" --out "$OUT" "${extra[@]}" > "$TMP/run-$mode.txt" 2>&1
@@ -97,7 +97,7 @@ for mode in simctl devicectl xctest; do
   [ "$rows" = 4 ] || ok="$ok rows=$rows(want 4: warm-ups discarded)"
   [ "$modes" = "$want_mode " ] || ok="$ok modes=[$modes]"
   [ "$shas" = "base111 cand222 cand222 base111 " ] || ok="$ok shas=[$shas]"
-  [ "$flag" = "7:NOT_NOMINAL " ] || ok="$ok flags=[$flag]"
+  [ "$flag" = "4:NOT_NOMINAL " ] || ok="$ok flags=[$flag]"
   [ "$wall" = 0 ] || ok="$ok wall"
   case "$cols" in scenario,sha,runIndex,thermalStateBefore,thermalStateAfter,runMode,planSeq,buildRole,wallClockSeconds,thermalFlag) ;; *) ok="$ok cols=$cols";; esac
   check "stubbed_run_$mode" "$([ "$ok" = ok ] && echo ok)" "$ok"
