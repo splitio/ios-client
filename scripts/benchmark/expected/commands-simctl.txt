@@ -2,24 +2,24 @@
     cp "$(xcrun simctl get_app_container DEV123 com.split.framework.SplitBenchmarkHost data)/Documents/benchmark.csv" WORK/runs/000.csv
 001 WARMUP discarded scenario=A build=baseline sha=base111 runIndex=1
     xcrun simctl install DEV123 BASE.app
-    xcrun simctl launch --console --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA base111 -benchRunIndex 1 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun simctl launch --console-pty --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA base111 -benchRunIndex 1 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
     cp "$(xcrun simctl get_app_container DEV123 com.split.framework.SplitBenchmarkHost data)/Documents/benchmark.csv" WORK/runs/001.csv
 002 WARMUP discarded scenario=A build=candidate sha=cand222 runIndex=2
     xcrun simctl install DEV123 CAND.app
-    xcrun simctl launch --console --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA cand222 -benchRunIndex 2 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun simctl launch --console-pty --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA cand222 -benchRunIndex 2 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
     cp "$(xcrun simctl get_app_container DEV123 com.split.framework.SplitBenchmarkHost data)/Documents/benchmark.csv" WORK/runs/002.csv
 003 MEASURED scenario=A build=baseline sha=base111 runIndex=3 block=1
     xcrun simctl install DEV123 BASE.app
-    xcrun simctl launch --console --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA base111 -benchRunIndex 3 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun simctl launch --console-pty --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA base111 -benchRunIndex 3 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
     cp "$(xcrun simctl get_app_container DEV123 com.split.framework.SplitBenchmarkHost data)/Documents/benchmark.csv" WORK/runs/003.csv
 004 MEASURED scenario=A build=candidate sha=cand222 runIndex=4 block=1
     xcrun simctl install DEV123 CAND.app
-    xcrun simctl launch --console --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA cand222 -benchRunIndex 4 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun simctl launch --console-pty --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA cand222 -benchRunIndex 4 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
     cp "$(xcrun simctl get_app_container DEV123 com.split.framework.SplitBenchmarkHost data)/Documents/benchmark.csv" WORK/runs/004.csv
 005 MEASURED scenario=A build=candidate sha=cand222 runIndex=5 block=1
-    xcrun simctl launch --console --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA cand222 -benchRunIndex 5 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun simctl launch --console-pty --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA cand222 -benchRunIndex 5 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
     cp "$(xcrun simctl get_app_container DEV123 com.split.framework.SplitBenchmarkHost data)/Documents/benchmark.csv" WORK/runs/005.csv
 006 MEASURED scenario=A build=baseline sha=base111 runIndex=6 block=1
     xcrun simctl install DEV123 BASE.app
-    xcrun simctl launch --console --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA base111 -benchRunIndex 6 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
+    xcrun simctl launch --console-pty --terminate-running-process DEV123 com.split.framework.SplitBenchmarkHost -benchScenario A -benchSHA base111 -benchRunIndex 6 -benchFixtureSize small -benchLogging off -benchReadyAPI listener -benchInstallState relaunch -benchIdleGapSeconds 5
     cp "$(xcrun simctl get_app_container DEV123 com.split.framework.SplitBenchmarkHost data)/Documents/benchmark.csv" WORK/runs/006.csv

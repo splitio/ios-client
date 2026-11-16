@@ -86,7 +86,7 @@ build_launch() { # scenario role idx
   [ -n "$ENDPOINT" ] && ARGS="$ARGS -benchEndpoint $ENDPOINT"
   local nn; nn=$(printf '%03d' "$3")
   case $MODE in
-    simctl) LAUNCH=(simctl launch --console --terminate-running-process "$DEVICE" "$BID");;
+    simctl) LAUNCH=(simctl launch --console-pty --terminate-running-process "$DEVICE" "$BID");;
     devicectl) LAUNCH=(devicectl device process launch --console --terminate-existing --json-output "$WORK/runs/$nn.launch.json" --device "$DEVICE" "$BID");;
     xctest)
       local d=$DEST
