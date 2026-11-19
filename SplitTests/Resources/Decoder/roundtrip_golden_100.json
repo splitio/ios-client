@@ -1,0 +1,927 @@
+[
+  {
+    "name": "flag_001",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_001\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_002",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_002\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_003",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_003\",\"sets\":[\"set_a\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_004",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_004\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_005",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_005\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_006",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_006\",\"sets\":[],\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_007",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_007\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_008",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_008\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_009",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_009\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_010",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_010\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_011",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_011\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_012",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_012\",\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_013",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_013\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_014",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_014\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_015",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_015\",\"sets\":[\"set_a\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_016",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_016\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_017",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_017\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_018",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_018\",\"sets\":[],\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_019",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_019\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_020",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_020\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_021",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_021\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_022",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_022\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_023",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_023\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_024",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_024\",\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_025",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_025\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_026",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_026\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_027",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_027\",\"sets\":[\"set_a\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_028",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_028\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_029",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_029\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_030",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": [],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_030\",\"sets\":[],\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_031",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_031\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_032",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_032\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_033",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_033\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_034",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_034\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_035",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_035\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_036",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_036\",\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_037",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_037\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_038",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_038\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_039",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_039\",\"sets\":[\"set_a\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_040",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_040\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_041",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_041\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_042",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_042\",\"sets\":[],\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_043",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_043\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_044",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_044\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_045",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_045\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_046",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_046\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_047",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_047\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_048",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_048\",\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_049",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_049\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_050",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_050\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_051",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_051\",\"sets\":[\"set_a\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_052",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_052\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_053",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_053\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_054",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_054\",\"sets\":[],\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_055",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_055\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_056",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_056\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_057",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_057\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_058",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_058\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_059",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_059\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_060",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": null,
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_060\",\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_061",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_061\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_062",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_062\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_063",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_063\",\"sets\":[\"set_a\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_064",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_064\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_065",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_065\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_066",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_066\",\"sets\":[],\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_067",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_067\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_068",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_068\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_069",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_069\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_070",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_070\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_071",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_071\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_072",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_072\",\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_073",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_073\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_074",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_074\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_075",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_075\",\"sets\":[\"set_a\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_076",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_076\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_077",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_077\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_078",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_078\",\"sets\":[],\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_079",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_079\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_080",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_080\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_081",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_081\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_082",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_082\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_083",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_083\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_084",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_084\",\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_085",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_085\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_086",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_086\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_087",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_087\",\"sets\":[\"set_a\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_088",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_088\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_089",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_089\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_090",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": [],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_090\",\"sets\":[],\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_091",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_091\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_092",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_092\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_093",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_093\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_094",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_094\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_095",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_095\",\"sets\":[\"set_a\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_096",
+    "status": "archived",
+    "trafficType": "account",
+    "sets": null,
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_096\",\"status\":\"archived\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_097",
+    "status": "active",
+    "trafficType": "user",
+    "sets": [
+      "set_a",
+      "set_b"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_097\",\"sets\":[\"set_a\",\"set_b\"],\"status\":\"active\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_098",
+    "status": "active",
+    "trafficType": "account",
+    "sets": [],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_098\",\"sets\":[],\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  },
+  {
+    "name": "flag_099",
+    "status": "archived",
+    "trafficType": "user",
+    "sets": [
+      "set_a"
+    ],
+    "killed": false,
+    "json": "{\"impressionsDisabled\":false,\"killed\":false,\"name\":\"flag_099\",\"sets\":[\"set_a\"],\"status\":\"archived\",\"trafficTypeName\":\"user\"}"
+  },
+  {
+    "name": "flag_100",
+    "status": "active",
+    "trafficType": "account",
+    "sets": null,
+    "killed": true,
+    "json": "{\"impressionsDisabled\":false,\"killed\":true,\"name\":\"flag_100\",\"status\":\"active\",\"trafficTypeName\":\"account\"}"
+  }
+]

@@ -54,7 +54,8 @@ struct SplitDatabaseHelper {
         if let testDb = testDatabase as? TestSplitDatabase {
             dbHelper = testDb.coreDataHelper
         } else {
-            dbHelper = CoreDataHelperBuilder.build(databaseName: databaseName)
+            dbHelper = CoreDataHelperBuilder.build(databaseName: databaseName,
+                                                   readAhead: CacheReadAhead.shared)
         }
         guard let dbHelper = dbHelper else {
             Logger.e("Error creating database helper")

@@ -91,6 +91,16 @@ struct SplitsSerialDecoder: SplitsDecoder {
 
     func getSplit(_ json: String) throws -> Split {
 
+        if case .fields(let fields) = SplitsTopLevelScanner.scan(json) {
+            return Split(name: fields.name, trafficType: fields.trafficType, status: fields.status,
+                         sets: fields.sets, json: json, killed: fields.killed)
+        }
+
+        return try getSplitUsingJSONSerialization(json)
+    }
+
+    /// Fallback for bodies the top-level scanner does not accept; also the reference the scanner must match.
+    func getSplitUsingJSONSerialization(_ json: String) throws -> Split {
         guard let data  = json.data(using: .utf8) else {
             throw GenericError.unknown(message: "parsing error")
         }

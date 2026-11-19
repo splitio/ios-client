@@ -76,22 +76,27 @@ class CoreDataSplitDao: BaseCoreDataDao, SplitDao, @unchecked Sendable {
         }
     }
 
-    func getAll() -> [Split] {
-
-        var splits: [Split]?
+    /// Fetches and copies the stored payloads. Every managed object is touched
+    /// inside `execute`; only `String` values leave the context queue.
+    func copyPayloads() -> [String] {
+        var payloads: [String]?
         execute { [weak self] in
             let start = Date.nowMillis()
             guard let self = self else {
                 return
             }
 
-            let jsonSplits = self.coreDataHelper.fetch(entity: .split)
+            payloads = self.coreDataHelper.fetch(entity: .split)
                 .compactMap { return $0 as? SplitEntity }
                 .compactMap { return $0.body }
             self.timeChecker.logInterval("Time to load feature flags", since: start)
-            splits = self.decoder.decode(jsonSplits).map { $0 }
         }
-        return splits ?? []
+        return payloads ?? []
+    }
+
+    func getAll() -> [Split] {
+        // Decode runs outside the context queue so other fetches are not blocked
+        return decoder.decode(copyPayloads())
     }
 
     func delete(_ splits: [String]) {

@@ -37,7 +37,17 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
     private let flagSetsCache: FlagSetsCache
     private let generalInfoStorage: GeneralInfoStorage
     private let persistenceBreaker: PersistenceBreaker
-    
+
+    // The previous sets of a flag are taken from memory to clean the flag-set index without scanning it.
+    // Memory and index diverge when memory is emptied (clear, destroy) or written without the index
+    // (updateWithoutChecks). From then on memory is not a reliable view of the index and the full scan is used.
+    private let previousSetsTrustLock = NSLock()
+    private var previousSetsTrustedValue = true
+    private var previousSetsTrusted: Bool {
+        get { previousSetsTrustLock.lock(); defer { previousSetsTrustLock.unlock() }; return previousSetsTrustedValue }
+        set { previousSetsTrustLock.lock(); previousSetsTrustedValue = newValue; previousSetsTrustLock.unlock() }
+    }
+
     private(set) var changeNumber: Int64 = -1
     private(set) var updateTimestamp: Int64 = -1
 
@@ -117,6 +127,7 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
 
     func updateWithoutChecks(split: Split) {
         if let splitName = split.name?.lowercased() {
+            previousSetsTrusted = false
             inMemorySplits.setValue(split, forKey: splitName)
             // Only call persistence if breaker allows
             if persistenceBreaker.isPersistenceEnabled {
@@ -130,6 +141,7 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
     }
 
     func clear() {
+        previousSetsTrusted = false
         inMemorySplits.removeAll()
         changeNumber = -1
         persistentStorage.clear()
@@ -145,6 +157,8 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
         var splitsUpdated = false
         var splitsRemoved = false
         var segmentsInUse: Int64 = generalInfoStorage.getSegmentsInUse() ?? 0
+        let usePreviousSets = previousSetsTrusted
+        var flagSetsBatch = [(flag: Split, previousSets: Set<String>?)]()
 
         for split in splits {
 
@@ -181,7 +195,10 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
             if active {
                 cachedTrafficTypes[trafficTypeName] = (cachedTrafficTypes[trafficTypeName] ?? 0) + 1
                 cachedSplits[splitName] = split
-                flagSetsCache.addToFlagSets(split)
+                // The index keys flags by name as given, memory by lowercased name: previous sets are only
+                // reliable when the previous version has exactly the same name.
+                let previous = (loadedSplit?.name == split.name) ? loadedSplit : nil
+                flagSetsBatch.append((flag: split, previousSets: previous?.sets ?? (previous == nil ? nil : [])))
                 splitsUpdated = true
             } else {
                 cachedSplits.removeValue(forKey: splitName)
@@ -191,6 +208,9 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
                 }
             }
         }
+        if !flagSetsBatch.isEmpty {
+            flagSetsCache.addToFlagSets(flagSetsBatch, usePreviousSets: usePreviousSets)
+        }
         inMemorySplits.setValues(cachedSplits)
         trafficTypes.setValues(cachedTrafficTypes)
         generalInfoStorage.setSegmentsInUse(segmentsInUse) // Ensure count of Flags with Segments (for optimization feature)
@@ -198,6 +218,7 @@ class DefaultSplitsStorage: SplitsStorage, @unchecked Sendable {
     }
 
     func destroy() {
+        previousSetsTrusted = false
         inMemorySplits.removeAll()
     }
     

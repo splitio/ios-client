@@ -41,6 +41,10 @@ class FlagSetsCacheMock: FlagSetsCache, @unchecked Sendable {
         }
     }
 
+    func addToFlagSets(_ batch: [(flag: Split, previousSets: Set<String>?)], usePreviousSets: Bool) {
+        batch.forEach { addToFlagSets($0.flag) }
+    }
+
     func removeFromFlagSets(featureFlagName: String, sets: Set<String>) {
         sets.forEach { flagSet in
             flagSets[featureFlagName] = nil
