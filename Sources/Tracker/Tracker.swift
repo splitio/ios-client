@@ -44,7 +44,7 @@ public final class DefaultTracker: Tracker, @unchecked Sendable {
 
         guard let trafficType = trafficType ?? defaultTrafficType else { return false }
 
-        if let errorInfo = eventValidator.validate(key: matchingKey, trafficTypeName: trafficType, eventTypeId: trafficType, value: value, properties: properties, isSdkReady: isSdkReady) {
+        if let errorInfo = eventValidator.validate(key: matchingKey, trafficTypeName: trafficType, eventTypeId: eventType, value: value, properties: properties, isSdkReady: isSdkReady) {
             logger.log(errorInfo: errorInfo, tag: validationTag)
             if errorInfo.isError {
                 return false

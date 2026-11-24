@@ -51,6 +51,8 @@ class TrackerTest: XCTestCase {
         XCTAssertTrue(result)
         XCTAssertEqual(pushedEvents.count, 1)
         XCTAssertEqual(recordedLatencies.count, 1)
+        XCTAssertEqual(eventValidator.receivedEventTypeId, "test_event")
+        XCTAssertEqual(eventValidator.receivedTrafficTypeName, "test_tt")
     }
 
     func testTrackDisabled() {
@@ -120,6 +122,8 @@ class TrackerTest: XCTestCase {
         XCTAssertTrue(result)
         XCTAssertEqual(pushedEvents.count, 1)
         XCTAssertEqual(pushedEvents.first?.trafficType, "user")
+        XCTAssertEqual(eventValidator.receivedEventTypeId, "test_event")
+        XCTAssertEqual(eventValidator.receivedTrafficTypeName, "user")
     }
 
     func testTrackWithValue() {
@@ -144,9 +148,13 @@ class TrackerTest: XCTestCase {
 
 final class TrackerEventValidatorStub: TrackerEventValidator, @unchecked Sendable {
     var validationError: TrackerValidationError?
+    var receivedTrafficTypeName: String?
+    var receivedEventTypeId: String?
 
     func validate(key: String?, trafficTypeName: String?, eventTypeId: String?, value: Double?, properties: [String: Any]?, isSdkReady: Bool) -> TrackerValidationError? {
-        validationError
+        receivedTrafficTypeName = trafficTypeName
+        receivedEventTypeId = eventTypeId
+        return validationError
     }
 }
 
