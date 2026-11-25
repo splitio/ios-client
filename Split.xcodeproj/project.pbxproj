@@ -751,6 +751,7 @@
 		5B3C179D2ED76BAD0068D623 /* UnsupportedMatcherIntegrationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5977C562BF53D60003E293A /* UnsupportedMatcherIntegrationTest.swift */; };
 		5B3C179E2ED76BAD0068D623 /* TelemetryConfigRecorderWorkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95B1800427626C70002DC9DF /* TelemetryConfigRecorderWorkerTests.swift */; };
 		5B3C179F2ED76BAD0068D623 /* EventsTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4C5293522D6006ED016 /* EventsTrackerTest.swift */; };
+		3EB2C63BA1F8DC642CF39FD0 /* TrackerValidatorArgumentsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F56A9A0FBB2CEA5A025A0D44 /* TrackerValidatorArgumentsTest.swift */; };
 		5B3C17A02ED76BAD0068D623 /* SplitsSyncHelperTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C53F3C462DCB956900655753 /* SplitsSyncHelperTest.swift */; };
 		5B3C17A12ED76BAD0068D623 /* EventValidatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4C729352425006ED016 /* EventValidatorStub.swift */; };
 		5B3C17A22ED76BAD0068D623 /* PeriodicMySegmentsSyncWorkerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F4AAC32513EFF700A1C69A /* PeriodicMySegmentsSyncWorkerTest.swift */; };
@@ -1164,6 +1165,7 @@
 		95ABF4C2293166A8006ED016 /* EventsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4C1293166A8006ED016 /* EventsStorage.swift */; };
 		95ABF4C42934EFF2006ED016 /* EventsStorageTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4C32934EFF2006ED016 /* EventsStorageTest.swift */; };
 		95ABF4C6293522D6006ED016 /* EventsTrackerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4C5293522D6006ED016 /* EventsTrackerTest.swift */; };
+		C99AEAB58DD7451BF0C290D5 /* TrackerValidatorArgumentsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F56A9A0FBB2CEA5A025A0D44 /* TrackerValidatorArgumentsTest.swift */; };
 		95ABF4C829352425006ED016 /* EventValidatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4C729352425006ED016 /* EventValidatorStub.swift */; };
 		95ABF4CA29352589006ED016 /* AnyValueValidatorStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4C929352589006ED016 /* AnyValueValidatorStub.swift */; };
 		95ABF4FC29369B73006ED016 /* TelemetrySynchronizerStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ABF4FB29369B73006ED016 /* TelemetrySynchronizerStub.swift */; };
@@ -2562,6 +2564,7 @@
 		95ABF4C1293166A8006ED016 /* EventsStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EventsStorage.swift; path = Split/Storage/Events/EventsStorage.swift; sourceTree = SOURCE_ROOT; };
 		95ABF4C32934EFF2006ED016 /* EventsStorageTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventsStorageTest.swift; sourceTree = "<group>"; };
 		95ABF4C5293522D6006ED016 /* EventsTrackerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsTrackerTest.swift; sourceTree = "<group>"; };
+		F56A9A0FBB2CEA5A025A0D44 /* TrackerValidatorArgumentsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerValidatorArgumentsTest.swift; sourceTree = "<group>"; };
 		95ABF4C729352425006ED016 /* EventValidatorStub.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EventValidatorStub.swift; path = SplitTests/Fake/EventValidatorStub.swift; sourceTree = SOURCE_ROOT; };
 		95ABF4C929352589006ED016 /* AnyValueValidatorStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyValueValidatorStub.swift; sourceTree = "<group>"; };
 		95ABF4FB29369B73006ED016 /* TelemetrySynchronizerStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TelemetrySynchronizerStub.swift; sourceTree = "<group>"; };
@@ -3098,6 +3101,7 @@
 				95ABF5012937ABFB006ED016 /* EventsSynchronizerTest.swift */,
 				95503349282F0FF400E5330F /* ImpressionsTrackerTest.swift */,
 				95ABF4C5293522D6006ED016 /* EventsTrackerTest.swift */,
+				F56A9A0FBB2CEA5A025A0D44 /* TrackerValidatorArgumentsTest.swift */,
 				9502B7B32837E70200B779C0 /* UniqueTrackerTest.swift */,
 				9519A93127DBC25B00278AEC /* MySegmentsSynchronizerTest.swift */,
 				9519A93927DE318000278AEC /* ByKeyFacadeTest.swift */,
@@ -6659,6 +6663,7 @@
 				95B1800527626C70002DC9DF /* TelemetryConfigRecorderWorkerTests.swift in Sources */,
 				C52C572B2EEB41450064D049 /* EncryptionKeyValidationTest.swift in Sources */,
 				95ABF4C6293522D6006ED016 /* EventsTrackerTest.swift in Sources */,
+				C99AEAB58DD7451BF0C290D5 /* TrackerValidatorArgumentsTest.swift in Sources */,
 				C53F3C472DCB956900655753 /* SplitsSyncHelperTest.swift in Sources */,
 				95ABF4C829352425006ED016 /* EventValidatorStub.swift in Sources */,
 				59F4AAC42513EFF800A1C69A /* PeriodicMySegmentsSyncWorkerTest.swift in Sources */,
@@ -7046,6 +7051,7 @@
 				5B3C179D2ED76BAD0068D623 /* UnsupportedMatcherIntegrationTest.swift in Sources */,
 				5B3C179E2ED76BAD0068D623 /* TelemetryConfigRecorderWorkerTests.swift in Sources */,
 				5B3C179F2ED76BAD0068D623 /* EventsTrackerTest.swift in Sources */,
+				3EB2C63BA1F8DC642CF39FD0 /* TrackerValidatorArgumentsTest.swift in Sources */,
 				5B3C17A02ED76BAD0068D623 /* SplitsSyncHelperTest.swift in Sources */,
 				5B3C17A12ED76BAD0068D623 /* EventValidatorStub.swift in Sources */,
 				5B3C17A22ED76BAD0068D623 /* PeriodicMySegmentsSyncWorkerTest.swift in Sources */,
