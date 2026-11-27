@@ -1,0 +1,117 @@
+{
+  "ff": {
+    "d": [
+      {
+        "name": "prerequisite_account_tier",
+        "trafficTypeName": "user",
+        "trafficAllocation": 100,
+        "trafficAllocationSeed": 1359120455,
+        "seed": -1227398421,
+        "status": "ACTIVE",
+        "killed": false,
+        "defaultTreatment": "off",
+        "changeNumber": 1700000000001,
+        "algo": 2,
+        "configurations": {},
+        "conditions": [
+          {
+            "conditionType": "ROLLOUT",
+            "matcherGroup": {
+              "combiner": "AND",
+              "matchers": [
+                {
+                  "keySelector": {
+                    "trafficType": "user",
+                    "attribute": "account_tier"
+                  },
+                  "matcherType": "MATCHES_STRING",
+                  "negate": false,
+                  "userDefinedSegmentMatcherData": null,
+                  "whitelistMatcherData": null,
+                  "unaryNumericMatcherData": null,
+                  "betweenMatcherData": null,
+                  "booleanMatcherData": null,
+                  "dependencyMatcherData": null,
+                  "stringMatcherData": "premium"
+                }
+              ]
+            },
+            "partitions": [
+              {
+                "treatment": "on",
+                "size": 100
+              },
+              {
+                "treatment": "off",
+                "size": 0
+              }
+            ],
+            "label": "account_tier matches premium"
+          }
+        ]
+      },
+      {
+        "name": "dependent_on_account_tier",
+        "trafficTypeName": "user",
+        "trafficAllocation": 100,
+        "trafficAllocationSeed": -913021442,
+        "seed": 1868120349,
+        "status": "ACTIVE",
+        "killed": false,
+        "defaultTreatment": "off",
+        "changeNumber": 1700000000002,
+        "algo": 2,
+        "configurations": {},
+        "prerequisites": [
+          {
+            "n": "prerequisite_account_tier",
+            "ts": ["on"]
+          }
+        ],
+        "conditions": [
+          {
+            "conditionType": "ROLLOUT",
+            "matcherGroup": {
+              "combiner": "AND",
+              "matchers": [
+                {
+                  "keySelector": {
+                    "trafficType": "user",
+                    "attribute": null
+                  },
+                  "matcherType": "ALL_KEYS",
+                  "negate": false,
+                  "userDefinedSegmentMatcherData": null,
+                  "whitelistMatcherData": null,
+                  "unaryNumericMatcherData": null,
+                  "betweenMatcherData": null,
+                  "booleanMatcherData": null,
+                  "dependencyMatcherData": null,
+                  "stringMatcherData": null
+                }
+              ]
+            },
+            "partitions": [
+              {
+                "treatment": "on",
+                "size": 100
+              },
+              {
+                "treatment": "off",
+                "size": 0
+              }
+            ],
+            "label": "in segment all"
+          }
+        ]
+      }
+    ],
+    "s": 1700000000002,
+    "t": 1700000000002
+  },
+  "rbs": {
+    "d": [],
+    "s": -1,
+    "t": -1
+  }
+}

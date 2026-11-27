@@ -95,6 +95,53 @@ class PrerequisitesMatcherTests: XCTestCase {
         XCTAssertFalse(SUT.evaluate(values: values, context: context), "If the feature flag is non existent it should return false")
     }
 
+    func testPrerequisitesReceiveCallerAttributes() {
+        let stub = EvaluatorStub()
+        let evalContext = EvalContext(evaluator: stub, mySegmentsStorage: MySegmentsStorageStub(),
+                                      myLargeSegmentsStorage: nil, ruleBasedSegmentsStorage: nil)
+        let callerAttributes: [String: Any] = ["account_tier": "premium", "region": "us-east"]
+        let callerValues = EvalValues(matchValue: "", matchingKey: "matching-key",
+                                      bucketingKey: "bucketing-key", attributes: callerAttributes)
+        let prerequisites = [
+            Prerequisite(flagName: "flag_one", treatments: ["on"]),
+            Prerequisite(flagName: "flag_two", treatments: ["on"])
+        ]
+
+        let SUT = PrerequisitesMatcher(prerequisites)
+
+        XCTAssertTrue(SUT.evaluate(values: callerValues, context: evalContext), "Both prerequisites return on, so the matcher should pass")
+        guard stub.lastAttributes.count == 2 else {
+            XCTFail("Expected exactly two recursive evaluations, got \(stub.lastAttributes.count)")
+            return
+        }
+        let firstRecorded = stub.getAttributes(index: 0) as NSDictionary?
+        let secondRecorded = stub.getAttributes(index: 1) as NSDictionary?
+        XCTAssertEqual(firstRecorded, callerAttributes as NSDictionary)
+        XCTAssertEqual(secondRecorded, callerAttributes as NSDictionary)
+    }
+
+    func testPrerequisitesPreserveNilAttributes() {
+        let stub = EvaluatorStub()
+        let evalContext = EvalContext(evaluator: stub, mySegmentsStorage: MySegmentsStorageStub(),
+                                      myLargeSegmentsStorage: nil, ruleBasedSegmentsStorage: nil)
+        let nilValues = EvalValues(matchValue: "", matchingKey: "matching-key",
+                                   bucketingKey: "bucketing-key", attributes: nil)
+        let prerequisites = [
+            Prerequisite(flagName: "flag_one", treatments: ["on"]),
+            Prerequisite(flagName: "flag_two", treatments: ["on"])
+        ]
+
+        let SUT = PrerequisitesMatcher(prerequisites)
+
+        XCTAssertTrue(SUT.evaluate(values: nilValues, context: evalContext), "Both prerequisites return on, so the matcher should pass")
+        guard stub.lastAttributes.count == 2 else {
+            XCTFail("Expected exactly two recursive evaluations, got \(stub.lastAttributes.count)")
+            return
+        }
+        XCTAssertNil(stub.getAttributes(index: 0))
+        XCTAssertNil(stub.getAttributes(index: 1))
+    }
+
 }
 
 //MARK: Testing Data

@@ -326,6 +326,84 @@ class AttributesEvaluationTest: XCTestCase {
         semaphore.wait()
     }
 
+    func testPrerequisitesEvaluationReceivesCallerAttributes() {
+        let splitDatabase = TestingHelper.createTestDatabase(name: "prereq_attr_test", queue: dbqueue)
+        splitDatabase.generalInfoDao.update(info: .flagsSpec, stringValue: Spec.flagsSpec)
+
+        let session = HttpSessionMock()
+        let reqManager = HttpRequestManagerTestDispatcher(dispatcher: buildPrerequisitesDispatcher(),
+                                                          streamingHandler: buildStreamingHandler())
+        let httpClient = DefaultHttpClient(session: session, requestManager: reqManager)
+        let splitConfig = basicSplitConfig()
+        splitConfig.persistentAttributesEnabled = false
+        splitConfig.streamingEnabled = false
+
+        let sdkReadyExp = XCTestExpectation()
+
+        let key: Key = Key(matchingKey: userKey)
+        let builder = DefaultSplitFactoryBuilder()
+        _ = builder.setHttpClient(httpClient)
+        _ = builder.setReachabilityChecker(ReachabilityMock())
+        _ = builder.setTestDatabase(splitDatabase)
+
+        let factory = builder.setApiKey(IntegrationHelper.dummyApiKey).setKey(key)
+            .setConfig(splitConfig).build()!
+
+        splitClient = factory.client
+
+        splitClient.on(event: SplitEvent.sdkReady) {
+            sdkReadyExp.fulfill()
+        }
+
+        wait(for: [sdkReadyExp], timeout: 5)
+
+        let callerAttributes: [String: Any] = ["account_tier": "premium", "region": "us-east"]
+        let basicAttributes: [String: Any] = ["account_tier": "basic", "region": "us-east"]
+
+        let direct = splitClient.getTreatment("prerequisite_account_tier", attributes: callerAttributes)
+        let dependent = splitClient.getTreatment("dependent_on_account_tier", attributes: callerAttributes)
+        let nonMatching = splitClient.getTreatment("dependent_on_account_tier", attributes: basicAttributes)
+        let missing = splitClient.getTreatment("dependent_on_account_tier")
+
+        print("PREREQ_ATTRIBUTES direct=\(direct) dependent=\(dependent) nonMatching=\(nonMatching) missing=\(missing)")
+
+        XCTAssertEqual("on", direct)
+        XCTAssertEqual("on", dependent)
+        XCTAssertEqual("off", nonMatching)
+        XCTAssertEqual("off", missing)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        splitClient.destroy(completion: {
+            _ = semaphore.signal()
+        })
+        semaphore.wait()
+    }
+
+    private func buildPrerequisitesDispatcher() -> HttpClientTestDispatcher {
+        let changes = loadPrerequisitesChanges()
+        return { request in
+            if request.isSplitEndpoint() {
+                return TestDispatcherResponse(code: 200, data: changes)
+            }
+            if request.isMySegmentsEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.emptyMySegments.utf8))
+            }
+            if request.isAuthEndpoint() {
+                return TestDispatcherResponse(code: 200, data: Data(IntegrationHelper.dummySseResponse().utf8))
+            }
+            if request.isImpressionsEndpoint() || request.isEventsEndpoint() {
+                return TestDispatcherResponse(code: 200)
+            }
+            return TestDispatcherResponse(code: 500)
+        }
+    }
+
+    private func loadPrerequisitesChanges() -> Data {
+        let content = IntegrationHelper.loadSplitChangeFileJson(
+            name: "splitchanges_prerequisites_attributes", sourceClass: IntegrationHelper())!
+        return Data(content.utf8)
+    }
+
     private func getChanges() -> Data {
         return Data(IntegrationHelper.emptySplitChanges(since: 999999, till: 999999).utf8)
     }

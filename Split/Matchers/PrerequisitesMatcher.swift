@@ -24,7 +24,7 @@ class PrerequisitesMatcher: BaseMatcher, MatcherProtocol {
                     matchingKey: values.matchingKey,
                     bucketingKey: values.bucketingKey,
                     splitName: prerequisite.flagName,
-                    attributes: nil).treatment else {
+                    attributes: values.attributes).treatment else {
                     continue
                 }
                 
